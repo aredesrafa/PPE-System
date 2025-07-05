@@ -1,10 +1,27 @@
 {
-	"/": [],
-	"/auditoria": [],
-	"/catalogo": [],
-	"/estoque": [],
-	"/fichas": [],
-	"/notas": [],
-	"/relatorios": [],
-	"/test": []
+	"/": [
+		"src/routes/+layout.ts",
+		"src/routes/+layout.ts"
+	],
+	"/auditoria": [
+		"src/routes/+layout.ts"
+	],
+	"/catalogo": [
+		"src/routes/+layout.ts"
+	],
+	"/estoque": [
+		"src/routes/+layout.ts"
+	],
+	"/fichas": [
+		"src/routes/+layout.ts"
+	],
+	"/notas": [
+		"src/routes/+layout.ts"
+	],
+	"/relatorios": [
+		"src/routes/+layout.ts"
+	],
+	"/test": [
+		"src/routes/+layout.ts"
+	]
 }
