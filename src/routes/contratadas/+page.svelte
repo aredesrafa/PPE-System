@@ -165,7 +165,7 @@
   }
   
   function handleView(contratada: any) {
-    goto(`/contratadas-v2/${contratada.id}`);
+    goto(`/contratadas/${contratada.id}`);
   }
   
   // Paginação

@@ -9,13 +9,10 @@
 	"/catalogo": [
 		"src/routes/+layout.ts"
 	],
-	"/contratadas-v2": [
+	"/contratadas": [
 		"src/routes/+layout.ts"
 	],
-	"/devolucoes-v2": [
-		"src/routes/+layout.ts"
-	],
-	"/estoque-v2": [
+	"/devolucoes": [
 		"src/routes/+layout.ts"
 	],
 	"/estoque": [

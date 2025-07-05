@@ -31,7 +31,7 @@
       icon: FolderOpenOutline,
       dropdown: [
         { href: '/estoque', label: 'Estoque' },
-        { href: '/devolucoes-v2', label: 'Devoluções Avançadas' },
+        { href: '/devolucoes', label: 'Devoluções' },
         { href: '/notas', label: 'Notas' },
         { href: '/catalogo', label: 'Catálogo' }
       ]
@@ -45,8 +45,7 @@
       label: 'Administração', 
       icon: BuildingOutline,
       dropdown: [
-        { href: '/contratadas-v2', label: 'Contratadas' },
-        { href: '/estoque-v2', label: 'Estoque v2 (Demo)' }
+        { href: '/contratadas', label: 'Contratadas' }
       ]
     }
   ];
