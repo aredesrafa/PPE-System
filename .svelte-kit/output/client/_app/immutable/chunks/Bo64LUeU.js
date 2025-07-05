@@ -1,0 +1,1 @@
+const n={default:"Carregando...",processing:"Processando...",saving:"Salvando...",deleting:"Excluindo...",creating:"Criando...",updating:"Atualizando...",searching:"Buscando...",loading:"Carregando...",signing:"Assinando...",uploading:"Enviando...",downloading:"Baixando..."},a={cancel:"Cancelar",confirm:"Confirmar"};export{a as B,n as L};

@@ -1,0 +1,53 @@
+{
+  "permissions": {
+    "allow": ["*"],
+    "deny": []
+  },
+  "tools": {
+    "enabled": [
+      "Bash",
+      "Read",
+      "Write",
+      "Edit",
+      "MultiEdit",
+      "Glob",
+      "Grep",
+      "LS",
+      "WebFetch",
+      "WebSearch",
+      "TodoRead",
+      "TodoWrite",
+      "NotebookRead",
+      "NotebookEdit",
+      "Task",
+      "mcp__deep-code-reasoning__*",
+      "mcp__obsidian__*",
+      "mcp__figma__*",
+      "mcp__notion__*",
+      "mcp__context7__*"
+    ]
+  },
+  "project": {
+    "name": "DataLife EPI Frontend",
+    "type": "svelte",
+    "framework": "sveltekit",
+    "permissions": {
+      "file_operations": "full",
+      "network": "full",
+      "package_management": "full",
+      "git_operations": "full",
+      "process_execution": "full"
+    }
+  },
+  "development": {
+    "auto_install_dependencies": true,
+    "auto_format_code": true,
+    "auto_run_checks": true,
+    "enable_hot_reload": true
+  },
+  "security": {
+    "trust_level": "full",
+    "allow_destructive_operations": true,
+    "allow_system_modifications": true
+  }
+}
