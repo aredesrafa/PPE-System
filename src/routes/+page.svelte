@@ -223,8 +223,9 @@
               <svelte:component this={metric.icon} class="w-6 h-6" />
             </div>
           </div>
-      </Card>
-    {/each}
+        </Card>
+      {/each}
+    {/if}
   </div>
   
   <!-- Main Content Grid -->
