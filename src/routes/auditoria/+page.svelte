@@ -4,8 +4,9 @@
   import { formatarData, formatarDataHora } from '$lib/utils/dateHelpers';
   import LoadingSpinner from '$lib/components/common/LoadingSpinner.svelte';
   import ErrorDisplay from '$lib/components/common/ErrorDisplay.svelte';
+  import { apiClient } from '$lib/services/api/client';
   
-  // Temporary types for mock data
+  // Types based on backend API
   interface Movimentacao {
     id: string;
     estoqueOrigemId: string | null;
@@ -28,7 +29,7 @@
     nomeColaborador?: string | null;
   }
   
-  interface Estoque {
+  interface Almoxarifado {
     id: string;
     nome: string;
     tipoEstoque: string;
@@ -38,96 +39,10 @@
     updatedAt: string;
   }
   
-  // Mock data for development
-  const mockMovimentacoes: Movimentacao[] = [
-    {
-      id: 'mov-001',
-      estoqueOrigemId: 'estoque-1',
-      estoqueDestinoId: null,
-      tipoMovimentacao: 'entrada',
-      quantidade: 10,
-      responsavel: 'João Silva',
-      motivo: 'Compra de EPIs',
-      observacoes: 'Lote recebido conforme nota fiscal',
-      documentoOrigemId: 'NF-12345',
-      documentoTipo: 'nota_fiscal',
-      dataMovimentacao: '2025-01-03T14:30:00Z',
-      transacaoId: 'txn-001',
-      createdAt: '2025-01-03T14:30:00Z',
-      itemEstoqueId: 'item-001',
-      itemFichaId: null,
-      nomeEstoqueOrigem: 'Estoque Principal',
-      nomeEstoqueDestino: null,
-      nomeEPI: 'Capacete de Segurança',
-      nomeColaborador: null
-    },
-    {
-      id: 'mov-002',
-      estoqueOrigemId: 'estoque-1',
-      estoqueDestinoId: null,
-      tipoMovimentacao: 'saida',
-      quantidade: 3,
-      responsavel: 'Maria Santos',
-      motivo: 'Entrega para colaborador',
-      observacoes: 'EPI entregue com termo de responsabilidade',
-      documentoOrigemId: 'TERM-001',
-      documentoTipo: 'termo_responsabilidade',
-      dataMovimentacao: '2025-01-02T09:15:00Z',
-      transacaoId: 'txn-002',
-      createdAt: '2025-01-02T09:15:00Z',
-      itemEstoqueId: 'item-001',
-      itemFichaId: 'ficha-001',
-      nomeEstoqueOrigem: 'Estoque Principal',
-      nomeEstoqueDestino: null,
-      nomeEPI: 'Capacete de Segurança',
-      nomeColaborador: 'Carlos Pereira'
-    },
-    {
-      id: 'mov-003',
-      estoqueOrigemId: 'estoque-1',
-      estoqueDestinoId: 'estoque-2',
-      tipoMovimentacao: 'transferencia',
-      quantidade: 5,
-      responsavel: 'Ana Costa',
-      motivo: 'Transferência entre estoques',
-      observacoes: 'Realocação para estoque secundário',
-      documentoOrigemId: 'TRANS-001',
-      documentoTipo: 'transferencia',
-      dataMovimentacao: '2025-01-01T16:45:00Z',
-      transacaoId: 'txn-003',
-      createdAt: '2025-01-01T16:45:00Z',
-      itemEstoqueId: 'item-002',
-      itemFichaId: null,
-      nomeEstoqueOrigem: 'Estoque Principal',
-      nomeEstoqueDestino: 'Estoque Secundário',
-      nomeEPI: 'Óculos de Proteção',
-      nomeColaborador: null
-    }
-  ];
-  
-  const mockEstoqueOptions: Estoque[] = [
-    {
-      id: 'estoque-1',
-      nome: 'Estoque Principal',
-      tipoEstoque: 'fisico',
-      codigo: 'EP',
-      ativo: true,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    },
-    {
-      id: 'estoque-2',
-      nome: 'Estoque Secundário',
-      tipoEstoque: 'fisico',
-      codigo: 'ES',
-      ativo: true,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    }
-  ];
   
   // State
   let movimentacoes: Movimentacao[] = [];
+  let almoxarifados: Almoxarifado[] = [];
   let loading = true;
   let error: string | null = null;
   
@@ -161,7 +76,10 @@
   $: currentItems = filteredMovimentacoes.slice(startIndex, endIndex);
   
   onMount(async () => {
-    await fetchMovimentacoes();
+    await Promise.all([
+      fetchMovimentacoes(),
+      fetchAlmoxarifados()
+    ]);
   });
   
   async function fetchMovimentacoes() {
@@ -169,19 +87,38 @@
       loading = true;
       error = null;
       
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 500));
+      const params = {
+        page: currentPage,
+        limit: itemsPerPage,
+        dataInicio: filtroDataInicio || undefined,
+        dataFim: filtroDataFim || undefined,
+        tipoMovimentacao: filtroTipoMovimentacao || undefined,
+        almoxarifadoOrigemId: filtroEstoqueOrigem || undefined,
+        almoxarifadoDestinoId: filtroEstoqueDestino || undefined
+      };
       
-      // In real implementation, this would be:
-      // const response = await movimentacoesAPI.getAll();
-      // movimentacoes = response;
+      const response = await apiClient.getMovimentacoes(params);
+      movimentacoes = response.data?.items || [];
       
-      movimentacoes = mockMovimentacoes;
+      console.log('📋 Movimentações carregadas:', response);
     } catch (err) {
       console.error('Erro ao buscar movimentações:', err);
       error = 'Não foi possível carregar as movimentações de estoque.';
     } finally {
       loading = false;
+    }
+  }
+  
+  async function fetchAlmoxarifados() {
+    try {
+      const response = await apiClient.getAlmoxarifados();
+      almoxarifados = response.data || [];
+      
+      console.log('🏪 Almoxarifados carregados:', response);
+    } catch (err) {
+      console.error('Erro ao buscar almoxarifados:', err);
+      // Se falhar, usa lista vazia (não bloqueia funcionalidade)
+      almoxarifados = [];
     }
   }
   
@@ -247,8 +184,8 @@
           class="rounded-sm"
         >
           <option value="">Todos os estoques</option>
-          {#each mockEstoqueOptions as estoque}
-            <option value={estoque.id}>{estoque.nome}</option>
+          {#each almoxarifados as almoxarifado}
+            <option value={almoxarifado.id}>{almoxarifado.nome}</option>
           {/each}
         </Select>
       </div>
@@ -263,8 +200,8 @@
           class="rounded-sm"
         >
           <option value="">Todos os estoques</option>
-          {#each mockEstoqueOptions as estoque}
-            <option value={estoque.id}>{estoque.nome}</option>
+          {#each almoxarifados as almoxarifado}
+            <option value={almoxarifado.id}>{almoxarifado.nome}</option>
           {/each}
         </Select>
       </div>

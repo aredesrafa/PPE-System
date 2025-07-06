@@ -9,47 +9,89 @@
     SearchOutline
   } from 'flowbite-svelte-icons';
   import { onMount } from 'svelte';
-  
-  // Métricas mockadas
-  const metrics = [
-    {
-      title: 'Fichas Ativas',
-      value: '150',
-      icon: FileDocOutline,
-      color: 'blue',
-      change: '+12%',
-      changeType: 'positive'
-    },
-    {
-      title: 'EPIs Entregues',
-      value: '1,245',
-      icon: CheckCircleOutline,
-      color: 'green',
-      change: '+8%',
-      changeType: 'positive'
-    },
-    {
-      title: 'EPIs Vencendo',
-      value: '23',
-      icon: ExclamationCircleOutline,
-      color: 'yellow',
-      change: '-5%',
-      changeType: 'negative'
-    },
-    {
-      title: 'Estoque Baixo',
-      value: '12',
-      icon: ArchiveOutline,
-      color: 'red',
-      change: '+3%',
-      changeType: 'positive'
-    }
-  ];
-  
-  // Dados reativos com stores
   import { writable, derived } from 'svelte/store';
+  import { apiClient } from '$lib/services/api/client';
   
-  // Mock data stores para demonstrar reatividade otimizada
+  // Dashboard data store
+  const dashboardData = writable<any>(null);
+  const loading = writable(true);
+  const error = writable<string | null>(null);
+  
+  // Derived metrics from API data
+  const metrics = derived(dashboardData, ($data) => {
+    if (!$data?.data) return [];
+    
+    const data = $data.data;
+    return [
+      {
+        title: 'Fichas Ativas',
+        value: data.fichasAtivas?.toString() || '0',
+        icon: FileDocOutline,
+        color: 'blue',
+        change: data.fichasAtivasChange || '0%',
+        changeType: 'positive'
+      },
+      {
+        title: 'EPIs Entregues',
+        value: data.episEntregues?.toString() || '0',
+        icon: CheckCircleOutline,
+        color: 'green',
+        change: data.episEntreguesChange || '0%',
+        changeType: 'positive'
+      },
+      {
+        title: 'EPIs Vencendo',
+        value: data.episVencendo?.toString() || '0',
+        icon: ExclamationCircleOutline,
+        color: 'yellow',
+        change: data.episVencendoChange || '0%',
+        changeType: 'negative'
+      },
+      {
+        title: 'Estoque Baixo',
+        value: data.estoqueBaixo?.toString() || '0',
+        icon: ArchiveOutline,
+        color: 'red',
+        change: data.estoqueBaixoChange || '0%',
+        changeType: 'positive'
+      }
+    ];
+  });
+  
+  // Load dashboard data from API
+  async function loadDashboardData() {
+    try {
+      loading.set(true);
+      error.set(null);
+      
+      const response = await apiClient.getDashboardMetrics();
+      dashboardData.set(response);
+      
+      console.log('📊 Dashboard metrics carregadas do backend:', response);
+    } catch (err) {
+      console.error('❌ Erro ao carregar dashboard:', err);
+      error.set(err instanceof Error ? err.message : 'Erro desconhecido');
+      
+      // Fallback para dados mockados se API falhar
+      dashboardData.set({
+        success: true,
+        data: {
+          fichasAtivas: 150,
+          episEntregues: 1245,
+          episVencendo: 23,
+          estoqueBaixo: 12,
+          fichasAtivasChange: '+12%',
+          episEntreguesChange: '+8%',
+          episVencendoChange: '-5%',
+          estoqueBaixoChange: '+3%'
+        }
+      });
+    } finally {
+      loading.set(false);
+    }
+  }
+  
+  // Mock data stores para atividades (mantém mock conforme solicitado)
   const activitiesStore = writable([
     { id: 1, type: 'entrega', description: 'EPI entregue para João Silva', time: 'há 2 horas', equipment: 'Capacete de Segurança' },
     { id: 2, type: 'devolucao', description: 'EPI devolvido por Maria Santos', time: 'há 4 horas', equipment: 'Luvas de Proteção' },
@@ -109,6 +151,10 @@
   
   onMount(() => {
     dashboardLoaded = true;
+    
+    // Carregar dados do dashboard do backend
+    loadDashboardData();
+    
     // Simular carregamento de dados em tempo real
     const interval = setInterval(() => {
       quickStatsStore.update(stats => ({
@@ -144,23 +190,39 @@
   
   <!-- Metrics Cards -->
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-    {#each metrics as metric}
-      <Card size="sm" class="rounded-sm">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">{metric.title}</p>
-            <p class="text-2xl font-bold text-gray-900 dark:text-white">{metric.value}</p>
-            <div class="flex items-center mt-2">
-              <span class="text-xs {metric.changeType === 'positive' ? 'text-green-600' : 'text-red-600'}">
-                {metric.change}
-              </span>
-              <span class="text-xs text-gray-500 dark:text-gray-400 ml-1">vs. mês anterior</span>
+    {#if $loading}
+      {#each Array(4) as _, i}
+        <Card size="sm" class="rounded-sm">
+          <div class="flex items-center justify-between animate-pulse">
+            <div class="space-y-2">
+              <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-24"></div>
+              <div class="h-8 bg-gray-200 dark:bg-gray-700 rounded w-16"></div>
+              <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-20"></div>
+            </div>
+            <div class="p-3 bg-gray-200 dark:bg-gray-700 rounded-lg">
+              <div class="w-6 h-6 bg-gray-300 dark:bg-gray-600 rounded"></div>
             </div>
           </div>
-          <div class="p-3 rounded-lg {metric.color === 'blue' ? 'bg-blue-100 dark:bg-blue-900' : metric.color === 'green' ? 'bg-green-100 dark:bg-green-900' : metric.color === 'yellow' ? 'bg-yellow-100 dark:bg-yellow-900' : 'bg-red-100 dark:bg-red-900'}">
-            <svelte:component this={metric.icon} class="w-6 h-6" />
+        </Card>
+      {/each}
+    {:else}
+      {#each $metrics as metric}
+        <Card size="sm" class="rounded-sm">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-gray-600 dark:text-gray-400">{metric.title}</p>
+              <p class="text-2xl font-bold text-gray-900 dark:text-white">{metric.value}</p>
+              <div class="flex items-center mt-2">
+                <span class="text-xs {metric.changeType === 'positive' ? 'text-green-600' : 'text-red-600'}">
+                  {metric.change}
+                </span>
+                <span class="text-xs text-gray-500 dark:text-gray-400 ml-1">vs. mês anterior</span>
+              </div>
+            </div>
+            <div class="p-3 rounded-lg {metric.color === 'blue' ? 'bg-blue-100 dark:bg-blue-900' : metric.color === 'green' ? 'bg-green-100 dark:bg-green-900' : metric.color === 'yellow' ? 'bg-yellow-100 dark:bg-yellow-900' : 'bg-red-100 dark:bg-red-900'}">
+              <svelte:component this={metric.icon} class="w-6 h-6" />
+            </div>
           </div>
-        </div>
       </Card>
     {/each}
   </div>

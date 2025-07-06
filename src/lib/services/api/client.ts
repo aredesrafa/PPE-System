@@ -403,6 +403,76 @@ export async function cancelarNota(id: string): Promise<any> {
   return apiPost(`/api/notas-movimentacao/${id}/cancelar`);
 }
 
+// -------------------- RELATÓRIOS E DASHBOARD --------------------
+export async function getDashboardMetrics(): Promise<any> {
+  return apiGet('/api/relatorios/dashboard');
+}
+
+export async function getRelatorioSaldoEstoque(params?: {
+  almoxarifadoId?: string;
+  unidadeNegocioId?: string;
+  apenasAbaixoMinimo?: boolean;
+}): Promise<any> {
+  return apiGet('/api/relatorios/saldo-estoque', params);
+}
+
+export async function getRelatorioMovimentacoes(params?: {
+  dataInicio?: string;
+  dataFim?: string;
+  almoxarifadoId?: string;
+  tipoEpiId?: string;
+  tipoMovimentacao?: string;
+}): Promise<any> {
+  return apiGet('/api/relatorios/movimentacoes-estoque', params);
+}
+
+export async function getRelatorioEpisAtivos(params?: {
+  detalhado?: boolean;
+  colaboradorId?: string;
+  almoxarifadoId?: string;
+  tipoEpiId?: string;
+}): Promise<any> {
+  const endpoint = params?.detalhado 
+    ? '/api/relatorios/epis-ativos-detalhado'
+    : '/api/relatorios/epis-ativos-sintetico';
+  return apiGet(endpoint, params);
+}
+
+export async function getRelatorioDevolucaoAtrasada(params?: {
+  colaboradorId?: string;
+  almoxarifadoId?: string;
+  diasAtraso?: number;
+}): Promise<any> {
+  return apiGet('/api/relatorios/epis-devolucao-atrasada', params);
+}
+
+export async function getRelatorioDescartados(params?: {
+  dataInicio?: string;
+  dataFim?: string;
+  almoxarifadoId?: string;
+  tipoEpiId?: string;
+}): Promise<any> {
+  return apiGet('/api/relatorios/itens-descartados', params);
+}
+
+// -------------------- MOVIMENTAÇÕES E AUDITORIA --------------------
+export async function getMovimentacoes(params?: {
+  page?: number;
+  limit?: number;
+  dataInicio?: string;
+  dataFim?: string;
+  tipoMovimentacao?: string;
+  almoxarifadoOrigemId?: string;
+  almoxarifadoDestinoId?: string;
+  responsavelId?: string;
+}): Promise<PaginatedResponse<any>> {
+  return apiGet('/api/relatorios/movimentacoes-estoque', params);
+}
+
+export async function getAlmoxarifados(): Promise<any> {
+  return apiGet('/api/almoxarifados');
+}
+
 // ==================== EXPORT CONSOLIDADO ====================
 
 /**
@@ -446,7 +516,19 @@ export const apiClient = {
   updateNotaMovimentacao,
   deleteNotaMovimentacao,
   concluirNota,
-  cancelarNota
+  cancelarNota,
+  
+  // Relatórios e Dashboard
+  getDashboardMetrics,
+  getRelatorioSaldoEstoque,
+  getRelatorioMovimentacoes,
+  getRelatorioEpisAtivos,
+  getRelatorioDevolucaoAtrasada,
+  getRelatorioDescartados,
+  
+  // Movimentações e Auditoria
+  getMovimentacoes,
+  getAlmoxarifados
 };
 
 export default apiClient;

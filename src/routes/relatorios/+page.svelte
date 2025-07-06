@@ -9,7 +9,7 @@
     UsersGroupSolid,
     ShoppingBagSolid
   } from 'flowbite-svelte-icons';
-  import { relatoriosAPI } from '$lib/services/api';
+  import { apiClient } from '$lib/services/api/client';
   import { createApiStore, notify } from '$lib/stores';
   import LoadingSpinner from '$lib/components/common/LoadingSpinner.svelte';
   import ErrorDisplay from '$lib/components/common/ErrorDisplay.svelte';
@@ -59,15 +59,48 @@
   
   async function loadEstatisticas() {
     try {
-      await estatisticasStore.execute(() => relatoriosAPI.getEstatisticas());
+      // Carrega métricas do dashboard que contém as estatísticas
+      await estatisticasStore.execute(() => apiClient.getDashboardMetrics());
     } catch (error) {
       console.error('Erro ao carregar estatísticas:', error);
       notify.error('Erro ao carregar', 'Não foi possível carregar as estatísticas');
     }
   }
   
-  function handleGerarRelatorio() {
-    notify.info('Em desenvolvimento', `Gerando relatório: ${tipoRelatorio} (${formatoRelatorio})`);
+  async function handleGerarRelatorio() {
+    try {
+      let response;
+      const params = {
+        dataInicio: new Date(Date.now() - parseInt(periodoRelatorio) * 24 * 60 * 60 * 1000).toISOString(),
+        dataFim: new Date().toISOString()
+      };
+
+      switch (tipoRelatorio) {
+        case 'fichas':
+          response = await apiClient.getRelatorioEpisAtivos({ detalhado: formatoRelatorio === 'detalhado' });
+          break;
+        case 'estoque':
+          response = await apiClient.getRelatorioSaldoEstoque();
+          break;
+        case 'movimentacoes':
+          response = await apiClient.getRelatorioMovimentacoes(params);
+          break;
+        case 'descartados':
+          response = await apiClient.getRelatorioDescartados(params);
+          break;
+        case 'devolucao_atrasada':
+          response = await apiClient.getRelatorioDevolucaoAtrasada();
+          break;
+        default:
+          throw new Error('Tipo de relatório não suportado');
+      }
+
+      console.log('📊 Relatório gerado:', response);
+      notify.success('Sucesso', `Relatório ${tipoRelatorio} gerado com sucesso`);
+    } catch (error) {
+      console.error('Erro ao gerar relatório:', error);
+      notify.error('Erro', 'Não foi possível gerar o relatório');
+    }
   }
   
   function handleExportarDados() {
