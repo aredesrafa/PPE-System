@@ -13,7 +13,7 @@
  */
 
 import { writable, derived, type Readable } from 'svelte/store';
-import { apiClient } from '../services/api/client';
+import { api } from '../services/core/apiClient';
 import { 
   CategoriaEPI, 
   StatusEstoqueItem, 
@@ -87,7 +87,7 @@ export async function initializeConfiguration(): Promise<SystemConfiguration> {
   
   try {
     // Carrega configurações diretas (hardcoded conforme backend)
-    const backendConfig = await apiClient.getConfiguration();
+    const backendConfig = await api.get('/configuration');
     
     // Mescla com valores padrão
     const mergedConfig: SystemConfiguration = {

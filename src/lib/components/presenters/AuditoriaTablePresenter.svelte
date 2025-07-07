@@ -201,7 +201,10 @@
         <Select
           id="filtro-almoxarifado"
           value={filters.almoxarifadoId || ''}
-          on:change={(e) => handleFilterInput('almoxarifadoId', e.target.value)}
+          on:change={(e) => {
+            const target = e.target as HTMLSelectElement;
+            if (target) handleFilterInput('almoxarifadoId', target.value);
+          }}
           size="sm"
           class="rounded-sm"
         >

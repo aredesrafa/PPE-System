@@ -266,6 +266,70 @@ export const breakpoints = {
   '2xl': '1536px'
 } as const;
 
+// Configurações centralizadas de cores para status
+export const statusColors = {
+  // Status de estoque
+  DISPONIVEL: 'green',
+  disponivel: 'green',
+  BAIXO: 'yellow', 
+  baixo: 'yellow',
+  INDISPONIVEL: 'red',
+  indisponivel: 'red',
+  ZERO: 'red',
+  zero: 'red',
+  
+  // Status gerais
+  ATIVO: 'green',
+  ativo: 'green',
+  ativa: 'green', // Para fichas
+  INATIVO: 'gray',
+  inativo: 'gray',
+  inativa: 'gray', // Para fichas
+  VENCIDO: 'red',
+  vencido: 'red',
+  vencida: 'red', // Para fichas
+  PENDENTE: 'yellow',
+  pendente: 'yellow',
+  
+  // Status de fichas
+  AGUARDANDO_ASSINATURA: 'yellow',
+  aguardando_assinatura: 'yellow',
+  ASSINADA: 'green',
+  assinada: 'green',
+  CANCELADA: 'red',
+  cancelada: 'red',
+  
+  // Status de entrega
+  COM_COLABORADOR: 'blue',
+  com_colaborador: 'blue',
+  DEVOLVIDO: 'gray',
+  devolvido: 'gray',
+  
+  // Status de movimento
+  entrada: 'green',
+  saida: 'red',
+  ajuste: 'blue',
+  transferencia: 'blue'
+} as const;
+
+export const statusColorsHex = {
+  ATIVO: greenColors[500],     // #00B8AA
+  ativo: greenColors[500],
+  ativa: greenColors[500],
+  INATIVO: grayColors[500],    // #535D72
+  inativo: grayColors[500],
+  inativa: grayColors[500],
+  VENCIDO: redColors[500],     // #FF4563
+  vencido: redColors[500],
+  vencida: redColors[500],
+  DISPONIVEL: greenColors[600], // #00a6a8
+  disponivel: greenColors[600],
+  BAIXO: yellowColors[500],    // #d98c29
+  baixo: yellowColors[500],
+  INDISPONIVEL: redColors[600], // #db324e
+  indisponivel: redColors[600]
+} as const;
+
 // Tipos TypeScript para type safety
 export type SemanticColor = keyof typeof semanticColors;
 export type SpacingSize = keyof typeof spacing;
@@ -273,3 +337,4 @@ export type PaddingClass = keyof typeof paddingClasses;
 export type BorderRadiusClass = keyof typeof borderRadius;
 export type ShadowClass = keyof typeof shadows;
 export type ButtonSize = keyof typeof buttonClasses.sizes;
+export type StatusColor = keyof typeof statusColors;

@@ -16,7 +16,8 @@
 
 import { derived, type Readable } from 'svelte/store';
 import { createPaginatedStore, type PaginatedStore } from './paginatedStore';
-import { apiClient, type PaginatedResponse } from '../services/api/client';
+import { api } from '../services/core/apiClient';
+import type { PaginatedResponse } from '../stores/paginatedStore';
 
 // ==================== TIPOS ESPECÍFICOS DE CONTRATADA ====================
 
@@ -133,7 +134,7 @@ async function fetchContratadaData(params: any): Promise<PaginatedResponse<Contr
     };
     
     // Chamar endpoint de contratadas
-    const response = await apiClient.getContratadas(backendParams);
+    const response = await api.get('/contratadas', backendParams);
     
     // Transformar response para formato do paginatedStore
     if (response.success && response.data) {
@@ -262,7 +263,7 @@ export async function createContratada(data: ContratadaCreateData): Promise<Cont
   try {
     console.log('➕ Criando nova contratada:', data);
     
-    const response = await apiClient.createContratada(data);
+    const response = await api.post('/contratadas', data);
     
     if (response.success && response.data) {
       // Reload data to show new item
@@ -282,7 +283,7 @@ export async function updateContratada(id: string, data: Partial<ContratadaCreat
   try {
     console.log('✏️ Atualizando contratada:', id, data);
     
-    const response = await apiClient.updateContratada(id, data);
+    const response = await api.put(`/contratadas/${id}`, data);
     
     if (response.success && response.data) {
       // Reload data to show updated item
@@ -302,7 +303,7 @@ export async function deleteContratada(id: string): Promise<void> {
   try {
     console.log('🗑️ Deletando contratada:', id);
     
-    await apiClient.deleteContratada(id);
+    await api.delete(`/contratadas/${id}`);
     
     // Reload data to remove deleted item
     await reloadContratadas();
@@ -317,7 +318,7 @@ export async function getContratadaById(id: string): Promise<Contratada> {
   try {
     console.log('🔍 Buscando contratada por ID:', id);
     
-    const response = await apiClient.getContratada(id);
+    const response = await api.get(`/contratadas/${id}`);
     
     if (response.success && response.data) {
       return response.data;
@@ -441,7 +442,7 @@ export async function validateCNPJWithBackend(cnpj: string): Promise<{
     }
     
     // Buscar no backend para verificar se já existe
-    const response = await apiClient.searchContratadas(localValidation.formatted);
+    const response = await api.get('/contratadas/search', localValidation.formatted);
     
     if (response.success && response.data) {
       const existing = response.data.find((c: Contratada) => c.cnpj === localValidation.formatted);
@@ -485,7 +486,7 @@ export function getContratadaById_Local(id: string): Contratada | undefined {
 
 export async function getContratadaStatistics(): Promise<any> {
   try {
-    const response = await apiClient.getContratadaStats();
+    const response = await api.get('/contratadas/stats');
     return response.data;
   } catch (error) {
     console.error('❌ Erro ao buscar estatísticas:', error);

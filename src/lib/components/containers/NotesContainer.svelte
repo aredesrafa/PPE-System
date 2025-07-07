@@ -23,7 +23,7 @@
     StatusNotaEnum,
     NotasFilterOptions
   } from '$lib/services/process/notasMovimentacaoAdapter';
-  import { createEnhancedPaginatedStore } from '$lib/stores/enhancedPaginatedStore';
+  import { createPaginatedStore } from '$lib/stores/paginatedStore';
   import { businessConfigStore } from '$lib/stores/businessConfigStore';
   import { notify } from '$lib/stores';
   import NotesTablePresenter from '$lib/components/presenters/NotesTablePresenter.svelte';

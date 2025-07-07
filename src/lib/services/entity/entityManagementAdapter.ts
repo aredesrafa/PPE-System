@@ -6,7 +6,6 @@
  */
 
 import { api, createUrlWithParams } from '../core/apiClient';
-import { tiposEPIAPI } from '../api';
 import type { 
   ContratadaDTO, 
   ColaboradorDTO, 
@@ -150,53 +149,20 @@ class EntityManagementAdapter {
   
   /**
    * Busca tipos de EPI com paginação e filtros
-   * TEMPORÁRIO: Usa API mockada existente até integração com backend
+   * Conectado ao backend real
    */
   async getTiposEPI(params: EntityParams = {}): Promise<PaginatedTiposEPI> {
     try {
-      // Usar API mockada existente temporariamente
-      const mockData = await tiposEPIAPI.getAll();
-      
-      // Aplicar filtros se necessário
-      let filteredData = mockData;
-      
-      if (params.ativo !== undefined) {
-        filteredData = mockData.filter(item => item.ativo === params.ativo);
-      }
-      
-      if (params.search) {
-        const searchLower = params.search.toLowerCase();
-        filteredData = filteredData.filter(item => 
-          item.nomeEquipamento?.toLowerCase().includes(searchLower) ||
-          item.numero_ca?.includes(params.search!)
-        );
-      }
-      
-      // Paginação simples
-      const page = params.page || 1;
-      const limit = params.limit || 50;
-      const startIndex = (page - 1) * limit;
-      const endIndex = startIndex + limit;
-      const paginatedItems = filteredData.slice(startIndex, endIndex);
-      
-      // Converter para DTO format
-      const items: TipoEPIDTO[] = paginatedItems.map(item => ({
-        id: item.id,
-        nomeEquipamento: item.nomeEquipamento,
-        numero_ca: item.numero_ca,
-        categoria: item.categoria || 'PROTECAO_CABECA',
-        descricao: item.descricao,
-        ativo: item.ativo,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      }));
+      // Usar backend real
+      const response = await api.get<{ data: { items: TipoEPIDTO[] } }>('/tipos-epi', params);
+      const items = response.data.items || [];
       
       return {
         data: items,
-        total: filteredData.length,
-        page: page,
-        pageSize: limit,
-        totalPages: Math.ceil(filteredData.length / limit)
+        total: response.data.total || items.length,
+        page: params.page || 1,
+        pageSize: params.limit || 50,
+        totalPages: Math.ceil((response.data.total || items.length) / (params.limit || 50))
       };
       
     } catch (error) {

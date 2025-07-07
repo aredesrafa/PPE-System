@@ -40,7 +40,7 @@
     TipoEPIUnified, 
     ItemEstoqueUnified 
   } from '$lib/services/unified/unifiedDataAdapter';
-  import type { FilterMetadata } from '$lib/stores/enhancedPaginatedStore';
+  import type { PaginationParams } from '$lib/stores/paginatedStore';
 
   // ==================== PROPS ====================
   

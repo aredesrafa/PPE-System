@@ -12,7 +12,8 @@ export { configurationService, type BusinessConfiguration, type BusinessConfigur
 // Entity Management Adapter - Para entidades com hierarquia
 export { entityManagementAdapter } from './entity/entityManagementAdapter';
 
-// Inventory Command Adapter - Para Event Sourcing de estoque
+// Inventory Adapters - Separação CQRS
+export { inventoryQueryAdapter } from './inventory/inventoryQueryAdapter';
 export { inventoryCommandAdapter } from './inventory/inventoryCommandAdapter';
 
 // Process Lifecycle Adapter - Para workflows complexos
@@ -46,7 +47,8 @@ export {
 export function getServiceAdapters() {
   return {
     entity: entityManagementAdapter,
-    inventory: inventoryCommandAdapter,
+    inventoryQuery: inventoryQueryAdapter,
+    inventoryCommand: inventoryCommandAdapter,
     process: processLifecycleAdapter,
     ficha: fichaProcessAdapter,
     reporting: reportingQueryAdapter
@@ -79,6 +81,7 @@ export async function initializeServices(): Promise<void> {
 export function clearAllServiceCaches(): void {
   try {
     entityManagementAdapter.clearCache();
+    inventoryQueryAdapter.clearCache();
     inventoryCommandAdapter.clearCache();
     reportingQueryAdapter.clearCache();
     console.log('🗑️ Cache de todos os services limpo');

@@ -11,6 +11,16 @@ import { browser } from '$app/environment';
 // Configurações da API - URL direta sempre para evitar problemas de SSR
 export const API_BASE_URL = 'https://epi-backend-s14g.onrender.com/api';
 
+// Interfaces para request unificado
+export interface RequestConfig {
+  endpoint: string;
+  method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+  data?: any;
+  params?: Record<string, any>;
+  headers?: Record<string, string>;
+  timeout?: number;
+}
+
 /**
  * Classe de erro customizada para APIs
  */
@@ -238,7 +248,32 @@ export const api = {
    * DELETE request
    */
   delete: <T>(endpoint: string, options?: ApiRequestOptions): Promise<T> =>
-    apiClient<T>(endpoint, { ...options, method: 'DELETE' })
+    apiClient<T>(endpoint, { ...options, method: 'DELETE' }),
+
+  /**
+   * Método unificado de request
+   */
+  async request<T>(config: RequestConfig): Promise<T> {
+    const { endpoint, method = 'GET', data, params, headers = {}, timeout = 10000 } = config;
+    
+    const url = createUrlWithParams(endpoint, params || {});
+    const requestHeaders = {
+      'Content-Type': 'application/json',
+      ...headers
+    };
+
+    const options: ApiRequestOptions = {
+      method,
+      headers: requestHeaders,
+      timeout
+    };
+
+    if (data && ['POST', 'PUT', 'PATCH'].includes(method)) {
+      options.body = JSON.stringify(data);
+    }
+
+    return apiClient<T>(url, options);
+  }
 };
 
 /**

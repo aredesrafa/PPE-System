@@ -3,8 +3,7 @@
   import { Button, Badge, Avatar } from 'flowbite-svelte';
   import Icon from '$lib/components/common/Icon.svelte';
   import DrawerHeader from '$lib/components/common/DrawerHeader.svelte';
-  import StatusDot from '$lib/components/common/StatusDot.svelte';
-  import StatusIndicator from '$lib/components/common/StatusIndicator.svelte';
+  import StatusBadge from '$lib/components/ui/StatusBadge.svelte';
   import LoadingSpinner from '$lib/components/common/LoadingSpinner.svelte';
   import ErrorDisplay from '$lib/components/common/ErrorDisplay.svelte';
   

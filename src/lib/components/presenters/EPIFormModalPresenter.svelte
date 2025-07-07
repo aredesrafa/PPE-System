@@ -193,7 +193,10 @@
           bind:value={formData.nomeEquipamento}
           disabled={isReadonly || loading}
           class="rounded-sm {errors.nomeEquipamento ? 'border-red-500' : ''}"
-          on:input={(e) => handleInputChange('nomeEquipamento', e.target.value)}
+          on:input={(e) => {
+            const target = e.target as HTMLInputElement;
+            if (target) handleInputChange('nomeEquipamento', target.value);
+          }}
         />
         {#if errors.nomeEquipamento}
           <p class="text-red-500 text-sm mt-1">{errors.nomeEquipamento}</p>
@@ -212,7 +215,10 @@
           bind:value={formData.numeroCa}
           disabled={isReadonly || loading}
           class="rounded-sm {errors.numeroCa ? 'border-red-500' : ''}"
-          on:input={(e) => handleInputChange('numeroCa', e.target.value)}
+          on:input={(e) => {
+            const target = e.target as HTMLInputElement;
+            if (target) handleInputChange('numeroCa', target.value);
+          }}
         />
         {#if errors.numeroCa}
           <p class="text-red-500 text-sm mt-1">{errors.numeroCa}</p>
@@ -232,7 +238,10 @@
           bind:value={formData.categoria}
           disabled={isReadonly || loading}
           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 {errors.categoria ? 'border-red-500' : ''}"
-          on:change={(e) => handleInputChange('categoria', e.target.value)}
+          on:change={(e) => {
+            const target = e.target as HTMLSelectElement;
+            if (target) handleInputChange('categoria', target.value);
+          }}
         >
           {#each categoriaOptions as option}
             <option value={option.value}>{option.label}</option>
@@ -256,7 +265,10 @@
           disabled={isReadonly || loading}
           class="rounded-sm {errors.vidaUtilDias ? 'border-red-500' : ''}"
           min="1"
-          on:input={(e) => handleInputChange('vidaUtilDias', e.target.value ? Number(e.target.value) : undefined)}
+          on:input={(e) => {
+            const target = e.target as HTMLInputElement;
+            if (target) handleInputChange('vidaUtilDias', target.value ? Number(target.value) : undefined);
+          }}
         />
         {#if errors.vidaUtilDias}
           <p class="text-red-500 text-sm mt-1">{errors.vidaUtilDias}</p>
@@ -296,7 +308,10 @@
           bind:value={formData.descricao}
           disabled={isReadonly || loading}
           class="rounded-sm"
-          on:input={(e) => handleInputChange('descricao', e.target.value)}
+          on:input={(e) => {
+            const target = e.target as HTMLTextAreaElement;
+            if (target) handleInputChange('descricao', target.value);
+          }}
         />
       </div>
 

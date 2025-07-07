@@ -12,6 +12,11 @@
   import { notify } from '$lib/stores';
   import type { RelatorioMovimentacaoDTO, RelatorioMovimentacoesParams } from '$lib/types/serviceTypes';
   
+  // Imports para service adapters
+  import { fichaProcessAdapter } from '$lib/services/process/fichaProcessAdapter';
+  import { inventoryQueryAdapter } from '$lib/services/inventory/inventoryQueryAdapter';
+  import { catalogAdapter } from '$lib/services/entity/catalogAdapter';
+  
   // ==================== PROPS ====================
   
   export let initialPageSize = 10;
@@ -34,11 +39,11 @@
     try {
       console.log('🔗 Carregando entregas para correlação...');
       
-      // Buscar fichas ativas
-      const fichasResponse = await fetch('/api/fichas-epi?page=1&limit=100');
-      if (!fichasResponse.ok) return;
-      
-      const fichasData = await fichasResponse.json();
+      // Buscar fichas ativas usando service adapter
+      const fichasData = await fichaProcessAdapter.getFichasWithColaboradores({
+        page: 1,
+        limit: 100
+      });
       entregasCache.clear();
       
       // ✅ CORREÇÃO: A resposta de fichas vem em data diretamente, não data.items
@@ -48,9 +53,8 @@
       // Para cada ficha, buscar entregas e popular cache
       for (const ficha of fichas) {
         try {
-          const entregasResponse = await fetch(`/api/fichas-epi/${ficha.id}/entregas`);
-          if (entregasResponse.ok) {
-            const entregasData = await entregasResponse.json();
+          // Usar o fichaProcessAdapter para buscar entregas
+          const entregasData = await fichaProcessAdapter.getEntregasByFicha(ficha.id);
             
             // ✅ CORREÇÃO: A resposta de entregas vem em data diretamente como array
             const entregas = entregasData.data || [];
@@ -82,7 +86,6 @@
               
               console.log(`✅ Entrega ${entrega.id.substring(0, 8)} adicionada ao cache (${entrega.dataEntrega}) - timestamp base: ${segundoBase}`);
             }
-          }
         } catch (error) {
           console.warn(`⚠️ Erro ao buscar entregas da ficha ${ficha.id}:`, error);
         }
@@ -237,11 +240,12 @@
   async function loadFilterOptions() {
     try {
       // Carregar almoxarifados (através dos itens de estoque)
-      const estoqueResponse = await fetch('/api/estoque/itens?page=1&limit=100');
-      if (estoqueResponse.ok) {
-        const estoqueData = await estoqueResponse.json();
-        const almoxarifadosUnicos = new Map();
-        estoqueData.data.items.forEach((item: any) => {
+      const estoqueData = await inventoryQueryAdapter.getInventoryItems({
+        page: 1,
+        limit: 100
+      });
+      const almoxarifadosUnicos = new Map();
+      estoqueData.data.items.forEach((item: any) => {
           if (item.almoxarifado) {
             almoxarifadosUnicos.set(item.almoxarifado.id, {
               id: item.almoxarifado.id,
@@ -251,30 +255,29 @@
         });
         almoxarifados = Array.from(almoxarifadosUnicos.values());
         console.log('✅ Almoxarifados carregados:', almoxarifados.length);
-      }
       
       // Carregar tipos de EPI
-      const epiResponse = await fetch('/api/tipos-epi?page=1&limit=100');
-      if (epiResponse.ok) {
-        const epiData = await epiResponse.json();
-        tiposEpi = epiData.data.items.map((item: any) => ({
+      const epiData = await catalogAdapter.getTiposEPI({
+        page: 1,
+        limit: 100
+      });
+      tiposEpi = epiData.data.items.map((item: any) => ({
           id: item.id,
           nomeEquipamento: item.nomeEquipamento,
           numeroCA: item.numeroCa
         }));
         console.log('✅ Tipos EPI carregados:', tiposEpi.length);
-      }
       
       // Carregar usuários
-      const usuariosResponse = await fetch('/api/usuarios?page=1&limit=100');
-      if (usuariosResponse.ok) {
-        const usuariosData = await usuariosResponse.json();
-        usuarios = usuariosData.items.map((item: any) => ({
+      const usuariosData = await fichaProcessAdapter.getUsuarios({
+        page: 1,
+        limit: 100
+      });
+      usuarios = usuariosData.items.map((item: any) => ({
           id: item.id,
           nome: item.nome
         }));
         console.log('✅ Usuários carregados:', usuarios.length);
-      }
     } catch (error) {
       console.error('⚠️ Erro ao carregar opções de filtros:', error);
     }

@@ -10,7 +10,7 @@
 
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte';
-  import { createEnhancedPaginatedStore, type StoreConfig } from '$lib/stores/enhancedPaginatedStore';
+  import { createPaginatedStore } from '$lib/stores/paginatedStore';
   import { businessConfigStore } from '$lib/stores/businessConfigStore';
   import { notify } from '$lib/stores';
   import UnifiedDataTablePresenter from '../presenters/UnifiedDataTablePresenter.svelte';

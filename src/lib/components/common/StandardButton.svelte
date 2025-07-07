@@ -68,7 +68,7 @@
 <Button
   {type}
   {href}
-  color={buttonColor}
+  color={buttonColor as any}
   {size}
   {outline}
   disabled={isDisabled}
@@ -98,6 +98,6 @@
 <style>
   /* Estilos adicionais se necessário */
   :global(.standard-button-loading) {
-    @apply pointer-events-none;
+    pointer-events: none;
   }
 </style>

@@ -370,3 +370,44 @@ export interface FichasFilters {
   empresa: string;
   devolucaoPendente: boolean;
 }
+
+// ==================== ALIASES PARA COMPATIBILIDADE ====================
+
+// Aliases para tipos modernos (serviceTypes.ts)
+export type { 
+  TipoEPIDTO,
+  ColaboradorDTO,
+  ContratadaDTO,
+  ItemEstoqueDTO as EstoqueItemDTO,
+  MovimentacaoEstoqueDTO,
+  FichaEPIDTO,
+  EntregaDTO,
+  PaginatedResponse
+} from './serviceTypes';
+
+// Aliases para migração gradual
+export type TipoEPIModerno = TipoEPI;
+export type ColaboradorModerno = Colaborador;
+export type EmpresaModerna = Empresa;
+
+// Interface única para paginação
+export interface PaginationParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+  [key: string]: any; // Para filtros específicos
+}
+
+export interface UnifiedPaginatedResponse<T> {
+  data: T[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  };
+}

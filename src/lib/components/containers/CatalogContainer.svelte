@@ -12,7 +12,7 @@
 <script lang="ts">
   import { createEventDispatcher, onMount, onDestroy } from 'svelte';
   import { catalogAdapter, type TipoEPI } from '$lib/services/entity/catalogAdapter';
-  import { createEnhancedPaginatedStore } from '$lib/stores/enhancedPaginatedStore';
+  import { createPaginatedStore } from '$lib/stores/paginatedStore';
   import { businessConfigStore } from '$lib/stores/businessConfigStore';
   import { notify } from '$lib/stores';
   import CatalogTablePresenter from '$lib/components/presenters/CatalogTablePresenter.svelte';

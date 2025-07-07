@@ -1,5 +1,5 @@
 import type { ItemEstoque, EventoEstoque, TipoEPI } from '$lib/types';
-import { apiClient } from '$lib/services/api/client';
+import { api } from '$lib/services/core/apiClient';
 import { isDataVencida, isProximoVencimento as isProximoVencimentoDate } from './dateHelpers';
 
 // Calcular status do item de estoque
@@ -49,7 +49,7 @@ export const verificarAlertasEstoque = async (): Promise<{
   vencidos: ItemEstoque[];
 }> => {
   try {
-    const response = await apiClient.getPosicaoEstoque();
+    const response = await api.get('/estoque/posicao');
     const todosItens = response.data?.items || [];
     
     const baixoEstoque: ItemEstoque[] = [];

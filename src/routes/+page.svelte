@@ -10,7 +10,7 @@
   } from 'flowbite-svelte-icons';
   import { onMount } from 'svelte';
   import { writable, derived } from 'svelte/store';
-  import { apiClient } from '$lib/services/api/client';
+  import { api } from '$lib/services/core/apiClient';
   
   // Dashboard data store
   const dashboardData = writable<any>(null);
@@ -26,7 +26,7 @@
       loading.set(true);
       error.set(null);
       
-      const response = await apiClient.getDashboardMetrics();
+      const response = await api.get('/dashboard/metrics');
       dashboardData.set(response);
       
       // Update metrics array

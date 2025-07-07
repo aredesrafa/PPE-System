@@ -5,7 +5,6 @@
   import { configurationStore } from '$lib/stores/configurationStore';
   import MainLayout from '$lib/components/layout/MainLayout.svelte';
   import NotificationToast from '$lib/components/common/NotificationToast.svelte';
-  import ConfirmationModal from '$lib/components/common/ConfirmationModal.svelte';
   import type { PageData } from './$types';
 
   export let data: PageData;
@@ -37,4 +36,3 @@
 
 <!-- Global Components -->
 <NotificationToast />
-<ConfirmationModal />

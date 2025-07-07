@@ -17,7 +17,7 @@ import type {
   StatusEntrega,
   TipoMovimentacao 
 } from '$lib/services/api/types';
-import { apiClient } from '$lib/services/api/client';
+import { api } from '$lib/services/core/apiClient';
 import { TipoMovimentacao as TipoMovEnum } from '$lib/constants/enums';
 
 // Tipos específicos para devoluções
@@ -86,13 +86,13 @@ export class DevolutionAdapter {
       console.log('🔍 Validando possibilidade de devolução para entrega:', entregaId);
       
       // Buscar dados da entrega
-      const entrega = await apiClient.get<Entrega>(`/api/v1/entregas/${entregaId}`);
+      const entrega = await api.get<Entrega>(`/api/v1/entregas/${entregaId}`);
       if (!entrega) {
         throw new Error('Entrega não encontrada');
       }
 
       // Buscar ficha relacionada
-      const ficha = await apiClient.get<FichaEPI>(`/api/v1/fichas/${entrega.fichaId}`);
+      const ficha = await api.get<FichaEPI>(`/api/v1/fichas/${entrega.fichaId}`);
       if (!ficha) {
         throw new Error('Ficha não encontrada');
       }
@@ -183,10 +183,10 @@ export class DevolutionAdapter {
         }
       };
 
-      const resultado = await apiClient.post<MovimentacaoEstoque>('/api/v1/movimentacoes', movimentacao);
+      const resultado = await api.post<MovimentacaoEstoque>('/api/v1/movimentacoes', movimentacao);
       
       // Atualizar status da entrega para EM_DEVOLUCAO
-      await apiClient.patch<Entrega>(`/api/v1/entregas/${request.entregaId}`, {
+      await api.patch<Entrega>(`/api/v1/entregas/${request.entregaId}`, {
         status: 'EM_DEVOLUCAO' as StatusEntrega
       });
 
@@ -206,7 +206,7 @@ export class DevolutionAdapter {
     try {
       console.log('👍 Aprovando devolução:', movimentacaoId, 'por', approverRole);
 
-      await apiClient.patch<MovimentacaoEstoque>(`/api/v1/movimentacoes/${movimentacaoId}`, {
+      await api.patch<MovimentacaoEstoque>(`/api/v1/movimentacoes/${movimentacaoId}`, {
         status: 'APROVADA',
         metadados: {
           approvedBy: approverRole,
@@ -230,13 +230,13 @@ export class DevolutionAdapter {
       console.log('🏁 Finalizando devolução:', movimentacaoId);
 
       // Buscar movimentação
-      const movimentacao = await apiClient.get<MovimentacaoEstoque>(`/api/v1/movimentacoes/${movimentacaoId}`);
+      const movimentacao = await api.get<MovimentacaoEstoque>(`/api/v1/movimentacoes/${movimentacaoId}`);
       if (!movimentacao) {
         throw new Error('Movimentação não encontrada');
       }
 
       // Atualizar movimentação para finalizada
-      await apiClient.patch<MovimentacaoEstoque>(`/api/v1/movimentacoes/${movimentacaoId}`, {
+      await api.patch<MovimentacaoEstoque>(`/api/v1/movimentacoes/${movimentacaoId}`, {
         status: 'FINALIZADA',
         metadados: {
           ...movimentacao.metadados,
@@ -247,7 +247,7 @@ export class DevolutionAdapter {
 
       // Atualizar entrega para devolvida
       if (movimentacao.metadados?.entregaOriginal) {
-        await apiClient.patch<Entrega>(`/api/v1/entregas/${movimentacao.metadados.entregaOriginal}`, {
+        await api.patch<Entrega>(`/api/v1/entregas/${movimentacao.metadados.entregaOriginal}`, {
           status: 'DEVOLVIDA' as StatusEntrega,
           dataDevolucao: new Date().toISOString()
         });
@@ -255,7 +255,7 @@ export class DevolutionAdapter {
 
       // Atualizar ficha para disponível se equipamento em boas condições
       if (finalCondition === CondicaoEquipamento.PERFEITA || finalCondition === CondicaoEquipamento.BOA) {
-        await apiClient.patch<FichaEPI>(`/api/v1/fichas/${movimentacao.fichaId}`, {
+        await api.patch<FichaEPI>(`/api/v1/fichas/${movimentacao.fichaId}`, {
           status: 'DISPONIVEL' as StatusFicha
         });
       }
@@ -273,7 +273,7 @@ export class DevolutionAdapter {
    */
   async listDevolutionsByStatus(status: StatusDevolucao): Promise<MovimentacaoEstoque[]> {
     try {
-      const movimentacoes = await apiClient.get<MovimentacaoEstoque[]>('/api/v1/movimentacoes', {
+      const movimentacoes = await api.get<MovimentacaoEstoque[]>('/api/v1/movimentacoes', {
         params: {
           tipo: TipoMovEnum.SAIDA_DEVOLUCAO,
           status: status
@@ -293,7 +293,7 @@ export class DevolutionAdapter {
    */
   async getDevolutionsByCollaborator(colaboradorId: string): Promise<MovimentacaoEstoque[]> {
     try {
-      const movimentacoes = await apiClient.get<MovimentacaoEstoque[]>('/api/v1/movimentacoes', {
+      const movimentacoes = await api.get<MovimentacaoEstoque[]>('/api/v1/movimentacoes', {
         params: {
           colaboradorId,
           tipo: TipoMovEnum.SAIDA_DEVOLUCAO

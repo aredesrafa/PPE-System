@@ -5,7 +5,7 @@
   import { createEventDispatcher } from 'svelte';
   import { Button, Badge } from 'flowbite-svelte';
   import Icon from '$lib/components/common/Icon.svelte';
-  import StatusDot from '$lib/components/common/StatusDot.svelte';
+  import StatusBadge from '$lib/components/ui/StatusBadge.svelte';
   
   const dispatch = createEventDispatcher();
 
@@ -96,7 +96,7 @@
       <!-- Status -->
       {#if status}
         <div class="flex-shrink-0">
-          <StatusDot {status} type={statusType} size="md" />
+          <StatusBadge {status} type={statusType} dotMode={true} dotSize="md" />
         </div>
       {/if}
 

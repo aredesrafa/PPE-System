@@ -7,6 +7,9 @@
 
 import type { PaginatedResponse, PaginationParams } from '$lib/stores/paginatedStore';
 
+// Re-export for external use
+export type { PaginatedResponse, PaginationParams };
+
 // ==================== ENTITY DTOs ====================
 
 export interface ContratadaDTO {

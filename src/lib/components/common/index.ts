@@ -7,12 +7,10 @@
 
 // Componentes de feedback e loading
 export { default as LoadingSpinner } from './LoadingSpinner.svelte';
-export { default as StatusIndicator } from './StatusIndicator.svelte';
 export { default as ErrorDisplay } from './ErrorDisplay.svelte';
 export { default as NotificationToast } from './NotificationToast.svelte';
 
 // Componentes de modal
-export { default as ConfirmationModal } from './ConfirmationModal.svelte';
 export { default as LocalConfirmationModal } from './LocalConfirmationModal.svelte';
 
 // Componentes de input e seleção

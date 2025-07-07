@@ -44,6 +44,9 @@ export interface PaginationParams {
   search?: string;
 }
 
+// Alias para compatibilidade com types/index.ts
+export type { UnifiedPaginatedResponse } from '../types/index';
+
 /**
  * Interface do store paginado
  */

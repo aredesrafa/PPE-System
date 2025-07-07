@@ -92,7 +92,7 @@
         {selectedCompany.name}
       </span>
       <Badge 
-        color={getBadgeColor(selectedCompany.badge)} 
+        color={getBadgeColor(selectedCompany.badge) as any} 
         class="text-xs px-1 py-0.5 rounded-sm flex-shrink-0"
       >
         {selectedCompany.badge}
