@@ -3,12 +3,12 @@
   import { onMount } from 'svelte';
 
   onMount(() => {
-    // Redirecionar para o dashboard executivo
-    goto('/relatorios/dashboard');
+    // Redirecionar para a página de auditoria (única sub-página existente)
+    goto('/relatorios/auditoria');
   });
 </script>
 
 <!-- Redirecionamento automático -->
 <div class="flex items-center justify-center min-h-screen">
-  <p class="text-gray-500">Redirecionando para o dashboard executivo...</p>
+  <p class="text-gray-500">Redirecionando para auditoria...</p>
 </div>

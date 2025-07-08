@@ -13,4 +13,3 @@ export { default as InventoryTablePresenter } from './InventoryTablePresenter.sv
 export { default as MovementModalPresenter } from './MovementModalPresenter.svelte';
 export { default as NotesTablePresenter } from './NotesTablePresenter.svelte';
 export { default as ReportTablePresenter } from './ReportTablePresenter.svelte';
-export { default as UnifiedDataTablePresenter } from './UnifiedDataTablePresenter.svelte';

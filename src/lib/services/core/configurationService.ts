@@ -95,12 +95,15 @@ class ConfigurationService {
     }
 
     try {
-      // TODO: Quando backend estiver pronto, descomentar a linha abaixo:
-      // const config = await api.get<BusinessConfiguration>('/api/v1/configuration');
+      // Conectar ao backend real - endpoint de configuração
+      const config = await api.get<BusinessConfiguration>('/api/v1/configuration');
       
-      // Por enquanto, simular delay da API e retornar mock data
-      await new Promise(resolve => setTimeout(resolve, 100));
-      const config = MOCK_BUSINESS_CONFIG;
+      // Fallback para mock em caso de erro de conexão
+      if (!config) {
+        console.warn('⚠️ Backend não disponível, usando configuração mock');
+        await new Promise(resolve => setTimeout(resolve, 100));
+        const config = MOCK_BUSINESS_CONFIG;
+      }
       
       // Atualizar cache
       this.cache = config;

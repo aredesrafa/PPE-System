@@ -452,7 +452,6 @@ src/
 │   ├── +page.svelte        # Dashboard (página inicial)
 │   ├── catalogo/           # Catálogo de EPIs
 │   ├── estoque/            # Gestão de estoque
-│   ├── estoque-modular/    # 🚀 NOVO: Demonstração da arquitetura modular
 │   ├── fichas/             # Fichas de EPI
 │   ├── movimentacoes/      # Movimentações de estoque
 │   ├── auditoria/          # Auditoria de movimentações
@@ -576,7 +575,7 @@ export const tiposMovimentacaoStore = derived(businessConfigStore, ...);
 
 #### **🧪 Página de Demonstração**
 
-Implementada página `/estoque-modular` demonstrando:
+Implementada página `/estoque` demonstrando:
 
 - **Integração completa** da nova arquitetura
 - **Container/Presenter** pattern funcionando
@@ -615,7 +614,7 @@ Implementada página `/estoque-modular` demonstrando:
 
 ### **🧪 Como Testar a Nova Arquitetura**
 
-1. **Acesse a página de demonstração**: `http://localhost:5177/estoque-modular`
+1. **Acesse a página de demonstração**: `http://localhost:5177/estoque`
 2. **Funcionalidades testáveis**:
    - ✅ Busca por nome do EPI ou CA com debounce
    - ✅ Filtros por status e categoria (carregados dinamicamente)
@@ -1623,7 +1622,7 @@ O projeto evoluirá para um **sistema enterprise-grade** de gestão de EPIs, man
 #### **🧪 Página de Demonstração**
 ```bash
 npm run dev
-# Visitar: http://localhost:5176/estoque-modular
+# Visitar: http://localhost:5176/estoque
 ```
 
 **O que você verá:**
