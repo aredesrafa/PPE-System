@@ -116,11 +116,14 @@
     try {
       console.log('💾 Salvando contratada:', dados);
       
-      // Usar método create do store para salvar via API real
-      await contratadaStore.create(dados);
+      // Usar adapter diretamente para criar contratada
+      await contratadasAdapter.createContratada(dados as any);
       
       showEditarContratadaModal = false;
       notify.success('Sucesso', 'Contratada salva com sucesso');
+      
+      // Reload data after creation
+      await contratadaStore.reload();
       
     } catch (error) {
       console.error('❌ Erro ao salvar contratada:', error);
@@ -136,12 +139,15 @@
         throw new Error('ID da contratada não encontrado');
       }
       
-      // Usar método update do store para atualizar via API real
-      await contratadaStore.update(contratadaEdicao.id, dados);
+      // Usar adapter diretamente para atualizar contratada
+      await contratadasAdapter.updateContratada(contratadaEdicao.id, dados as any);
       
       showEditarContratadaModal = false;
       contratadaEdicao = null;
       notify.success('Sucesso', 'Contratada atualizada com sucesso');
+      
+      // Reload data after update
+      await contratadaStore.reload();
       
     } catch (error) {
       console.error('❌ Erro ao atualizar contratada:', error);
@@ -153,10 +159,13 @@
     try {
       console.log('🗑️ Excluir contratada:', contratada.id);
       
-      // Usar método delete do store para excluir via API real
-      await contratadaStore.delete(contratada.id);
+      // Usar adapter diretamente para excluir contratada
+      await contratadasAdapter.deleteContratada(contratada.id);
       
       notify.success('Sucesso', 'Contratada excluída com sucesso');
+      
+      // Reload data after deletion
+      await contratadaStore.reload();
       
     } catch (error) {
       console.error('❌ Erro ao excluir contratada:', error);
