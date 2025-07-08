@@ -11,6 +11,7 @@
 Após análise profunda comparando o frontend Svelte atual com as especificações do Backend EPI 3.5, foi identificada uma **incompatibilidade fundamental** que impede a integração direta. O problema vai além de ajustes de API - são **diferenças arquiteturais irreconciliáveis** que requerem intervenção imediata.
 
 ### Status Geral
+
 - ✅ **Backend EPI 3.5**: 97% completo, conforme especificação técnica
 - ❌ **Frontend Svelte**: 0% compatível com backend real
 - 🚫 **Integração**: **IMPOSSÍVEL** sem refatoração massiva
@@ -55,8 +56,8 @@ tipos_epi {
 // ❌ FRONTEND FAZ (src/lib/services/api.ts)
 export const estoqueExtendedAPI = {
   async updateQuantidade(id: string, quantidade: number, motivo: string) {
-    await apiRequest(`/itens-estoque/${id}/quantidade`, { 
-      method: 'PATCH', 
+    await apiRequest(`/itens-estoque/${id}/quantidade`, {
+      method: 'PATCH',
       data: { quantidade, motivo }
     });
   }
@@ -93,7 +94,7 @@ fichas_epi {
   id, colaborador_id, data_emissao, status
 }
 entregas {
-  id, ficha_epi_id, data_entrega, status  
+  id, ficha_epi_id, data_entrega, status
 }
 entrega_itens {
   id, entrega_id, quantidade_entregue: 1
@@ -122,45 +123,49 @@ async getAll(): Promise<T[]> {
 
 ### Backend Features vs Frontend Expectations
 
-| **Categoria** | **Backend EPI 3.5** | **Frontend Svelte** | **Compatibilidade** | **Ação Requerida** |
-|---------------|---------------------|---------------------|---------------------|-------------------|
-| **Casos de Uso** | 12 casos implementados | Mock CRUD genérico | ❌ **0%** | Refatorar para Use Cases |
-| **API Endpoints** | 42 específicos + 14 extras | CRUD + consultas | 🟡 **30%** | Implementar BFF layer |
-| **Modelo de Dados** | Normalizado PostgreSQL | Denormalizado mock | ❌ **20%** | Dados ausentes críticos |
-| **Relatórios** | 10 queries SQL específicas | Estatísticas simples | 🟡 **60%** | Adaptar formatos |
-| **Validação** | Zod schemas rigorosos | Validação básica | 🟡 **40%** | Implementar Zod no frontend |
-| **Transações** | ACID, atomicidade total | Operações isoladas | ❌ **0%** | Redesenhar fluxos |
+| **Categoria**       | **Backend EPI 3.5**        | **Frontend Svelte**  | **Compatibilidade** | **Ação Requerida**          |
+| ------------------- | -------------------------- | -------------------- | ------------------- | --------------------------- |
+| **Casos de Uso**    | 12 casos implementados     | Mock CRUD genérico   | ❌ **0%**           | Refatorar para Use Cases    |
+| **API Endpoints**   | 42 específicos + 14 extras | CRUD + consultas     | 🟡 **30%**          | Implementar BFF layer       |
+| **Modelo de Dados** | Normalizado PostgreSQL     | Denormalizado mock   | ❌ **20%**          | Dados ausentes críticos     |
+| **Relatórios**      | 10 queries SQL específicas | Estatísticas simples | 🟡 **60%**          | Adaptar formatos            |
+| **Validação**       | Zod schemas rigorosos      | Validação básica     | 🟡 **40%**          | Implementar Zod no frontend |
+| **Transações**      | ACID, atomicidade total    | Operações isoladas   | ❌ **0%**           | Redesenhar fluxos           |
 
 ### Endpoints Críticos em Conflito
 
-| **Operação** | **Frontend Mock** | **Backend Real** | **Status** |
-|--------------|-------------------|------------------|------------|
-| Ajustar estoque | `PATCH /itens-estoque/{id}` | `POST /api/estoque/ajustes` | ❌ Incompatível |
-| Buscar colaboradores | `GET /colaboradores?empresaId=X` | Não especificado | ❌ Endpoint ausente |
-| Criar entrega | `POST /entregas` | `POST /fichas-epi/{id}/entregas` | 🟡 Estrutura diferente |
-| Listar EPIs disponíveis | `GET /itens-estoque?status=disponivel` | Não especificado | ❌ Endpoint ausente |
-| Dashboard stats | `GET /relatorios/estatisticas` | `GET /relatorios/dashboard` | 🟡 Pode existir nos extras |
+| **Operação**            | **Frontend Mock**                      | **Backend Real**                 | **Status**                 |
+| ----------------------- | -------------------------------------- | -------------------------------- | -------------------------- |
+| Ajustar estoque         | `PATCH /itens-estoque/{id}`            | `POST /api/estoque/ajustes`      | ❌ Incompatível            |
+| Buscar colaboradores    | `GET /colaboradores?empresaId=X`       | Não especificado                 | ❌ Endpoint ausente        |
+| Criar entrega           | `POST /entregas`                       | `POST /fichas-epi/{id}/entregas` | 🟡 Estrutura diferente     |
+| Listar EPIs disponíveis | `GET /itens-estoque?status=disponivel` | Não especificado                 | ❌ Endpoint ausente        |
+| Dashboard stats         | `GET /relatorios/estatisticas`         | `GET /relatorios/dashboard`      | 🟡 Pode existir nos extras |
 
 ---
 
 ## 🚩 Impactos Críticos
 
 ### **1. Impossibilidade de Integração Direta**
+
 - Frontend não pode conectar ao backend sem refatoração completa
 - Mock API criou "falsa sensação de segurança"
 - Estimativa: **4-6 semanas** de retrabalho
 
 ### **2. Dados Essenciais Ausentes**
+
 - `categoria` e `fabricante` de EPIs não existem no backend
 - **Questão crítica**: Esses dados vêm de onde? Outro sistema? Devem ser adicionados?
 - Bloqueio total até resolver origem dos dados
 
 ### **3. Padrão Arquitetural Conflitante**
+
 - Frontend: Arquitetura CRUD simples
 - Backend: Arquitetura Use-Case com auditoria rigorosa
 - **Irreconciliável** sem redesign de uma das camadas
 
 ### **4. Performance e UX Degradadas**
+
 - Frontend atual = 1 chamada para dados completos
 - Backend real = 3-5 chamadas para montar mesma view
 - Resultado: Loading lento, UX fragmentada
@@ -191,6 +196,7 @@ async getAll(): Promise<T[]> {
 ### **🟡 CURTO PRAZO (1-2 semanas)**
 
 1. **Implementar camada BFF (Backend for Frontend)**
+
    ```typescript
    // Novo endpoint agregado
    GET /api/bff/fichas-completas/{id} {
@@ -206,30 +212,32 @@ async getAll(): Promise<T[]> {
    ```
 
 2. **Refatorar padrão de interação do frontend**
+
    ```typescript
    // ❌ ANTES
    await estoqueAPI.updateQuantidade(id, quantidade, motivo);
-   
-   // ✅ DEPOIS  
+
+   // ✅ DEPOIS
    await ajustesAPI.criarAjuste({
      estoque_item_id: id,
-     tipo_ajuste: quantidade > 0 ? 'POSITIVO' : 'NEGATIVO',
+     tipo_ajuste: quantidade > 0 ? "POSITIVO" : "NEGATIVO",
      quantidade: Math.abs(quantidade),
      motivo,
-     responsavel_id: currentUser.id
+     responsavel_id: currentUser.id,
    });
    ```
 
 3. **Implementar gerenciamento de estado robusto**
+
    ```typescript
    // Substituir stores simples por TanStack Query
-   import { createQuery } from '@tanstack/svelte-query';
-   
+   import { createQuery } from "@tanstack/svelte-query";
+
    const fichasQuery = createQuery({
-     queryKey: ['fichas', filtros],
+     queryKey: ["fichas", filtros],
      queryFn: () => bffAPI.getFichasCompletas(filtros),
-     staleTime: 5 * 60 * 1000,  // Cache 5min
-     retry: 3
+     staleTime: 5 * 60 * 1000, // Cache 5min
+     retry: 3,
    });
    ```
 
@@ -249,7 +257,7 @@ async getAll(): Promise<T[]> {
 3. **Testes de integração E2E**
    ```typescript
    // Cypress tests para fluxos críticos
-   it('deve criar ficha, entregar EPI e processar devolução', () => {
+   it("deve criar ficha, entregar EPI e processar devolução", () => {
      // Testa fluxo completo contra backend real
    });
    ```
@@ -268,17 +276,17 @@ export const bffAPI = {
     const response = await fetch(`/api/bff/fichas/${id}`);
     return response.json();
   },
-  
+
   // Adapta Use Cases para interface simples
   async ajustarEstoque(itemId: string, delta: number, motivo: string) {
     return backendAPI.criarAjuste({
       estoque_item_id: itemId,
-      tipo_ajuste: delta > 0 ? 'POSITIVO' : 'NEGATIVO',
+      tipo_ajuste: delta > 0 ? "POSITIVO" : "NEGATIVO",
       quantidade: Math.abs(delta),
       motivo,
-      responsavel_id: await getCurrentUserId()
+      responsavel_id: await getCurrentUserId(),
     });
-  }
+  },
 };
 ```
 
@@ -286,14 +294,14 @@ export const bffAPI = {
 
 ```typescript
 // stores/fichasStore.ts
-import { createQuery, createMutation } from '@tanstack/svelte-query';
+import { createQuery, createMutation } from "@tanstack/svelte-query";
 
 export const useFichas = (filtros: FichasFilters) => {
   return createQuery({
-    queryKey: ['fichas', filtros],
+    queryKey: ["fichas", filtros],
     queryFn: () => bffAPI.getFichas(filtros),
     refetchOnWindowFocus: false,
-    staleTime: 2 * 60 * 1000
+    staleTime: 2 * 60 * 1000,
   });
 };
 
@@ -301,8 +309,8 @@ export const useCreateFicha = () => {
   return createMutation({
     mutationFn: bffAPI.createFicha,
     onSuccess: () => {
-      queryClient.invalidateQueries(['fichas']);
-    }
+      queryClient.invalidateQueries(["fichas"]);
+    },
   });
 };
 ```
@@ -311,7 +319,7 @@ export const useCreateFicha = () => {
 
 ```typescript
 // schemas/epi.ts
-import { z } from 'zod';
+import { z } from "zod";
 
 export const TipoEPISchema = z.object({
   id: z.string().uuid(),
@@ -319,7 +327,7 @@ export const TipoEPISchema = z.object({
   nomeEquipamento: z.string().min(1),
   // categoria: resolvido com backend
   // fabricante: resolvido com backend
-  vidaUtilDias: z.number().positive().optional()
+  vidaUtilDias: z.number().positive().optional(),
 });
 
 export type TipoEPI = z.infer<typeof TipoEPISchema>;
@@ -330,30 +338,35 @@ export type TipoEPI = z.infer<typeof TipoEPISchema>;
 ## 📋 Checklist de Integração
 
 ### **Pré-requisitos (BLOQUEANTES)**
+
 - [ ] **Resolver origem de `categoria`/`fabricante`**
 - [ ] **Definir padrão de interação acordado**
 - [ ] **Especificação OpenAPI do BFF aprovada**
 - [ ] **Ambiente de backend EPI 3.5 disponível para testes**
 
 ### **Fase 1: Fundação**
+
 - [ ] Implementar camada BFF básica
 - [ ] Configurar TanStack Query no Svelte
 - [ ] Criar schemas Zod unificados
 - [ ] Testes de conectividade básica
 
 ### **Fase 2: Migração Core**
+
 - [ ] Dashboard e métricas
 - [ ] Catálogo de EPIs (read-only)
 - [ ] Listagens básicas com filtros
 - [ ] Sistema de notificações
 
 ### **Fase 3: Operações Críticas**
+
 - [ ] Gestão de estoque com Use Cases
 - [ ] Criação e edição de fichas
 - [ ] Fluxo de entregas com assinatura
 - [ ] Devoluções e estornos
 
 ### **Fase 4: Finalização**
+
 - [ ] Relatórios complexos
 - [ ] Auditoria e compliance
 - [ ] Performance optimization
@@ -370,7 +383,7 @@ gantt
     section Emergência
     Reunião Alinhamento    :crit, done, reuniao, 2025-07-04, 1d
     Resolver Dados Ausentes :crit, active, dados, after reuniao, 2d
-    section Fundação  
+    section Fundação
     Implementar BFF        :bff, after dados, 5d
     Configurar TanStack    :tanstack, after dados, 3d
     section Migração
@@ -434,16 +447,19 @@ gantt
 ## 📞 Próximos Passos
 
 ### **Imediato (hoje)**
+
 1. Agendar reunião emergencial com stakeholders
 2. Documentar e apresentar esta análise
 3. Definir ownership para resolução de dados ausentes
 
 ### **Esta semana**
+
 1. Resolver questão de `categoria`/`fabricante`
 2. Definir escopo do BFF layer
 3. Estimar recursos necessários para refatoração
 
 ### **Próximas 2 semanas**
+
 1. Implementar BFF básico
 2. Configurar novo estado management
 3. Iniciar migração com funcionalidade simples (dashboard)
@@ -457,8 +473,9 @@ gantt
 O backend EPI 3.5 está tecnicamente correto e 97% completo. O problema é que o frontend foi desenvolvido com base em suposições incorretas sobre a API, criando uma incompatibilidade fundamental.
 
 **A integração é possível, mas requer:**
+
 - ✅ Refatoração substancial do frontend (4-6 semanas)
-- ✅ Implementação de camada BFF (2-3 semanas)  
+- ✅ Implementação de camada BFF (2-3 semanas)
 - ✅ Resolução de dados ausentes (decisão imediata)
 - ✅ Novo padrão de gerenciamento de estado
 

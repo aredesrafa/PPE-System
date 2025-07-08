@@ -7,7 +7,7 @@
 
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { createAdvancedPaginatedStore } from '$lib/stores/paginatedStore';
+  import { createPaginatedStore } from '$lib/stores/paginatedStore';
   import AuditoriaTablePresenter from '$lib/components/presenters/AuditoriaTablePresenter.svelte';
   import { notify } from '$lib/stores';
   import type { RelatorioMovimentacaoDTO, RelatorioMovimentacoesParams } from '$lib/types/serviceTypes';
@@ -206,8 +206,8 @@
     }
   }
   
-  // ✅ Advanced Store conectado ao endpoint correto de relatórios/movimentações
-  const auditoriaStore = createAdvancedPaginatedStore<RelatorioMovimentacaoDTO>(
+  // ✅ Store paginado conectado ao endpoint correto de relatórios/movimentações
+  const auditoriaStore = createPaginatedStore<RelatorioMovimentacaoDTO>(
     fetchMovimentacoes,
     {
       initialPageSize: initialPageSize,
@@ -262,10 +262,13 @@
         page: 1,
         limit: 100
       });
-      tiposEpi = epiData.data.items.map((item: any) => ({
+      
+      console.log('📦 Estrutura epiData:', epiData);
+      
+      tiposEpi = epiData.data.map((item: any) => ({
           id: item.id,
           nomeEquipamento: item.nomeEquipamento,
-          numeroCA: item.numeroCa
+          numeroCA: item.numeroCa || item.numeroCA
         }));
         console.log('✅ Tipos EPI carregados:', tiposEpi.length);
       
@@ -342,7 +345,7 @@
     console.log('📥 Exportar dados de auditoria...');
     
     // Preparar dados para exportação
-    const exportFilters = $auditoriaStore.filters;
+    const exportFilters = filters;
     const exportData = {
       filtros: exportFilters,
       totalRecords: pagination.total,

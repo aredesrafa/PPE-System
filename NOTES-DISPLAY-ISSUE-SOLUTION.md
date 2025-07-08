@@ -1,16 +1,19 @@
 # 🔧 Solução para Problema de Exibição de Notas
+
 **Data:** 07 de Janeiro de 2025  
 **Status:** ✅ Implementado com Proposta de Otimização Backend
 
 ## 🐛 Problema Identificado
 
 **Sintomas Reportados:**
+
 - Quantidade de itens não aparecendo na tabela
-- Nomes de almoxarifados exibindo "N/A" 
+- Nomes de almoxarifados exibindo "N/A"
 - Nomes de responsáveis não sendo exibidos
 - Modal de detalhes sem itens visíveis
 
 **Causa Raiz Descoberta:**
+
 1. **Estrutura de Dados**: API de listagem (`/api/notas-movimentacao`) não inclui itens por design (performance)
 2. **Mapeamento de Campos**: Componente esperava estruturas aninhadas que não estavam sendo criadas
 3. **Cache não Resolvendo**: IDs não sendo convertidos para nomes legíveis
@@ -39,7 +42,7 @@ private enrichNotaData(nota: any): any {
 
   // Criar objeto principal para compatibilidade
   enriched.almoxarifado = enriched.almoxarifado_destino || enriched.almoxarifado_origem;
-  
+
   return enriched;
 }
 ```
@@ -50,7 +53,7 @@ private enrichNotaData(nota: any): any {
 // ✅ NOVO: listarNotasComDetalhes()
 async listarNotasComDetalhes(params) {
   const listagem = await this.listarNotas(params);
-  
+
   // Buscar detalhes apenas das primeiras 5 notas (evitar sobrecarga)
   const notasComDetalhes = await Promise.all(
     listagem.data.slice(0, 5).map(async (nota) => {
@@ -58,10 +61,10 @@ async listarNotasComDetalhes(params) {
         const notaCompleta = await this.obterNota(nota.id);
         nota.itens = notaCompleta.itens || [];
         nota.total_itens = nota.itens.length;
-        
+
         // Calcular valor total para entradas
         if (nota.tipo === 'ENTRADA') {
-          nota.valor_total = nota.itens.reduce((total, item) => 
+          nota.valor_total = nota.itens.reduce((total, item) =>
             total + (item.custoUnitario * item.quantidade), 0);
         }
       }
@@ -78,14 +81,14 @@ async listarNotasComDetalhes(params) {
 ```typescript
 // NotesTablePresenter.svelte - Debug temporário
 $: if (notas && notas.length > 0) {
-  console.log('🔍 NotesTablePresenter: Dados recebidos', {
+  console.log("🔍 NotesTablePresenter: Dados recebidos", {
     quantidade: notas.length,
     primeiraNota: {
       responsavel: notas[0]?.responsavel,
       almoxarifado: notas[0]?.almoxarifado,
       total_itens: notas[0]?.total_itens,
-      status: notas[0]?.status
-    }
+      status: notas[0]?.status,
+    },
   });
 }
 ```
@@ -95,7 +98,7 @@ $: if (notas && notas.length > 0) {
 Após a implementação, a página `/notas` deve exibir:
 
 - ✅ **Responsável**: Nome do usuário em vez de "N/A"
-- ✅ **Almoxarifado**: Nome do almoxarifado em vez de "N/A"  
+- ✅ **Almoxarifado**: Nome do almoxarifado em vez de "N/A"
 - ✅ **Quantidade de Itens**: Número real de itens para primeiras 5 notas
 - ✅ **Status**: Status correto das notas
 - ✅ **Modal de Detalhes**: Itens carregados quando necessário
@@ -109,12 +112,14 @@ GET /api/notas-movimentacao/summary
 ```
 
 **Query Parameters Adicionais:**
+
 - `include=item_count` - Incluir contagem de itens
 - `include=valor_total` - Incluir valor total calculado
 - `include=almoxarifado_nome` - Incluir nome do almoxarifado
 - `include=responsavel_nome` - Incluir nome do responsável
 
 **Resposta Otimizada:**
+
 ```json
 {
   "success": true,
@@ -124,10 +129,10 @@ GET /api/notas-movimentacao/summary
       "numero": "ENT-2025-000001",
       "tipo": "ENTRADA",
       "_status": "CONCLUIDA",
-      "item_count": 5,           // ✨ NOVO
-      "valor_total": 1250.00,    // ✨ NOVO  
+      "item_count": 5, // ✨ NOVO
+      "valor_total": 1250.0, // ✨ NOVO
       "almoxarifado_nome": "Almoxarifado Central SP", // ✨ NOVO
-      "responsavel_nome": "João Silva",               // ✨ NOVO
+      "responsavel_nome": "João Silva", // ✨ NOVO
       "createdAt": "2025-07-07T14:30:00.000Z"
     }
   ]
@@ -137,21 +142,21 @@ GET /api/notas-movimentacao/summary
 ### **Benefícios do Endpoint Otimizado**
 
 1. **Performance**: Uma única query SQL com JOINs em vez de N+1 queries
-2. **Rede**: Reduz tráfego de rede drasticamente  
+2. **Rede**: Reduz tráfego de rede drasticamente
 3. **Cache**: Backend pode implementar cache especializado
 4. **Escalabilidade**: Funciona bem com milhares de notas
 
 ### **Query SQL Sugerida (Backend)**
 
 ```sql
-SELECT 
+SELECT
   n.*,
   u.nome as responsavel_nome,
   a.nome as almoxarifado_nome,
   COUNT(ni.id) as item_count,
   COALESCE(SUM(ni.quantidade * ni.custo_unitario), 0) as valor_total
 FROM notas_movimentacao n
-LEFT JOIN usuarios u ON n.usuario_id = u.id  
+LEFT JOIN usuarios u ON n.usuario_id = u.id
 LEFT JOIN almoxarifados a ON (n.almoxarifado_destino_id = a.id OR n.almoxarifado_origem_id = a.id)
 LEFT JOIN nota_itens ni ON n.id = ni.nota_id
 GROUP BY n.id, u.nome, a.nome
@@ -170,7 +175,7 @@ LIMIT ? OFFSET ?
 ## 📊 Status de Implementação
 
 - ✅ **Enrichment corrigido**: Objetos aninhados criados corretamente
-- ✅ **Cache funcionando**: Usuários e almoxarifados sendo resolvidos  
+- ✅ **Cache funcionando**: Usuários e almoxarifados sendo resolvidos
 - ✅ **Método híbrido**: `listarNotasComDetalhes()` implementado
 - ✅ **Container atualizado**: Usando novo método otimizado
 - ✅ **Logs de debug**: Adicionados temporariamente
@@ -179,7 +184,7 @@ LIMIT ? OFFSET ?
 ## 🎯 Próximos Passos
 
 1. **Testar implementação atual** - Verificar se dados aparecem corretamente
-2. **Avaliar performance** - Monitorar tempo de carregamento 
+2. **Avaliar performance** - Monitorar tempo de carregamento
 3. **Decidir sobre endpoint backend** - Se necessário, criar `/summary` otimizado
 4. **Remover logs de debug** - Após validação
 5. **Aplicar mesmo padrão** - A outras páginas se necessário

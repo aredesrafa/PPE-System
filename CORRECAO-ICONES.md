@@ -15,6 +15,7 @@
 Substituí todas as referências ao componente `Icon` personalizado por importações diretas da biblioteca `flowbite-svelte-icons`.
 
 #### **Antes (❌ Problemático)**:
+
 ```svelte
 import Icon from '$lib/components/common/Icon.svelte';
 
@@ -23,6 +24,7 @@ import Icon from '$lib/components/common/Icon.svelte';
 ```
 
 #### **Depois (✅ Funcionando)**:
+
 ```svelte
 import { CloseOutline, ExclamationTriangleOutline, CheckOutline } from 'flowbite-svelte-icons';
 
@@ -35,16 +37,19 @@ import { CloseOutline, ExclamationTriangleOutline, CheckOutline } from 'flowbite
 ## 📁 Arquivos Corrigidos
 
 ### **1. DevolucaoModalPresenter.svelte**
+
 - **Ícones migrados**: CloseOutline, ExclamationTriangleOutline, CheckCircleOutline, ExclamationCircleOutline, ClockOutline, CheckOutline
 - **Total de usos**: 8 substituições
 
-### **2. NovaEntregaDrawerPresenter.svelte**  
+### **2. NovaEntregaDrawerPresenter.svelte**
+
 - **Ícones migrados**: ExclamationTriangleOutline
 - **Importação adicionada**: ExclamationTriangleOutline na lista de imports
 - **Total de usos**: 1 substituição
 
 ### **3. EditarEntregaDrawerPresenter.svelte**
-- **Ícones migrados**: PlusOutline, TrashBinOutline, CheckOutline, SpinnerOutline  
+
+- **Ícones migrados**: PlusOutline, TrashBinOutline, CheckOutline, SpinnerOutline
 - **Total de usos**: 5 substituições
 
 ---
@@ -52,13 +57,15 @@ import { CloseOutline, ExclamationTriangleOutline, CheckOutline } from 'flowbite
 ## 🎯 Diferenças Técnicas
 
 ### **Sintaxe de Props**
-| Antes (Icon.svelte) | Depois (flowbite-svelte-icons) |
-|---|---|
+
+| Antes (Icon.svelte)   | Depois (flowbite-svelte-icons)     |
+| --------------------- | ---------------------------------- |
 | `name="CloseOutline"` | Componente direto `<CloseOutline>` |
-| `size="w-5 h-5"` | `class="w-5 h-5"` |
-| `className="mr-2"` | `class="mr-2 w-4 h-4"` |
+| `size="w-5 h-5"`      | `class="w-5 h-5"`                  |
+| `className="mr-2"`    | `class="mr-2 w-4 h-4"`             |
 
 ### **Benefícios da Migração**
+
 - ✅ **Elimina importação dinâmica** problemática
 - ✅ **Tree-shaking melhor** - apenas ícones usados são incluídos
 - ✅ **Performance superior** - sem carregamento assíncrono
@@ -76,6 +83,7 @@ import { CloseOutline, ExclamationTriangleOutline, CheckOutline } from 'flowbite
 5. **Testar devolução**: Modal de devolução também deve funcionar
 
 ### **Verificações Específicas**
+
 - ✅ Drawer "Nova Entrega" abre corretamente
 - ✅ Ícones aparecem corretamente nos modais
 - ✅ Ícones de loading/spinner funcionam
@@ -87,11 +95,13 @@ import { CloseOutline, ExclamationTriangleOutline, CheckOutline } from 'flowbite
 ## 📊 Status Final
 
 **ANTES** ❌:
+
 - Drawer não abria devido a erro `Can't find variable: Icon`
 - Componente Icon personalizado com importação dinâmica instável
 - 14+ usos de `<Icon>` em arquivos críticos
 
 **DEPOIS** ✅:
+
 - Drawer "Nova Entrega" abre sem erros
 - Ícones carregam instantaneamente
 - Importações diretas mais estáveis
@@ -104,24 +114,27 @@ import { CloseOutline, ExclamationTriangleOutline, CheckOutline } from 'flowbite
 Se ainda houver problemas com outros arquivos, aplicar a mesma correção:
 
 1. **Identificar arquivos com Icon imports**:
+
    ```bash
    grep -r "Icon.*common" src/lib/components
    ```
 
 2. **Substituir imports**:
+
    ```svelte
    // Remover
    import Icon from '$lib/components/common/Icon.svelte';
-   
+
    // Adicionar
    import { IconName1, IconName2 } from 'flowbite-svelte-icons';
    ```
 
 3. **Substituir usos**:
+
    ```svelte
    <!-- Remover -->
    <Icon name="IconName" size="w-4 h-4" />
-   
+
    <!-- Adicionar -->
    <IconName class="w-4 h-4" />
    ```

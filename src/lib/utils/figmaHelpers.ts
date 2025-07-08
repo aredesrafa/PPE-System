@@ -12,16 +12,17 @@ export interface FigmaReference {
 export const FIGMA_DESIGNS = {
   fichas: {
     detailDrawer: {
-      url: 'https://www.figma.com/design/TwCLRJsnzdrmozHkVPHSid/M%C3%B3dulo-EPI?node-id=28-6888&t=VEat8YEcS8xUozDT-4',
-      description: 'Drawer lateral de detalhes da ficha com informações do colaborador e tabs',
-      component: 'FichaDetailDrawer',
-      section: 'Fichas EPI'
-    }
+      url: "https://www.figma.com/design/TwCLRJsnzdrmozHkVPHSid/M%C3%B3dulo-EPI?node-id=28-6888&t=VEat8YEcS8xUozDT-4",
+      description:
+        "Drawer lateral de detalhes da ficha com informações do colaborador e tabs",
+      component: "FichaDetailDrawer",
+      section: "Fichas EPI",
+    },
   },
   // Adicionar outras referências conforme necessário
   dashboard: {},
   estoque: {},
-  relatorios: {}
+  relatorios: {},
 } as const;
 
 /**
@@ -31,8 +32,8 @@ export const FIGMA_DESIGNS = {
  * @returns Referência do Figma ou null se não encontrada
  */
 export function getFigmaReference(
-  category: keyof typeof FIGMA_DESIGNS, 
-  design: string
+  category: keyof typeof FIGMA_DESIGNS,
+  design: string,
 ): FigmaReference | null {
   const categoryDesigns = FIGMA_DESIGNS[category];
   return (categoryDesigns as any)[design] || null;
@@ -43,10 +44,13 @@ export function getFigmaReference(
  * @param category Categoria do design
  * @param design Nome do design
  */
-export function openFigmaDesign(category: keyof typeof FIGMA_DESIGNS, design: string): void {
+export function openFigmaDesign(
+  category: keyof typeof FIGMA_DESIGNS,
+  design: string,
+): void {
   const reference = getFigmaReference(category, design);
   if (reference) {
-    window.open(reference.url, '_blank', 'noopener,noreferrer');
+    window.open(reference.url, "_blank", "noopener,noreferrer");
   } else {
     console.warn(`Design não encontrado: ${category}.${design}`);
   }
@@ -57,7 +61,9 @@ export function openFigmaDesign(category: keyof typeof FIGMA_DESIGNS, design: st
  * @param category Categoria do design
  * @returns Array com nomes dos designs disponíveis
  */
-export function listFigmaDesigns(category: keyof typeof FIGMA_DESIGNS): string[] {
+export function listFigmaDesigns(
+  category: keyof typeof FIGMA_DESIGNS,
+): string[] {
   return Object.keys(FIGMA_DESIGNS[category]);
 }
 
@@ -77,9 +83,12 @@ export function extractFigmaNodeId(url: string): string | null {
  * @param design Nome do design
  * @returns String com comentário formatado
  */
-export function generateFigmaComment(category: keyof typeof FIGMA_DESIGNS, design: string): string {
+export function generateFigmaComment(
+  category: keyof typeof FIGMA_DESIGNS,
+  design: string,
+): string {
   const reference = getFigmaReference(category, design);
-  if (!reference) return '';
-  
+  if (!reference) return "";
+
   return `// Design Reference: ${reference.description}\n// Figma: ${reference.url}`;
 }

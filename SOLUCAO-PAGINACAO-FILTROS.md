@@ -59,6 +59,7 @@
 ### **📊 Componentes da Solução**
 
 #### **1. Enhanced Paginated Store**
+
 - **Cache unificado** com TTL configurável por tipo de dados
 - **Debounce automático** para filtros e busca
 - **Sistema de filtros padronizado** com metadata
@@ -70,14 +71,15 @@ const store = createFilteredStore(
   fetchFunction,
   filterOptionsFunction,
   filterMetadata,
-  pageSize
+  pageSize,
 );
 
-await store.setFilter('categoria', 'PROTECAO_CABECA');
-await store.setSearch('capacete');
+await store.setFilter("categoria", "PROTECAO_CABECA");
+await store.setSearch("capacete");
 ```
 
 #### **2. Unified Data Adapter**
+
 - **Cache inteligente** com eviction policies
 - **Endpoints otimizados** para filtros (ex: `/tipos-epi/categorias-disponiveis`)
 - **Mapeamento consistente** entre backend e frontend
@@ -86,12 +88,13 @@ await store.setSearch('capacete');
 ```typescript
 // Cache com configurações específicas por tipo
 const CACHE_CONFIGS = {
-  'tipos-epi': { ttl: 10 * 60 * 1000, maxSize: 1000 },
-  'estoque': { ttl: 2 * 60 * 1000, maxSize: 500 }
+  "tipos-epi": { ttl: 10 * 60 * 1000, maxSize: 1000 },
+  estoque: { ttl: 2 * 60 * 1000, maxSize: 500 },
 };
 ```
 
 #### **3. Unified Data Container**
+
 - **Lógica reutilizável** para catálogo e estoque
 - **Event handling padronizado**
 - **Configuração flexível** via props
@@ -107,6 +110,7 @@ const CACHE_CONFIGS = {
 ```
 
 #### **4. Unified Data Table Presenter**
+
 - **UI consistente** entre páginas
 - **Colunas configuráveis** baseadas no modo
 - **Acessibilidade completa**
@@ -115,24 +119,28 @@ const CACHE_CONFIGS = {
 ### **🚀 Benefícios Alcançados**
 
 #### **Performance**
+
 - ✅ **70% redução** no tempo de carregamento de filtros
 - ✅ **Cache unificado** reduz requisições redundantes
 - ✅ **Debounce automático** evita chamadas desnecessárias
 - ✅ **Endpoints otimizados** para grandes volumes
 
 #### **Manutenibilidade**
+
 - ✅ **Código reutilizável** entre catálogo e estoque
 - ✅ **Lógica centralizada** em componentes unificados
 - ✅ **Configuração declarativa** via props
 - ✅ **Testes simplificados** com componentes isolados
 
 #### **Escalabilidade**
+
 - ✅ **Suporte para 1000+ itens** sem degradação
 - ✅ **Cache com eviction** controla uso de memória
 - ✅ **Paginação server-side** eficiente
 - ✅ **Filtros otimizados** com endpoints específicos
 
 #### **Experiência do Usuário**
+
 - ✅ **Interface consistente** entre páginas
 - ✅ **Filtros responsivos** com feedback visual
 - ✅ **Estados de loading** bem definidos
@@ -198,7 +206,7 @@ npm run dev
 # Testar catálogo unificado
 http://localhost:5176/catalogo-v2
 
-# Testar estoque unificado  
+# Testar estoque unificado
 http://localhost:5176/estoque-v2
 ```
 
@@ -206,7 +214,7 @@ http://localhost:5176/estoque-v2
 
 ```javascript
 // Console do navegador - monitorar cache
-console.log('Cache Stats:', unifiedDataAdapter.getCacheStats());
+console.log("Cache Stats:", unifiedDataAdapter.getCacheStats());
 
 // Verificar debounce
 // Digite rapidamente em um filtro - deve fazer apenas 1 requisição
@@ -217,12 +225,12 @@ console.log('Cache Stats:', unifiedDataAdapter.getCacheStats());
 
 ### **3. Métricas Esperadas**
 
-| Métrica | Antes | Depois | Melhoria |
-|---------|-------|--------|----------|
-| Time to Interactive | ~3s | ~1s | 66% |
-| Cache Hit Rate | ~30% | ~80% | 167% |
-| API Calls (filtros) | 5-10 | 1-2 | 75% |
-| Memory Usage | 15MB | 8MB | 47% |
+| Métrica             | Antes | Depois | Melhoria |
+| ------------------- | ----- | ------ | -------- |
+| Time to Interactive | ~3s   | ~1s    | 66%      |
+| Cache Hit Rate      | ~30%  | ~80%   | 167%     |
+| API Calls (filtros) | 5-10  | 1-2    | 75%      |
+| Memory Usage        | 15MB  | 8MB    | 47%      |
 
 ## 🔧 **Configuração e Uso**
 
@@ -273,32 +281,35 @@ console.log('Cache Stats:', unifiedDataAdapter.getCacheStats());
 ```typescript
 const customFilters: FilterMetadata[] = [
   {
-    key: 'quantidadeMin',
-    label: 'Quantidade Mínima',
-    type: 'search',
-    placeholder: 'Ex: 10'
+    key: "quantidadeMin",
+    label: "Quantidade Mínima",
+    type: "search",
+    placeholder: "Ex: 10",
   },
   {
-    key: 'dataValidade',
-    label: 'Data de Validade',
-    type: 'daterange'
-  }
+    key: "dataValidade",
+    label: "Data de Validade",
+    type: "daterange",
+  },
 ];
 ```
 
 ## 🔮 **Roadmap de Evolução**
 
 ### **Curto Prazo (1-2 semanas)**
+
 - [ ] Implementação completa dos modais de CRUD
 - [ ] Testes unitários para componentes unificados
 - [ ] Migração das páginas existentes
 
 ### **Médio Prazo (1 mês)**
+
 - [ ] Filtros avançados (daterange, multiselect)
 - [ ] Export/Import de dados
 - [ ] Offline support com IndexedDB
 
 ### **Longo Prazo (3 meses)**
+
 - [ ] Virtual scrolling para listas gigantes
 - [ ] Real-time updates com WebSockets
 - [ ] Analytics de uso dos filtros

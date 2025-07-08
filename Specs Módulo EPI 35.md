@@ -3,7 +3,7 @@ type: Page
 title: Epi 3.5
 description: null
 icon: null
-createdAt: '2025-06-28T19:49:48.118Z'
+createdAt: "2025-06-28T19:49:48.118Z"
 creationDate: 2025-06-28 16:49
 modificationDate: 2025-07-01 13:31
 tags: []
@@ -12,16 +12,12 @@ coverImage: null
 
 # Especificação Técnica Detalhada: Módulo de Gestão de Fichas de EPI e Estoque
 
-
-
 [https://app.capacities.io/home/485dc91e-fe80-47c1-a884-584a13d09097](https://app.capacities.io/home/485dc91e-fe80-47c1-a884-584a13d09097)
 
 **Versão**: 3.5 (Entrega Corrigida)
 
 **Data**: 28 de junho de 2025
 ​
-
-
 
 ## 1. Visão Geral e Arquitetura
 
@@ -35,7 +31,7 @@ Este documento detalha a arquitetura e implementação do **Módulo de Gestão d
 
 4. **Separação de Contextos**: Operações de estoque (agrupadas em "Notas") são separadas das operações com colaboradores (Entregas e Devoluções), garantindo clareza e interfaces específicas.
 
-5. **API RESTful e Casos de Uso**: A lógica de negócio é encapsulada em casos de uso bem definidos, expostos por uma API RESTful, seguindo princípios de *Clean Architecture* e *CQRS*.
+5. **API RESTful e Casos de Uso**: A lógica de negócio é encapsulada em casos de uso bem definidos, expostos por uma API RESTful, seguindo princípios de _Clean Architecture_ e _CQRS_.
 
 ### 1.1. Princípio de Design: Fonte da Verdade vs. Saldo Materializado
 
@@ -43,13 +39,12 @@ Para garantir tanto a integridade contábil quanto a alta performance, o sistema
 
 - **A Fonte da Verdade (Auditoria)**: A tabela `movimentacoes_estoque` é o livro-razão sagrado e imutável. Cada linha é a prova de uma transação que ocorreu. Com esta tabela, é possível reconstruir o saldo de qualquer item em qualquer ponto do tempo.
 
-- **O Saldo Materializado (Performance)**: A coluna `estoque_itens.quantidade` é um campo calculado e denormalizado. Seu único propósito é responder instantaneamente à pergunta "Qual o saldo *agora*?".
+- **O Saldo Materializado (Performance)**: A coluna `estoque_itens.quantidade` é um campo calculado e denormalizado. Seu único propósito é responder instantaneamente à pergunta "Qual o saldo _agora_?".
 
 - **O Mecanismo de Sincronização (Atomicidade)**: A consistência entre o livro-razão e o saldo materializado é garantida pelo uso de **transações atômicas de banco de dados (ACID)**. Toda e qualquer operação de escrita no estoque executa, no mínimo, duas ações dentro de uma única transação:
+  1. `INSERT` na tabela `movimentacoes_estoque` (a prova).
 
-    1. `INSERT` na tabela `movimentacoes_estoque` (a prova).
-
-    2. `UPDATE` na coluna `estoque_itens.quantidade` (o saldo).
+  2. `UPDATE` na coluna `estoque_itens.quantidade` (o saldo).
 
 ### 1.2. Princípio de Design: Rastreabilidade Individual vs. Agrupamento em Massa
 
@@ -66,9 +61,6 @@ Para garantir tanto a integridade contábil quanto a alta performance, o sistema
 - **Tipos de Movimentação** (`tipo_movimentacao_enum`): Representam o impacto específico no estoque registrado no livro-razão (ex: `ENTRADA_NOTA`, `SAIDA_TRANSFERENCIA`)
 
 **Exemplo**: Uma nota do tipo `ENTRADA` gera uma movimentação do tipo `ENTRADA_NOTA` no livro-razão.
-
-
-
 
 > DISCLAIMER: Propositalmente foi retirado dessa versão (e pode ser implementada mais junto com outras melhorias) o tratamento de concorrência quando movimentacoes simultaneas sao solicitadas, controle por lotes e data de validade. Esses pontos, apesar de importantes, não serão implementados até a validação da lógica atual, suas regras e design. O restante parece bem estruturado e suficiente para atender os primeiros projetos e coletar feedbacks antes de novas camadas de complexidade
 
@@ -243,14 +235,14 @@ CHECK (
 ALTER TABLE notas_movimentacao
 ADD CONSTRAINT chk_transferencia_diferente
 CHECK (
-    tipo_nota <> 'TRANSFERENCIA' OR 
+    tipo_nota <> 'TRANSFERENCIA' OR
     (almoxarifado_id != almoxarifado_destino_id)
 );
 ```
 
 #### Tabela: `nota_movimentacao_itens`
 
-*Propósito: Armazena os detalhes de cada item dentro de uma* `notas_movimentacao` *enquanto ela está no estado* `'RASCUNHO'`*. Esta tabela é a fonte para a criação dos registros em* `movimentacoes_estoque` *quando a nota é concluída.*
+_Propósito: Armazena os detalhes de cada item dentro de uma_ `notas_movimentacao` _enquanto ela está no estado_ `'RASCUNHO'`_. Esta tabela é a fonte para a criação dos registros em_ `movimentacoes_estoque` _quando a nota é concluída._
 
 | Coluna                 | Tipo de Dado   | Constraints / Índices            | Descrição                                                                                                     |
 | :--------------------- | :------------- | :------------------------------- | :------------------------------------------------------------------------------------------------------------ |
@@ -320,8 +312,8 @@ BEGIN
     IF NEW.movimentacao_origem_id IS NOT NULL THEN
         -- Verifica se a movimentação original é um estorno
         IF EXISTS (
-            SELECT 1 FROM movimentacoes_estoque 
-            WHERE id = NEW.movimentacao_origem_id 
+            SELECT 1 FROM movimentacoes_estoque
+            WHERE id = NEW.movimentacao_origem_id
             AND tipo_movimentacao LIKE 'ESTORNO_%'
         ) THEN
             RAISE EXCEPTION 'Não é possível estornar uma movimentação de estorno';
@@ -338,7 +330,7 @@ CREATE TRIGGER trigger_nao_estornar_estorno
 
 #### Tabela: `colaboradores`
 
-*Tabela mock para desenvolvimento. Estrutura mínima sugerida:*
+_Tabela mock para desenvolvimento. Estrutura mínima sugerida:_
 
 | Coluna | Tipo de Dado | Constraints | Descrição                          |
 | :----- | :----------- | :---------- | :--------------------------------- |
@@ -426,9 +418,9 @@ CREATE INDEX idx_notas_movimentacao_status ON notas_movimentacao (status);
 CREATE INDEX idx_notas_movimentacao_tipo ON notas_movimentacao (tipo_nota);
 CREATE INDEX idx_entregas_status ON entregas (status);
 -- Índices compostos para queries específicas
-CREATE INDEX idx_estoque_disponivel ON estoque_itens (almoxarifado_id, tipo_epi_id, status) 
+CREATE INDEX idx_estoque_disponivel ON estoque_itens (almoxarifado_id, tipo_epi_id, status)
 WHERE status = 'DISPONIVEL';
-CREATE INDEX idx_itens_com_colaborador ON entrega_itens (status, data_limite_devolucao) 
+CREATE INDEX idx_itens_com_colaborador ON entrega_itens (status, data_limite_devolucao)
 WHERE status = 'COM_COLABORADOR';
 -- Índice para rastreabilidade de estornos
 CREATE INDEX idx_movimentacao_origem ON movimentacoes_estoque (movimentacao_origem_id);
@@ -441,8 +433,8 @@ CREATE INDEX idx_historico_responsavel ON historico_fichas (responsavel_id);
 
 ## 4. Relação Entre Eventos e Registros (Tabela da Verdade)
 
-| Evento de Negócio         | Gera `nota_movimentacao`?                  | `tipo_movimentacao` Resultante                                                   | Origem da Movimentação                    |
-| :------------------------ | :----------------------------------------- | :------------------------------------------------------------------------------- | :---------------------------------------- |
+| Evento de Negócio         | Gera `nota_movimentacao`?                   | `tipo_movimentacao` Resultante                                                   | Origem da Movimentação                    |
+| :------------------------ | :------------------------------------------ | :------------------------------------------------------------------------------- | :---------------------------------------- |
 | Compra de EPIs            | ✅ Sim (`ENTRADA`)                          | `ENTRADA_NOTA`                                                                   | `nota_movimentacao_id`                    |
 | Devolução do Colaborador  | ❌ Não                                      | `ENTRADA_DEVOLUCAO`                                                              | `entrega_id` (da entrega original)        |
 | Entrega ao Colaborador    | ❌ Não                                      | `SAIDA_ENTREGA`                                                                  | `entrega_id`                              |
@@ -462,16 +454,15 @@ CREATE INDEX idx_historico_responsavel ON historico_fichas (responsavel_id);
 - **Descrição**: Cria e gerencia registros em `notas_movimentacao` com status `'RASCUNHO'`. Esta é uma funcionalidade de usabilidade que permite que usuários criem notas e as completem posteriormente.
 
 - **Funcionalidades Incluídas**:
+  - Criar nova nota em rascunho
 
-    - Criar nova nota em rascunho
+  - Adicionar itens à nota (com validação em tempo real)
 
-    - Adicionar itens à nota (com validação em tempo real)
+  - Remover itens da nota
 
-    - Remover itens da nota
+  - Atualizar dados gerais da nota
 
-    - Atualizar dados gerais da nota
-
-    - Validar disponibilidade de estoque ao adicionar itens
+  - Validar disponibilidade de estoque ao adicionar itens
 
 - **Validações em Tempo Real**: Ao adicionar um item à nota, o sistema verifica se há estoque suficiente (se `PERMITIR_ESTOQUE_NEGATIVO = false`) e alerta o usuário imediatamente.
 
@@ -482,32 +473,29 @@ CREATE INDEX idx_historico_responsavel ON historico_fichas (responsavel_id);
 - **Descrição**: Percorre todos os registros em `nota_movimentacao_itens` associados à nota. Para cada item, cria a movimentação de estoque correspondente e atualiza o saldo.
 
 - **Mapeamento** `tipo_nota` **->** `tipo_movimentacao`:
+  - `ENTRADA`: Gera `ENTRADA_NOTA`. Cria novo registro em `estoque_itens` se não existir para o (almoxarifado, tipo_epi, status='DISPONIVEL').
 
-    - `ENTRADA`: Gera `ENTRADA_NOTA`. Cria novo registro em `estoque_itens` se não existir para o (almoxarifado, tipo_epi, status='DISPONIVEL').
+  - `SAIDA_AJUSTE`: Gera `AJUSTE_NEGATIVO`.
 
-    - `SAIDA_AJUSTE`: Gera `AJUSTE_NEGATIVO`.
+  - `DESCARTE`: Gera `SAIDA_DESCARTE`.
 
-    - `DESCARTE`: Gera `SAIDA_DESCARTE`.
+  - `TRANSFERENCIA`: Gera `SAIDA_TRANSFERENCIA` (origem) e `ENTRADA_TRANSFERENCIA` (destino, sempre status='DISPONIVEL').
 
-    - `TRANSFERENCIA`: Gera `SAIDA_TRANSFERENCIA` (origem) e `ENTRADA_TRANSFERENCIA` (destino, sempre status='DISPONIVEL').
-
-    - `ENTRADA_AJUSTE`: Gera `AJUSTE_POSITIVO`.
+  - `ENTRADA_AJUSTE`: Gera `AJUSTE_POSITIVO`.
 
 - **Lógica de Transferência**:
+  - No almoxarifado de origem: Busca `estoque_itens` com status='DISPONIVEL'
 
-    - No almoxarifado de origem: Busca `estoque_itens` com status='DISPONIVEL'
+  - No almoxarifado de destino: Busca ou cria `estoque_itens` com status='DISPONIVEL'
 
-    - No almoxarifado de destino: Busca ou cria `estoque_itens` com status='DISPONIVEL'
-
-    - Preserva `custo_unitario` do item original
+  - Preserva `custo_unitario` do item original
 
 - **Regras de Validação Final**:
+  - Se `PERMITIR_ESTOQUE_NEGATIVO = false`, valida novamente cada item antes de concluir
 
-    - Se `PERMITIR_ESTOQUE_NEGATIVO = false`, valida novamente cada item antes de concluir
+  - Se algum item não tem estoque suficiente, retorna erro detalhado com lista de problemas
 
-    - Se algum item não tem estoque suficiente, retorna erro detalhado com lista de problemas
-
-    - Operação é atômica: ou todos os itens são processados ou nenhum
+  - Operação é atômica: ou todos os itens são processados ou nenhum
 
 - **Pós-condição**: Nota alterada para `'CONCLUIDA'`, estoque atualizado, movimentações registradas.
 
@@ -516,26 +504,24 @@ CREATE INDEX idx_historico_responsavel ON historico_fichas (responsavel_id);
 - **Pré-condição**: A nota existe.
 
 - **Passos**:
+  1. Verifica o status atual da nota.
 
-    1. Verifica o status atual da nota.
+  2. **Se** `'RASCUNHO'`: Altera status para `'CANCELADA'` (sem impacto no estoque).
 
-    2. **Se** `'RASCUNHO'`: Altera status para `'CANCELADA'` (sem impacto no estoque).
+  3. **Se** `'CONCLUIDA'`:
+     - Consulta movimentações via `nota_movimentacao_id`
 
-    3. **Se** `'CONCLUIDA'`:
+     - Gera estornos correspondentes (ex: `ESTORNO_ENTRADA_NOTA`)
 
-        - Consulta movimentações via `nota_movimentacao_id`
+     - Para transferências: gera dois estornos (origem e destino)
 
-        - Gera estornos correspondentes (ex: `ESTORNO_ENTRADA_NOTA`)
+     - Preenche `movimentacao_origem_id` nos registros de estorno
 
-        - Para transferências: gera dois estornos (origem e destino)
+     - Atualiza saldos em transação atômica
 
-        - Preenche `movimentacao_origem_id` nos registros de estorno
+     - Altera status para `'CANCELADA'`
 
-        - Atualiza saldos em transação atômica
-
-        - Altera status para `'CANCELADA'`
-
-    4. **Se** `'CANCELADA'`: Retorna erro.
+  4. **Se** `'CANCELADA'`: Retorna erro.
 
 **UC-ESTOQUE-04: Realizar Ajuste Direto**
 
@@ -544,14 +530,13 @@ CREATE INDEX idx_historico_responsavel ON historico_fichas (responsavel_id);
 - **Pré-condição**: `PERMITIR_AJUSTES_FORCADOS = true`
 
 - **Passos**:
+  1. Cria nota do tipo apropriado (`ENTRADA_AJUSTE` ou `SAIDA_AJUSTE`)
 
-    1. Cria nota do tipo apropriado (`ENTRADA_AJUSTE` ou `SAIDA_AJUSTE`)
+  2. Adiciona o item à nota
 
-    2. Adiciona o item à nota
+  3. Conclui a nota imediatamente
 
-    3. Conclui a nota imediatamente
-
-    4. Gera movimentação `AJUSTE_POSITIVO` ou `AJUSTE_NEGATIVO`
+  4. Gera movimentação `AJUSTE_POSITIVO` ou `AJUSTE_NEGATIVO`
 
 ### 5.2. Casos de Uso da Ficha de EPI
 
@@ -562,40 +547,36 @@ CREATE INDEX idx_historico_responsavel ON historico_fichas (responsavel_id);
 - **Pré-condição**: Recebe um `colaborador_id`.
 
 - **Passos**:
+  1. Verifica se já existe ficha para o colaborador
 
-    1. Verifica se já existe ficha para o colaborador
+  2. **Se existe**: Retorna erro 409 com ID da ficha existente
 
-    2. **Se existe**: Retorna erro 409 com ID da ficha existente
-
-    3. **Se não existe**: Cria ficha e registra no histórico
+  3. **Se não existe**: Cria ficha e registra no histórico
 
 - **Pós-condição**: Nova ficha criada e vinculada ao colaborador.
 
 **UC-FICHA-03: Criar Entrega na Ficha de EPI**
 
 - **Regras de Negócio (Revisadas e Esclarecidas)**:
+  1. **Validação de Almoxarifado**: Todos os `estoque_item_id` devem pertencer ao `almoxarifado_id` informado
 
-    1. **Validação de Almoxarifado**: Todos os `estoque_item_id` devem pertencer ao `almoxarifado_id` informado
+  2. **Validação de Status**: Só pode entregar itens com `status = 'DISPONIVEL'`
 
-    2. **Validação de Status**: Só pode entregar itens com `status = 'DISPONIVEL'`
+  3. **Validação de Saldo**: Se `PERMITIR_ESTOQUE_NEGATIVO = false`, verifica saldo suficiente
 
-    3. **Validação de Saldo**: Se `PERMITIR_ESTOQUE_NEGATIVO = false`, verifica saldo suficiente
+  4. **Cálculo de Validade**: Se `tipos_epi.vida_util_dias` existe, calcula `data_limite_devolucao` como `data_entrega + vida_util_dias`. O usuário pode editar esta data no momento da entrega.
 
-    4. **Cálculo de Validade**: Se `tipos_epi.vida_util_dias` existe, calcula `data_limite_devolucao` como `data_entrega + vida_util_dias`. O usuário pode editar esta data no momento da entrega.
-
-    5. **Criação Unitária e Lógica da API**: A API recebe uma lista de itens com um campo `quantidade`. Para cada item dessa lista, o sistema **deve iterar sobre a** `quantidade` **e criar um registro individual e unitário na tabela** `entrega_itens`. Por exemplo, uma requisição para entregar 2 luvas (`quantidade: 2`) resultará na criação de **2 registros** separados em `entrega_itens`, ambos com `quantidade_entregue = 1`. Isso é fundamental para a rastreabilidade atômica de cada unidade.
+  5. **Criação Unitária e Lógica da API**: A API recebe uma lista de itens com um campo `quantidade`. Para cada item dessa lista, o sistema **deve iterar sobre a** `quantidade` **e criar um registro individual e unitário na tabela** `entrega_itens`. Por exemplo, uma requisição para entregar 2 luvas (`quantidade: 2`) resultará na criação de **2 registros** separados em `entrega_itens`, ambos com `quantidade_entregue = 1`. Isso é fundamental para a rastreabilidade atômica de cada unidade.
 
 - **Passos**:
+  1. Cria registro em `entregas`
 
-    1. Cria registro em `entregas`
+  2. Para cada unidade a ser entregue:
+     - Cria um registro em `entrega_itens` com `quantidade_entregue = 1`
 
-    2. Para cada unidade a ser entregue:
+     - Gera movimentação `SAIDA_ENTREGA` (quantidade total)
 
-        - Cria um registro em `entrega_itens` com `quantidade_entregue = 1`
-
-        - Gera movimentação `SAIDA_ENTREGA` (quantidade total)
-
-    3. Atualiza saldo do `estoque_itens`
+  3. Atualiza saldo do `estoque_itens`
 
 **Regra de Negócio Adicional: Assinatura de Entregas**
 
@@ -608,24 +589,22 @@ CREATE INDEX idx_historico_responsavel ON historico_fichas (responsavel_id);
 - **Descrição**: Registra retorno individual de EPIs ao estoque para análise.
 
 - **Passos**:
+  1. Recebe lista de IDs de `entrega_itens` a devolver (cada ID = 1 unidade)
 
-    1. Recebe lista de IDs de `entrega_itens` a devolver (cada ID = 1 unidade)
+  2. Valida que todas as entregas estão com status `'ASSINADA'`
 
-    2. Valida que todas as entregas estão com status `'ASSINADA'`
+  3. Para cada item:
+     - Verifica se status é 'COM_COLABORADOR'
 
-    3. Para cada item:
+     - Atualiza status para 'DEVOLVIDO'
 
-        - Verifica se status é 'COM_COLABORADOR'
+  4. Agrupa por tipo_epi e almoxarifado para criar movimentações
 
-        - Atualiza status para 'DEVOLVIDO'
+  5. Busca ou cria `estoque_itens` com `status = 'AGUARDANDO_INSPECAO'`
 
-    4. Agrupa por tipo_epi e almoxarifado para criar movimentações
+  6. Cria movimentação `ENTRADA_DEVOLUCAO` com a quantidade total devolvida
 
-    5. Busca ou cria `estoque_itens` com `status = 'AGUARDANDO_INSPECAO'`
-
-    6. Cria movimentação `ENTRADA_DEVOLUCAO` com a quantidade total devolvida
-
-    7. Incrementa saldo do estoque em inspeção
+  7. Incrementa saldo do estoque em inspeção
 
 - **Pós-condição**: Unidades devolvidas ficam em estoque segregado para análise.
 
@@ -640,14 +619,13 @@ CREATE INDEX idx_historico_responsavel ON historico_fichas (responsavel_id);
 **UC-FICHA-06: Cancelar uma Devolução**
 
 - **Passos**:
+  1. Identifica itens afetados pela movimentação de devolução
 
-    1. Identifica itens afetados pela movimentação de devolução
+  2. Reverte status de 'DEVOLVIDO' para 'COM_COLABORADOR'
 
-    2. Reverte status de 'DEVOLVIDO' para 'COM_COLABORADOR'
+  3. Gera `ESTORNO_ENTRADA_DEVOLUCAO`. A nova movimentação de estorno terá seu campo `movimentacao_origem_id` preenchido com o ID da movimentação de devolução original.
 
-    3. Gera `ESTORNO_ENTRADA_DEVOLUCAO`. A nova movimentação de estorno terá seu campo `movimentacao_origem_id` preenchido com o ID da movimentação de devolução original.
-
-    4. Ajusta saldos em transação atômica.
+  4. Ajusta saldos em transação atômica.
 
 ### 5.3. Casos de Uso de Visualização (Queries)
 
@@ -663,111 +641,110 @@ CREATE INDEX idx_historico_responsavel ON historico_fichas (responsavel_id);
 
 - **R-03: EPIs Ativos com Colaboradores (Sintético)**:
 
-    ```sql
-    SELECT 
-        est.tipo_epi_id,
-        te.nome_equipamento,
-        COUNT(ei.id) as quantidade_com_colaboradores
-    FROM entrega_itens ei
-    JOIN estoque_itens est ON ei.estoque_item_origem_id = est.id
-    JOIN tipos_epi te ON est.tipo_epi_id = te.id
-    WHERE ei.status = 'COM_COLABORADOR'
-    GROUP BY est.tipo_epi_id, te.nome_equipamento;
-    ```
+  ```sql
+  SELECT
+      est.tipo_epi_id,
+      te.nome_equipamento,
+      COUNT(ei.id) as quantidade_com_colaboradores
+  FROM entrega_itens ei
+  JOIN estoque_itens est ON ei.estoque_item_origem_id = est.id
+  JOIN tipos_epi te ON est.tipo_epi_id = te.id
+  WHERE ei.status = 'COM_COLABORADOR'
+  GROUP BY est.tipo_epi_id, te.nome_equipamento;
+  ```
 
 - **R-04: EPIs Ativos com Colaboradores (Detalhado)**:
 
-    ```sql
-    SELECT 
-        c.nome as colaborador,
-        te.nome_equipamento,
-        ei.data_limite_devolucao,
-        ei.status,
-        CASE 
-            WHEN ei.status = 'COM_COLABORADOR' AND ei.data_limite_devolucao < CURRENT_DATE 
-            THEN true 
-            ELSE false 
-        END as devolucao_atrasada
-    FROM entrega_itens ei
-    JOIN entregas e ON ei.entrega_id = e.id
-    JOIN fichas_epi f ON e.ficha_epi_id = f.id
-    JOIN colaboradores c ON f.colaborador_id = c.id
-    JOIN estoque_itens est ON ei.estoque_item_origem_id = est.id
-    JOIN tipos_epi te ON est.tipo_epi_id = te.id
-    WHERE ei.status = 'COM_COLABORADOR'
-    ORDER BY c.nome, te.nome_equipamento;
-    ```
+  ```sql
+  SELECT
+      c.nome as colaborador,
+      te.nome_equipamento,
+      ei.data_limite_devolucao,
+      ei.status,
+      CASE
+          WHEN ei.status = 'COM_COLABORADOR' AND ei.data_limite_devolucao < CURRENT_DATE
+          THEN true
+          ELSE false
+      END as devolucao_atrasada
+  FROM entrega_itens ei
+  JOIN entregas e ON ei.entrega_id = e.id
+  JOIN fichas_epi f ON e.ficha_epi_id = f.id
+  JOIN colaboradores c ON f.colaborador_id = c.id
+  JOIN estoque_itens est ON ei.estoque_item_origem_id = est.id
+  JOIN tipos_epi te ON est.tipo_epi_id = te.id
+  WHERE ei.status = 'COM_COLABORADOR'
+  ORDER BY c.nome, te.nome_equipamento;
+  ```
 
-- **R-05: EPIs Devolvidos e Descartados**: Correlaciona `movimentacoes_estoque` do tipo `ENTRADA_DEVOLUCAO` e `SAIDA_DESCARTE` para o mesmo item de estoque. *Nota: A correlação entre devolução e descarte requer análise temporal dos registros.*
+- **R-05: EPIs Devolvidos e Descartados**: Correlaciona `movimentacoes_estoque` do tipo `ENTRADA_DEVOLUCAO` e `SAIDA_DESCARTE` para o mesmo item de estoque. _Nota: A correlação entre devolução e descarte requer análise temporal dos registros._
 
 - **R-06: EPIs Devolvidos em Análise/Quarentena**: `SELECT * FROM estoque_itens WHERE status IN ('AGUARDANDO_INSPECAO', 'QUARENTENA')`.
 
 - **R-07: Fichas com Devolução Atrasada (Corrigido)**
+  - **Lógica:** Este relatório identifica colaboradores que possuem itens cuja data limite de devolução já passou e que ainda não foram devolvidos. O status de "devolução atrasada" é calculado dinamicamente.
 
-    - **Lógica:** Este relatório identifica colaboradores que possuem itens cuja data limite de devolução já passou e que ainda não foram devolvidos. O status de "devolução atrasada" é calculado dinamicamente.
+  - **Query Corrigida:**
 
-    - **Query Corrigida:**
-
-        ```sql
-        SELECT DISTINCT    f.id as ficha_id,    c.nome as colaborador,    te.nome_equipamento,    ei.data_limite_devolucao,    COUNT(ei.id) as quantidade_itens_atrasadosFROM entrega_itens eiJOIN entregas e ON ei.entrega_id = e.idJOIN fichas_epi f ON e.ficha_epi_id = f.idJOIN colaboradores c ON f.colaborador_id = c.idJOIN estoque_itens est ON ei.estoque_item_origem_id = est.idJOIN tipos_epi te ON est.tipo_epi_id = te.idWHERE ei.status = 'COM_COLABORADOR'  AND ei.data_limite_devolucao IS NOT NULL  AND ei.data_limite_devolucao < CURRENT_DATEGROUP BY f.id, c.nome, te.nome_equipamento, ei.data_limite_devolucaoORDER BY ei.data_limite_devolucao ASC, c.nome;
-        ```
+    ```sql
+    SELECT DISTINCT    f.id as ficha_id,    c.nome as colaborador,    te.nome_equipamento,    ei.data_limite_devolucao,    COUNT(ei.id) as quantidade_itens_atrasadosFROM entrega_itens eiJOIN entregas e ON ei.entrega_id = e.idJOIN fichas_epi f ON e.ficha_epi_id = f.idJOIN colaboradores c ON f.colaborador_id = c.idJOIN estoque_itens est ON ei.estoque_item_origem_id = est.idJOIN tipos_epi te ON est.tipo_epi_id = te.idWHERE ei.status = 'COM_COLABORADOR'  AND ei.data_limite_devolucao IS NOT NULL  AND ei.data_limite_devolucao < CURRENT_DATEGROUP BY f.id, c.nome, te.nome_equipamento, ei.data_limite_devolucaoORDER BY ei.data_limite_devolucao ASC, c.nome;
+    ```
 
 - **R-08: Pesquisar Fichas por Tipo de EPI**: `SELECT * FROM fichas_epi` com joins para filtrar por `tipo_epi_id`.
 
 - **R-09: Relatório de Itens Descartados**:
 
-    ```sql
-    SELECT
-        m.data_movimentacao,
-        te.nome_equipamento,
-        m.quantidade_movida,
-        a.nome AS almoxarifado_origem,
-        u.nome AS responsavel
-    FROM
-        movimentacoes_estoque m
-    JOIN
-        estoque_itens ei ON m.estoque_item_id = ei.id
-    JOIN
-        tipos_epi te ON ei.tipo_epi_id = te.id
-    JOIN
-        almoxarifados a ON ei.almoxarifado_id = a.id
-    JOIN
-        usuarios u ON m.responsavel_id = u.id
-    WHERE
-        m.tipo_movimentacao = 'SAIDA_DESCARTE'
-    ORDER BY
-        m.data_movimentacao DESC;
-    ```
+  ```sql
+  SELECT
+      m.data_movimentacao,
+      te.nome_equipamento,
+      m.quantidade_movida,
+      a.nome AS almoxarifado_origem,
+      u.nome AS responsavel
+  FROM
+      movimentacoes_estoque m
+  JOIN
+      estoque_itens ei ON m.estoque_item_id = ei.id
+  JOIN
+      tipos_epi te ON ei.tipo_epi_id = te.id
+  JOIN
+      almoxarifados a ON ei.almoxarifado_id = a.id
+  JOIN
+      usuarios u ON m.responsavel_id = u.id
+  WHERE
+      m.tipo_movimentacao = 'SAIDA_DESCARTE'
+  ORDER BY
+      m.data_movimentacao DESC;
+  ```
 
 - **R-10: Relatório de Estornos**:
 
-    ```sql
-    SELECT
-        m.data_movimentacao,
-        m.tipo_movimentacao,
-        m.quantidade_movida,
-        te.nome_equipamento,
-        mo.data_movimentacao as data_movimentacao_original,
-        mo.tipo_movimentacao as tipo_movimentacao_original,
-        u.nome as responsavel_estorno,
-        uo.nome as responsavel_original
-    FROM
-        movimentacoes_estoque m
-    JOIN
-        movimentacoes_estoque mo ON m.movimentacao_origem_id = mo.id
-    JOIN
-        estoque_itens ei ON m.estoque_item_id = ei.id
-    JOIN
-        tipos_epi te ON ei.tipo_epi_id = te.id
-    JOIN
-        usuarios u ON m.responsavel_id = u.id
-    JOIN
-        usuarios uo ON mo.responsavel_id = uo.id
-    WHERE
-        m.tipo_movimentacao LIKE 'ESTORNO_%'
-    ORDER BY
-        m.data_movimentacao DESC;
-    ```
+  ```sql
+  SELECT
+      m.data_movimentacao,
+      m.tipo_movimentacao,
+      m.quantidade_movida,
+      te.nome_equipamento,
+      mo.data_movimentacao as data_movimentacao_original,
+      mo.tipo_movimentacao as tipo_movimentacao_original,
+      u.nome as responsavel_estorno,
+      uo.nome as responsavel_original
+  FROM
+      movimentacoes_estoque m
+  JOIN
+      movimentacoes_estoque mo ON m.movimentacao_origem_id = mo.id
+  JOIN
+      estoque_itens ei ON m.estoque_item_id = ei.id
+  JOIN
+      tipos_epi te ON ei.tipo_epi_id = te.id
+  JOIN
+      usuarios u ON m.responsavel_id = u.id
+  JOIN
+      usuarios uo ON mo.responsavel_id = uo.id
+  WHERE
+      m.tipo_movimentacao LIKE 'ESTORNO_%'
+  ORDER BY
+      m.data_movimentacao DESC;
+  ```
 
 ## 7. Configurações do Sistema
 
@@ -781,14 +758,12 @@ CREATE INDEX idx_historico_responsavel ON historico_fichas (responsavel_id);
 ### 8.1. Recursos de Notas de Movimentação
 
 - `POST /api/notas-movimentacao`: Cria nota em `'RASCUNHO'` (UC-ESTOQUE-01).
-
-    - **Corpo**: `{ "tipo_nota": "...", "almoxarifado_id": "...", "almoxarifado_destino_id": "..." }`
+  - **Corpo**: `{ "tipo_nota": "...", "almoxarifado_id": "...", "almoxarifado_destino_id": "..." }`
 
 - `PUT /api/notas-movimentacao/{notaId}`: Atualiza dados da nota em rascunho (UC-ESTOQUE-01).
 
 - `POST /api/notas-movimentacao/{notaId}/itens`: Adiciona item à nota em rascunho (UC-ESTOQUE-01).
-
-    - **Corpo**: `{ "estoque_item_id": "...", "quantidade": X }` ou `{ "tipo_epi_id": "...", "quantidade": X, "custo_unitario": Y }`
+  - **Corpo**: `{ "estoque_item_id": "...", "quantidade": X }` ou `{ "tipo_epi_id": "...", "quantidade": X, "custo_unitario": Y }`
 
 - `DELETE /api/notas-movimentacao/{notaId}/itens/{itemId}`: Remove item da nota em rascunho (UC-ESTOQUE-01).
 
@@ -805,80 +780,89 @@ CREATE INDEX idx_historico_responsavel ON historico_fichas (responsavel_id);
 ### 8.2. Recursos de Ajustes Diretos
 
 - `POST /api/estoque/ajustes`: Realiza ajuste direto (UC-ESTOQUE-04).
+  - **Pré-condição**: `PERMITIR_AJUSTES_FORCADOS = true`
 
-    - **Pré-condição**: `PERMITIR_AJUSTES_FORCADOS = true`
-
-    - **Corpo**: `{ "estoque_item_id": "...", "tipo_ajuste": "POSITIVO|NEGATIVO", "quantidade": X, "motivo": "..." }`
+  - **Corpo**: `{ "estoque_item_id": "...", "tipo_ajuste": "POSITIVO|NEGATIVO", "quantidade": X, "motivo": "..." }`
 
 ### 8.3. Recursos de Movimentações
 
 - `POST /api/movimentacoes/{movimentacaoId}/estornar`: Estorna uma movimentação concluída.
+  - **Descrição**: Verifica se a movimentação é estornável (não é um estorno de estorno) e gera o registro de estorno correspondente, preenchendo o campo `movimentacao_origem_id`.
 
-    - **Descrição**: Verifica se a movimentação é estornável (não é um estorno de estorno) e gera o registro de estorno correspondente, preenchendo o campo `movimentacao_origem_id`.
+  - **Validações**:
+    - Movimentação existe e não é um estorno
 
-    - **Validações**:
+    - Movimentação não foi previamente estornada
 
-        - Movimentação existe e não é um estorno
+    - Há saldo suficiente para o estorno (se aplicável)
 
-        - Movimentação não foi previamente estornada
+  - **Respostas Possíveis**:
+    - `200 OK`: Corpo contém o ID da nova movimentação de estorno.
 
-        - Há saldo suficiente para o estorno (se aplicável)
+    - `404 Not Found`: O `movimentacaoId` não existe.
 
-    - **Respostas Possíveis**:
-
-        - `200 OK`: Corpo contém o ID da nova movimentação de estorno.
-
-        - `404 Not Found`: O `movimentacaoId` não existe.
-
-        - `409 Conflict`: A movimentação não é estornável, já foi estornada, ou é um estorno.
+    - `409 Conflict`: A movimentação não é estornável, já foi estornada, ou é um estorno.
 
 ### 8.4. Recursos de Fichas, Entregas e Devoluções
 
 - `POST /api/tipos-epi`: Cria tipo de EPI (UC-FICHA-01).
 
 - `POST /api/fichas-epi`: Cria ficha de EPI (UC-FICHA-02).
+  - **Corpo**: `{ "colaborador_id": "..." }`
 
-    - **Corpo**: `{ "colaborador_id": "..." }`
+  - **Sucesso (201)**: Retorna a ficha criada.
 
-    - **Sucesso (201)**: Retorna a ficha criada.
-
-    - **Erro (409)**: `{"message": "Ficha já existe.", "ficha_id": "..."}`
+  - **Erro (409)**: `{"message": "Ficha já existe.", "ficha_id": "..."}`
 
 - `GET /api/fichas-epi/{fichaId}/historico`: Histórico da ficha (UC-QUERY-01).
 
 - `POST /api/fichas-epi/{fichaId}/entregas`: Registra entrega (UC-FICHA-03).
+  - **Corpo**:
 
-    - **Corpo**:
+    ```json
+    {    "almoxarifado_id": "...",    "itens": [        {            "estoque_item_id": "...",            "quantidade": 2, // O sistema criará 2 registros unitários em 'entrega_itens'            "data_limite_devolucao": "2025-12-31"        }    ]}
+    ```
 
-        ```json
-        {    "almoxarifado_id": "...",    "itens": [        {            "estoque_item_id": "...",            "quantidade": 2, // O sistema criará 2 registros unitários em 'entrega_itens'            "data_limite_devolucao": "2025-12-31"        }    ]}
-        ```
-
-    - **Comportamento**: A API valida a `quantidade` e cria múltiplos registros unitários em `entrega_itens` conforme descrito na regra de negócio (Seção 5.2).
+  - **Comportamento**: A API valida a `quantidade` e cria múltiplos registros unitários em `entrega_itens` conforme descrito na regra de negócio (Seção 5.2).
 
 - `POST /api/entregas/{entregaId}/cancelar`: Cancela entrega (UC-FICHA-05).
 
 - `POST /api/devolucoes`: Processa devolução (UC-FICHA-04).
+  - **Corpo**:
 
-    - **Corpo**:
+    ```json
+    {     "entrega_item_ids": ["item_001", "item_002", ...]}
+    ```
 
-        ```json
-        {     "entrega_item_ids": ["item_001", "item_002", ...]}
-        ```
-
-    - **Resposta**: Retorna os IDs das movimentações `ENTRADA_DEVOLUCAO` criadas (agrupadas por tipo/almoxarifado).
+  - **Resposta**: Retorna os IDs das movimentações `ENTRADA_DEVOLUCAO` criadas (agrupadas por tipo/almoxarifado).
 
 - `GET /api/entregas/{entregaId}/itens`: Lista todos os itens unitários de uma entrega.
+  - **Resposta**:
 
-    - **Resposta**:
-
-        ```json
-        {    "entrega_id": "...",    "itens": [        {            "id": "item_001",            "tipo_epi": "Luva de Proteção",            "status": "COM_COLABORADOR",            "data_limite_devolucao": "2025-12-31",            "devolucao_atrasada": false        },        {            "id": "item_002",            "tipo_epi": "Luva de Proteção",            "status": "DEVOLVIDO",            "data_limite_devolucao": "2025-12-31",            "devolucao_atrasada": false        }    ]}
-        ```
+    ```json
+    {
+      "entrega_id": "...",
+      "itens": [
+        {
+          "id": "item_001",
+          "tipo_epi": "Luva de Proteção",
+          "status": "COM_COLABORADOR",
+          "data_limite_devolucao": "2025-12-31",
+          "devolucao_atrasada": false
+        },
+        {
+          "id": "item_002",
+          "tipo_epi": "Luva de Proteção",
+          "status": "DEVOLVIDO",
+          "data_limite_devolucao": "2025-12-31",
+          "devolucao_atrasada": false
+        }
+      ]
+    }
+    ```
 
 - `PUT /api/entregas/{entregaId}/assinar`: Atualiza status da entrega para 'ASSINADA'.
-
-    - **Corpo**: `{ "data_assinatura": "2025-06-28T10:00:00Z", "link_assinatura": "https://..." }`
+  - **Corpo**: `{ "data_assinatura": "2025-06-28T10:00:00Z", "link_assinatura": "https://..." }`
 
 ### 8.5. Recursos de Relatórios
 
@@ -903,8 +887,7 @@ CREATE INDEX idx_historico_responsavel ON historico_fichas (responsavel_id);
 - `GET /api/usuarios/{usuarioId}`: Detalhes de um usuário.
 
 - `POST /api/usuarios`: Cria novo usuário.
-
-    - **Corpo**: `{ "nome": "...", "email": "..." }`
+  - **Corpo**: `{ "nome": "...", "email": "..." }`
 
 ## 9. Anexo A: Fluxos Operacionais Comuns
 
@@ -929,10 +912,9 @@ CREATE INDEX idx_historico_responsavel ON historico_fichas (responsavel_id);
 2. **Adicionar Itens**: Adicionar `estoque_item_id` do almoxarifado de origem
 
 3. **Concluir**: Sistema cria automaticamente:
+   - `SAIDA_TRANSFERENCIA` no almoxarifado origem
 
-    - `SAIDA_TRANSFERENCIA` no almoxarifado origem
-
-    - `ENTRADA_TRANSFERENCIA` no almoxarifado destino (status='DISPONIVEL')
+   - `ENTRADA_TRANSFERENCIA` no almoxarifado destino (status='DISPONIVEL')
 
 ### 9.3. Como Ajustar Estoque Rapidamente
 
@@ -954,31 +936,30 @@ CREATE INDEX idx_historico_responsavel ON historico_fichas (responsavel_id);
 
 1. `POST /api/fichas-epi/{fichaId}/entregas`:
 
-    ```json
-    {
-        "almoxarifado_id": "ALM-001",
-        "itens": [
-            {
-                "estoque_item_id": "EST-LUVA-001",
-                "quantidade": 2,
-                "data_limite_devolucao": "2025-12-31"
-            },
-            {
-                "estoque_item_id": "EST-CAP-001",
-                "quantidade": 1,
-                "data_limite_devolucao": "2026-01-15"
-            }
-        ]
-    }
-    ```
+   ```json
+   {
+     "almoxarifado_id": "ALM-001",
+     "itens": [
+       {
+         "estoque_item_id": "EST-LUVA-001",
+         "quantidade": 2,
+         "data_limite_devolucao": "2025-12-31"
+       },
+       {
+         "estoque_item_id": "EST-CAP-001",
+         "quantidade": 1,
+         "data_limite_devolucao": "2026-01-15"
+       }
+     ]
+   }
+   ```
 
 2. **Sistema cria automaticamente**:
+   - 1 registro em `entregas`
 
-    - 1 registro em `entregas`
+   - 3 registros em `entrega_itens` (2 luvas + 1 capacete)
 
-    - 3 registros em `entrega_itens` (2 luvas + 1 capacete)
-
-    - 2 movimentações em `movimentacoes_estoque` (1 por tipo de EPI)
+   - 2 movimentações em `movimentacoes_estoque` (1 por tipo de EPI)
 
 ### 9.5. Como Devolver Parcialmente
 
@@ -990,19 +971,18 @@ CREATE INDEX idx_historico_responsavel ON historico_fichas (responsavel_id);
 
 2. `POST /api/devolucoes`:
 
-    ```json
-    {
-        "entrega_item_ids": ["item_luva_001"]
-    }
-    ```
+   ```json
+   {
+     "entrega_item_ids": ["item_luva_001"]
+   }
+   ```
 
 3. **Resultado**:
+   - `item_luva_001`: status = 'DEVOLVIDO'
 
-    - `item_luva_001`: status = 'DEVOLVIDO'
+   - `item_luva_002`: status = 'COM_COLABORADOR' (permanece)
 
-    - `item_luva_002`: status = 'COM_COLABORADOR' (permanece)
-
-    - 1 movimentação `ENTRADA_DEVOLUCAO` com quantidade 1
+   - 1 movimentação `ENTRADA_DEVOLUCAO` com quantidade 1
 
 ### 9.6. Como Coletar Assinatura de Entrega
 
@@ -1012,12 +992,12 @@ CREATE INDEX idx_historico_responsavel ON historico_fichas (responsavel_id);
 
 2. `PUT /api/entregas/{entregaId}/assinar`:
 
-    ```json
-    {
-        "data_assinatura": "2025-06-28T10:00:00Z",
-        "link_assinatura": "https://documento-assinado.com/123"
-    }
-    ```
+   ```json
+   {
+     "data_assinatura": "2025-06-28T10:00:00Z",
+     "link_assinatura": "https://documento-assinado.com/123"
+   }
+   ```
 
 3. **Resultado**: Status alterado para `'ASSINADA'`, habilitando devoluções futuras
 
@@ -1028,20 +1008,18 @@ CREATE INDEX idx_historico_responsavel ON historico_fichas (responsavel_id);
 1. `POST /api/movimentacoes/{movimentacaoId}/estornar`
 
 2. **Sistema verifica**:
+   - Se a movimentação não é já um estorno (impede estorno de estorno)
 
-    - Se a movimentação não é já um estorno (impede estorno de estorno)
+   - Se é estornável (regras de negócio específicas)
 
-    - Se é estornável (regras de negócio específicas)
-
-    - Se não foi previamente estornada
+   - Se não foi previamente estornada
 
 3. **Resultado**:
+   - Nova movimentação de estorno criada
 
-    - Nova movimentação de estorno criada
+   - Campo `movimentacao_origem_id` preenchido
 
-    - Campo `movimentacao_origem_id` preenchido
-
-    - Saldos ajustados em transação atômica
+   - Saldos ajustados em transação atômica
 
 ### 9.8. Como Identificar Devoluções Atrasadas
 
@@ -1052,10 +1030,10 @@ CREATE INDEX idx_historico_responsavel ON historico_fichas (responsavel_id);
 **Método 2: Via Query Manual**
 
 ```sql
-SELECT ei.*, 
+SELECT ei.*,
        CASE WHEN ei.data_limite_devolucao < CURRENT_DATE THEN true ELSE false END as atrasada
-FROM entrega_itens ei 
-WHERE ei.status = 'COM_COLABORADOR' 
+FROM entrega_itens ei
+WHERE ei.status = 'COM_COLABORADOR'
   AND ei.data_limite_devolucao IS NOT NULL;
 ```
 
@@ -1064,36 +1042,31 @@ WHERE ei.status = 'COM_COLABORADOR'
 **Cenário**: Comprar luvas, entregar a colaborador, receber devolução, descartar
 
 1. **Compra**:
+   - Criar nota `ENTRADA`
 
-    - Criar nota `ENTRADA`
+   - Adicionar 10 luvas
 
-    - Adicionar 10 luvas
-
-    - Concluir nota → `ENTRADA_NOTA`
+   - Concluir nota → `ENTRADA_NOTA`
 
 2. **Entrega**:
+   - `POST /api/fichas-epi/{fichaId}/entregas` com 2 luvas
 
-    - `POST /api/fichas-epi/{fichaId}/entregas` com 2 luvas
-
-    - Sistema cria 2 registros unitários → `SAIDA_ENTREGA`
+   - Sistema cria 2 registros unitários → `SAIDA_ENTREGA`
 
 3. **Assinatura**:
-
-    - `PUT /api/entregas/{entregaId}/assinar`
+   - `PUT /api/entregas/{entregaId}/assinar`
 
 4. **Devolução Parcial**:
+   - `POST /api/devolucoes` com 1 luva
 
-    - `POST /api/devolucoes` com 1 luva
-
-    - Status: AGUARDANDO_INSPECAO → `ENTRADA_DEVOLUCAO`
+   - Status: AGUARDANDO_INSPECAO → `ENTRADA_DEVOLUCAO`
 
 5. **Descarte da Luva Devolvida**:
+   - Criar nota `DESCARTE`
 
-    - Criar nota `DESCARTE`
+   - Adicionar a luva do estoque em inspeção
 
-    - Adicionar a luva do estoque em inspeção
-
-    - Concluir → `SAIDA_DESCARTE`
+   - Concluir → `SAIDA_DESCARTE`
 
 **Resultado Final**:
 
@@ -1105,16 +1078,7 @@ WHERE ei.status = 'COM_COLABORADOR'
 
 - Histórico completo rastreável
 
-
-
-
-
-
-
-
 # Stack tecnologócia
-
-
 
 Analisando o `package.json` e considerando as necessidades específicas do **Módulo de EPI**, aqui estão as dependências **essenciais** que precisaremos:
 
@@ -1123,17 +1087,17 @@ Analisando o `package.json` e considerando as necessidades específicas do **Mó
 ```json
 {
   "dependencies": {
-    "@nestjs/common": "^10.0.0",        // Framework base - Controllers, Services, Guards
-    "@nestjs/core": "^10.0.0",          // Core do NestJS - DI, Modules  
+    "@nestjs/common": "^10.0.0", // Framework base - Controllers, Services, Guards
+    "@nestjs/core": "^10.0.0", // Core do NestJS - DI, Modules
     "@nestjs/platform-express": "^10.0.0", // HTTP platform
-    "@nestjs/config": "^3.2.3",         // Para configurações (PERMITIR_ESTOQUE_NEGATIVO, etc.)
-    "@nestjs/swagger": "^8.1.0",        // Documentação automática da API
-    "@prisma/client": "^5.15.1",        // ORM para PostgreSQL
-    "reflect-metadata": "^0.2.0",       // Decorators e metadata
-    "rxjs": "^7.8.1",                   // Programação reativa do NestJS
-    "swagger-ui-express": "^5.0.1",     // Interface do Swagger
-    "zod": "^3.23.8",                   // Validação robusta de dados
-    "zod-validation-error": "^3.3.0"    // Formatação de erros de validação
+    "@nestjs/config": "^3.2.3", // Para configurações (PERMITIR_ESTOQUE_NEGATIVO, etc.)
+    "@nestjs/swagger": "^8.1.0", // Documentação automática da API
+    "@prisma/client": "^5.15.1", // ORM para PostgreSQL
+    "reflect-metadata": "^0.2.0", // Decorators e metadata
+    "rxjs": "^7.8.1", // Programação reativa do NestJS
+    "swagger-ui-express": "^5.0.1", // Interface do Swagger
+    "zod": "^3.23.8", // Validação robusta de dados
+    "zod-validation-error": "^3.3.0" // Formatação de erros de validação
   }
 }
 ```
@@ -1143,17 +1107,17 @@ Analisando o `package.json` e considerando as necessidades específicas do **Mó
 ```json
 {
   "devDependencies": {
-    "@nestjs/cli": "^10.0.0",           // CLI para comandos do NestJS
-    "@nestjs/testing": "^10.0.0",       // Framework de testes
-    "@types/express": "^4.17.17",       // Types do Express
-    "@types/node": "^20.3.1",           // Types do Node.js
-    "typescript": "^5.1.3",             // Linguagem TypeScript
-    "prisma": "^5.15.1",                // CLI do Prisma (migrations, schema)
-    "dotenv": "^16.4.5",                // Variáveis de ambiente
-    "eslint": "^8.42.0",                // Linting
-    "prettier": "^3.0.0",               // Formatação de código
-    "vitest": "^1.6.0",                 // Framework de testes rápido
-    "@vitest/coverage-v8": "^1.6.0"     // Coverage de testes
+    "@nestjs/cli": "^10.0.0", // CLI para comandos do NestJS
+    "@nestjs/testing": "^10.0.0", // Framework de testes
+    "@types/express": "^4.17.17", // Types do Express
+    "@types/node": "^20.3.1", // Types do Node.js
+    "typescript": "^5.1.3", // Linguagem TypeScript
+    "prisma": "^5.15.1", // CLI do Prisma (migrations, schema)
+    "dotenv": "^16.4.5", // Variáveis de ambiente
+    "eslint": "^8.42.0", // Linting
+    "prettier": "^3.0.0", // Formatação de código
+    "vitest": "^1.6.0", // Framework de testes rápido
+    "@vitest/coverage-v8": "^1.6.0" // Coverage de testes
   }
 }
 ```
@@ -1199,4 +1163,3 @@ Analisando o `package.json` e considerando as necessidades específicas do **Mó
 - Gerencia configurações como `PERMITIR_ESTOQUE_NEGATIVO`
 
 - Diferentes ambientes (dev, prod, qa)
-

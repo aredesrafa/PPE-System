@@ -1,17 +1,17 @@
 /**
  * Inventory Query Adapter
- * 
+ *
  * Adapter especializado para consultas (queries) de inventário.
  * Segue o padrão CQRS separando queries dos commands.
  */
 
-import { api, createUrlWithParams } from '../core/apiClient';
-import type { 
+import { api, createUrlWithParams } from "../core/apiClient";
+import type {
   InventoryItemDTO,
   PaginatedResponse,
   MovementHistoryDTO,
-  ConsolidatedStockDTO
-} from '$lib/types/serviceTypes';
+  ConsolidatedStockDTO,
+} from "$lib/types/serviceTypes";
 
 export class InventoryQueryAdapter {
   private api = api;
@@ -26,7 +26,7 @@ export class InventoryQueryAdapter {
     tipoEpiId?: string;
     status?: string;
   }): Promise<PaginatedResponse<InventoryItemDTO>> {
-    const url = createUrlWithParams('/estoque/itens', params || {});
+    const url = createUrlWithParams("/estoque/itens", params || {});
     return this.api.get<PaginatedResponse<InventoryItemDTO>>(url);
   }
 
@@ -49,7 +49,7 @@ export class InventoryQueryAdapter {
     page?: number;
     limit?: number;
   }): Promise<PaginatedResponse<MovementHistoryDTO>> {
-    const url = createUrlWithParams('/estoque/movimentacoes', params || {});
+    const url = createUrlWithParams("/estoque/movimentacoes", params || {});
     return this.api.get<PaginatedResponse<MovementHistoryDTO>>(url);
   }
 
@@ -60,7 +60,7 @@ export class InventoryQueryAdapter {
     almoxarifadoId?: string;
     tipoEpiId?: string;
   }): Promise<ConsolidatedStockDTO[]> {
-    const url = createUrlWithParams('/estoque/consolidado', params || {});
+    const url = createUrlWithParams("/estoque/consolidado", params || {});
     return this.api.get<ConsolidatedStockDTO[]>(url);
   }
 
@@ -71,7 +71,7 @@ export class InventoryQueryAdapter {
     threshold?: number;
     almoxarifadoId?: string;
   }): Promise<InventoryItemDTO[]> {
-    const url = createUrlWithParams('/estoque/baixo', params || {});
+    const url = createUrlWithParams("/estoque/baixo", params || {});
     return this.api.get<InventoryItemDTO[]>(url);
   }
 
@@ -82,7 +82,7 @@ export class InventoryQueryAdapter {
     diasAntecedencia?: number;
     almoxarifadoId?: string;
   }): Promise<InventoryItemDTO[]> {
-    const url = createUrlWithParams('/estoque/vencendo', params || {});
+    const url = createUrlWithParams("/estoque/vencendo", params || {});
     return this.api.get<InventoryItemDTO[]>(url);
   }
 
@@ -91,7 +91,7 @@ export class InventoryQueryAdapter {
    */
   clearCache(): void {
     // Implementar quando houver cache
-    console.log('🗑️ Cache do InventoryQueryAdapter limpo');
+    console.log("🗑️ Cache do InventoryQueryAdapter limpo");
   }
 }
 

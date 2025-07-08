@@ -1,11 +1,14 @@
 /**
  * Helpers para Notas de Movimentação - UI e Labels
- * 
+ *
  * Funções utilitárias para exibição e formatação de notas
  * de movimentação na interface do usuário
  */
 
-import type { TipoNotaEnum, StatusNotaEnum } from '$lib/services/process/notasMovimentacaoTypes';
+import type {
+  TipoNotaEnum,
+  StatusNotaEnum,
+} from "$lib/services/process/notasMovimentacaoTypes";
 
 // ==================== LABELS E TEXTOS ====================
 
@@ -14,11 +17,11 @@ import type { TipoNotaEnum, StatusNotaEnum } from '$lib/services/process/notasMo
  */
 export function getTipoNotaLabel(tipo: TipoNotaEnum): string {
   const labels: Record<TipoNotaEnum, string> = {
-    'ENTRADA': 'Entrada',
-    'TRANSFERENCIA': 'Transferência',
-    'DESCARTE': 'Descarte',
-    'ENTRADA_AJUSTE': 'Entrada (Ajuste)',
-    'SAIDA_AJUSTE': 'Saída (Ajuste)'
+    ENTRADA: "Entrada",
+    TRANSFERENCIA: "Transferência",
+    DESCARTE: "Descarte",
+    ENTRADA_AJUSTE: "Entrada (Ajuste)",
+    SAIDA_AJUSTE: "Saída (Ajuste)",
   };
   return labels[tipo] || tipo;
 }
@@ -28,9 +31,9 @@ export function getTipoNotaLabel(tipo: TipoNotaEnum): string {
  */
 export function getStatusNotaLabel(status: StatusNotaEnum): string {
   const labels: Record<StatusNotaEnum, string> = {
-    'RASCUNHO': 'Rascunho',
-    'CONCLUIDA': 'Concluída',
-    'CANCELADA': 'Cancelada'
+    RASCUNHO: "Rascunho",
+    CONCLUIDA: "Concluída",
+    CANCELADA: "Cancelada",
   };
   return labels[status] || status;
 }
@@ -40,27 +43,56 @@ export function getStatusNotaLabel(status: StatusNotaEnum): string {
 /**
  * Obtém cor do badge para tipo de nota (Flowbite colors)
  */
-export function getTipoNotaBadgeColor(tipo: TipoNotaEnum): 'green' | 'blue' | 'red' | 'yellow' | 'dark' | 'gray' {
-  const colors: Record<TipoNotaEnum, 'green' | 'blue' | 'red' | 'yellow' | 'dark' | 'gray'> = {
-    'ENTRADA': 'green',
-    'TRANSFERENCIA': 'blue', 
-    'DESCARTE': 'red',
-    'ENTRADA_AJUSTE': 'yellow',
-    'SAIDA_AJUSTE': 'dark'
+export function getTipoNotaBadgeColor(
+  tipo: TipoNotaEnum,
+): "green" | "blue" | "red" | "yellow" | "dark" | "gray" {
+  const colors: Record<
+    TipoNotaEnum,
+    "green" | "blue" | "red" | "yellow" | "dark" | "gray"
+  > = {
+    ENTRADA: "green",
+    TRANSFERENCIA: "blue",
+    DESCARTE: "red",
+    ENTRADA_AJUSTE: "yellow",
+    SAIDA_AJUSTE: "dark",
   };
-  return colors[tipo] || 'gray';
+  return colors[tipo] || "gray";
 }
 
 /**
  * Obtém cor do badge para status da nota (Flowbite colors)
  */
-export function getStatusNotaBadgeColor(status: StatusNotaEnum): 'green' | 'red' | 'yellow' | 'primary' | 'blue' | 'dark' | 'purple' | 'indigo' | 'pink' | 'none' {
-  const colors: Record<StatusNotaEnum, 'green' | 'red' | 'yellow' | 'primary' | 'blue' | 'dark' | 'purple' | 'indigo' | 'pink' | 'none'> = {
-    'RASCUNHO': 'yellow',
-    'CONCLUIDA': 'green',
-    'CANCELADA': 'red'
+export function getStatusNotaBadgeColor(
+  status: StatusNotaEnum,
+):
+  | "green"
+  | "red"
+  | "yellow"
+  | "primary"
+  | "blue"
+  | "dark"
+  | "purple"
+  | "indigo"
+  | "pink"
+  | "none" {
+  const colors: Record<
+    StatusNotaEnum,
+    | "green"
+    | "red"
+    | "yellow"
+    | "primary"
+    | "blue"
+    | "dark"
+    | "purple"
+    | "indigo"
+    | "pink"
+    | "none"
+  > = {
+    RASCUNHO: "yellow",
+    CONCLUIDA: "green",
+    CANCELADA: "red",
   };
-  return colors[status] || 'dark';
+  return colors[status] || "dark";
 }
 
 // ==================== VALIDAÇÕES DE NEGÓCIO ====================
@@ -69,28 +101,28 @@ export function getStatusNotaBadgeColor(status: StatusNotaEnum): 'green' | 'red'
  * Verifica se uma nota pode ser editada
  */
 export function notaPodeSerEditada(status: StatusNotaEnum): boolean {
-  return status === 'RASCUNHO';
+  return status === "RASCUNHO";
 }
 
 /**
  * Verifica se uma nota pode ser excluída
  */
 export function notaPodeSerExcluida(status: StatusNotaEnum): boolean {
-  return status === 'RASCUNHO';
+  return status === "RASCUNHO";
 }
 
 /**
  * Verifica se uma nota pode ser concluída
  */
 export function notaPodeSerConcluida(status: StatusNotaEnum): boolean {
-  return status === 'RASCUNHO';
+  return status === "RASCUNHO";
 }
 
 /**
  * Verifica se uma nota pode ser cancelada
  */
 export function notaPodeSerCancelada(status: StatusNotaEnum): boolean {
-  return status === 'RASCUNHO' || status === 'CONCLUIDA';
+  return status === "RASCUNHO" || status === "CONCLUIDA";
 }
 
 // ==================== FORMATAÇÃO ====================
@@ -99,8 +131,8 @@ export function notaPodeSerCancelada(status: StatusNotaEnum): boolean {
  * Formata número da nota para exibição
  */
 export function formatarNumeroNota(numero: string): string {
-  if (!numero) return 'N/A';
-  
+  if (!numero) return "N/A";
+
   // Exemplo: ENT-2025-000001 → ENT-2025-000001 (mantém como está)
   return numero.toUpperCase();
 }
@@ -109,13 +141,13 @@ export function formatarNumeroNota(numero: string): string {
  * Formata data da nota para exibição brasileira
  */
 export function formatarDataNota(data: string): string {
-  if (!data) return 'N/A';
-  
+  if (!data) return "N/A";
+
   try {
     const date = new Date(data);
-    return date.toLocaleDateString('pt-BR');
+    return date.toLocaleDateString("pt-BR");
   } catch {
-    return 'Data inválida';
+    return "Data inválida";
   }
 }
 
@@ -123,11 +155,11 @@ export function formatarDataNota(data: string): string {
  * Formata valor monetário brasileiro
  */
 export function formatarValorMonetario(valor: number): string {
-  if (valor == null || isNaN(valor)) return 'R$ 0,00';
-  
-  return new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL'
+  if (valor == null || isNaN(valor)) return "R$ 0,00";
+
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
   }).format(valor);
 }
 
@@ -136,20 +168,25 @@ export function formatarValorMonetario(valor: number): string {
 /**
  * Calcula resumo de uma nota
  */
-export function calcularResumoNota(nota: { itens?: Array<{ quantidade: number; custo_unitario?: number }> }) {
+export function calcularResumoNota(nota: {
+  itens?: Array<{ quantidade: number; custo_unitario?: number }>;
+}) {
   const itens = nota.itens || [];
-  
+
   const totalItens = itens.reduce((acc, item) => acc + item.quantidade, 0);
   const valorTotal = itens.reduce((acc, item) => {
-    const custo = (item.custo_unitario != null && typeof item.custo_unitario === 'number' && !isNaN(item.custo_unitario)) 
-      ? item.custo_unitario 
-      : 0;
-    return acc + (custo * item.quantidade);
+    const custo =
+      item.custo_unitario != null &&
+      typeof item.custo_unitario === "number" &&
+      !isNaN(item.custo_unitario)
+        ? item.custo_unitario
+        : 0;
+    return acc + custo * item.quantidade;
   }, 0);
-  
+
   return {
     totalItens,
     valorTotal,
-    mediaValorUnitario: totalItens > 0 ? valorTotal / totalItens : 0
+    mediaValorUnitario: totalItens > 0 ? valorTotal / totalItens : 0,
   };
 }

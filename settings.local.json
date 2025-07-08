@@ -2,20 +2,20 @@
   "permissions": {
     "allow": [
       "*",
-      
+
       // === COMANDOS GIT COMPLETOS ===
       "Bash(git add:*)",
       "Bash(git init:*)",
       "Bash(git commit:*)",
       "Bash(git checkout:*)",
-      "Bash(git branch:*)", 
+      "Bash(git branch:*)",
       "Bash(git status:*)",
       "Bash(git log:*)",
       "Bash(git diff:*)",
       "Bash(git merge:*)",
       "Bash(git reset:*)",
       "Bash(git stash:*)",
-      
+
       // === PACKAGE MANAGEMENT COMPLETO ===
       "Bash(npm install:*)",
       "Bash(npm update:*)",
@@ -28,7 +28,7 @@
       "Bash(npm run format:*)",
       "Bash(npm run lint:*)",
       "Bash(npx:*)",
-      
+
       // === FILE OPERATIONS COMPLETAS ===
       "Bash(rm:*)",
       "Bash(rmdir:*)",
@@ -43,7 +43,7 @@
       "Bash(basename:*)",
       "Bash(dirname:*)",
       "Bash(realpath:*)",
-      
+
       // === ANÁLISE E BUSCA ===
       "Bash(find:*)",
       "Bash(grep:*)",
@@ -55,7 +55,7 @@
       "Bash(less:*)",
       "Bash(cat:*)",
       "Bash(tree:*)",
-      
+
       // === PROCESS MANAGEMENT ===
       "Bash(ps:*)",
       "Bash(kill:*)",
@@ -63,7 +63,7 @@
       "Bash(pkill:*)",
       "Bash(timeout:*)",
       "Bash(timeout 30s npm run build:*)",
-      
+
       // === NETWORK E TESTING ===
       "Bash(curl:*)",
       "Bash(ping:*)",
@@ -71,25 +71,25 @@
       "Bash(nc:*)",
       "WebFetch(domain:epi-backend-s14g.onrender.com)",
       "WebFetch(domain:flowbite-svelte-icons.codewithshin.com)",
-      
+
       // === BUILD TOOLS ===
       "Bash(node:*)",
       "Bash(tsc:*)",
       "Bash(npx openapi-typescript:*)",
       "Bash(node_modules/.bin/*)",
-      
+
       // === BACKUP E SAFETY ===
       "Bash(tar:*)",
       "Bash(zip:*)",
       "Bash(unzip:*)",
-      
+
       // === UTILITIES ===
       "Bash(true)",
       "Bash(which:*)",
       "Bash(du:*)",
       "Bash(ls:*)",
       "Bash(xargs:*)",
-      
+
       // === MCP SERVICES ===
       "mcp__figma__get_figma_data",
       "mcp__deep-code-reasoning__escalate_analysis",

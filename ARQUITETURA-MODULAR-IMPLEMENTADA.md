@@ -48,7 +48,7 @@ src/lib/components/
 ├── containers/
 │   └── InventoryContainer.svelte     # ✅ Componente "inteligente"
 └── presenters/
-    ├── InventoryTablePresenter.svelte # ✅ Componente "burro" 
+    ├── InventoryTablePresenter.svelte # ✅ Componente "burro"
     └── MovementModalPresenter.svelte  # ✅ Modal de movimentação
 ```
 
@@ -65,12 +65,14 @@ src/routes/
 ### **1. Container/Presenter Pattern**
 
 **Container (Inteligente):**
+
 - Gerencia estado global com stores reativos
 - Integra com service adapters especializados
 - Processa eventos e validações
 - Não renderiza HTML diretamente
 
 **Presenter (Burro):**
+
 - Recebe dados via props
 - Renderiza UI usando Flowbite Svelte
 - Emite eventos para o Container
@@ -88,31 +90,35 @@ src/routes/
 ### **3. Event Sourcing Ready**
 
 **Commands Implementados:**
+
 ```typescript
 // Ajuste de estoque
 await inventoryCommandAdapter.registrarAjusteContagem({
-  itemEstoqueId: 'item-123',
+  itemEstoqueId: "item-123",
   quantidadeAnterior: 10,
   novaQuantidade: 15,
-  motivo: 'Contagem física'
+  motivo: "Contagem física",
 });
 
-// Transferência entre almoxarifados  
+// Transferência entre almoxarifados
 await inventoryCommandAdapter.registerTransfer({
-  itemId: 'item-123',
-  almoxarifadoDestinoId: 'alm-456',
+  itemId: "item-123",
+  almoxarifadoDestinoId: "alm-456",
   quantidade: 5,
-  motivo: 'Redistribuição'
+  motivo: "Redistribuição",
 });
 ```
 
 ### **4. Configurações Dinâmicas**
 
 **Backend Integration Ready:**
+
 ```typescript
 // Carrega ENUMs dinamicamente do backend
-const tiposMovimentacao = await configurationService.getConfigByCategory('tiposMovimentacao');
-const statusEstoque = await configurationService.getConfigByCategory('statusEstoque');
+const tiposMovimentacao =
+  await configurationService.getConfigByCategory("tiposMovimentacao");
+const statusEstoque =
+  await configurationService.getConfigByCategory("statusEstoque");
 ```
 
 ## 🚀 Como Usar a Nova Arquitetura
@@ -150,7 +156,7 @@ const statusEstoque = await configurationService.getConfigByCategory('statusEsto
 </script>
 
 <!-- Delegar renderização para Presenter -->
-<MyPresenter 
+<MyPresenter
   {...presenterState}
   on:save={handleSave}
 />
@@ -209,32 +215,36 @@ Para conectar ao backend real, basta:
 
 ```typescript
 // apiClient.ts - Trocar apenas isto
-const API_BASE_URL = 'http://localhost:3000/api'; // Mock
+const API_BASE_URL = "http://localhost:3000/api"; // Mock
 // Para:
-const API_BASE_URL = 'https://api.datalife-epi.com'; // Real
+const API_BASE_URL = "https://api.datalife-epi.com"; // Real
 ```
 
 ## 📊 Vantagens da Nova Arquitetura
 
 ### **🎯 Separação de Responsabilidades**
+
 - **Containers**: Estado, lógica, integração
-- **Presenters**: UI, eventos, acessibilidade  
+- **Presenters**: UI, eventos, acessibilidade
 - **Service Adapters**: Comunicação com backend
 - **Stores**: Estado global reativo
 
 ### **⚡ Performance Otimizada**
+
 - **Server-side Pagination**: Carrega apenas dados necessários
 - **Cache Inteligente**: Stores com TTL configurável
 - **Debounce**: Reduz chamadas desnecessárias
 - **Lazy Loading**: Componentes carregados sob demanda
 
 ### **🔧 Manutenibilidade**
+
 - **Testabilidade**: Cada adapter é isolado e testável
 - **Escalabilidade**: Fácil adicionar novos domínios
 - **Reusabilidade**: Presenters reutilizáveis
 - **Type Safety**: TypeScript em toda stack
 
 ### **🚀 Backend Integration Ready**
+
 - **Event Sourcing**: Commands já estruturados
 - **CQRS Pattern**: Queries e Commands separados
 - **Dynamic Configuration**: ENUMs carregados do backend
@@ -256,15 +266,16 @@ npm run dev
 A implementação inclui logs detalhados:
 
 ```javascript
-console.log('🚀 InventoryContainer: Inicializando...');
-console.log('📦 Dados de inventário carregados');  
-console.log('💾 Salvando movimentação:', data);
-console.log('✅ Movimentação registrada:', result.id);
+console.log("🚀 InventoryContainer: Inicializando...");
+console.log("📦 Dados de inventário carregados");
+console.log("💾 Salvando movimentação:", data);
+console.log("✅ Movimentação registrada:", result.id);
 ```
 
 ### **3. DevTools**
 
 Use as Svelte DevTools para inspecionar:
+
 - **Stores**: Estado dos dados paginados
 - **Events**: Fluxo Container → Presenter
 - **Components**: Hierarquia de componentes
@@ -288,7 +299,7 @@ Use as Svelte DevTools para inspecionar:
 
 ## 🎉 Conclusão
 
-A **arquitetura modular** está **100% implementada** e **pronta para receber o backend PostgreSQL**. 
+A **arquitetura modular** está **100% implementada** e **pronta para receber o backend PostgreSQL**.
 
 **Key Benefits:**
 
@@ -297,7 +308,7 @@ A **arquitetura modular** está **100% implementada** e **pronta para receber o 
 ✅ **Componentização**: Pattern Container/Presenter  
 ✅ **Performance**: Stores otimizados e paginação server-side  
 ✅ **Type Safety**: TypeScript end-to-end  
-✅ **Future-proof**: Event Sourcing e CQRS ready  
+✅ **Future-proof**: Event Sourcing e CQRS ready
 
 **Resultado:** Um frontend Svelte **moderno, escalável e preparado** para integração backend sem necessidade de refatoração! 🚀
 

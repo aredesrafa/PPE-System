@@ -3,6 +3,7 @@
 ## ⚠️ **Problema Identificado**
 
 **Erro**: Import inválido do ícone `ClipboardDocumentListOutline`
+
 ```
 SyntaxError: The requested module '/node_modules/.vite/deps/flowbite-svelte-icons.js?v=3f47c0d5' does not provide an export named 'ClipboardDocumentListOutline'
 ```
@@ -12,8 +13,9 @@ SyntaxError: The requested module '/node_modules/.vite/deps/flowbite-svelte-icon
 O ícone `ClipboardDocumentListOutline` **não existe** na biblioteca `flowbite-svelte-icons v1.6.2`.
 
 **Ícones disponíveis relacionados a clipboard:**
+
 - `ClipboardCheckOutline` ✅
-- `ClipboardCleanOutline` ✅  
+- `ClipboardCleanOutline` ✅
 - `ClipboardListOutline` ✅
 - `ClipboardOutline` ✅
 
@@ -22,15 +24,17 @@ O ícone `ClipboardDocumentListOutline` **não existe** na biblioteca `flowbite-
 ### **Arquivo**: `src/lib/components/fichas/FichaDetailDrawer.svelte`
 
 **Substituição do import:**
+
 ```typescript
 // ❌ ANTES - Icon inexistente
-import { ClipboardDocumentListOutline } from 'flowbite-svelte-icons';
+import { ClipboardDocumentListOutline } from "flowbite-svelte-icons";
 
 // ✅ DEPOIS - Icon válido
-import { ClipboardListOutline } from 'flowbite-svelte-icons';
+import { ClipboardListOutline } from "flowbite-svelte-icons";
 ```
 
 **Substituição no uso:**
+
 ```svelte
 <!-- ❌ ANTES -->
 <ClipboardDocumentListOutline class="w-6 h-6 text-primary-600 dark:text-primary-400" />
@@ -42,11 +46,13 @@ import { ClipboardListOutline } from 'flowbite-svelte-icons';
 ## 🧪 **Resultado**
 
 ### **Antes da Correção**
+
 - ❌ Erro de import durante HMR
 - ❌ Drawer não carregava
 - ❌ Console com erro de módulo
 
-### **Depois da Correção**  
+### **Depois da Correção**
+
 - ✅ Servidor inicia normalmente (porta 5176)
 - ✅ Sem erros de import relacionados ao ícone
 - ✅ Drawer deve carregar corretamente
@@ -54,7 +60,8 @@ import { ClipboardListOutline } from 'flowbite-svelte-icons';
 ## 🎯 **Funcionalidade Afetada**
 
 **Componente**: `FichaDetailDrawer`
-- **Localização**: Header do drawer  
+
+- **Localização**: Header do drawer
 - **Função**: Ícone decorativo da ficha EPI
 - **Visual**: Ícone de lista/clipboard em azul primary
 
@@ -62,7 +69,7 @@ import { ClipboardListOutline } from 'flowbite-svelte-icons';
 
 1. **Acesse**: `http://localhost:5176/fichas`
 2. **Clique**: Ícone de olho em qualquer ficha
-3. **Resultado esperado**: 
+3. **Resultado esperado**:
    - ✅ Drawer abre sem erros
    - ✅ Ícone aparece no header do drawer
    - ✅ Console limpo
@@ -78,7 +85,7 @@ Se `ClipboardListOutline` não fosse adequado visualmente:
 ## ⚡ **Impacto da Correção**
 
 - **Performance**: ✅ Sem impacto negativo
-- **Funcionalidade**: ✅ Mantida integralmente  
+- **Funcionalidade**: ✅ Mantida integralmente
 - **Visual**: ✅ Ícone similar e adequado
 - **Compatibilidade**: ✅ Total com flowbite-svelte-icons v1.6.2
 

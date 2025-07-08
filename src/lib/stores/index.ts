@@ -1,10 +1,10 @@
 // Re-export all stores for easy importing
 
 // Theme store
-export { themeStore } from './themeStore';
+export { themeStore } from "./themeStore";
 
 // Business configuration store
-export { 
+export {
   businessConfigStore,
   tiposMovimentacaoStore,
   categoriasEPIStore,
@@ -19,20 +19,20 @@ export {
   statusEstoqueOptions,
   initializeBusinessConfig,
   getConfigByCode,
-  configToOptions
-} from './businessConfigStore';
+  configToOptions,
+} from "./businessConfigStore";
 
 // API-related stores
-export { 
-  createApiStore, 
-  createCachedApiStore, 
+export {
+  createApiStore,
+  createCachedApiStore,
   globalLoading,
   notifications,
-  notify
-} from './apiStore';
+  notify,
+} from "./apiStore";
 
 // Filter stores
-export { 
+export {
   createFiltersStore,
   createCustomFilters,
   epiFilters,
@@ -40,11 +40,11 @@ export {
   fichasFilters,
   type EPIFilters,
   type EstoqueFilters,
-  type FichasFilters
-} from './filtersStore';
+  type FichasFilters,
+} from "./filtersStore";
 
 // Entity stores
-export { 
+export {
   tiposEPIStore,
   estoqueStore,
   fichasStore,
@@ -59,11 +59,11 @@ export {
   colaboradoresAtivos,
   notificacoesNaoLidas,
   countNotificacoesNaoLidas,
-  dashboardStats
-} from './entitiesStore';
+  dashboardStats,
+} from "./entitiesStore";
 
 // Modal stores
-export { 
+export {
   createModalStore,
   epiModal,
   colaboradorModal,
@@ -76,5 +76,5 @@ export {
   confirmationModal,
   confirmActions,
   modalLoading,
-  withModalLoading
-} from './modalStore';
+  withModalLoading,
+} from "./modalStore";

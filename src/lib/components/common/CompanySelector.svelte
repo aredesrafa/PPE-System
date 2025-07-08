@@ -7,8 +7,7 @@
   type ComponentColor = 'green' | 'red' | 'yellow' | 'primary' | 'blue' | 'dark' | 'purple' | 'indigo' | 'pink' | 'none';
   
   // Props para integração com o header (usado pelo Header.svelte)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars  
-  export let headerType: 'admin' | 'holding' | 'contratada' | 'default' = 'default';
+  export const headerType: 'admin' | 'holding' | 'contratada' | 'default' = 'default';
 
   // Função para selecionar empresa
   function selectCompany(company: Company) {

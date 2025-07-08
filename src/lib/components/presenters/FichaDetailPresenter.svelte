@@ -299,9 +299,6 @@
         <div class="space-y-4">
           <div class="flex justify-between items-center">
             <h3 class="text-xl font-semibold">Equipamentos com o Colaborador</h3>
-            <Button size="sm" color="primary" class="rounded-sm" on:click={handleNovaEntrega}>
-              Nova Entrega
-            </Button>
           </div>
 
           {#if equipamentosEmPosse.length === 0}
@@ -465,11 +462,18 @@
                     <!-- Itens da entrega -->
                     <div class="mt-2">
                       <p class="text-sm font-medium">Itens:</p>
-                      {#each entrega.itens as item (item.id)}
-                        <p class="text-sm text-gray-600 dark:text-gray-400">
-                          • {item.quantidade}x {item.nomeEquipamento} (CA: {item.numeroCA || item.registroCA})
-                        </p>
-                      {/each}
+                      <div class="mt-1 space-y-1">
+                        {#each entrega.itens as item (item.id)}
+                          <div class="flex items-center space-x-2">
+                            <span class="inline-flex items-center justify-center w-5 h-5 text-xs font-medium text-white bg-gray-700 rounded">
+                              {item.quantidade}
+                            </span>
+                            <div class="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-sm font-mono text-gray-800 dark:text-gray-200">
+                              {item.nomeEquipamento} (CA: {item.numeroCA || item.registroCA})
+                            </div>
+                          </div>
+                        {/each}
+                      </div>
                     </div>
                   </div>
 

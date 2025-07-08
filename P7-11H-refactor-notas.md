@@ -1,4 +1,5 @@
 # 📋 Plano de Refatoração da Página /notas
+
 **Duração Estimada:** 7-11 horas  
 **Complexidade:** Alta  
 **Data:** 07 de Janeiro de 2025
@@ -10,6 +11,7 @@ Refatorar completamente a página `/notas` para criar uma experiência unificada
 ## 🚨 Problemas Identificados
 
 ### **Problemas Atuais:**
+
 1. **❌ Processo em duas etapas**: Criar nota → adicionar itens separadamente
 2. **❌ Modal desconectado**: Não permite gerenciar itens dentro da criação
 3. **❌ Dados mockados**: Almoxarifados hardcoded ao invés de API real
@@ -17,6 +19,7 @@ Refatorar completamente a página `/notas` para criar uma experiência unificada
 5. **❌ Backend mal integrado**: Não utiliza endpoints completos disponíveis
 
 ### **Endpoints Backend Disponíveis:**
+
 - ✅ `GET /api/notas-movimentacao` - Listagem com filtros
 - ✅ `POST /api/notas-movimentacao` - Criar nota
 - ✅ `PUT /api/notas-movimentacao/:id` - Atualizar nota
@@ -30,6 +33,7 @@ Refatorar completamente a página `/notas` para criar uma experiência unificada
 ## 📋 Estrutura de Dados Backend (Análise Realizada)
 
 ### **Tabela `notas_movimentacao`:**
+
 ```sql
 - id: uuid (PK)
 - almoxarifado_id: uuid (FK -> almoxarifados.id) -- OBRIGATÓRIO
@@ -44,6 +48,7 @@ Refatorar completamente a página `/notas` para criar uma experiência unificada
 ```
 
 ### **Tabela `nota_movimentacao_itens`:**
+
 ```sql
 - id: uuid (PK)
 - nota_movimentacao_id: uuid (FK)
@@ -54,6 +59,7 @@ Refatorar completamente a página `/notas` para criar uma experiência unificada
 ```
 
 ### **Fluxo de Estados:**
+
 1. **RASCUNHO**: Nota criada, pode adicionar/remover itens
 2. **CONCLUIDA**: Gera movimentações de estoque automaticamente
 3. **CANCELADA**: Não pode ser modificada
@@ -61,6 +67,7 @@ Refatorar completamente a página `/notas` para criar uma experiência unificada
 ## 🏗️ Nova Arquitetura Proposta
 
 ### **Fluxo UX Redesenhado:**
+
 ```
 1. Usuário seleciona "Nova Nota [Tipo]"
 2. Modal abre em "Modo Itens" (principal)
@@ -72,6 +79,7 @@ Refatorar completamente a página `/notas` para criar uma experiência unificada
 ```
 
 ### **Modal com 2 Modos:**
+
 - **🏗️ Modo Itens** (Principal): Gerenciamento de itens da nota
 - **📋 Modo Dados** (Secundário): Campos burocráticos (número doc, data, obs)
 
@@ -80,6 +88,7 @@ Refatorar completamente a página `/notas` para criar uma experiência unificada
 ## 📱 FASE 1: Criar Adapters de Suporte (2-3 horas)
 
 ### **Step 1.1: Criar AlmoxarifadosAdapter**
+
 **Arquivo:** `src/lib/services/entity/almoxarifadosAdapter.ts`
 
 ```typescript
@@ -104,7 +113,7 @@ export interface AlmoxarifadoSelectOption {
 }
 
 class AlmoxarifadosAdapter {
-  private baseEndpoint = '/estoque/almoxarifados';
+  private baseEndpoint = "/estoque/almoxarifados";
 
   async listarAlmoxarifados(): Promise<Almoxarifado[]> {
     const response = await api.get<{
@@ -116,11 +125,11 @@ class AlmoxarifadosAdapter {
 
   async obterOpcoesSelect(): Promise<AlmoxarifadoSelectOption[]> {
     const almoxarifados = await this.listarAlmoxarifados();
-    return almoxarifados.map(alm => ({
+    return almoxarifados.map((alm) => ({
       value: alm.id,
       label: alm.nome,
       isPrincipal: alm.is_principal,
-      unidadeNegocio: alm.unidade_negocio?.nome
+      unidadeNegocio: alm.unidade_negocio?.nome,
     }));
   }
 }
@@ -129,6 +138,7 @@ export const almoxarifadosAdapter = new AlmoxarifadosAdapter();
 ```
 
 ### **Step 1.2: Criar TiposEpiAdapter para Itens**
+
 **Arquivo:** `src/lib/services/entity/tiposEpiAdapter.ts`
 
 ```typescript
@@ -141,7 +151,7 @@ export interface TipoEpiSelectOption {
 }
 
 class TiposEpiAdapter {
-  private baseEndpoint = '/tipos-epi';
+  private baseEndpoint = "/tipos-epi";
 
   async obterOpcoesSelect(): Promise<TipoEpiSelectOption[]> {
     const response = await api.get<{
@@ -157,12 +167,12 @@ class TiposEpiAdapter {
       };
     }>(`${this.baseEndpoint}?limit=100`);
 
-    return response.data.items.map(tipo => ({
+    return response.data.items.map((tipo) => ({
       value: tipo.id,
       label: `${tipo.nome_equipamento} (CA: ${tipo.numero_ca})`,
       categoria: tipo.categoria,
       numeroCA: tipo.numero_ca,
-      custoUnitario: tipo.custo_unitario
+      custoUnitario: tipo.custo_unitario,
     }));
   }
 }
@@ -171,6 +181,7 @@ export const tiposEpiAdapter = new TiposEpiAdapter();
 ```
 
 ### **Step 1.3: Criar EstoqueItensAdapter para Saídas**
+
 **Arquivo:** `src/lib/services/entity/estoqueItensAdapter.ts`
 
 ```typescript
@@ -185,9 +196,11 @@ export interface EstoqueItemOption {
 }
 
 class EstoqueItensAdapter {
-  private baseEndpoint = '/estoque/itens';
+  private baseEndpoint = "/estoque/itens";
 
-  async obterItensDisponiveisParaSaida(almoxarifadoId: string): Promise<EstoqueItemOption[]> {
+  async obterItensDisponiveisParaSaida(
+    almoxarifadoId: string,
+  ): Promise<EstoqueItemOption[]> {
     const response = await api.get<{
       success: boolean;
       data: {
@@ -206,18 +219,20 @@ class EstoqueItensAdapter {
           };
         }>;
       };
-    }>(`${this.baseEndpoint}?almoxarifado_id=${almoxarifadoId}&status=DISPONIVEL`);
+    }>(
+      `${this.baseEndpoint}?almoxarifado_id=${almoxarifadoId}&status=DISPONIVEL`,
+    );
 
     return response.data.items
-      .filter(item => item.quantidade > 0)
-      .map(item => ({
+      .filter((item) => item.quantidade > 0)
+      .map((item) => ({
         value: item.id,
         label: `${item.tipo_epi.nome_equipamento} - ${item.quantidade} disponível`,
         quantidade: item.quantidade,
         equipamento: item.tipo_epi.nome_equipamento,
         categoria: item.tipo_epi.categoria,
         numeroCA: item.tipo_epi.numero_ca,
-        almoxarifado: item.almoxarifado.nome
+        almoxarifado: item.almoxarifado.nome,
       }));
   }
 }
@@ -230,6 +245,7 @@ export const estoqueItensAdapter = new EstoqueItensAdapter();
 ## 🎨 FASE 2: Refatorar NotesFormModalPresenter (3-4 horas)
 
 ### **Step 2.1: Criar Componente de Gerenciamento de Itens**
+
 **Arquivo:** `src/lib/components/presenters/NotaItensManager.svelte`
 
 ```typescript
@@ -266,6 +282,7 @@ function handleQuantidadeChange(tempId: string, novaQuantidade: number) { /* ...
 ```
 
 ### **Step 2.2: Refatorar NotesFormModalPresenter - Modal Dual**
+
 **Arquivo:** `src/lib/components/presenters/NotesFormModalPresenter.svelte`
 
 ```typescript
@@ -292,7 +309,7 @@ $: canConcluir = canProceedToDados && formData.data_documento;
     bind:itens={itensTemp}
     {readonly}
   />
-  
+
   <div slot="footer">
     <Button on:click={handleSalvarRascunho} disabled={!canSaveRascunho}>
       Salvar Rascunho
@@ -301,11 +318,11 @@ $: canConcluir = canProceedToDados && formData.data_documento;
       Próximo: Dados da Nota
     </Button>
   </div>
-  
+
 {:else if modalMode === 'dados'}
   <!-- Modo Dados: Foco nos campos burocráticos -->
   <!-- Campos: numero_documento, data_documento, observacoes -->
-  
+
   <div slot="footer">
     <Button on:click={() => modalMode = 'itens'}>
       Voltar: Itens
@@ -327,13 +344,13 @@ async function handleSalvarRascunho(): Promise<void> {
   // Estratégia: salvar nota + itens de forma atômica
   try {
     let notaId: string;
-    
+
     if (selectedNota?.id) {
       // Nota existente: atualizar
       await notasMovimentacaoAdapter.atualizarNota(selectedNota.id, {
         numero_documento: formData.numero_documento,
         data_documento: formData.data_documento,
-        observacoes: formData.observacoes
+        observacoes: formData.observacoes,
       });
       notaId = selectedNota.id;
     } else {
@@ -341,39 +358,42 @@ async function handleSalvarRascunho(): Promise<void> {
       const response = await notasMovimentacaoAdapter.criarNota(formData);
       notaId = response.data.id;
     }
-    
+
     // Sincronizar itens
     await sincronizarItens(notaId, itensTemp);
-    
-    dispatch('salvar', { notaId, modo: 'rascunho' });
+
+    dispatch("salvar", { notaId, modo: "rascunho" });
   } catch (error) {
     // Error handling
   }
 }
 
-async function sincronizarItens(notaId: string, itens: NotaItem[]): Promise<void> {
+async function sincronizarItens(
+  notaId: string,
+  itens: NotaItem[],
+): Promise<void> {
   // 1. Buscar itens atuais da nota
   const notaCompleta = await notasMovimentacaoAdapter.obterNota(notaId);
   const itensExistentes = notaCompleta.itens || [];
-  
+
   // 2. Remover itens que não estão mais na lista temp
   for (const existente of itensExistentes) {
-    const ainda_existe = itens.find(temp => temp.id === existente.id);
+    const ainda_existe = itens.find((temp) => temp.id === existente.id);
     if (!ainda_existe) {
       await notasMovimentacaoAdapter.removerItem(notaId, existente.id);
     }
   }
-  
+
   // 3. Adicionar/atualizar itens da lista temp
   for (const temp of itens) {
     if (temp.id) {
       // Item existente: verificar se quantidade mudou
-      const existente = itensExistentes.find(e => e.id === temp.id);
+      const existente = itensExistentes.find((e) => e.id === temp.id);
       if (existente && existente.quantidade !== temp.quantidade) {
         await notasMovimentacaoAdapter.atualizarQuantidade(
-          notaId, 
-          temp.tipo_epi_id || temp.estoque_item_id!, 
-          temp.quantidade
+          notaId,
+          temp.tipo_epi_id || temp.estoque_item_id!,
+          temp.quantidade,
         );
       }
     } else {
@@ -382,7 +402,7 @@ async function sincronizarItens(notaId: string, itens: NotaItem[]): Promise<void
         tipo_epi_id: temp.tipo_epi_id,
         estoque_item_id: temp.estoque_item_id,
         quantidade: temp.quantidade,
-        custo_unitario: temp.custo_unitario
+        custo_unitario: temp.custo_unitario,
       });
     }
   }
@@ -399,27 +419,31 @@ async function sincronizarItens(notaId: string, itens: NotaItem[]): Promise<void
 // Simplificar handlers - Modal agora gerencia própria complexidade
 function handleNovaNota(tipo: TipoNotaEnum): void {
   selectedNota = null;
-  modalMode = 'create';
+  modalMode = "create";
   modalTipo = tipo;
   showNotaModal = true;
 }
 
 // Novo handler para salvamento unificado
-async function handleFormSave(event: { notaId: string, modo: 'rascunho' | 'concluida' }): Promise<void> {
+async function handleFormSave(event: {
+  notaId: string;
+  modo: "rascunho" | "concluida";
+}): Promise<void> {
   try {
-    if (event.modo === 'concluida') {
+    if (event.modo === "concluida") {
       await handleConcluirNota({ id: event.notaId } as NotaMovimentacao);
     }
-    
+
     // Recarregar listagem
     notesStore.reload();
     showNotaModal = false;
-    
-    const mensagem = event.modo === 'rascunho' ? 'Rascunho salvo' : 'Nota concluída';
+
+    const mensagem =
+      event.modo === "rascunho" ? "Rascunho salvo" : "Nota concluída";
     notify.success(mensagem);
   } catch (error) {
-    console.error('Erro ao salvar:', error);
-    notify.error('Erro ao salvar nota');
+    console.error("Erro ao salvar:", error);
+    notify.error("Erro ao salvar nota");
   }
 }
 ```
@@ -519,7 +543,7 @@ async obterNotaCompleta(id: string): Promise<NotaMovimentacao> {
       responsavel: { nome: string };
     };
   }>(`${this.baseEndpoint}/${id}?include=itens,almoxarifado,responsavel`);
-  
+
   return response.data;
 }
 
@@ -537,7 +561,7 @@ async validarProcessamento(id: string): Promise<{
       avisos?: string[];
     };
   }>(`${this.baseEndpoint}/${id}/validar-processamento`);
-  
+
   return response.data;
 }
 ```
@@ -551,12 +575,12 @@ private optionsCache = new Map<string, { data: any; timestamp: number }>();
 async obterOpcoesAlmoxarifados(): Promise<AlmoxarifadoSelectOption[]> {
   const cacheKey = 'almoxarifados_options';
   const TTL = 10 * 60 * 1000; // 10 minutos
-  
+
   const cached = this.optionsCache.get(cacheKey);
   if (cached && (Date.now() - cached.timestamp) < TTL) {
     return cached.data;
   }
-  
+
   const fresh = await almoxarifadosAdapter.obterOpcoesSelect();
   this.optionsCache.set(cacheKey, { data: fresh, timestamp: Date.now() });
   return fresh;
@@ -615,13 +639,13 @@ async obterOpcoesAlmoxarifados(): Promise<AlmoxarifadoSelectOption[]> {
 class NotaFormErrorHandler {
   static handleApiError(error: any): string {
     if (error.response?.status === 400) {
-      return error.response.data?.message || 'Dados inválidos';
+      return error.response.data?.message || "Dados inválidos";
     } else if (error.response?.status === 409) {
-      return 'Conflito: verifique se os dados não foram alterados por outro usuário';
+      return "Conflito: verifique se os dados não foram alterados por outro usuário";
     } else if (error.response?.status === 422) {
-      return 'Estoque insuficiente ou regras de negócio violadas';
+      return "Estoque insuficiente ou regras de negócio violadas";
     } else {
-      return 'Erro interno do servidor. Tente novamente.';
+      return "Erro interno do servidor. Tente novamente.";
     }
   }
 }
@@ -632,18 +656,21 @@ class NotaFormErrorHandler {
 ## 📈 Benefícios Esperados
 
 ### **UX Melhorado:**
+
 - ✅ Fluxo unificado: itens primeiro, burocracia depois
 - ✅ Rascunhos inteligentes: salvar progresso a qualquer momento
 - ✅ Validação em tempo real: verificar estoque disponível
 - ✅ Modal dual: foco no que importa em cada etapa
 
 ### **Integração Backend Completa:**
+
 - ✅ Dados reais: almoxarifados, tipos EPI, estoque disponível
 - ✅ API especializada: uso correto de todos os endpoints
 - ✅ Cache inteligente: performance otimizada
 - ✅ Error handling: feedback claro para o usuário
 
 ### **Código Limpo:**
+
 - ✅ Separação clara: Container (lógica) + Presenters (UI)
 - ✅ Adapters especializados: cada responsabilidade isolada
 - ✅ Type safety: interfaces que refletem backend real
@@ -654,6 +681,7 @@ class NotaFormErrorHandler {
 ## 🎯 Critérios de Aceitação
 
 ### **Must Have:**
+
 1. ✅ Modal permite adicionar itens antes de dados burocráticos
 2. ✅ Rascunhos salvos automaticamente mantêm itens
 3. ✅ Transferências validam almoxarifados origem ≠ destino
@@ -661,12 +689,14 @@ class NotaFormErrorHandler {
 5. ✅ Integração 100% com backend real (zero mocks)
 
 ### **Should Have:**
+
 6. ✅ Cache de opções para performance
 7. ✅ Feedback visual durante operações
 8. ✅ Validação em tempo real
 9. ✅ Error handling robusto
 
 ### **Could Have:**
+
 10. ✅ Shortcuts de teclado no modal
 11. ✅ Auto-save de rascunhos
 12. ✅ Histórico de alterações
@@ -675,14 +705,14 @@ class NotaFormErrorHandler {
 
 ## ⏱️ Cronograma Detalhado
 
-| Fase | Duração | Atividades |
-|------|---------|------------|
-| **FASE 1** | 2-3h | Criar adapters de suporte (Almoxarifados, TiposEPI, EstoqueItens) |
-| **FASE 2** | 3-4h | Refatorar modal dual (NotaItensManager + NotesFormModalPresenter) |
-| **FASE 3** | 1-2h | Atualizar Container logic para novo fluxo |
-| **FASE 4** | 1h | Melhorar TablePresenter com novas colunas |
-| **FASE 5** | 1-2h | Completar integração backend + cache |
-| **FASE 6** | 1-2h | Testes completos + refinamentos |
+| Fase       | Duração | Atividades                                                        |
+| ---------- | ------- | ----------------------------------------------------------------- |
+| **FASE 1** | 2-3h    | Criar adapters de suporte (Almoxarifados, TiposEPI, EstoqueItens) |
+| **FASE 2** | 3-4h    | Refatorar modal dual (NotaItensManager + NotesFormModalPresenter) |
+| **FASE 3** | 1-2h    | Atualizar Container logic para novo fluxo                         |
+| **FASE 4** | 1h      | Melhorar TablePresenter com novas colunas                         |
+| **FASE 5** | 1-2h    | Completar integração backend + cache                              |
+| **FASE 6** | 1-2h    | Testes completos + refinamentos                                   |
 
 **Total:** 9-14 horas (estimativa conservadora: **11 horas**)
 
@@ -691,15 +721,19 @@ class NotaFormErrorHandler {
 ## 🚨 Riscos e Mitigações
 
 ### **Risco 1: Backend API diferente do esperado**
+
 **Mitigação:** Validar endpoints reais primeiro via Swagger docs
 
 ### **Risco 2: Performance com muitos almoxarifados/tipos EPI**
+
 **Mitigação:** Implementar cache + pagination nas opções de seleção
 
 ### **Risco 3: Complexidade do modal dual**
+
 **Mitigação:** Implementar em etapas, testando cada modo isoladamente
 
 ### **Risco 4: Estado inconsistente entre itens temp vs backend**
+
 **Mitigação:** Método `sincronizarItens()` atomicamente gerencia diferenças
 
 ---

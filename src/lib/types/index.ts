@@ -6,7 +6,7 @@ export interface Holding {
   nome: string;
   cnpj: string;
   setor: string;
-  status: 'ativa' | 'inativa';
+  status: "ativa" | "inativa";
 }
 
 export interface Empresa {
@@ -14,9 +14,9 @@ export interface Empresa {
   nome: string;
   cnpj: string;
   endereco: string;
-  status: 'ativa' | 'inativa';
+  status: "ativa" | "inativa";
   holdingId?: string;
-  tipo: 'holding' | 'contratada';
+  tipo: "holding" | "contratada";
 }
 
 export interface Colaborador {
@@ -28,7 +28,7 @@ export interface Colaborador {
   empresa: string;
   dataAdmissao: string;
   empresaId: string;
-  status: 'ativo' | 'afastado' | 'desligado';
+  status: "ativo" | "afastado" | "desligado";
   temFichaAtiva: boolean;
 }
 
@@ -49,7 +49,11 @@ export interface Estoque {
   nome: string;
   codigo: string;
   enderecoFisico?: string;
-  tipoEstoque: 'fisico' | 'virtual_devolucoes' | 'virtual_descartes' | 'virtual_preparacao';
+  tipoEstoque:
+    | "fisico"
+    | "virtual_devolucoes"
+    | "virtual_descartes"
+    | "virtual_preparacao";
   responsavel?: string;
   ativo: boolean;
   createdAt: string;
@@ -82,7 +86,13 @@ export interface MovimentacaoEstoque {
   itemFichaId?: string;
   estoqueOrigemId?: string;
   estoqueDestinoId?: string;
-  tipoMovimentacao: 'entrada' | 'saida_entrega' | 'devolucao' | 'transferencia' | 'descarte' | 'ajuste';
+  tipoMovimentacao:
+    | "entrada"
+    | "saida_entrega"
+    | "devolucao"
+    | "transferencia"
+    | "descarte"
+    | "ajuste";
   quantidade: number;
   responsavel?: string;
   motivo?: string;
@@ -106,7 +116,13 @@ export interface ItemEstoque {
   localizacao?: string;
   lote?: string;
   dataValidade?: string;
-  status?: 'disponivel' | 'baixo_estoque' | 'vencido' | 'esgotado' | 'vencendo' | 'baixo';
+  status?:
+    | "disponivel"
+    | "baixo_estoque"
+    | "vencido"
+    | "esgotado"
+    | "vencendo"
+    | "baixo";
   dataUltimaMovimentacao?: string;
   custoUnitario?: number;
   fornecedor?: string;
@@ -126,7 +142,7 @@ export interface FichaEPI {
   empresaId: string;
   dataEmissao: string;
   dataValidade: string;
-  status: 'ativo' | 'vencido' | 'suspenso' | 'arquivado';
+  status: "ativo" | "vencido" | "suspenso" | "arquivado";
   itens: ItemFicha[];
 }
 
@@ -140,7 +156,7 @@ export interface ItemFicha {
   dataEntrega: string;
   dataValidadeItem?: string;
   dataDevolucao?: string;
-  status: 'entregue' | 'devolvido' | 'vencido' | 'descartado' | 'perdido';
+  status: "entregue" | "devolvido" | "vencido" | "descartado" | "perdido";
   motivoStatus?: string;
   observacoes?: string;
   responsavelEntrega?: string;
@@ -156,7 +172,7 @@ export interface Entrega {
   dataEntrega: string;
   itens: ItemEntrega[];
   responsavel: string;
-  status: 'nao_assinado' | 'assinado' | 'pendente';
+  status: "nao_assinado" | "assinado" | "pendente";
   assinatura?: {
     dataAssinatura: string;
     ip?: string;
@@ -171,7 +187,7 @@ export interface ItemEntrega {
   tipoEPIId: string;
   quantidade: number;
   dataValidade: string;
-  status: 'entregue' | 'devolvido' | 'vencido';
+  status: "entregue" | "devolvido" | "vencido";
   dataEntrega: string;
   numeroLote?: string;
 }
@@ -180,7 +196,13 @@ export interface Notificacao {
   id: string;
   titulo: string;
   mensagem: string;
-  tipo: 'alerta' | 'informacao' | 'importante' | 'vencimento' | 'estoque_baixo' | 'vencendo';
+  tipo:
+    | "alerta"
+    | "informacao"
+    | "importante"
+    | "vencimento"
+    | "estoque_baixo"
+    | "vencendo";
   data: string;
   lida: boolean;
   link?: string;
@@ -191,7 +213,13 @@ export interface Notificacao {
 export interface EventoHistorico {
   id: string;
   fichaEPIId: string;
-  tipo: 'ficha_criada' | 'entrega_criada' | 'entrega_editada' | 'entrega_excluida' | 'item_devolvido' | 'item_desativado';
+  tipo:
+    | "ficha_criada"
+    | "entrega_criada"
+    | "entrega_editada"
+    | "entrega_excluida"
+    | "item_devolvido"
+    | "item_desativado";
   data: string;
   responsavel: string;
   descricao: string;
@@ -207,7 +235,15 @@ export interface EventoHistorico {
 export interface EventoEstoque {
   id: string;
   itemEstoqueId: string;
-  tipo: 'entrada' | 'saida' | 'ajuste' | 'devolucao' | 'perda' | 'vencimento' | 'entrega' | 'cadastro';
+  tipo:
+    | "entrada"
+    | "saida"
+    | "ajuste"
+    | "devolucao"
+    | "perda"
+    | "vencimento"
+    | "entrega"
+    | "cadastro";
   data: string;
   responsavel: string;
   descricao: string;
@@ -246,7 +282,7 @@ export interface NotaEntrada {
   fornecedor?: string;
   notaFiscal?: string;
   valorTotal?: number;
-  status: 'pendente' | 'processada' | 'cancelada';
+  status: "pendente" | "processada" | "cancelada";
   itens: ItemNota[];
   observacoes?: string;
   dataProcessamento?: string;
@@ -262,7 +298,7 @@ export interface NotaSaida {
   motivo: string;
   destinatario?: string;
   solicitante?: string;
-  status: 'pendente' | 'processada' | 'cancelada';
+  status: "pendente" | "processada" | "cancelada";
   itens: ItemNota[];
   observacoes?: string;
   dataProcessamento?: string;
@@ -270,7 +306,7 @@ export interface NotaSaida {
 
 // Interface para formulário de nova movimentação multi-item
 export interface NovaMovimentacaoForm {
-  tipo: 'entrada' | 'saida' | 'ajuste' | 'transferencia' | 'descarte';
+  tipo: "entrada" | "saida" | "ajuste" | "transferencia" | "descarte";
   responsavel: string;
   motivo: string;
   observacoes?: string;
@@ -307,7 +343,7 @@ export interface VisualizacaoConsolidadaEstoque {
 // Tipo para controle de modais
 export interface ModalState {
   isOpen: boolean;
-  mode?: 'create' | 'edit' | 'view' | 'delete';
+  mode?: "create" | "edit" | "view" | "delete";
   data?: any;
 }
 
@@ -334,7 +370,7 @@ export interface PaginationState {
 // Tipo para ordenação
 export interface SortState {
   field: string;
-  direction: 'asc' | 'desc';
+  direction: "asc" | "desc";
 }
 
 // Tipo para busca
@@ -374,7 +410,7 @@ export interface FichasFilters {
 // ==================== ALIASES PARA COMPATIBILIDADE ====================
 
 // Aliases para tipos modernos (serviceTypes.ts)
-export type { 
+export type {
   TipoEPIDTO,
   ColaboradorDTO,
   ContratadaDTO,
@@ -382,8 +418,8 @@ export type {
   MovimentacaoEstoqueDTO,
   FichaEPIDTO,
   EntregaDTO,
-  PaginatedResponse
-} from './serviceTypes';
+  PaginatedResponse,
+} from "./serviceTypes";
 
 // Aliases para migração gradual
 export type TipoEPIModerno = TipoEPI;
@@ -396,7 +432,7 @@ export interface PaginationParams {
   limit?: number;
   search?: string;
   sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
+  sortOrder?: "asc" | "desc";
   [key: string]: any; // Para filtros específicos
 }
 

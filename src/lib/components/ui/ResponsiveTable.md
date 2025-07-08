@@ -5,6 +5,7 @@ Componente de tabela responsiva que evita scroll horizontal em telas >= 980px at
 ## Estratégias de Responsividade
 
 ### 1. **Colunas Ocultas (Breakpoint-based)**
+
 Oculta colunas menos importantes em telas menores:
 
 ```svelte
@@ -13,6 +14,7 @@ Oculta colunas menos importantes em telas menores:
 ```
 
 ### 2. **Larguras Mínimas Controladas**
+
 Define largura mínima para evitar compressão excessiva:
 
 ```svelte
@@ -21,6 +23,7 @@ Define largura mínima para evitar compressão excessiva:
 ```
 
 ### 3. **Informações Consolidadas**
+
 Mostra dados ocultos dentro de células visíveis:
 
 ```svelte
@@ -37,6 +40,7 @@ Mostra dados ocultos dentro de células visíveis:
 ```
 
 ### 4. **Truncamento Inteligente**
+
 Aplica truncamento apenas onde necessário:
 
 ```svelte
@@ -48,6 +52,7 @@ Aplica truncamento apenas onde necessário:
 ## Breakpoints Utilizados
 
 ### Tailwind CSS Breakpoints:
+
 - **`sm`**: 640px+
 - **`md`**: 768px+
 - **`lg`**: 1024px+ (ponto principal)
@@ -57,16 +62,19 @@ Aplica truncamento apenas onde necessário:
 ### Estratégia por Tela:
 
 #### **Mobile (< 1024px)**
+
 - Mostrar apenas colunas essenciais
 - Consolidar informações em células principais
 - Usar badges menores e simplificados
 
 #### **Tablet (1024px - 1279px)**
+
 - Mostrar colunas principais + algumas secundárias
 - Manter informações consolidadas
 - Usar tamanhos padrão
 
 #### **Desktop (1280px+)**
+
 - Mostrar todas as colunas
 - Layout completo
 - Máximo de informações visíveis
@@ -74,6 +82,7 @@ Aplica truncamento apenas onde necessário:
 ## Padrões de Implementação
 
 ### 1. **Coluna Principal (Sempre Visível)**
+
 ```svelte
 <TableHeadCell class="min-w-[200px]">Colaborador</TableHeadCell>
 <TableBodyCell class="min-w-[200px]">
@@ -93,6 +102,7 @@ Aplica truncamento apenas onde necessário:
 ```
 
 ### 2. **Coluna Secundária (Desktop/Tablet)**
+
 ```svelte
 <TableHeadCell class="min-w-[120px] hidden lg:table-cell">Cargo</TableHeadCell>
 <TableBodyCell class="min-w-[120px] hidden lg:table-cell">
@@ -103,6 +113,7 @@ Aplica truncamento apenas onde necessário:
 ```
 
 ### 3. **Coluna Terciária (Apenas Desktop)**
+
 ```svelte
 <TableHeadCell class="min-w-[110px] hidden xl:table-cell">Data Emissão</TableHeadCell>
 <TableBodyCell class="min-w-[110px] hidden xl:table-cell">
@@ -113,13 +124,14 @@ Aplica truncamento apenas onde necessário:
 ```
 
 ### 4. **Coluna de Ações (Sempre Visível)**
+
 ```svelte
 <TableHeadCell class="min-w-[120px]">Ações</TableHeadCell>
 <TableBodyCell class="min-w-[120px]">
   <div class="flex space-x-2">
     <!-- Botões principais -->
     <button>...</button>
-    
+
     <!-- Info móvel de colunas ocultas -->
     <div class="lg:hidden flex items-center">
       <Badge class="text-xs">{count}</Badge>
@@ -140,6 +152,7 @@ Aplica truncamento apenas onde necessário:
 - **Ações**: `min-w-[120px]`
 
 ### Cálculo Total:
+
 ```
 Essenciais: 200 + 140 + 100 + 120 = 560px
 + Secundárias: 120 + 80 = 200px
@@ -150,6 +163,7 @@ Essenciais: 200 + 140 + 100 + 120 = 560px
 ## Aplicação em Outras Tabelas
 
 ### 1. **Estoque**
+
 ```svelte
 <!-- Colunas essenciais: Item, Quantidade, Localização, Ações -->
 <TableHeadCell class="min-w-[200px]">Item</TableHeadCell>
@@ -160,6 +174,7 @@ Essenciais: 200 + 140 + 100 + 120 = 560px
 ```
 
 ### 2. **Movimentações**
+
 ```svelte
 <!-- Colunas essenciais: Tipo, Item, Quantidade, Data, Ações -->
 <TableHeadCell class="min-w-[100px]">Tipo</TableHeadCell>
@@ -171,6 +186,7 @@ Essenciais: 200 + 140 + 100 + 120 = 560px
 ```
 
 ### 3. **Colaboradores**
+
 ```svelte
 <!-- Colunas essenciais: Nome, Status, Empresa, Ações -->
 <TableHeadCell class="min-w-[200px]">Colaborador</TableHeadCell>
@@ -183,6 +199,7 @@ Essenciais: 200 + 140 + 100 + 120 = 560px
 ## Boas Práticas
 
 ### ✅ **Fazer**
+
 - Definir `min-w-[]` em todas as colunas
 - Usar `hidden lg:table-cell` para colunas secundárias
 - Consolidar informações em células principais
@@ -190,6 +207,7 @@ Essenciais: 200 + 140 + 100 + 120 = 560px
 - Usar `truncate` em textos longos
 
 ### ❌ **Evitar**
+
 - Larguras fixas (`w-[]`) em vez de mínimas
 - Ocultar colunas de ações
 - Scroll horizontal em telas > 980px

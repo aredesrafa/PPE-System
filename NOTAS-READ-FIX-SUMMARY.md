@@ -1,11 +1,13 @@
 # 📖 Notas READ Data Fix Summary
+
 **Data:** 07 de Janeiro de 2025  
-**Status:** Implementado - Aguardando Teste  
+**Status:** Implementado - Aguardando Teste
 
 ## 🐛 Problem Identified
 
 **Issue**: Notes are being created successfully, but READ operations (list and detail) show zero information for:
-- **Items**: No items shown in notes 
+
+- **Items**: No items shown in notes
 - **Quantity**: Quantity column shows zero/empty
 - **Warehouses**: Warehouse information not displayed
 
@@ -15,7 +17,7 @@
 
 **Key Findings from API Documentation:**
 
-1. **Field Naming Inconsistency**: 
+1. **Field Naming Inconsistency**:
    - API uses `status` but code was looking for `_status`
    - API returns `itens` array but normalization wasn't handling it properly
 
@@ -29,7 +31,7 @@
    "itens": [
      {
        "id": "uuid",
-       "tipoEpiId": "uuid", 
+       "tipoEpiId": "uuid",
        "quantidade": 50,
        "tipoEpi": {
          "nome": "Capacete de Segurança",
@@ -44,6 +46,7 @@
 ### **1. Data Normalization Correction**
 
 **Fixed `normalizeNotaData()` method:**
+
 ```typescript
 // ❌ BEFORE: Incorrect field mapping
 _status: nota._status,
@@ -57,63 +60,73 @@ _itens: itensNormalizados,
 ### **2. Items Parsing Implementation**
 
 **Added proper item normalization:**
+
 ```typescript
 // Normalizar os itens se existirem
-const itensNormalizados = nota.itens ? nota.itens.map((item: any) => ({
-  id: item.id,
-  nota_movimentacao_id: nota.id,
-  quantidade: item.quantidade,
-  estoque_item_id: item.estoqueItemId,
-  tipo_epi_id: item.tipoEpiId, 
-  custo_unitario: item.custoUnitario,
-  equipamento_nome: item.tipoEpi?.nome || item.equipamento_nome || 'Item',
-  equipamento_ca: item.tipoEpi?.codigo || item.numero_ca,
-  categoria: item.tipoEpi?.categoria || item.categoria
-})) : [];
+const itensNormalizados = nota.itens
+  ? nota.itens.map((item: any) => ({
+      id: item.id,
+      nota_movimentacao_id: nota.id,
+      quantidade: item.quantidade,
+      estoque_item_id: item.estoqueItemId,
+      tipo_epi_id: item.tipoEpiId,
+      custo_unitario: item.custoUnitario,
+      equipamento_nome: item.tipoEpi?.nome || item.equipamento_nome || "Item",
+      equipamento_ca: item.tipoEpi?.codigo || item.numero_ca,
+      categoria: item.tipoEpi?.categoria || item.categoria,
+    }))
+  : [];
 ```
 
 ### **3. Include Parameters Added**
 
 **Updated API calls to request related data:**
+
 ```typescript
 // ❌ BEFORE: Basic listing without relationships
-const url = createUrlWithParams(this.baseEndpoint, { /* basic params */ });
+const url = createUrlWithParams(this.baseEndpoint, {
+  /* basic params */
+});
 
 // ✅ AFTER: Include related data
 const url = createUrlWithParams(this.baseEndpoint, {
   // ... existing params
-  include: 'itens,responsavel,almoxarifado' // Include relationships
+  include: "itens,responsavel,almoxarifado", // Include relationships
 });
 ```
 
 **Methods Updated:**
+
 - `listarNotas()` - Added include parameter
-- `listarRascunhos()` - Added include parameter  
+- `listarRascunhos()` - Added include parameter
 - `obterNotaCompleta()` - Already had include parameter
 
 ### **4. Enhanced Debug Logging**
 
 **Added comprehensive logging for troubleshooting:**
+
 ```typescript
-console.log('🔄 Normalizando dados da nota:', {
+console.log("🔄 Normalizando dados da nota:", {
   id: nota.id,
   raw_itens: nota.itens,
   raw_status: nota.status || nota._status,
   almoxarifadoOrigemId: nota.almoxarifadoOrigemId,
   almoxarifadoDestinoId: nota.almoxarifadoDestinoId,
-  allFields: Object.keys(nota)
+  allFields: Object.keys(nota),
 });
 ```
 
 ## 🎯 Expected Results
 
 ### **Before Fix:**
+
 - ❌ Notes list shows empty items/quantity
-- ❌ Note details missing item information  
+- ❌ Note details missing item information
 - ❌ Warehouse columns empty
 - ❌ Total items count = 0
 
 ### **After Fix:**
+
 - ✅ Notes list displays correct item count
 - ✅ Note details show all items with quantities
 - ✅ Warehouse information properly populated
@@ -123,6 +136,7 @@ console.log('🔄 Normalizando dados da nota:', {
 ## 🧪 Testing Checklist
 
 ### **Frontend Display Tests:**
+
 1. **Notes List View**:
    - [ ] Quantity column shows correct count
    - [ ] Warehouse columns populated
@@ -140,6 +154,7 @@ console.log('🔄 Normalizando dados da nota:', {
    - [ ] DESCARTE notes display items properly
 
 ### **API Response Verification:**
+
 1. Check browser console for normalization logs
 2. Verify API responses include `itens` array
 3. Confirm include parameters in network requests
@@ -148,6 +163,7 @@ console.log('🔄 Normalizando dados da nota:', {
 ## 🚀 Implementation Status
 
 **Completed:**
+
 - ✅ Normalized data structure updated
 - ✅ Item parsing logic implemented
 - ✅ Include parameters added to API calls
@@ -155,6 +171,7 @@ console.log('🔄 Normalizando dados da nota:', {
 - ✅ Field mapping corrections applied
 
 **Ready for Testing:**
+
 - 🧪 Notes listing with item counts
 - 🧪 Note detail views with items
 - 🧪 Warehouse information display

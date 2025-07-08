@@ -1,12 +1,12 @@
 /**
  * Paginated Store Factory
- * 
+ *
  * Factory para criar stores com paginação server-side, filtros e ordenação.
  * Substitui o padrão atual de client-side pagination por server-side pagination.
  */
 
-import { writable, type Readable } from 'svelte/store';
-import type { PaginationState, FilterState } from '$lib/types';
+import { writable, type Readable } from "svelte/store";
+import type { PaginationState, FilterState } from "$lib/types";
 
 /**
  * Resposta paginada esperada do backend
@@ -40,13 +40,16 @@ export interface PaginationParams {
   page?: number;
   limit?: number;
   sort?: string;
-  order?: 'asc' | 'desc';
+  order?: "asc" | "desc";
   filters?: Record<string, any>;
   search?: string;
+  // Propriedades específicas para diferentes contextos
+  ativo?: boolean | string;
+  contratadaId?: string;
 }
 
 // Alias para compatibilidade com types/index.ts
-export type { UnifiedPaginatedResponse } from '../types/index';
+export type { UnifiedPaginatedResponse } from "../types/index";
 
 /**
  * Interface do store paginado
@@ -55,19 +58,19 @@ export interface PaginatedStore<T> extends Readable<PaginatedState<T>> {
   fetchPage: (params?: PaginationParams) => Promise<void>;
   setFilters: (filters: Record<string, any>) => Promise<void>;
   setSearch: (search: string) => Promise<void>;
-  setSorting: (sort: string, order: 'asc' | 'desc') => Promise<void>;
+  setSorting: (sort: string, order: "asc" | "desc") => Promise<void>;
   nextPage: () => Promise<void>;
   prevPage: () => Promise<void>;
   goToPage: (page: number) => Promise<void>;
   reload: () => Promise<void>;
   reset: () => void;
-  
+
   // Getters de conveniência
   hasNext: () => boolean;
   hasPrev: () => boolean;
   isEmpty: () => boolean;
   isLoading: () => boolean;
-  
+
   // Estado atual para reatividade
   getCurrentParams: () => PaginationParams;
 }
@@ -95,16 +98,15 @@ interface CacheEntry<T> {
  */
 export function createPaginatedStore<T>(
   fetchFunction: (params: PaginationParams) => Promise<PaginatedResponse<T>>,
-  options: PaginatedStoreOptions = {}
+  options: PaginatedStoreOptions = {},
 ): PaginatedStore<T> {
-  
   const {
     initialPageSize = 20,
     enableCache = true,
     cacheTimeout = 5 * 60 * 1000, // 5 minutos
-    debounceDelay = 300
+    debounceDelay = 300,
   } = options;
-  
+
   const initialState: PaginatedState<T> = {
     items: [],
     total: 0,
@@ -113,116 +115,119 @@ export function createPaginatedStore<T>(
     totalPages: 0,
     loading: false,
     error: null,
-    lastFetch: null
+    lastFetch: null,
   };
-  
+
   const { subscribe, set, update } = writable(initialState);
-  
+
   // Cache de requisições
   const cache = new Map<string, CacheEntry<T>>();
-  
+
   // Parâmetros atuais
   let currentParams: PaginationParams = {
     page: 1,
-    limit: initialPageSize
+    limit: initialPageSize,
   };
-  
+
   // Debounce para busca
   let searchTimeout: ReturnType<typeof setTimeout> | null = null;
   let filterTimeout: ReturnType<typeof setTimeout> | null = null;
-  
+
   /**
    * Gera chave para cache
    */
   function getCacheKey(params: PaginationParams): string {
     return JSON.stringify(params);
   }
-  
+
   /**
    * Verifica se cache está válido
    */
   function isCacheValid(entry: CacheEntry<T>): boolean {
     return Date.now() - entry.timestamp < cacheTimeout;
   }
-  
+
   /**
    * Busca dados com cache
    */
-  async function fetchWithCache(params: PaginationParams): Promise<PaginatedResponse<T>> {
+  async function fetchWithCache(
+    params: PaginationParams,
+  ): Promise<PaginatedResponse<T>> {
     if (enableCache) {
       const cacheKey = getCacheKey(params);
       const cached = cache.get(cacheKey);
-      
+
       if (cached && isCacheValid(cached)) {
-        console.log('📄 Using cached data for:', cacheKey);
+        console.log("📄 Using cached data for:", cacheKey);
         return cached.data;
       }
     }
-    
+
     const response = await fetchFunction(params);
-    
+
     if (enableCache) {
       const cacheKey = getCacheKey(params);
       cache.set(cacheKey, {
         data: response,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
     }
-    
+
     return response;
   }
-  
+
   /**
    * Função principal para buscar página
    */
   async function fetchPage(params: PaginationParams = {}): Promise<void> {
     // Mesclar com parâmetros atuais
     currentParams = { ...currentParams, ...params };
-    
-    update(state => ({ ...state, loading: true, error: null }));
-    
+
+    update((state) => ({ ...state, loading: true, error: null }));
+
     try {
       const response = await fetchWithCache(currentParams);
-      console.log('🏪 PaginatedStore received response:', {
+      console.log("🏪 PaginatedStore received response:", {
         dataLength: response.data?.length || 0,
         total: response.total,
         page: response.page,
         pageSize: response.pageSize,
-        totalPages: response.totalPages
+        totalPages: response.totalPages,
       });
-      
+
       const newState = {
         items: response.data,
         total: response.total,
         page: response.page,
         pageSize: response.pageSize,
-        totalPages: response.totalPages || Math.ceil(response.total / response.pageSize),
+        totalPages:
+          response.totalPages || Math.ceil(response.total / response.pageSize),
         loading: false,
         error: null,
-        lastFetch: Date.now()
+        lastFetch: Date.now(),
       };
-      
-      console.log('🏪 Setting new store state:', {
+
+      console.log("🏪 Setting new store state:", {
         itemsLength: newState.items?.length || 0,
         total: newState.total,
-        loading: newState.loading
+        loading: newState.loading,
       });
-      
+
       set(newState);
-      
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
-      
-      update(state => ({
+      const errorMessage =
+        error instanceof Error ? error.message : "Erro desconhecido";
+
+      update((state) => ({
         ...state,
         loading: false,
-        error: errorMessage
+        error: errorMessage,
       }));
-      
-      console.error('❌ Erro ao buscar página:', error);
+
+      console.error("❌ Erro ao buscar página:", error);
     }
   }
-  
+
   /**
    * Define filtros com debounce
    */
@@ -231,18 +236,18 @@ export function createPaginatedStore<T>(
     if (filterTimeout) {
       clearTimeout(filterTimeout);
     }
-    
+
     // Aplicar filtros com debounce
     filterTimeout = setTimeout(async () => {
-      currentParams = { 
-        ...currentParams, 
+      currentParams = {
+        ...currentParams,
         ...filters, // Aplicar filtros no nível raiz dos params
-        page: 1 // Reset para primeira página
+        page: 1, // Reset para primeira página
       };
       await fetchPage(currentParams);
     }, debounceDelay);
   }
-  
+
   /**
    * Define busca com debounce
    */
@@ -251,46 +256,49 @@ export function createPaginatedStore<T>(
     if (searchTimeout) {
       clearTimeout(searchTimeout);
     }
-    
+
     // Aplicar busca com debounce
     searchTimeout = setTimeout(async () => {
-      currentParams = { 
-        ...currentParams, 
-        search, 
-        page: 1 // Reset para primeira página
+      currentParams = {
+        ...currentParams,
+        search,
+        page: 1, // Reset para primeira página
       };
       await fetchPage(currentParams);
     }, debounceDelay);
   }
-  
+
   /**
    * Define ordenação
    */
-  async function setSorting(sort: string, order: 'asc' | 'desc'): Promise<void> {
-    currentParams = { 
-      ...currentParams, 
-      sort, 
+  async function setSorting(
+    sort: string,
+    order: "asc" | "desc",
+  ): Promise<void> {
+    currentParams = {
+      ...currentParams,
+      sort,
       order,
-      page: 1 // Reset para primeira página
+      page: 1, // Reset para primeira página
     };
     await fetchPage(currentParams);
   }
-  
+
   /**
    * Próxima página
    */
   async function nextPage(): Promise<void> {
     let canNext = false;
-    
-    subscribe(state => {
+
+    subscribe((state) => {
       canNext = state.page < state.totalPages;
     })();
-    
+
     if (canNext) {
       await fetchPage({ page: currentParams.page! + 1 });
     }
   }
-  
+
   /**
    * Página anterior
    */
@@ -299,7 +307,7 @@ export function createPaginatedStore<T>(
       await fetchPage({ page: currentParams.page! - 1 });
     }
   }
-  
+
   /**
    * Vai para página específica
    */
@@ -308,7 +316,7 @@ export function createPaginatedStore<T>(
       await fetchPage({ page });
     }
   }
-  
+
   /**
    * Recarrega dados atuais
    */
@@ -318,10 +326,10 @@ export function createPaginatedStore<T>(
       const cacheKey = getCacheKey(currentParams);
       cache.delete(cacheKey);
     }
-    
+
     await fetchPage(currentParams);
   }
-  
+
   /**
    * Reset do store
    */
@@ -330,40 +338,40 @@ export function createPaginatedStore<T>(
     cache.clear();
     set(initialState);
   }
-  
+
   // Getters de conveniência
   function hasNext(): boolean {
     let result = false;
-    subscribe(state => {
+    subscribe((state) => {
       result = state.page < state.totalPages;
     })();
     return result;
   }
-  
+
   function hasPrev(): boolean {
     return currentParams.page! > 1;
   }
-  
+
   function isEmpty(): boolean {
     let result = false;
-    subscribe(state => {
+    subscribe((state) => {
       result = state.items.length === 0 && !state.loading;
     })();
     return result;
   }
-  
+
   function isLoading(): boolean {
     let result = false;
-    subscribe(state => {
+    subscribe((state) => {
       result = state.loading;
     })();
     return result;
   }
-  
+
   function getCurrentParams(): PaginationParams {
     return { ...currentParams };
   }
-  
+
   return {
     subscribe,
     fetchPage,
@@ -379,7 +387,7 @@ export function createPaginatedStore<T>(
     hasPrev,
     isEmpty,
     isLoading,
-    getCurrentParams
+    getCurrentParams,
   };
 }
 
@@ -402,9 +410,9 @@ export interface AdvancedPaginatedStoreConfig {
  * Store paginado otimizado com recursos extras
  */
 export function createAdvancedPaginatedStore<T>(
-  config: AdvancedPaginatedStoreConfig = {}
+  config: AdvancedPaginatedStoreConfig = {},
 ): PaginatedStore<T> & {
-  // Propriedades de estado adicional 
+  // Propriedades de estado adicional
   data: T[];
   pagination: PaginationState;
   filters: FilterState;
@@ -412,7 +420,7 @@ export function createAdvancedPaginatedStore<T>(
     contratadas: any[];
     [key: string]: any[];
   };
-  
+
   // Métodos avançados
   addItem: (item: T) => void;
   updateItem: (id: string | number, updates: Partial<T>) => void;
@@ -424,575 +432,590 @@ export function createAdvancedPaginatedStore<T>(
   clearFilters: () => Promise<void>;
   refresh: () => Promise<void>;
   setPageSize: (size: number) => Promise<void>;
-  
+
   // Métodos CRUD específicos
   create: (data: any) => Promise<any>;
   update: (id: string, data: any) => Promise<any>;
   delete: (id: string) => Promise<boolean>;
 } {
-  
   const {
     defaultPageSize = 10,
     debounceDelay = 300,
-    cacheTimeout = 5 * 60 * 1000
+    cacheTimeout = 5 * 60 * 1000,
   } = config;
-  
+
   // Função de fallback para contratadas
-  function getFallbackContratadas(params: PaginationParams): PaginatedResponse<T> {
+  function getFallbackContratadas(
+    params: PaginationParams,
+  ): PaginatedResponse<T> {
     const mockData = [
       {
-        id: '1',
-        nome: 'Empresa ABC Ltda',
-        cnpj: '12345678000190',
-        cnpjFormatado: '12.345.678/0001-90',
-        createdAt: '2024-01-15T10:00:00Z'
+        id: "1",
+        nome: "Empresa ABC Ltda",
+        cnpj: "12345678000190",
+        cnpjFormatado: "12.345.678/0001-90",
+        createdAt: "2024-01-15T10:00:00Z",
       },
       {
-        id: '2',
-        nome: 'TechSolutions Corp',
-        cnpj: '98765432000198',
-        cnpjFormatado: '98.765.432/0001-98',
-        createdAt: '2024-01-20T14:30:00Z'
-      }
+        id: "2",
+        nome: "TechSolutions Corp",
+        cnpj: "98765432000198",
+        cnpjFormatado: "98.765.432/0001-98",
+        createdAt: "2024-01-20T14:30:00Z",
+      },
     ];
-    
+
     // Aplicar filtros
     let filteredData = [...mockData];
     if (params.search) {
       const searchTerm = params.search.toLowerCase();
-      filteredData = filteredData.filter((item: any) => 
-        item.nome?.toLowerCase().includes(searchTerm) ||
-        item.cnpj?.includes(searchTerm)
+      filteredData = filteredData.filter(
+        (item: any) =>
+          item.nome?.toLowerCase().includes(searchTerm) ||
+          item.cnpj?.includes(searchTerm),
       );
     }
-    
+
     // Paginação
     const page = params.page || 1;
     const pageSize = params.limit || defaultPageSize;
     const startIndex = (page - 1) * pageSize;
     const endIndex = startIndex + pageSize;
     const paginatedData = filteredData.slice(startIndex, endIndex);
-    
+
     return {
       data: paginatedData as T[],
       total: filteredData.length,
       page,
       pageSize,
-      totalPages: Math.ceil(filteredData.length / pageSize)
+      totalPages: Math.ceil(filteredData.length / pageSize),
     };
   }
-  
+
   // Fetch function real ou mock baseada no endpoint
-  async function fetchFunction(params: PaginationParams): Promise<PaginatedResponse<T>> {
-    
+  async function fetchFunction(
+    params: PaginationParams,
+  ): Promise<PaginatedResponse<T>> {
     // Para contratadas, usar API real
-    if (config.baseEndpoint === '/contratadas') {
+    if (config.baseEndpoint === "/contratadas") {
       try {
         // Construir query string
         const queryParams = new URLSearchParams();
-        
-        if (params.page) queryParams.append('page', params.page.toString());
-        if (params.limit) queryParams.append('limit', params.limit.toString());
-        if (params.search) queryParams.append('nome', params.search);
-        if (params.ativo !== undefined && params.ativo !== '') {
-          queryParams.append('ativa', params.ativo);
+
+        if (params.page) queryParams.append("page", params.page.toString());
+        if (params.limit) queryParams.append("limit", params.limit.toString());
+        if (params.search) queryParams.append("nome", params.search);
+        if (params.ativo !== undefined && params.ativo !== "") {
+          queryParams.append("ativa", String(params.ativo));
         }
-        
+
         const url = `/api/contratadas?${queryParams.toString()}`;
-        console.log('🌐 Fetching contratadas from:', url);
-        
+        console.log("🌐 Fetching contratadas from:", url);
+
         const response = await fetch(url, {
-          method: 'GET',
+          method: "GET",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
         });
-        
+
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
-        
+
         const result = await response.json();
-        console.log('📦 Contratadas response:', result);
-        console.log('📦 Data array:', result.data);
-        console.log('📦 Data length:', result.data?.length);
-        
+        console.log("📦 Contratadas response:", result);
+        console.log("📦 Data array:", result.data);
+        console.log("📦 Data length:", result.data?.length);
+
         if (!result.success) {
-          throw new Error(result.message || 'Erro na resposta da API');
+          throw new Error(result.message || "Erro na resposta da API");
         }
-        
+
         // Backend retorna: { success: true, data: { contratadas: [...], total: 4 } }
         const contratadas = result.data.contratadas || result.data;
         const total = result.data.total || result.data.length;
-        
+
         // Adicionar campo 'ativo' padrão para contratadas que não têm
         const contratadasComStatus = contratadas.map((contratada: any) => ({
           ...contratada,
-          ativo: contratada.ativo !== undefined ? contratada.ativo : true
+          ativo: contratada.ativo !== undefined ? contratada.ativo : true,
         }));
-        
+
         return {
           data: contratadasComStatus as T[],
           total: total,
           page: params.page || 1,
           pageSize: params.limit || 10,
-          totalPages: Math.ceil(total / (params.limit || 10))
+          totalPages: Math.ceil(total / (params.limit || 10)),
         };
-        
       } catch (error) {
-        console.error('❌ Erro ao buscar contratadas:', error);
+        console.error("❌ Erro ao buscar contratadas:", error);
         // Fallback para dados mock em caso de erro
         return getFallbackContratadas(params);
       }
     }
-    
+
     // Para colaboradores, usar API real
-    else if (config.baseEndpoint === '/colaboradores') {
+    else if (config.baseEndpoint === "/colaboradores") {
       try {
         // Construir query string
         const queryParams = new URLSearchParams();
-        
-        if (params.page) queryParams.append('page', params.page.toString());
-        if (params.limit) queryParams.append('limit', params.limit.toString());
-        if (params.search) queryParams.append('nome', params.search);
-        if (params.contratadaId) queryParams.append('contratadaId', params.contratadaId);
-        if (params.ativo !== undefined && params.ativo !== '') {
-          queryParams.append('ativo', params.ativo);
+
+        if (params.page) queryParams.append("page", params.page.toString());
+        if (params.limit) queryParams.append("limit", params.limit.toString());
+        if (params.search) queryParams.append("nome", params.search);
+        if (params.contratadaId)
+          queryParams.append("contratadaId", params.contratadaId);
+        if (params.ativo !== undefined && params.ativo !== "") {
+          queryParams.append("ativo", String(params.ativo));
         }
-        
+
         const url = `/api/colaboradores?${queryParams.toString()}`;
-        console.log('🌐 Fetching colaboradores from:', url);
-        
+        console.log("🌐 Fetching colaboradores from:", url);
+
         const response = await fetch(url, {
-          method: 'GET',
+          method: "GET",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
         });
-        
+
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
-        
+
         const result = await response.json();
-        console.log('📦 Colaboradores response:', result);
-        
+        console.log("📦 Colaboradores response:", result);
+
         if (!result.success) {
-          throw new Error(result.message || 'Erro na resposta da API');
+          throw new Error(result.message || "Erro na resposta da API");
         }
-        
+
         // Backend pode retornar: { success: true, data: { colaboradores: [...], total: 10 } } ou { success: true, data: [...] }
         const colaboradores = result.data.colaboradores || result.data || [];
         const total = result.data.total || result.data.length || 0;
-        
+
         // Adicionar campo 'ativo' padrão para colaboradores que não têm
-        const colaboradoresComStatus = colaboradores.map((colaborador: any) => ({
-          ...colaborador,
-          ativo: colaborador.ativo !== undefined ? colaborador.ativo : true
-        }));
-        
+        const colaboradoresComStatus = colaboradores.map(
+          (colaborador: any) => ({
+            ...colaborador,
+            ativo: colaborador.ativo !== undefined ? colaborador.ativo : true,
+          }),
+        );
+
         return {
           data: colaboradoresComStatus as T[],
           total: total,
           page: params.page || 1,
           pageSize: params.limit || 10,
-          totalPages: Math.ceil(total / (params.limit || 10))
+          totalPages: Math.ceil(total / (params.limit || 10)),
         };
-        
       } catch (error) {
-        console.error('❌ Erro ao buscar colaboradores:', error);
-        
+        console.error("❌ Erro ao buscar colaboradores:", error);
+
         // Fallback para dados mock em caso de erro
-        await new Promise(resolve => setTimeout(resolve, 300));
-        
+        await new Promise((resolve) => setTimeout(resolve, 300));
+
         const mockData = [
           {
-            id: '1',
-            nome: 'João Silva Santos',
-            cpf: '12345678901',
-            email: 'joao.silva@abc.com.br',
-            cargo: 'Operador de Máquinas',
+            id: "1",
+            nome: "João Silva Santos",
+            cpf: "12345678901",
+            email: "joao.silva@abc.com.br",
+            cargo: "Operador de Máquinas",
             contratada: {
-              id: '751c35a3-09dd-42bc-bc96-58ca036525fd',
-              nome: 'Beta Serviços e Construções S.A.'
+              id: "751c35a3-09dd-42bc-bc96-58ca036525fd",
+              nome: "Beta Serviços e Construções S.A.",
             },
-            contratadaId: '751c35a3-09dd-42bc-bc96-58ca036525fd',
-            dataAdmissao: '2023-01-15',
+            contratadaId: "751c35a3-09dd-42bc-bc96-58ca036525fd",
+            dataAdmissao: "2023-01-15",
             ativo: true,
             temFichaAtiva: true,
-            createdAt: '2023-01-15T10:00:00Z',
+            createdAt: "2023-01-15T10:00:00Z",
           },
           {
-            id: '2',
-            nome: 'Maria Santos Oliveira',
-            cpf: '98765432109',
-            email: 'maria.santos@techsolutions.com',
-            cargo: 'Técnica de Segurança',
+            id: "2",
+            nome: "Maria Santos Oliveira",
+            cpf: "98765432109",
+            email: "maria.santos@techsolutions.com",
+            cargo: "Técnica de Segurança",
             contratada: {
-              id: '70e382b6-7cdb-41f6-acc8-80dfc4110861',
-              nome: 'Claude Test Company LTDA'
+              id: "70e382b6-7cdb-41f6-acc8-80dfc4110861",
+              nome: "Claude Test Company LTDA",
             },
-            contratadaId: '70e382b6-7cdb-41f6-acc8-80dfc4110861',
-            dataAdmissao: '2023-03-10',
+            contratadaId: "70e382b6-7cdb-41f6-acc8-80dfc4110861",
+            dataAdmissao: "2023-03-10",
             ativo: true,
             temFichaAtiva: true,
-            createdAt: '2023-03-10T10:00:00Z',
+            createdAt: "2023-03-10T10:00:00Z",
           },
           {
-            id: '3',
-            nome: 'Carlos Pereira Lima',
-            cpf: '11122233344',
-            email: 'carlos.pereira@gamma.com.br',
-            cargo: 'Engenheiro',
+            id: "3",
+            nome: "Carlos Pereira Lima",
+            cpf: "11122233344",
+            email: "carlos.pereira@gamma.com.br",
+            cargo: "Engenheiro",
             contratada: {
-              id: 'fbbcd5fc-2bd8-4a38-a54b-46d90cb696b8',
-              nome: 'Gamma Engenharia e Consultoria'
+              id: "fbbcd5fc-2bd8-4a38-a54b-46d90cb696b8",
+              nome: "Gamma Engenharia e Consultoria",
             },
-            contratadaId: 'fbbcd5fc-2bd8-4a38-a54b-46d90cb696b8',
-            dataAdmissao: '2023-05-20',
+            contratadaId: "fbbcd5fc-2bd8-4a38-a54b-46d90cb696b8",
+            dataAdmissao: "2023-05-20",
             ativo: true,
             temFichaAtiva: false,
-            createdAt: '2023-05-20T10:00:00Z',
-          }
+            createdAt: "2023-05-20T10:00:00Z",
+          },
         ];
-        
+
         // Filtros para colaboradores
         let filteredData = [...mockData];
-        
+
         if (params.search) {
           const searchTerm = params.search.toLowerCase();
-          filteredData = filteredData.filter((item: any) => 
-            item.nome?.toLowerCase().includes(searchTerm) ||
-            item.cpf?.includes(searchTerm) ||
-            item.email?.toLowerCase().includes(searchTerm)
+          filteredData = filteredData.filter(
+            (item: any) =>
+              item.nome?.toLowerCase().includes(searchTerm) ||
+              item.cpf?.includes(searchTerm) ||
+              item.email?.toLowerCase().includes(searchTerm),
           );
         }
-        
+
         if (params.contratadaId) {
-          filteredData = filteredData.filter((item: any) => item.contratadaId === params.contratadaId);
+          filteredData = filteredData.filter(
+            (item: any) => item.contratadaId === params.contratadaId,
+          );
         }
-        
+
         // Paginação
         const page = params.page || 1;
         const pageSize = params.limit || defaultPageSize;
         const startIndex = (page - 1) * pageSize;
         const endIndex = startIndex + pageSize;
         const paginatedData = filteredData.slice(startIndex, endIndex);
-        
+
         return {
           data: paginatedData as T[],
           total: filteredData.length,
           page,
           pageSize,
-          totalPages: Math.ceil(filteredData.length / pageSize)
+          totalPages: Math.ceil(filteredData.length / pageSize),
         };
       }
     }
-    
+
     // Para outros endpoints, usar mock genérico
     else {
-      await new Promise(resolve => setTimeout(resolve, 300));
-      
+      await new Promise((resolve) => setTimeout(resolve, 300));
+
       const mockData = [
         {
-          id: '1',
-          nome: 'Item Mock 1',
-          createdAt: '2023-01-15T10:00:00Z',
+          id: "1",
+          nome: "Item Mock 1",
+          createdAt: "2023-01-15T10:00:00Z",
         },
         {
-          id: '2',
-          nome: 'Item Mock 2',
-          createdAt: '2023-03-10T10:00:00Z',
-        }
+          id: "2",
+          nome: "Item Mock 2",
+          createdAt: "2023-03-10T10:00:00Z",
+        },
       ];
-      
+
       return {
         data: mockData as T[],
         total: mockData.length,
         page: params.page || 1,
         pageSize: params.limit || defaultPageSize,
-        totalPages: Math.ceil(mockData.length / (params.limit || defaultPageSize))
+        totalPages: Math.ceil(
+          mockData.length / (params.limit || defaultPageSize),
+        ),
       };
     }
   }
-  
+
   const baseStore = createPaginatedStore(fetchFunction, {
     initialPageSize: defaultPageSize,
     enableCache: true,
-    debounceDelay
+    debounceDelay,
   });
-  
+
   // Estado adicional
   let currentFilters: FilterState = {};
-  
+
   // Implementar funcionalidades avançadas
   function addItem(item: T): void {
-    console.log('➕ Adicionando item:', item);
+    console.log("➕ Adicionando item:", item);
     // TODO: Implementar adição otimística
   }
-  
+
   function updateItem(id: string | number, updates: Partial<T>): void {
-    console.log('✏️ Atualizando item:', id, updates);
+    console.log("✏️ Atualizando item:", id, updates);
     // TODO: Implementar atualização otimística
   }
-  
+
   function removeItem(id: string | number): void {
-    console.log('🗑️ Removendo item:', id);
+    console.log("🗑️ Removendo item:", id);
     // TODO: Implementar remoção otimística
   }
-  
+
   async function prefetchNext(): Promise<void> {
     if (baseStore.hasNext()) {
-      console.log('📄 Pré-carregando próxima página...');
+      console.log("📄 Pré-carregando próxima página...");
       await baseStore.nextPage();
     }
   }
-  
+
   async function loadData(): Promise<void> {
     await baseStore.fetchPage();
   }
-  
+
   async function setPage(page: number): Promise<void> {
     await baseStore.goToPage(page);
   }
-  
+
   async function setFilter(key: string, value: any): Promise<void> {
     currentFilters[key] = value;
     await baseStore.setFilters(currentFilters);
   }
-  
+
   async function clearFilters(): Promise<void> {
     currentFilters = {};
     await baseStore.setFilters({});
   }
-  
+
   async function refresh(): Promise<void> {
     await baseStore.reload();
   }
-  
+
   async function setPageSize(size: number): Promise<void> {
     await baseStore.fetchPage({ limit: size, page: 1 });
   }
-  
+
   // Métodos CRUD específicos
   async function create(data: any): Promise<any> {
-    if (config.baseEndpoint === '/contratadas') {
+    if (config.baseEndpoint === "/contratadas") {
       try {
-        console.log('🆕 Criando contratada:', data);
-        
-        const response = await fetch('/api/contratadas', {
-          method: 'POST',
+        console.log("🆕 Criando contratada:", data);
+
+        const response = await fetch("/api/contratadas", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
-          body: JSON.stringify(data)
+          body: JSON.stringify(data),
         });
-        
+
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
-        
+
         const result = await response.json();
-        console.log('✅ Contratada criada:', result);
-        
+        console.log("✅ Contratada criada:", result);
+
         if (!result.success) {
-          throw new Error(result.message || 'Erro ao criar contratada');
+          throw new Error(result.message || "Erro ao criar contratada");
         }
-        
+
         // Refresh data after creation
         await refresh();
-        
+
         return result.data;
-        
       } catch (error) {
-        console.error('❌ Erro ao criar contratada:', error);
+        console.error("❌ Erro ao criar contratada:", error);
         throw error;
       }
-    } else if (config.baseEndpoint === '/colaboradores') {
+    } else if (config.baseEndpoint === "/colaboradores") {
       try {
-        console.log('🆕 Criando colaborador:', data);
-        
-        const response = await fetch('/api/colaboradores', {
-          method: 'POST',
+        console.log("🆕 Criando colaborador:", data);
+
+        const response = await fetch("/api/colaboradores", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
-          body: JSON.stringify(data)
+          body: JSON.stringify(data),
         });
-        
+
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
-        
+
         const result = await response.json();
-        console.log('✅ Colaborador criado:', result);
-        
+        console.log("✅ Colaborador criado:", result);
+
         if (!result.success) {
-          throw new Error(result.message || 'Erro ao criar colaborador');
+          throw new Error(result.message || "Erro ao criar colaborador");
         }
-        
+
         // Refresh data after creation
         await refresh();
-        
+
         return result.data;
-        
       } catch (error) {
-        console.error('❌ Erro ao criar colaborador:', error);
+        console.error("❌ Erro ao criar colaborador:", error);
         throw error;
       }
     } else {
-      throw new Error('Método create não implementado para este endpoint');
+      throw new Error("Método create não implementado para este endpoint");
     }
   }
-  
+
   async function update(id: string, data: any): Promise<any> {
-    if (config.baseEndpoint === '/contratadas') {
+    if (config.baseEndpoint === "/contratadas") {
       try {
-        console.log('✏️ Atualizando contratada:', id, data);
-        
+        console.log("✏️ Atualizando contratada:", id, data);
+
         const response = await fetch(`/api/contratadas/${id}`, {
-          method: 'PUT',
+          method: "PUT",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
-          body: JSON.stringify(data)
+          body: JSON.stringify(data),
         });
-        
+
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
-        
+
         const result = await response.json();
-        console.log('✅ Contratada atualizada:', result);
-        
+        console.log("✅ Contratada atualizada:", result);
+
         if (!result.success) {
-          throw new Error(result.message || 'Erro ao atualizar contratada');
+          throw new Error(result.message || "Erro ao atualizar contratada");
         }
-        
+
         // Refresh data after update
         await refresh();
-        
+
         return result.data;
-        
       } catch (error) {
-        console.error('❌ Erro ao atualizar contratada:', error);
+        console.error("❌ Erro ao atualizar contratada:", error);
         throw error;
       }
-    } else if (config.baseEndpoint === '/colaboradores') {
+    } else if (config.baseEndpoint === "/colaboradores") {
       try {
-        console.log('✏️ Atualizando colaborador:', id, data);
-        
+        console.log("✏️ Atualizando colaborador:", id, data);
+
         const response = await fetch(`/api/colaboradores/${id}`, {
-          method: 'PUT',
+          method: "PUT",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
-          body: JSON.stringify(data)
+          body: JSON.stringify(data),
         });
-        
+
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
-        
+
         const result = await response.json();
-        console.log('✅ Colaborador atualizado:', result);
-        
+        console.log("✅ Colaborador atualizado:", result);
+
         if (!result.success) {
-          throw new Error(result.message || 'Erro ao atualizar colaborador');
+          throw new Error(result.message || "Erro ao atualizar colaborador");
         }
-        
+
         // Refresh data after update
         await refresh();
-        
+
         return result.data;
-        
       } catch (error) {
-        console.error('❌ Erro ao atualizar colaborador:', error);
+        console.error("❌ Erro ao atualizar colaborador:", error);
         throw error;
       }
     } else {
-      throw new Error('Método update não implementado para este endpoint');
+      throw new Error("Método update não implementado para este endpoint");
     }
   }
-  
+
   async function deleteItem(id: string): Promise<boolean> {
-    if (config.baseEndpoint === '/contratadas') {
+    if (config.baseEndpoint === "/contratadas") {
       try {
-        console.log('🗑️ Excluindo contratada:', id);
-        
+        console.log("🗑️ Excluindo contratada:", id);
+
         const response = await fetch(`/api/contratadas/${id}`, {
-          method: 'DELETE',
+          method: "DELETE",
           headers: {
-            'Content-Type': 'application/json',
-          }
+            "Content-Type": "application/json",
+          },
         });
-        
+
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
-        
+
         const result = await response.json();
-        console.log('✅ Contratada excluída:', result);
-        
+        console.log("✅ Contratada excluída:", result);
+
         if (!result.success) {
-          throw new Error(result.message || 'Erro ao excluir contratada');
+          throw new Error(result.message || "Erro ao excluir contratada");
         }
-        
+
         // Refresh data after deletion
         await refresh();
-        
+
         return true;
-        
       } catch (error) {
-        console.error('❌ Erro ao excluir contratada:', error);
+        console.error("❌ Erro ao excluir contratada:", error);
         throw error;
       }
-    } else if (config.baseEndpoint === '/colaboradores') {
+    } else if (config.baseEndpoint === "/colaboradores") {
       try {
-        console.log('🗑️ Excluindo colaborador:', id);
-        
+        console.log("🗑️ Excluindo colaborador:", id);
+
         const response = await fetch(`/api/colaboradores/${id}`, {
-          method: 'DELETE',
+          method: "DELETE",
           headers: {
-            'Content-Type': 'application/json',
-          }
+            "Content-Type": "application/json",
+          },
         });
-        
+
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
-        
+
         const result = await response.json();
-        console.log('✅ Colaborador excluído:', result);
-        
+        console.log("✅ Colaborador excluído:", result);
+
         if (!result.success) {
-          throw new Error(result.message || 'Erro ao excluir colaborador');
+          throw new Error(result.message || "Erro ao excluir colaborador");
         }
-        
+
         // Refresh data after deletion
         await refresh();
-        
+
         return true;
-        
       } catch (error) {
-        console.error('❌ Erro ao excluir colaborador:', error);
+        console.error("❌ Erro ao excluir colaborador:", error);
         throw error;
       }
     } else {
-      throw new Error('Método delete não implementado para este endpoint');
+      throw new Error("Método delete não implementado para este endpoint");
     }
   }
-  
+
   // Mock data para filterOptions baseado nas contratadas reais
   const mockFilterOptions = {
     contratadas: [
-      { id: '751c35a3-09dd-42bc-bc96-58ca036525fd', nome: 'Beta Serviços e Construções S.A.' },
-      { id: '70e382b6-7cdb-41f6-acc8-80dfc4110861', nome: 'Claude Test Company LTDA' },
-      { id: '610921f5-2579-4f2a-9a9c-8544f95fdbad', nome: 'Empresa Contratada Alpha LTDA' },
-      { id: 'fbbcd5fc-2bd8-4a38-a54b-46d90cb696b8', nome: 'Gamma Engenharia e Consultoria' }
-    ]
+      {
+        id: "751c35a3-09dd-42bc-bc96-58ca036525fd",
+        nome: "Beta Serviços e Construções S.A.",
+      },
+      {
+        id: "70e382b6-7cdb-41f6-acc8-80dfc4110861",
+        nome: "Claude Test Company LTDA",
+      },
+      {
+        id: "610921f5-2579-4f2a-9a9c-8544f95fdbad",
+        nome: "Empresa Contratada Alpha LTDA",
+      },
+      {
+        id: "fbbcd5fc-2bd8-4a38-a54b-46d90cb696b8",
+        nome: "Gamma Engenharia e Consultoria",
+      },
+    ],
   };
-  
+
   // Derivar estado compatível
   let derivedState = {
     data: [] as T[],
@@ -1000,40 +1023,48 @@ export function createAdvancedPaginatedStore<T>(
       currentPage: 1,
       itemsPerPage: defaultPageSize,
       totalItems: 0,
-      totalPages: 0
+      totalPages: 0,
     } as PaginationState,
     filters: currentFilters as FilterState,
-    filterOptions: mockFilterOptions
+    filterOptions: mockFilterOptions,
   };
-  
+
   // Manter estado sincronizado com baseStore
-  baseStore.subscribe(state => {
+  baseStore.subscribe((state) => {
     derivedState = {
       data: state.items,
       pagination: {
         currentPage: state.page,
         itemsPerPage: state.pageSize,
         totalItems: state.total,
-        totalPages: state.totalPages
+        totalPages: state.totalPages,
       },
       filters: currentFilters,
-      filterOptions: mockFilterOptions
+      filterOptions: mockFilterOptions,
     };
-    
-    console.log('🔄 Store state updated:', {
+
+    console.log("🔄 Store state updated:", {
       itemsLength: state.items?.length || 0,
       total: state.total,
       loading: state.loading,
-      error: state.error
+      error: state.error,
     });
   });
-  
+
   return {
     ...baseStore,
-    get data() { return derivedState.data; },
-    get pagination() { return derivedState.pagination; },
-    get filters() { return derivedState.filters; },
-    get filterOptions() { return derivedState.filterOptions; },
+    get data() {
+      return derivedState.data;
+    },
+    get pagination() {
+      return derivedState.pagination;
+    },
+    get filters() {
+      return derivedState.filters;
+    },
+    get filterOptions() {
+      return derivedState.filterOptions;
+    },
     addItem,
     updateItem,
     removeItem,
@@ -1046,7 +1077,7 @@ export function createAdvancedPaginatedStore<T>(
     setPageSize,
     create,
     update,
-    delete: deleteItem
+    delete: deleteItem,
   };
 }
 
@@ -1055,11 +1086,11 @@ export function createAdvancedPaginatedStore<T>(
  */
 export function createSimplePaginatedStore<T>(
   fetchFunction: (params: PaginationParams) => Promise<PaginatedResponse<T>>,
-  pageSize: number = 20
+  pageSize: number = 20,
 ): PaginatedStore<T> {
   return createPaginatedStore(fetchFunction, {
     initialPageSize: pageSize,
     enableCache: true,
-    debounceDelay: 300
+    debounceDelay: 300,
   });
 }

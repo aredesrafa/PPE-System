@@ -21,7 +21,7 @@
   // ==================== PROPS ====================
   
   export let initialPageSize = 10;
-  export let autoRefresh = false;
+  export const autoRefresh = false;
 
   // ==================== EVENT DISPATCHER ====================
   

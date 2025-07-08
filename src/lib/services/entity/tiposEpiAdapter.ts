@@ -1,12 +1,12 @@
 /**
  * Tipos EPI Adapter - Backend Integration
- * 
+ *
  * Adapter especializado para tipos de EPI
  * Focado em fornecer opções para componentes de seleção
  */
 
-import { api } from '../core/apiClient';
-import type { PaginatedResponse } from '$lib/stores/paginatedStore';
+import { api } from "../core/apiClient";
+import type { PaginatedResponse } from "$lib/stores/paginatedStore";
 
 // ==================== INTERFACES ====================
 
@@ -18,7 +18,7 @@ export interface TipoEpi {
   categoria: string;
   descricao?: string;
   vidaUtilDias?: number;
-  status: 'ATIVO' | 'DESCONTINUADO';
+  status: "ATIVO" | "DESCONTINUADO";
   createdAt: string;
   // Legacy fields for compatibility (snake_case)
   nome_equipamento?: string;
@@ -40,7 +40,7 @@ export interface TipoEpiSelectOption {
 // ==================== ADAPTER CLASS ====================
 
 class TiposEpiAdapter {
-  private baseEndpoint = '/tipos-epi';
+  private baseEndpoint = "/tipos-epi";
 
   /**
    * Lista tipos de EPI disponíveis para seleção
@@ -50,23 +50,23 @@ class TiposEpiAdapter {
     limit?: number;
     search?: string;
     categoria?: string;
-    status?: 'ATIVO' | 'DESCONTINUADO' | 'todos';
+    status?: "ATIVO" | "DESCONTINUADO" | "todos";
   }): Promise<PaginatedResponse<TipoEpi>> {
-    console.log('🛡️ TiposEpiAdapter: Listando tipos de EPI', params);
+    console.log("🛡️ TiposEpiAdapter: Listando tipos de EPI", params);
 
     try {
       const queryParams = new URLSearchParams();
-      if (params?.page) queryParams.append('page', params.page.toString());
-      if (params?.limit) queryParams.append('limit', params.limit.toString());
-      if (params?.search) queryParams.append('search', params.search);
-      if (params?.categoria) queryParams.append('categoria', params.categoria);
+      if (params?.page) queryParams.append("page", params.page.toString());
+      if (params?.limit) queryParams.append("limit", params.limit.toString());
+      if (params?.search) queryParams.append("search", params.search);
+      if (params?.categoria) queryParams.append("categoria", params.categoria);
       // Temporarily disable status filter to debug backend compatibility
       // if (params?.status && params.status !== 'todos') {
       //   queryParams.append('status', params.status);
       // }
 
       const url = `${this.baseEndpoint}?${queryParams.toString()}`;
-      
+
       const response = await api.get<{
         success: boolean;
         data: {
@@ -80,32 +80,34 @@ class TiposEpiAdapter {
         };
       }>(url);
 
-      console.log('✅ Tipos de EPI listados:', response.data.pagination);
+      console.log("✅ Tipos de EPI listados:", response.data.pagination);
 
       return {
         data: response.data.items,
         total: response.data.pagination.total,
         page: response.data.pagination.page,
         pageSize: response.data.pagination.limit,
-        totalPages: response.data.pagination.totalPages
+        totalPages: response.data.pagination.totalPages,
       };
     } catch (error) {
-      console.error('❌ Erro ao listar tipos de EPI:', error);
-      
+      console.error("❌ Erro ao listar tipos de EPI:", error);
+
       // Se for timeout, usar dados de fallback temporariamente
-      if (error.name === 'AbortError' || error.message?.includes('timeout')) {
-        console.warn('⚠️ Backend indisponível, usando dados de fallback para tipos EPI');
+      if (error.name === "AbortError" || error.message?.includes("timeout")) {
+        console.warn(
+          "⚠️ Backend indisponível, usando dados de fallback para tipos EPI",
+        );
         const fallbackData = this.getFallbackTiposEPI();
         return {
           data: fallbackData,
           total: fallbackData.length,
           page: 1,
           pageSize: fallbackData.length,
-          totalPages: 1
+          totalPages: 1,
         };
       }
-      
-      throw new Error('Não foi possível carregar os tipos de EPI');
+
+      throw new Error("Não foi possível carregar os tipos de EPI");
     }
   }
 
@@ -113,7 +115,7 @@ class TiposEpiAdapter {
    * Obtém um tipo de EPI específico por ID
    */
   async obterTipoEpi(id: string): Promise<TipoEpi> {
-    console.log('🔍 TiposEpiAdapter: Buscando tipo de EPI', id);
+    console.log("🔍 TiposEpiAdapter: Buscando tipo de EPI", id);
 
     try {
       const response = await api.get<{
@@ -121,11 +123,11 @@ class TiposEpiAdapter {
         data: TipoEpi;
       }>(`${this.baseEndpoint}/${id}`);
 
-      console.log('✅ Tipo de EPI encontrado:', response.data.nome_equipamento);
+      console.log("✅ Tipo de EPI encontrado:", response.data.nome_equipamento);
       return response.data;
     } catch (error) {
-      console.error('❌ Erro ao buscar tipo de EPI:', error);
-      throw new Error('Não foi possível encontrar o tipo de EPI');
+      console.error("❌ Erro ao buscar tipo de EPI:", error);
+      throw new Error("Não foi possível encontrar o tipo de EPI");
     }
   }
 
@@ -138,74 +140,74 @@ class TiposEpiAdapter {
     apenasAtivos?: boolean;
     limite?: number;
   }): Promise<TipoEpiSelectOption[]> {
-    console.log('🔧 TiposEpiAdapter: Carregando opções para select', filtros);
+    console.log("🔧 TiposEpiAdapter: Carregando opções para select", filtros);
 
     try {
       const params: any = {
         page: 1,
-        limit: filtros?.limite || 100
+        limit: filtros?.limite || 100,
       };
-      
+
       // Only add optional filters if they have valid values
       if (filtros?.categoria) {
         params.categoria = filtros.categoria;
       }
-      
+
       // Try without status filter first to see if that's causing the issue
       // if (filtros?.apenasAtivos !== false) {
       //   params.status = 'ATIVO';
       // }
 
       const response = await this.listarTiposEpi(params);
-      
-      const opcoes = response.data.map(tipo => {
-        console.log('🔍 Mapeando tipo EPI completo:', JSON.stringify(tipo, null, 2));
-        
+
+      const opcoes = response.data.map((tipo) => {
+        console.log(
+          "🔍 Mapeando tipo EPI completo:",
+          JSON.stringify(tipo, null, 2),
+        );
+
         // Debug every possible field to understand backend structure
-        console.log('🔍 Campos disponíveis:', Object.keys(tipo));
-        console.log('🔍 nome_equipamento:', tipo.nome_equipamento);
-        console.log('🔍 nomeEquipamento:', tipo.nomeEquipamento);
-        console.log('🔍 nome:', tipo.nome);
-        console.log('🔍 name:', tipo.name);
-        
+        console.log("🔍 Campos disponíveis:", Object.keys(tipo));
+        console.log("🔍 nome_equipamento:", tipo.nome_equipamento);
+        console.log("🔍 nomeEquipamento:", tipo.nomeEquipamento);
+        console.log("🔍 nome:", tipo.nome);
+        console.log("🔍 name:", tipo.name);
+
         // Backend returns camelCase fields (confirmed via API test)
-        const nomeEquipamento = tipo.nomeEquipamento || 
-                               tipo.nome_equipamento || 
-                               tipo.nome || 
-                               tipo.name || 
-                               'Nome não identificado';
-                               
-        const numeroCA = tipo.numeroCa || 
-                        tipo.numero_ca || 
-                        tipo.numeroCA || 
-                        tipo.ca ||
-                        'N/A';
-                        
-        const categoria = tipo.categoria || 
-                         tipo.category ||
-                         'Sem categoria';
-        
+        const nomeEquipamento =
+          tipo.nomeEquipamento ||
+          tipo.nome_equipamento ||
+          tipo.nome ||
+          tipo.name ||
+          "Nome não identificado";
+
+        const numeroCA =
+          tipo.numeroCa || tipo.numero_ca || tipo.numeroCA || tipo.ca || "N/A";
+
+        const categoria = tipo.categoria || tipo.category || "Sem categoria";
+
         const opcaoFinal = {
           value: tipo.id,
           label: `${nomeEquipamento} (CA: ${numeroCA})`,
           categoria: categoria,
           numeroCA: numeroCA,
-          custoUnitario: tipo.custo_unitario || tipo.custoUnitario || tipo.preco || 0,
-          status: tipo.status
+          custoUnitario:
+            tipo.custo_unitario || tipo.custoUnitario || tipo.preco || 0,
+          status: tipo.status,
         };
-        
-        console.log('🎯 Opção final criada:', opcaoFinal);
+
+        console.log("🎯 Opção final criada:", opcaoFinal);
         return opcaoFinal;
       });
 
       // Ordenar alfabeticamente por nome do equipamento
       opcoes.sort((a, b) => a.label.localeCompare(b.label));
 
-      console.log('✅ Opções de select criadas:', opcoes.length);
+      console.log("✅ Opções de select criadas:", opcoes.length);
       return opcoes;
     } catch (error) {
-      console.error('❌ Erro ao criar opções de select:', error);
-      
+      console.error("❌ Erro ao criar opções de select:", error);
+
       // Retornar lista vazia em caso de erro para não quebrar a UI
       return [];
     }
@@ -217,14 +219,14 @@ class TiposEpiAdapter {
   async obterOpcoesAgrupadasPorCategoria(): Promise<{
     [categoria: string]: TipoEpiSelectOption[];
   }> {
-    console.log('📂 TiposEpiAdapter: Agrupando opções por categoria');
+    console.log("📂 TiposEpiAdapter: Agrupando opções por categoria");
 
     try {
       const opcoes = await this.obterOpcoesSelect({ apenasAtivos: true });
-      
+
       const agrupadas: { [categoria: string]: TipoEpiSelectOption[] } = {};
-      
-      opcoes.forEach(opcao => {
+
+      opcoes.forEach((opcao) => {
         if (!agrupadas[opcao.categoria]) {
           agrupadas[opcao.categoria] = [];
         }
@@ -232,14 +234,14 @@ class TiposEpiAdapter {
       });
 
       // Ordenar itens dentro de cada categoria
-      Object.keys(agrupadas).forEach(categoria => {
+      Object.keys(agrupadas).forEach((categoria) => {
         agrupadas[categoria].sort((a, b) => a.label.localeCompare(b.label));
       });
 
-      console.log('✅ Opções agrupadas por categoria:', Object.keys(agrupadas));
+      console.log("✅ Opções agrupadas por categoria:", Object.keys(agrupadas));
       return agrupadas;
     } catch (error) {
-      console.error('❌ Erro ao agrupar opções por categoria:', error);
+      console.error("❌ Erro ao agrupar opções por categoria:", error);
       return {};
     }
   }
@@ -266,21 +268,23 @@ class TiposEpiAdapter {
     const cacheKey = JSON.stringify(filtros || {});
 
     // Verificar cache
-    if (this.selectOptionsCache && 
-        this.selectOptionsCache.key === cacheKey &&
-        (now - this.selectOptionsCache.timestamp) < TTL) {
-      console.log('💾 TiposEpiAdapter: Usando cache para opções select');
+    if (
+      this.selectOptionsCache &&
+      this.selectOptionsCache.key === cacheKey &&
+      now - this.selectOptionsCache.timestamp < TTL
+    ) {
+      console.log("💾 TiposEpiAdapter: Usando cache para opções select");
       return this.selectOptionsCache.data;
     }
 
     // Cache expirado ou filtros diferentes, buscar dados frescos
     const freshData = await this.obterOpcoesSelect(filtros);
-    
+
     // Salvar no cache
     this.selectOptionsCache = {
       data: freshData,
       timestamp: now,
-      key: cacheKey
+      key: cacheKey,
     };
 
     return freshData;
@@ -290,7 +294,7 @@ class TiposEpiAdapter {
    * Busca tipos de EPI por nome ou CA
    */
   async buscarTiposEpi(termo: string): Promise<TipoEpiSelectOption[]> {
-    console.log('🔍 TiposEpiAdapter: Buscando tipos de EPI', termo);
+    console.log("🔍 TiposEpiAdapter: Buscando tipos de EPI", termo);
 
     if (!termo || termo.length < 2) {
       return [];
@@ -299,42 +303,39 @@ class TiposEpiAdapter {
     try {
       const response = await this.listarTiposEpi({
         search: termo,
-        limit: 20
+        limit: 20,
         // Temporarily disable status filter to debug backend compatibility
         // status: 'ATIVO'
       });
 
-      const opcoes = response.data.map(tipo => {
+      const opcoes = response.data.map((tipo) => {
         // Backend returns camelCase fields (confirmed via API test)
-        const nomeEquipamento = tipo.nomeEquipamento || 
-                               tipo.nome_equipamento || 
-                               tipo.nome || 
-                               tipo.name || 
-                               'Nome não identificado';
-                               
-        const numeroCA = tipo.numeroCa || 
-                        tipo.numero_ca || 
-                        tipo.numeroCA || 
-                        tipo.ca ||
-                        'N/A';
-                        
-        const categoria = tipo.categoria || 
-                         tipo.category ||
-                         'Sem categoria';
-        
+        const nomeEquipamento =
+          tipo.nomeEquipamento ||
+          tipo.nome_equipamento ||
+          tipo.nome ||
+          tipo.name ||
+          "Nome não identificado";
+
+        const numeroCA =
+          tipo.numeroCa || tipo.numero_ca || tipo.numeroCA || tipo.ca || "N/A";
+
+        const categoria = tipo.categoria || tipo.category || "Sem categoria";
+
         return {
           value: tipo.id,
           label: `${nomeEquipamento} (CA: ${numeroCA})`,
           categoria: categoria,
           numeroCA: numeroCA,
-          custoUnitario: tipo.custo_unitario || tipo.custoUnitario || tipo.preco || 0
+          custoUnitario:
+            tipo.custo_unitario || tipo.custoUnitario || tipo.preco || 0,
         };
       });
 
-      console.log('✅ Busca realizada, encontrados:', opcoes.length);
+      console.log("✅ Busca realizada, encontrados:", opcoes.length);
       return opcoes;
     } catch (error) {
-      console.error('❌ Erro na busca de tipos de EPI:', error);
+      console.error("❌ Erro na busca de tipos de EPI:", error);
       return [];
     }
   }
@@ -343,24 +344,26 @@ class TiposEpiAdapter {
    * Obtém categorias disponíveis
    */
   async obterCategorias(): Promise<string[]> {
-    console.log('📋 TiposEpiAdapter: Carregando categorias');
+    console.log("📋 TiposEpiAdapter: Carregando categorias");
 
     try {
       // Buscar uma amostra grande para extrair todas as categorias
       const response = await this.listarTiposEpi({
-        limit: 500
+        limit: 500,
         // Temporarily disable status filter to debug backend compatibility
         // status: 'ATIVO'
       });
 
-      const categorias = [...new Set(response.data.map(tipo => tipo.categoria))]
-        .filter(categoria => categoria && categoria.trim() !== '')
+      const categorias = [
+        ...new Set(response.data.map((tipo) => tipo.categoria)),
+      ]
+        .filter((categoria) => categoria && categoria.trim() !== "")
         .sort();
 
-      console.log('✅ Categorias encontradas:', categorias);
+      console.log("✅ Categorias encontradas:", categorias);
       return categorias;
     } catch (error) {
-      console.error('❌ Erro ao carregar categorias:', error);
+      console.error("❌ Erro ao carregar categorias:", error);
       return [];
     }
   }
@@ -371,7 +374,7 @@ class TiposEpiAdapter {
   async validarTipoEpiAtivo(id: string): Promise<boolean> {
     try {
       const tipo = await this.obterTipoEpi(id);
-      return tipo.status === 'ATIVO';
+      return tipo.status === "ATIVO";
     } catch {
       return false;
     }
@@ -382,7 +385,7 @@ class TiposEpiAdapter {
    */
   limparCache(): void {
     this.selectOptionsCache = null;
-    console.log('🗑️ TiposEpiAdapter: Cache limpo');
+    console.log("🗑️ TiposEpiAdapter: Cache limpo");
   }
 
   /**
@@ -395,49 +398,48 @@ class TiposEpiAdapter {
   /**
    * Obtém tipos de EPI mais utilizados (útil para sugestões)
    */
-  async obterTiposPopulares(limite: number = 10): Promise<TipoEpiSelectOption[]> {
-    console.log('🌟 TiposEpiAdapter: Carregando tipos populares');
+  async obterTiposPopulares(
+    limite: number = 10,
+  ): Promise<TipoEpiSelectOption[]> {
+    console.log("🌟 TiposEpiAdapter: Carregando tipos populares");
 
     try {
       // Por enquanto, retornamos os primeiros resultados ordenados
       // No futuro, o backend pode implementar um ranking baseado em uso
       const response = await this.listarTiposEpi({
-        limit: limite
+        limit: limite,
         // Temporarily disable status filter to debug backend compatibility
         // status: 'ATIVO'
       });
 
-      const opcoes = response.data.map(tipo => {
+      const opcoes = response.data.map((tipo) => {
         // Backend returns camelCase fields (confirmed via API test)
-        const nomeEquipamento = tipo.nomeEquipamento || 
-                               tipo.nome_equipamento || 
-                               tipo.nome || 
-                               tipo.name || 
-                               'Nome não identificado';
-                               
-        const numeroCA = tipo.numeroCa || 
-                        tipo.numero_ca || 
-                        tipo.numeroCA || 
-                        tipo.ca ||
-                        'N/A';
-                        
-        const categoria = tipo.categoria || 
-                         tipo.category ||
-                         'Sem categoria';
-        
+        const nomeEquipamento =
+          tipo.nomeEquipamento ||
+          tipo.nome_equipamento ||
+          tipo.nome ||
+          tipo.name ||
+          "Nome não identificado";
+
+        const numeroCA =
+          tipo.numeroCa || tipo.numero_ca || tipo.numeroCA || tipo.ca || "N/A";
+
+        const categoria = tipo.categoria || tipo.category || "Sem categoria";
+
         return {
           value: tipo.id,
           label: `${nomeEquipamento} (CA: ${numeroCA})`,
           categoria: categoria,
           numeroCA: numeroCA,
-          custoUnitario: tipo.custo_unitario || tipo.custoUnitario || tipo.preco || 0
+          custoUnitario:
+            tipo.custo_unitario || tipo.custoUnitario || tipo.preco || 0,
         };
       });
 
-      console.log('✅ Tipos populares carregados:', opcoes.length);
+      console.log("✅ Tipos populares carregados:", opcoes.length);
       return opcoes;
     } catch (error) {
-      console.error('❌ Erro ao carregar tipos populares:', error);
+      console.error("❌ Erro ao carregar tipos populares:", error);
       return [];
     }
   }
@@ -448,32 +450,32 @@ class TiposEpiAdapter {
   private getFallbackTiposEPI(): TipoEpi[] {
     return [
       {
-        id: 'fallback-1',
-        nome_equipamento: 'Capacete de Segurança (Demo)',
-        numero_ca: '12345',
-        categoria: 'PROTECAO_CRANIO',
-        custo_unitario: 35.50,
-        status: 'ATIVO',
-        created_at: new Date().toISOString()
+        id: "fallback-1",
+        nome_equipamento: "Capacete de Segurança (Demo)",
+        numero_ca: "12345",
+        categoria: "PROTECAO_CRANIO",
+        custo_unitario: 35.5,
+        status: "ATIVO",
+        created_at: new Date().toISOString(),
       },
       {
-        id: 'fallback-2',
-        nome_equipamento: 'Óculos de Proteção (Demo)',
-        numero_ca: '67890',
-        categoria: 'PROTECAO_OLHOS',
-        custo_unitario: 28.90,
-        status: 'ATIVO',
-        created_at: new Date().toISOString()
+        id: "fallback-2",
+        nome_equipamento: "Óculos de Proteção (Demo)",
+        numero_ca: "67890",
+        categoria: "PROTECAO_OLHOS",
+        custo_unitario: 28.9,
+        status: "ATIVO",
+        created_at: new Date().toISOString(),
       },
       {
-        id: 'fallback-3',
-        nome_equipamento: 'Luva de Segurança (Demo)',
-        numero_ca: '54321',
-        categoria: 'PROTECAO_MAOS',
+        id: "fallback-3",
+        nome_equipamento: "Luva de Segurança (Demo)",
+        numero_ca: "54321",
+        categoria: "PROTECAO_MAOS",
         custo_unitario: 15.75,
-        status: 'ATIVO',
-        created_at: new Date().toISOString()
-      }
+        status: "ATIVO",
+        created_at: new Date().toISOString(),
+      },
     ];
   }
 }

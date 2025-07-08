@@ -1,16 +1,21 @@
 /**
  * Tipos e Interfaces para Notas de Movimentação
- * 
+ *
  * Centralização de todas as definições de tipos relacionadas
  * a notas de movimentação para melhor organização e reutilização
  */
 
-import type { PaginationParams } from '$lib/stores/paginatedStore';
+import type { PaginationParams } from "$lib/stores/paginatedStore";
 
 // ==================== ENUMS DO BACKEND ====================
 
-export type TipoNotaEnum = 'ENTRADA' | 'TRANSFERENCIA' | 'DESCARTE' | 'ENTRADA_AJUSTE' | 'SAIDA_AJUSTE';
-export type StatusNotaEnum = 'RASCUNHO' | 'CONCLUIDA' | 'CANCELADA';
+export type TipoNotaEnum =
+  | "ENTRADA"
+  | "TRANSFERENCIA"
+  | "DESCARTE"
+  | "ENTRADA_AJUSTE"
+  | "SAIDA_AJUSTE";
+export type StatusNotaEnum = "RASCUNHO" | "CONCLUIDA" | "CANCELADA";
 
 // ==================== INTERFACES PRINCIPAIS ====================
 
@@ -40,7 +45,7 @@ export interface NotaMovimentacao {
   _status: StatusNotaEnum;
   createdAt: string;
   _itens?: NotaMovimentacaoItem[];
-  
+
   // Campos para compatibilidade com frontend legacy
   almoxarifado_id?: string; // Mapping de almoxarifadoOrigemId
   almoxarifado_destino_id?: string; // Mapping de almoxarifadoDestinoId
@@ -51,7 +56,7 @@ export interface NotaMovimentacao {
   data_documento?: string; // Mapping de createdAt
   created_at?: string; // Mapping de createdAt
   itens?: NotaMovimentacaoItem[]; // Mapping de _itens
-  
+
   // Relacionamentos expandidos (quando incluídos)
   responsavel?: {
     id: string;
@@ -68,7 +73,7 @@ export interface NotaMovimentacao {
     nome: string;
     descricao?: string;
   };
-  
+
   // Campos derivados
   total_itens?: number;
   valor_total?: number;

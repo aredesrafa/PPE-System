@@ -37,7 +37,7 @@
   export let mode: 'create' | 'edit' | 'view' = 'create';
   export let tipo: TipoNotaEnum = 'ENTRADA';
   export let nota: NotaMovimentacao | null = null;
-  export let loading = false;
+  export const loading = false;
 
   // ==================== EVENT DISPATCHER ====================
   

@@ -34,8 +34,8 @@
   // ==================== PROPS ====================
   
   export let initialPageSize: number = 20;
-  export let autoRefresh: boolean = false;
-  export let refreshInterval: number = 30000;
+  export const autoRefresh: boolean = false;
+  export const refreshInterval: number = 30000;
   
   // ==================== ENHANCED STORE ====================
   

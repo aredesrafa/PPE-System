@@ -1,46 +1,56 @@
 /**
  * Service Adapters Index
- * 
+ *
  * Exporta todos os service adapters especializados para uso em componentes.
  * Cada adapter implementa uma responsabilidade específica do domínio.
  */
 
 // Core services
-export { api, apiClient, ApiError, createUrlWithParams, errorUtils } from './core/apiClient';
-export { configurationService, type BusinessConfiguration, type BusinessConfigurationItem } from './core/configurationService';
+export {
+  api,
+  apiClient,
+  ApiError,
+  createUrlWithParams,
+  errorUtils,
+} from "./core/apiClient";
+export {
+  configurationService,
+  type BusinessConfiguration,
+  type BusinessConfigurationItem,
+} from "./core/configurationService";
 
 // Entity Management Adapter - Para entidades com hierarquia
-export { entityManagementAdapter } from './entity/entityManagementAdapter';
+export { entityManagementAdapter } from "./entity/entityManagementAdapter";
 
 // Inventory Adapters - Separação CQRS
-export { inventoryQueryAdapter } from './inventory/inventoryQueryAdapter';
-export { inventoryCommandAdapter } from './inventory/inventoryCommandAdapter';
+export { inventoryQueryAdapter } from "./inventory/inventoryQueryAdapter";
+export { inventoryCommandAdapter } from "./inventory/inventoryCommandAdapter";
 
 // Process Lifecycle Adapter - Para workflows complexos
-export { processLifecycleAdapter } from './process/processLifecycleAdapter';
+export { processLifecycleAdapter } from "./process/processLifecycleAdapter";
 
 // 🚀 NOVOS: Process adapters especializados (substituindo fichaProcessAdapter)
-export * from './process';
+export * from "./process";
 
 // Notas Movimentacao Adapter - Para notas de movimentação
-export { notasMovimentacaoAdapter } from './process/notasMovimentacaoAdapter';
+export { notasMovimentacaoAdapter } from "./process/notasMovimentacaoAdapter";
 
 // Reporting Query Adapter - Para consultas especializadas
-export { reportingQueryAdapter } from './reporting/reportingQueryAdapter';
+export { reportingQueryAdapter } from "./reporting/reportingQueryAdapter";
 
 // Nuevos adapters para notas
-export { almoxarifadosAdapter } from './entity/almoxarifadosAdapter';
-export { tiposEpiAdapter } from './entity/tiposEpiAdapter';
-export { estoqueItensAdapter } from './entity/estoqueItensAdapter';
+export { almoxarifadosAdapter } from "./entity/almoxarifadosAdapter";
+export { tiposEpiAdapter } from "./entity/tiposEpiAdapter";
+export { estoqueItensAdapter } from "./entity/estoqueItensAdapter";
 
 // Imports para uso em getServiceAdapters
-import { almoxarifadosAdapter } from './entity/almoxarifadosAdapter';
-import { tiposEpiAdapter } from './entity/tiposEpiAdapter';
-import { estoqueItensAdapter } from './entity/estoqueItensAdapter';
-import { notasMovimentacaoAdapter } from './process/notasMovimentacaoAdapter';
+import { almoxarifadosAdapter } from "./entity/almoxarifadosAdapter";
+import { tiposEpiAdapter } from "./entity/tiposEpiAdapter";
+import { estoqueItensAdapter } from "./entity/estoqueItensAdapter";
+import { notasMovimentacaoAdapter } from "./process/notasMovimentacaoAdapter";
 
 // Business Configuration Stores
-export { 
+export {
   businessConfigStore,
   tiposMovimentacaoStore,
   categoriasEPIStore,
@@ -54,10 +64,10 @@ export {
   statusEntregaOptions,
   statusEstoqueOptions,
   initializeBusinessConfig,
-  configToOptions
-} from '../stores/businessConfigStore';
+  configToOptions,
+} from "../stores/businessConfigStore";
 
-// Helper functions para facilitar importações  
+// Helper functions para facilitar importações
 export function getServiceAdapters() {
   return {
     entity: entityManagementAdapter,
@@ -70,27 +80,27 @@ export function getServiceAdapters() {
     notas: notasMovimentacaoAdapter,
     almoxarifados: almoxarifadosAdapter,
     tiposEpi: tiposEpiAdapter,
-    estoqueItens: estoqueItensAdapter
+    estoqueItens: estoqueItensAdapter,
   };
 }
 
 // Types
-export type * from '../types/serviceTypes';
+export type * from "../types/serviceTypes";
 
 /**
  * Inicializa todos os services
  * Pode ser chamado no +layout.svelte para setup inicial
  */
 export async function initializeServices(): Promise<void> {
-  console.log('🚀 Inicializando service adapters...');
-  
+  console.log("🚀 Inicializando service adapters...");
+
   try {
     // Configurações de negócio já são carregadas pelo businessConfigStore
     // Aqui podemos fazer outras inicializações se necessário
-    
-    console.log('✅ Service adapters inicializados com sucesso');
+
+    console.log("✅ Service adapters inicializados com sucesso");
   } catch (error) {
-    console.error('❌ Erro ao inicializar service adapters:', error);
+    console.error("❌ Erro ao inicializar service adapters:", error);
   }
 }
 
@@ -103,15 +113,15 @@ export function clearAllServiceCaches(): void {
     inventoryQueryAdapter.clearCache();
     inventoryCommandAdapter.clearCache();
     reportingQueryAdapter.clearCache();
-    
+
     // Novos adapters para notas
     almoxarifadosAdapter.clearCache();
     tiposEpiAdapter.clearCache();
     estoqueItensAdapter.clearCache();
     // notasMovimentacaoAdapter não tem cache (adapter de processo)
-    
-    console.log('🗑️ Cache de todos os services limpo');
+
+    console.log("🗑️ Cache de todos os services limpo");
   } catch (error) {
-    console.warn('⚠️ Erro ao limpar cache dos services:', error);
+    console.warn("⚠️ Erro ao limpar cache dos services:", error);
   }
 }

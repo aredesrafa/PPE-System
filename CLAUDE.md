@@ -54,6 +54,7 @@ Este arquivo fornece orientações para desenvolvimento no frontend Svelte do Da
    - ✅ Response parsing otimizado para diferentes estruturas
 
 #### **🔧 Correções Técnicas Aplicadas:**
+
 - ✅ **Syntax Fix**: Corrigido uso de `class:` em componentes Flowbite (deve ser `class="{condition ? 'class' : ''}"`)
 - ✅ **Component Props**: Ajustados props do `NotaItensManager` para interface correta
 - ✅ **Event Handlers**: Atualizados para compatibilidade com eventos do drawer
@@ -64,6 +65,7 @@ Este arquivo fornece orientações para desenvolvimento no frontend Svelte do Da
   - Estrutura agora idêntica ao FichaDetailPresenter que funciona corretamente
 
 #### **✅ Status de Funcionamento:**
+
 - ✅ **Servidor Vite**: Rodando sem erros na porta 5177 (auto-ajuste de porta)
 - ✅ **Página /notas**: Carregando corretamente sem erros de compilação
 - ✅ **Página /fichas**: Drawer funcionando perfeitamente como referência
@@ -74,6 +76,7 @@ Este arquivo fornece orientações para desenvolvimento no frontend Svelte do Da
 - ✅ **Container/Presenter**: Arquitetura implementada em páginas principais
 
 #### **🎯 Sistema Drawer Unificado - Métricas Finais:**
+
 - **Consistência UI**: 100% - Todos os drawers seguem padrão de 940px
 - **DrawerHeader**: Implementado em todos os drawers (Fichas, Notas)
 - **Comportamento**: Idêntico (ESC, click fora, animações)
@@ -83,6 +86,7 @@ Este arquivo fornece orientações para desenvolvimento no frontend Svelte do Da
 ---
 
 **Estado Atual**: Sistema funcional com arquitetura drawer totalmente unificada
+
 - ✅ **Base técnica sólida**: Dependências corretas, configurações adequadas
 - ✅ **Página /notas**: 100% migrada para drawer + Container/Presenter ⭐ **FINALIZADA**
 - ✅ **Página /fichas**: 100% funcional com drawer + Container/Presenter ⭐ **FINALIZADA**
@@ -100,11 +104,12 @@ O sistema agora possui **consistência visual e funcional total** entre todas as
 
 - **Largura padrão**: 940px em todos os drawers
 - **Header unificado**: `DrawerHeader` component em todos
-- **Comportamento idêntico**: ESC, click fora, animações consistentes  
+- **Comportamento idêntico**: ESC, click fora, animações consistentes
 - **Botões padronizados**: Ações primárias e secundárias no header
 - **Fluxo de UX**: Navegação e interações previsíveis
 
 **Páginas com drawer unificado:**
+
 - ✅ `/fichas` - Detalhes de colaborador e fichas de EPI
 - ✅ `/notas` - Criação/edição de notas de movimentação
 - 🔄 `/catalogo` - Próxima a ser migrada (ainda usa modal)
@@ -138,22 +143,25 @@ O sistema agora possui **consistência visual e funcional total** entre todas as
 **Status: CONCLUÍDO** - Lógica complexa do frontend para listagem de notas removida conforme solicitado
 
 ### **🧹 Simplificação do notasMovimentacaoAdapter.ts**
+
 - ✅ **Cache removido**: Todo sistema de cache (usuários, almoxarifados) eliminado
-- ✅ **Enrichment removido**: Função `enrichNotaData()` eliminada  
+- ✅ **Enrichment removido**: Função `enrichNotaData()` eliminada
 - ✅ **Método híbrido removido**: `listarNotasComDetalhes()` eliminado
 - ✅ **Método principal**: `listarNotas()` agora usa diretamente `/api/notas-movimentacao/resumo`
 - ✅ **obterNota()**: Simplificado, sem enrichment de dados
 - ✅ **obterOpcoesFilters()**: Simplificado, sem tratamento complexo de API
 
 ### **🔗 Endpoint /resumo Integrado**
+
 ```typescript
 // Agora usa diretamente o endpoint já implementado
-GET /api/notas-movimentacao/resumo
+GET / api / notas - movimentacao / resumo;
 // Parâmetros: page, limit, dataInicio, dataFim, status, tipo, numero, usuarioId, almoxarifadoId
 // Retorna: dados pré-processados com nomes, contagens e valores
 ```
 
 ### **📝 Container Atualizado**
+
 - ✅ **NotesContainer.svelte**: Atualizado para usar `listarNotas()` simples
 - ✅ **Compatibilidade mantida**: Todos os eventos e handlers funcionando
 - ✅ **Performance melhorada**: Menos lógica no frontend, dados vêm do backend
@@ -161,6 +169,7 @@ GET /api/notas-movimentacao/resumo
 **Resultado**: Sistema totalmente simplificado usando endpoint otimizado já implementado no backend.
 
 ### **🔧 Correção Final - Mapeamento de Campos**
+
 - ✅ **NotesTablePresenter.svelte**: Corrigido para usar campos diretos do `/resumo`
   - `nota.responsavel?.nome` → `nota.responsavel_nome`
   - `nota.almoxarifado?.nome` → `nota.almoxarifado_nome`
@@ -174,13 +183,15 @@ GET /api/notas-movimentacao/resumo
 ## 🔍 **API Backend Integration - Status Final (Janeiro 2025)**
 
 **✅ VALIDAÇÃO COMPLETA REALIZADA:**
+
 - **Endpoint Notas**: `GET /api/notas-movimentacao` ✅ Formato: `{success: true, data: [...], pagination: {...}}`
 - **Endpoint Usuários**: `GET /api/usuarios` ✅ Formato: `{items: [...], pagination: {...}}`
 - **Endpoint Almoxarifados**: `GET /api/estoque/almoxarifados` ✅ Formato: `{success: true, data: [...]}`
 - **Endpoint Nota Individual**: `GET /api/notas-movimentacao/:id` ✅ Inclui `_itens` com detalhes
 
 **🎯 Cache e Enriquecimento Implementados:**
-- **Cache de Usuários**: TTL 5 minutos, resolve usuarioId → nome 
+
+- **Cache de Usuários**: TTL 5 minutos, resolve usuarioId → nome
 - **Cache de Almoxarifados**: TTL 5 minutos, resolve almoxarifadoId → nome
 - **Enriquecimento de Dados**: Substitui UUIDs por nomes legíveis
 - **Adaptação de Campos**: `_status` → `status`, `_itens` → `itens`
@@ -190,11 +201,13 @@ GET /api/notas-movimentacao/resumo
 **✅ PROBLEMA RESOLVIDO - Notas não exibindo dados corretos**
 
 **Causa Raiz Identificada:**
+
 - API de listagem `/api/notas-movimentacao` não inclui itens por design (performance)
 - Enrichment não criava objetos aninhados compatíveis com componente
 - Cache resolvendo IDs mas estrutura de dados inadequada
 
 **Solução Implementada:**
+
 - ✅ **Enrichment Corrigido**: Cria objetos `{responsavel: {nome, id}, almoxarifado: {nome, id}}`
 - ✅ **Método Híbrido**: `listarNotasComDetalhes()` busca itens das primeiras 5 notas
 - ✅ **Logs de Debug**: Temporários para validação
@@ -208,6 +221,7 @@ GET /api/notas-movimentacao/resumo
 **✅ IMPLEMENTAÇÃO COMPLETA (P7-11H-refactor-notas.md + Refatoração Adicional):**
 
 ### **🧹 Limpeza Arquitetural Concluída (Janeiro 2025)**
+
 - ✅ **NotasMovimentacaoAdapter.ts**: Reduzido de 926 para 565 linhas (-39%)
 - ✅ **Dados de fallback removidos**: Backend está 100% funcional
 - ✅ **Helpers UI centralizados**: Movidos para `src/lib/utils/notasHelpers.ts`
@@ -216,6 +230,7 @@ GET /api/notas-movimentacao/resumo
 - ✅ **Imports atualizados**: Todos os componentes usam helpers centralizados
 
 ### **🎯 Resultados Alcançados**
+
 - **UX Revolucionária**: Modal dual com fluxo items-first (primeiro itens, depois burocracia)
 - **Arquitetura Modular**: Container/Presenter pattern 100% implementado na página notas
 - **Backend Integration**: 3 novos adapters especializados (almoxarifados, tipos EPI, estoque)
@@ -223,6 +238,7 @@ GET /api/notas-movimentacao/resumo
 - **Dual-mode Modal**: Tabs inteligentes para gestão de itens vs dados burocráticos
 
 ### **🔧 Componentes Implementados**
+
 1. **NotesContainer.svelte** - Container inteligente com store paginado
 2. **NotesTablePresenter.svelte** - Tabela otimizada com novas colunas (Qtd. Itens, Valor Total)
 3. **NotesFormModalPresenter.svelte** - Modal dual revolucionário
@@ -232,6 +248,7 @@ GET /api/notas-movimentacao/resumo
 7. **EstoqueItensAdapter.ts** - Backend integration para estoque com validação
 
 ### **⚡ Features Implementadas**
+
 - ✅ **Fluxo Items-First**: Usuário adiciona itens antes de preencher campos burocráticos
 - ✅ **Validação em Tempo Real**: Verificação automática de quantidades disponíveis
 - ✅ **Cache Inteligente**: TTL 5 minutos para otimização de performance
@@ -241,6 +258,7 @@ GET /api/notas-movimentacao/resumo
 - ✅ **Status Workflow**: Rascunho → Concluída → Cancelada com validações
 
 ### **📊 Métricas de Sucesso**
+
 - **Arquitetura**: Container/Presenter pattern 100% na página notas
 - **UX**: Fluxo otimizado reduz cliques em ~40%
 - **Performance**: Cache implementado, paginação server-side
@@ -250,6 +268,7 @@ GET /api/notas-movimentacao/resumo
 ### **🔗 Status Integração Backend (Testado 07/01/2025)**
 
 **✅ SISTEMA 100% FUNCIONAL - TESTADO E CONFIRMADO:**
+
 - ✅ Criação de notas com auto-fetch de responsável padrão
 - ✅ Adição de itens a notas (tipoEpiId, quantidade, custoUnitario)
 - ✅ **Conclusão de notas**: Gerando movimentações de estoque corretamente ⭐
@@ -260,18 +279,21 @@ GET /api/notas-movimentacao/resumo
 - ✅ **Workflow completo**: RASCUNHO → CONCLUIDA → MovimentaçãoEstoque criada
 
 **✅ BUG BACKEND RESOLVIDO (07/01/2025):**
+
 - ✅ **Conclusão de notas**: Foreign key constraint violation CORRIGIDO
 - **Causa identificada**: ConcluirNotaMovimentacaoUseCase usava input.usuarioId em vez de notaComItens.usuarioId
 - **Correção aplicada**: Todos os métodos (processarEntrada, processarTransferencia, processarDescarte, processarAjuste) agora usam responsável da nota
 - **Status**: ✅ **SISTEMA 100% FUNCIONAL**
 
 **🚀 RESULTADO FINAL:**
+
 - ✅ Criação, edição e **conclusão** de notas funcionando perfeitamente
 - ✅ Frontend mantém fallback inteligente para responsável padrão
 - ✅ Error handling robusto implementado
 - ✅ Sistema pronto para produção completa
 
 **🔧 CORREÇÕES ADICIONAIS APLICADAS (07/01/2025):**
+
 - ✅ **Endpoint /validar-conclusao**: REMOVIDO - substituído por validação local eficiente
 - ✅ **Custo unitário**: Corrigida conversão string→number no input
 - ✅ **Response parsing**: Melhorado parsing de dados de conclusão
@@ -291,31 +313,32 @@ GET /api/notas-movimentacao/resumo
 ### **✅ Problemas Recentemente Resolvidos (Janeiro 2025)**
 
 #### **🔧 Correções de Backend Integration Críticas**
+
 - ✅ **Tipos EPI "undefined"**: RESOLVIDO - Mapeamento de campos backend
   - **Problema**: Backend retorna `nomeEquipamento`, `numeroCa` (camelCase)
-  - **Frontend esperava**: `nome_equipamento`, `numero_ca` (snake_case)  
+  - **Frontend esperava**: `nome_equipamento`, `numero_ca` (snake_case)
   - **Solução**: Atualizada interface `TipoEpi` e todos os mappers em `tiposEpiAdapter.ts`
   - **Resultado**: Dropdowns agora mostram nomes corretos dos EPIs
-  
 - ✅ **Erro custo_unitario.toFixed()**: RESOLVIDO - Verificações robustas
   - **Problema**: `custo_unitario` vinha como null/undefined do backend
   - **Solução**: Added `!= null && typeof === 'number' && !isNaN()` checks
   - **Arquivos alterados**: `NotaItensManager.svelte` - funções `getTotalValor()` e displays
-  
 - ✅ **Criação de Notas Backend**: MELHORADO - Responsável automático
   - **Problema**: Campo `responsavel_id` obrigatório não era enviado
   - **Solução**: Implementado fallback para usuário padrão quando não especificado
   - **Resultado**: Criação de notas agora funciona (parcialmente - validação ainda pendente)
 
 #### **🔍 Debug System Implementado**
+
 - ✅ **Logs detalhados**: Implementados em `tiposEpiAdapter.ts`
   - JSON completo dos objetos retornados pelo backend
   - Mapeamento campo por campo para identificar problemas
   - Debug de todos os campos disponíveis vs esperados
 
 ### **⚠️ Problemas Conhecidos (Atualizados)**
+
 - **Build falha**: 1228 erros TypeScript impedem build de produção
-- **Badge colors**: Flowbite aceita apenas enum específico, não string  
+- **Badge colors**: Flowbite aceita apenas enum específico, não string
 - **Service mocks**: Vários serviços ainda usam dados mockados
 - **Validação Backend Notas**: ⚠️ INVESTIGANDO
   - Erro: "Almoxarifados obrigatórios não informados ou configuração inválida"
@@ -323,6 +346,7 @@ GET /api/notas-movimentacao/resumo
   - **Próximo**: Investigar regras específicas de negócio para criação de notas
 
 ### **🔧 Comandos de Diagnóstico**
+
 ```bash
 # Verificar erros TypeScript
 npm run check
@@ -344,26 +368,29 @@ curl https://epi-backend-s14g.onrender.com/api/health
 ### **⚡ Correções Prioritárias**
 
 #### **1. Corrigir Badge Colors (Alto Impacto)**
+
 ```typescript
 // ❌ Errado (causa erro TS)
-const badgeColor = status === 'active' ? 'green' : 'red';
+const badgeColor = status === "active" ? "green" : "red";
 
 // ✅ Correto (Flowbite enum)
-const badgeColor: "green" | "red" | "yellow" | "blue" = 
-  status === 'active' ? 'green' : 'red';
+const badgeColor: "green" | "red" | "yellow" | "blue" =
+  status === "active" ? "green" : "red";
 ```
 
 #### **2. Migrar Mocks para Backend Real**
+
 ```typescript
 // configurationService.ts - linha 103
 // ❌ Atual
 return MOCK_BUSINESS_CONFIG;
 
 // ✅ Deve ser
-return await apiClient.get('/configuration');
+return await apiClient.get("/configuration");
 ```
 
 ### **🧪 Páginas de Teste**
+
 - `http://localhost:5173/fichas` - Nova arquitetura Container/Presenter ✅
 - `http://localhost:5173/estoque` - Arquitetura legada ⚠️
 - `http://localhost:5173/catalogo` - Arquitetura legada ⚠️
@@ -373,6 +400,7 @@ return await apiClient.get('/configuration');
 **🎯 Sistema Frontend Svelte com Arquitetura Modular COMPLETA**
 
 Sistema de gerenciamento de EPIs (Equipamentos de Proteção Individual) desenvolvido com **arquitetura modular Svelte 4** preparada para integração PostgreSQL:
+
 - **Frontend SvelteKit** com TypeScript para interface de usuário
 - **Flowbite Svelte v0.48.6** para componentes de UI (última versão compatível com Svelte 4)
 - **TailwindCSS 3.4** para estilização
@@ -382,6 +410,7 @@ Sistema de gerenciamento de EPIs (Equipamentos de Proteção Individual) desenvo
 - **Configurações Dinâmicas** carregadas do backend via businessConfigStore
 
 **Tecnologias Principais:**
+
 - **Svelte 4.2.19** (última versão estável antes do Svelte 5)
 - **SvelteKit 2.x** (framework full-stack)
 - **TypeScript 5.x** (tipagem forte)
@@ -392,6 +421,7 @@ Sistema de gerenciamento de EPIs (Equipamentos de Proteção Individual) desenvo
 - UUID 11.1.0 (geração de IDs únicos)
 
 **Funcionalidades Principais:**
+
 - Sistema de temas claro/escuro com cores primárias customizadas
 - Design responsivo com abordagem mobile-first
 - Interface completamente em português
@@ -505,6 +535,7 @@ Os **Containers** encapsulam toda a lógica de negócio e gerenciamento de estad
 ```
 
 **Componentes Containers Implementados:**
+
 - `InventoryContainer.svelte` - Gestão completa de estoque com movimentações
 - `MovementModalPresenter.svelte` - Modal para ajustes de estoque
 - `HistoryModalPresenter.svelte` - Histórico de movimentações com filtros
@@ -514,7 +545,7 @@ Os **Containers** encapsulam toda a lógica de negócio e gerenciamento de estad
 Os **Presenters** são puramente apresentacionais:
 
 ```typescript
-// InventoryTablePresenter.svelte - Exemplo do padrão implementado  
+// InventoryTablePresenter.svelte - Exemplo do padrão implementado
 - Recebem dados via props
 - Renderizam UI usando Flowbite Svelte
 - Emitem eventos para o Container pai
@@ -522,6 +553,7 @@ Os **Presenters** são puramente apresentacionais:
 ```
 
 **Componentes Presenters Implementados:**
+
 - `InventoryTablePresenter.svelte` - Tabela com paginação e filtros
 - `MovementModalPresenter.svelte` - Interface de movimentação
 - `HistoryModalPresenter.svelte` - Exibição de histórico
@@ -532,10 +564,10 @@ Sistema de service adapters implementado por domínio:
 
 ```typescript
 // Adapters especializados por contexto de negócio
-inventoryCommandAdapter     // Commands para Event Sourcing
-entityManagementAdapter     // CRUD de entidades hierárquicas  
-processWorkflowAdapter      // Workflows de assinaturas
-reportingQueryAdapter       // Queries especializadas para relatórios
+inventoryCommandAdapter; // Commands para Event Sourcing
+entityManagementAdapter; // CRUD de entidades hierárquicas
+processWorkflowAdapter; // Workflows de assinaturas
+reportingQueryAdapter; // Queries especializadas para relatórios
 ```
 
 #### **📋 Server-Side Pagination Store**
@@ -596,11 +628,13 @@ Implementada página `/estoque` demonstrando:
 ### **🔄 Estado de Transição (Status Real)**
 
 **Páginas Migradas (Nova Arquitetura):**
+
 - `fichas/` ✅ **Container/Presenter implementado**
 
 **Páginas em Transição (Arquitetura Legacy):**
+
 - `estoque/` ⚠️ **Pendente migração**
-- `catalogo/` ⚠️ **Pendente migração** 
+- `catalogo/` ⚠️ **Pendente migração**
 - `auditoria/` ⚠️ **Pendente migração**
 - `notas/` ⚠️ **Pendente migração**
 - `devolucoes/` ⚠️ **Pendente migração**
@@ -608,6 +642,7 @@ Implementada página `/estoque` demonstrando:
 - `relatorios/*` ⚠️ **Pendente migração**
 
 **Componentes Implementados:**
+
 - ✅ 9 Containers existem (`src/lib/components/containers/`)
 - ✅ 15 Presenters existem (`src/lib/components/presenters/`)
 - ⚠️ Nem todos estão sendo utilizados nas páginas
@@ -633,17 +668,20 @@ Implementada página `/estoque` demonstrando:
 ### **📋 Checklist de Implementação**
 
 #### **✅ Fase 0: Configuração de Negócio**
+
 - [x] ConfigurationService para ENUMs dinâmicos
 - [x] businessConfigStore com configurações globais
 - [x] Sistema de derivação de opções (status, categorias, etc.)
 
 #### **✅ Fase 1: Infraestrutura**
+
 - [x] Cliente HTTP central (apiClient.ts) com retry/timeout
 - [x] Factory de store paginado (createPaginatedStore)
 - [x] Service adapters especializados por domínio
 - [x] Tipos TypeScript para DTOs e contratos
 
 #### **✅ Fase 2: Container/Presenter Pattern**
+
 - [x] InventoryContainer.svelte (componente inteligente)
 - [x] InventoryTablePresenter.svelte (componente burro)
 - [x] MovementModalPresenter.svelte (modal de movimentação)
@@ -651,6 +689,7 @@ Implementada página `/estoque` demonstrando:
 - [x] Integração completa com eventos e estado
 
 #### **⚠️ Fase 3: Integração Backend Real (PARCIAL)**
+
 - [x] Backend PostgreSQL em produção (https://epi-backend-s14g.onrender.com)
 - [x] ApiClient configurado para backend real
 - [x] Service adapters criados (estrutura completa)
@@ -660,6 +699,7 @@ Implementada página `/estoque` demonstrando:
 - [ ] **InventoryCommandAdapter**: registerMovement() ainda mockado
 
 #### **⚠️ Testes e Demonstração (STATUS REAL)**
+
 - [x] Página `/fichas` com nova arquitetura Container/Presenter
 - [ ] **Backend real**: Integração parcial, vários endpoints mockados
 - [ ] **Build de produção**: Falha devido a 382 erros TypeScript
@@ -670,6 +710,7 @@ Implementada página `/estoque` demonstrando:
 ### **📊 Sistema de Estado Reativo Avançado**
 
 **Stores Principais:**
+
 - `themeStore` - Gerenciamento de tema claro/escuro
 - `apiStore` - Estado global da API e cache
 - `userStore` - Dados do usuário logado
@@ -681,16 +722,15 @@ Implementada página `/estoque` demonstrando:
 
 ```typescript
 // Store com performance otimizada
-import { writable, derived } from 'svelte/store';
-import { createCacheStore, debounce } from '$lib/utils/performance';
+import { writable, derived } from "svelte/store";
+import { createCacheStore, debounce } from "$lib/utils/performance";
 
 // Store básico com cache
 export const estoqueStore = writable<ItemEstoque[]>([]);
 
 // Store derivado otimizado (computed)
-export const estoqueDisponivel = derived(
-  estoqueStore,
-  $estoque => $estoque.filter(item => item.quantidade > 0)
+export const estoqueDisponivel = derived(estoqueStore, ($estoque) =>
+  $estoque.filter((item) => item.quantidade > 0),
 );
 
 // Store com métodos personalizados e performance
@@ -701,12 +741,14 @@ function createOptimizedEstoqueStore() {
   return {
     subscribe,
     init: () => set([]),
-    addItem: debounce((item: ItemEstoque) => 
-      update(items => [...items, item]), 300),
-    updateItem: (id: string, updates: Partial<ItemEstoque>) => 
-      update(items => items.map(item => 
-        item.id === id ? { ...item, ...updates } : item
-      )),
+    addItem: debounce(
+      (item: ItemEstoque) => update((items) => [...items, item]),
+      300,
+    ),
+    updateItem: (id: string, updates: Partial<ItemEstoque>) =>
+      update((items) =>
+        items.map((item) => (item.id === id ? { ...item, ...updates } : item)),
+      ),
     // Métodos com cache
     loadFromCache: (key: string) => {
       const cached = cache.get(key);
@@ -716,7 +758,7 @@ function createOptimizedEstoqueStore() {
     saveToCache: (key: string, data: ItemEstoque[]) => {
       cache.set(key, data);
       set(data);
-    }
+    },
   };
 }
 
@@ -730,28 +772,30 @@ export const estoque = createOptimizedEstoqueStore();
 **Flowbite Svelte v0.48.6** é a última versão compatível com **Svelte 4**. Versões posteriores são reescritas para Svelte 5 e **NÃO funcionam** com Svelte 4.
 
 **Configuração Obrigatória (tailwind.config.mjs):**
+
 ```javascript
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
-    './src/**/*.{html,js,svelte,ts}',
-    './node_modules/flowbite-svelte/**/*.{html,js,svelte,ts}', // OBRIGATÓRIO
+    "./src/**/*.{html,js,svelte,ts}",
+    "./node_modules/flowbite-svelte/**/*.{html,js,svelte,ts}", // OBRIGATÓRIO
   ],
-  plugins: [require('flowbite/plugin')], // OBRIGATÓRIO
+  plugins: [require("flowbite/plugin")], // OBRIGATÓRIO
   theme: {
     extend: {
       colors: {
-        primary: { // OBRIGATÓRIO para componentes funcionarem
-          50: '#FFF5F2',
-          100: '#FFF1EE',
-          200: '#FFE4DE',
-          300: '#FFD5CC',
-          400: '#FFBCAD',
-          500: '#FE795D',
-          600: '#EF562F',
-          700: '#EB4F27',
-          800: '#CC4522',
-          900: '#A5371B',
+        primary: {
+          // OBRIGATÓRIO para componentes funcionarem
+          50: "#FFF5F2",
+          100: "#FFF1EE",
+          200: "#FFE4DE",
+          300: "#FFD5CC",
+          400: "#FFBCAD",
+          500: "#FE795D",
+          600: "#EF562F",
+          700: "#EB4F27",
+          800: "#CC4522",
+          900: "#A5371B",
         },
       },
     },
@@ -762,6 +806,7 @@ export default {
 ### **📋 Padrões de Uso Otimizados**
 
 **Styling Standards (Flowbite Svelte v0.48.6):**
+
 - **CRÍTICO**: Todos os botões devem usar `class="rounded-sm"` (border-radius: 2px) - padrão da aplicação
 - Todos os componentes Flowbite devem usar `size="sm"` para consistência
 - Usar props `color` do Flowbite ao invés de classes CSS hardcoded
@@ -770,18 +815,19 @@ export default {
 - **NUNCA usar** `rounded-lg` ou outros radius - apenas `rounded-sm` para botões
 
 **Padrão de Componente Otimizado:**
+
 ```svelte
 <script lang="ts">
   import { Button, Card, Badge } from 'flowbite-svelte';
   import type { TipoEPI } from '$lib/types';
   import { createOptimizedFiltersStore } from '$lib/utils/performance';
-  
+
   export let tipoEpi: TipoEPI;
   export let onEdit: (id: string) => void = () => {};
-  
+
   // Estado reativo otimizado
   $: badgeColor = tipoEpi.status === 'ativo' ? 'green' : 'red';
-  
+
   // Lazy loading para dados pesados
   let detailsLoaded = false;
 </script>
@@ -789,15 +835,15 @@ export default {
 <Card size="sm" class="rounded-sm">
   <h3 class="text-lg font-semibold">{tipoEpi.nomeEquipamento}</h3>
   <Badge color={badgeColor} class="w-fit rounded-sm">{tipoEpi.status}</Badge>
-  
+
   {#if detailsLoaded}
     <!-- Conteúdo carregado sob demanda -->
   {/if}
-  
-  <Button 
-    size="sm" 
-    color="primary" 
-    class="rounded-sm" 
+
+  <Button
+    size="sm"
+    color="primary"
+    class="rounded-sm"
     on:click={() => onEdit(tipoEpi.id)}
   >
     Editar
@@ -812,15 +858,19 @@ export default {
 Para garantir consistência visual em toda a aplicação, foram criados componentes padronizados baseados no design do Figma:
 
 #### **TableContainer.svelte**
+
 Container padrão para todas as tabelas da aplicação:
+
 - Container único com bordas arredondadas e sombra sutil
 - Estados integrados: loading, erro, vazio
 - Suporte a filtros via slot
 - Paginação opcional
 - Design consistente com Figma
 
-#### **TableFilters.svelte** 
+#### **TableFilters.svelte**
+
 Filtros padronizados integrados no topo da tabela:
+
 - Campo de busca expansível com ícone
 - Filtros dropdown com largura mínima consistente
 - Checkboxes inline
@@ -828,11 +878,12 @@ Filtros padronizados integrados no topo da tabela:
 - **CRÍTICO**: Filtros integrados dentro do container da tabela, não como card separado
 
 #### **Padrão de Uso:**
+
 ```svelte
 <script>
   import TableContainer from '$lib/components/common/TableContainer.svelte';
   import TableFilters from '$lib/components/common/TableFilters.svelte';
-  
+
   // Configuração de filtros
   $: filterConfig = [
     {
@@ -842,7 +893,7 @@ Filtros padronizados integrados no topo da tabela:
       placeholder: 'Status'
     }
   ];
-  
+
   $: checkboxConfig = [
     {
       key: 'onlyActive',
@@ -864,7 +915,7 @@ Filtros padronizados integrados no topo da tabela:
     on:filterChange={handleFilterChange}
     on:checkboxChange={handleCheckboxChange}
   />
-  
+
   <Table hoverable>
     <!-- Conteúdo da tabela -->
   </Table>
@@ -872,6 +923,7 @@ Filtros padronizados integrados no topo da tabela:
 ```
 
 ### **🎯 Benefícios do Padrão**
+
 1. **Consistência Visual**: Todas as tabelas seguem o mesmo design do Figma
 2. **Reutilização**: Componentes podem ser usados em qualquer página
 3. **Manutenibilidade**: Mudanças no design afetam toda a aplicação
@@ -885,6 +937,7 @@ Filtros padronizados integrados no topo da tabela:
 **REGRA CRÍTICA**: Todos os botões da aplicação devem usar `rounded-sm` (border-radius: 2px).
 
 #### **✅ Padrão Correto:**
+
 ```svelte
 <!-- Flowbite Button -->
 <Button size="sm" color="primary" class="rounded-sm">
@@ -898,6 +951,7 @@ Filtros padronizados integrados no topo da tabela:
 ```
 
 #### **❌ Padrões Incorretos:**
+
 ```svelte
 <!-- NUNCA usar rounded-lg ou outros radius -->
 <Button class="rounded-lg">Botão</Button>  <!-- ❌ Errado -->
@@ -906,6 +960,7 @@ Filtros padronizados integrados no topo da tabela:
 ```
 
 #### **🎯 Elementos Afetados:**
+
 - Botões primários e secundários
 - Botões de ação em tabelas
 - Botões de paginação
@@ -914,6 +969,7 @@ Filtros padronizados integrados no topo da tabela:
 - Botões de formulário
 
 #### **📋 Verificação:**
+
 Todos os botões da aplicação foram atualizados para seguir este padrão. O design agora está 100% consistente com as especificações do Figma.
 
 ## 🖱️ Padrão de Linhas Clicáveis em Tabelas (Janeiro 2025)
@@ -923,19 +979,20 @@ Todos os botões da aplicação foram atualizados para seguir este padrão. O de
 **REGRA CRÍTICA**: Todas as linhas de tabela devem ser clicáveis e executar a ação principal (geralmente "ver detalhes").
 
 #### **✅ Padrão Implementado:**
+
 ```svelte
-<TableBodyRow 
+<TableBodyRow
   class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer"
   on:click={() => handleMainAction(item)}
 >
   <!-- conteúdo da linha -->
-  
+
   <TableBodyCell>
     <!-- Botões de ação secundária com stopPropagation -->
-    <Button 
-      on:click={(e) => { 
-        e.stopPropagation(); 
-        handleSecondaryAction(); 
+    <Button
+      on:click={(e) => {
+        e.stopPropagation();
+        handleSecondaryAction();
       }}
       class="rounded-sm"
     >
@@ -946,6 +1003,7 @@ Todos os botões da aplicação foram atualizados para seguir este padrão. O de
 ```
 
 #### **🎯 Ações Principais por Página:**
+
 - **Estoque**: Clique abre modal de ajuste de quantidade
 - **Fichas**: Clique abre detalhes da ficha do colaborador
 - **Catálogo**: Clique abre detalhes do EPI
@@ -954,6 +1012,7 @@ Todos os botões da aplicação foram atualizados para seguir este padrão. O de
 - **Contratadas**: Clique navega para página de detalhes
 
 #### **🔧 Elementos Obrigatórios:**
+
 1. **Classe CSS**: `cursor-pointer` para indicar interatividade
 2. **Hover states**: Mudança de cor de fundo no hover
 3. **Transições**: `transition-colors` para animação suave
@@ -961,12 +1020,14 @@ Todos os botões da aplicação foram atualizados para seguir este padrão. O de
 5. **Acessibilidade**: Indicação visual clara de interatividade
 
 #### **📋 Benefícios:**
+
 - **UX intuitiva**: Usuários podem clicar em qualquer lugar da linha
 - **Eficiência**: Acesso rápido à ação principal
 - **Consistência**: Comportamento uniforme em todas as tabelas
 - **Acessibilidade**: Área de clique maior para dispositivos touch
 
 **⚠️ Problema Conhecido - Reatividade de Tabelas:**
+
 ```svelte
 <!-- ❌ NÃO FUNCIONA com stores reativos -->
 <Table items={$myStore} />
@@ -992,17 +1053,17 @@ Tabela otimizada com virtualização, paginação eficiente e acessibilidade:
 ```svelte
 <script>
   import OptimizedTable from '$lib/components/ui/OptimizedTable.svelte';
-  
+
   const columns = [
     { key: 'nome', label: 'Nome', sortable: true },
-    { key: 'status', label: 'Status', sortable: true, 
+    { key: 'status', label: 'Status', sortable: true,
       render: (value) => `<span class="badge">${value}</span>` }
   ];
 </script>
 
-<OptimizedTable 
-  {data} 
-  {columns} 
+<OptimizedTable
+  {data}
+  {columns}
   {loading}
   itemsPerPage={20}
   hoverable={true}
@@ -1017,12 +1078,12 @@ Modal otimizado com focus trap, lazy loading e animações:
 ```svelte
 <script>
   import OptimizedModal from '$lib/components/ui/OptimizedModal.svelte';
-  
+
   let showModal = false;
   let modalLoading = false;
 </script>
 
-<OptimizedModal 
+<OptimizedModal
   bind:show={showModal}
   title="Título do Modal"
   size="lg"
@@ -1031,7 +1092,7 @@ Modal otimizado com focus trap, lazy loading e animações:
   showFooter={true}
 >
   <p>Conteúdo do modal...</p>
-  
+
   <svelte:fragment slot="footer">
     <Button on:click={() => showModal = false}>Cancelar</Button>
     <Button color="primary">Confirmar</Button>
@@ -1044,13 +1105,13 @@ Modal otimizado com focus trap, lazy loading e animações:
 ### **⚡ Performance Utils**
 
 ```typescript
-import { 
-  debounce, 
-  throttle, 
-  createPaginationStore, 
+import {
+  debounce,
+  throttle,
+  createPaginationStore,
   createOptimizedFiltersStore,
-  createCacheStore 
-} from '$lib/utils/performance';
+  createCacheStore,
+} from "$lib/utils/performance";
 
 // Debounce para busca
 const debouncedSearch = debounce((term: string) => {
@@ -1062,8 +1123,8 @@ const pagination = createPaginationStore(10);
 
 // Store de filtros com debounce
 const filters = createOptimizedFiltersStore(
-  { status: 'todos', categoria: 'todas' },
-  300 // debounce delay
+  { status: "todos", categoria: "todas" },
+  300, // debounce delay
 );
 
 // Cache otimizado
@@ -1075,14 +1136,14 @@ const cache = createCacheStore<TipoEPI[]>(5 * 60 * 1000); // 5 min
 ```svelte
 <script>
   import { createIntersectionObserver } from '$lib/utils/performance';
-  
+
   let visible = false;
   let element: HTMLElement;
-  
+
   const observer = createIntersectionObserver((entries) => {
     visible = entries[0].isIntersecting;
   });
-  
+
   $: if (element) observer.observe(element);
 </script>
 
@@ -1098,6 +1159,7 @@ const cache = createCacheStore<TipoEPI[]>(5 * 60 * 1000); // 5 min
 Mesmos tipos de negócio, adaptados para Svelte com otimizações:
 
 **Entidades (Tipos mantidos do React):**
+
 - `Empresa` - Companies/organizations
 - `Colaborador` - Employees/workers
 - `TipoEPI` - Types of safety equipment
@@ -1111,6 +1173,7 @@ Mesmos tipos de negócio, adaptados para Svelte com otimizações:
 ## Theme System Otimizado
 
 **Primary Color Theme:**
+
 - Paleta de cores primárias personalizada implementada via CSS custom properties
 - Cores de primary-50 a primary-900 (paleta azul)
 - Aplicada a botões, badges, tabs e links
@@ -1118,33 +1181,41 @@ Mesmos tipos de negócio, adaptados para Svelte com otimizações:
 - **Performance otimizada** com CSS variables
 
 **Theme Configuration:**
+
 ```typescript
 // themeStore.ts - Otimizado
-import { writable } from 'svelte/store';
-import { browser } from '$app/environment';
+import { writable } from "svelte/store";
+import { browser } from "$app/environment";
 
 function createThemeStore() {
-  const { subscribe, set, update } = writable<'light' | 'dark'>('light');
-  
+  const { subscribe, set, update } = writable<"light" | "dark">("light");
+
   return {
     subscribe,
-    toggle: () => update(theme => {
-      const newTheme = theme === 'light' ? 'dark' : 'light';
-      if (browser) {
-        document.documentElement.classList.toggle('dark', newTheme === 'dark');
-        localStorage.setItem('theme', newTheme);
-      }
-      return newTheme;
-    }),
+    toggle: () =>
+      update((theme) => {
+        const newTheme = theme === "light" ? "dark" : "light";
+        if (browser) {
+          document.documentElement.classList.toggle(
+            "dark",
+            newTheme === "dark",
+          );
+          localStorage.setItem("theme", newTheme);
+        }
+        return newTheme;
+      }),
     init: () => {
       if (browser) {
-        const stored = localStorage.getItem('theme');
-        const theme = stored || 
-          (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-        set(theme as 'light' | 'dark');
-        document.documentElement.classList.toggle('dark', theme === 'dark');
+        const stored = localStorage.getItem("theme");
+        const theme =
+          stored ||
+          (window.matchMedia("(prefers-color-scheme: dark)").matches
+            ? "dark"
+            : "light");
+        set(theme as "light" | "dark");
+        document.documentElement.classList.toggle("dark", theme === "dark");
       }
-    }
+    },
   };
 }
 
@@ -1154,21 +1225,24 @@ export const themeStore = createThemeStore();
 ## ✅ Backend PostgreSQL - Integração Avançada
 
 **Status: INTEGRAÇÃO AVANÇADA** - https://epi-backend-s14g.onrender.com
+
 - **Backend em Produção**: Sistema funcional com documentação Swagger
 - **Frontend**: ~70% dos endpoints integrados (+10% melhoria)
 - **Problemas**: Erros TypeScript em outros componentes, mas API integration corrigida
 - **ApiClient**: Configurado corretamente e sendo usado por todos os adapters
 
 **Endpoints Verificados:**
+
 - ✅ `/api/docs` - Documentação Swagger funcionando
 - ❌ `/api/health` - Endpoint não existe (404)
 - ✅ `/api/usuarios` - Funcionando com parsing correto do formato de resposta
 - ✅ `/api/notas-movimentacao` - Totalmente integrado com format handling
 
 **Status por Service Adapter:**
+
 - ✅ `apiClient.ts` - Configurado para backend real
 - ✅ `notasMovimentacaoAdapter.ts` - **100% integrado com API v3.5** ⭐ **NOVO**
-- ⚠️ `configurationService.ts` - Usa MOCK_BUSINESS_CONFIG (linha 103)  
+- ⚠️ `configurationService.ts` - Usa MOCK_BUSINESS_CONFIG (linha 103)
 - ⚠️ `inventoryCommandAdapter.ts` - getInventoryItems() real, registerMovement() mock
 - ✅ Proxy Vite configurado corretamente
 
@@ -1177,12 +1251,14 @@ export const themeStore = createThemeStore();
 ### **✅ Correções Recentes (Janeiro 2025)**
 
 **Problemas de Integração Backend Resolvidos:**
+
 - ✅ **API Response Parsing**: Corrigido parsing de resposta em `notasMovimentacaoAdapter.ts`
 - ✅ **User Fetching Error**: Resolvido erro "Nenhum usuário encontrado no sistema"
 - ✅ **Formato de Resposta**: Atualizado para formato padrão `{success: true, data: [...], pagination: {...}}`
 - ✅ **Fallback Strategy**: Removido uso de mocks, implementando fallback para ID de administrador conhecido
 
 **Métodos Atualizados para Compatibilidade API v3.5:**
+
 - `criarNota()` - Busca automática de usuário responsável com fallback
 - `listarNotas()` - Parsing correto do formato de resposta padrão
 - `obterNota()` - Tratamento de diferentes estruturas de resposta
@@ -1191,9 +1267,10 @@ export const themeStore = createThemeStore();
 - `adicionarItem()` - Compatível com formato de resposta da API
 
 ### **🚨 Ações Restantes**
+
 1. **Corrigir erros TypeScript** em outros componentes (não relacionados à API)
 2. **Migrar services restantes** para APIs reais
-3. **Completar integração** do ConfigurationService  
+3. **Completar integração** do ConfigurationService
 4. **Testar funcionalidades** em produção
 
 ## Otimizações de Performance Implementadas
@@ -1201,6 +1278,7 @@ export const themeStore = createThemeStore();
 ### **🚀 Performance Best Practices**
 
 1. **Lazy Loading de Componentes:**
+
    ```svelte
    {#await import('./HeavyComponent.svelte')}
      <LoadingSpinner />
@@ -1210,16 +1288,18 @@ export const themeStore = createThemeStore();
    ```
 
 2. **Virtualização de Listas Grandes:**
+
    ```svelte
    <!-- Usar OptimizedTable para listas > 100 items -->
    <OptimizedTable {data} {columns} itemsPerPage={50} />
    ```
 
 3. **Debounce em Inputs de Busca:**
+
    ```svelte
    <script>
      import { debounce } from '$lib/utils/performance';
-     
+
      const debouncedSearch = debounce((term) => {
        // Executar busca
      }, 300);
@@ -1227,10 +1307,11 @@ export const themeStore = createThemeStore();
    ```
 
 4. **Cache Inteligente:**
+
    ```svelte
    <script>
      import { createCacheStore } from '$lib/utils/performance';
-     
+
      const cache = createCacheStore(5 * 60 * 1000); // 5 min
    </script>
    ```
@@ -1258,6 +1339,7 @@ export const themeStore = createThemeStore();
 Este é um **frontend Svelte moderno otimizado** preparado para integração com backend PostgreSQL. Mantém toda a funcionalidade do sistema React original, mas aproveita as vantagens do Svelte como reatividade nativa, bundle menor e performance superior, com otimizações avançadas implementadas.
 
 **Diretrizes Técnicas:**
+
 - Use português para todos os termos de negócio e texto da interface
 - Siga PascalCase para arquivos de componentes `.svelte`
 - Mantenha tipagem TypeScript forte em todo o projeto
@@ -1270,6 +1352,7 @@ Este é um **frontend Svelte moderno otimizado** preparado para integração com
 - **Acessibilidade obrigatória** em todos os componentes
 
 **Comandos Essenciais:**
+
 - `npm run dev` - Inicia desenvolvimento Svelte (porta 5176)
 - `npm run build` - Build de produção otimizada
 - `npm run preview` - Preview da build de produção
@@ -1280,6 +1363,7 @@ Este é um **frontend Svelte moderno otimizado** preparado para integração com
 ### **🔄 Status da Migração: 100% Completo**
 
 **Páginas Implementadas (8/8):**
+
 - ✅ Dashboard (`/`) - Com stores otimizados e lazy loading
 - ✅ Catálogo EPIs (`/catalogo`) - Filtros com debounce
 - ✅ Estoque (`/estoque`) - Componentes otimizados
@@ -1290,6 +1374,7 @@ Este é um **frontend Svelte moderno otimizado** preparado para integração com
 - ✅ Relatórios (`/relatorios`) - Performance otimizada
 
 **Funcionalidades Implementadas:**
+
 - ✅ Nova Ficha (NovaFichaModal otimizado)
 - ✅ Nova Movimentação (NewMovementModal otimizado)
 - ✅ Layout fixo (Header + Sidebar responsivo)
@@ -1344,24 +1429,28 @@ Sistema frontend Svelte **funcional mas em transição**, com base técnica sól
 ### **🎯 Status Real da Implementação**
 
 #### **⚠️ FASE 0: Configuração Dinâmica de Negócio (PARCIAL)**
+
 - ✅ ConfigurationService criado com estrutura correta
 - ⚠️ businessConfigStore usa MOCK_BUSINESS_CONFIG (linha 103)
 - ❌ Endpoint `/api/configuration` não utilizado pelo frontend
 - ✅ Store global para configurações implementado
 
 #### **✅ FASE 1: Service Adapters Especializados (ESTRUTURA COMPLETA)**
+
 - ✅ **Estrutura criada**: 13 adapters em 4 domínios especializados
 - ✅ **ApiClient Central**: Configurado para https://epi-backend-s14g.onrender.com
 - ⚠️ **Integração mista**: Alguns métodos usam backend real, outros mock
 - ✅ **PaginatedStore Factory**: Implementada corretamente
 
 #### **⚠️ FASE 2: Container/Presenter Pattern (30% MIGRADO)**
+
 - ✅ **Componentes criados**: 9 Containers + 15 Presenters existem
 - ✅ **Página `/fichas`**: Única página 100% migrada para nova arquitetura
 - ❌ **Demais páginas**: Ainda usam arquitetura legada
 - ⚠️ **Componentes órfãos**: Containers/Presenters não utilizados
 
 #### **⚠️ FASE 3: Integração Backend Real (60% COMPLETA)**
+
 - ✅ **Backend PostgreSQL**: Ativo com documentação Swagger
 - ⚠️ **Frontend**: Integração parcial, mix de real + mock
 - ❌ **Build de produção**: Falha devido a 382 erros TypeScript
@@ -1370,18 +1459,20 @@ Sistema frontend Svelte **funcional mas em transição**, com base técnica sól
 ### **🏗️ Nova Arquitetura Implementada**
 
 #### **📁 Service Adapters Especializados**
+
 ```typescript
 // 4 adapters especializados por domínio
-entityManagementAdapter     // Hierarquias de entidades
-inventoryCommandAdapter     // Event Sourcing para estoque  
-processLifecycleAdapter     // Workflows complexos
-reportingQueryAdapter       // Consultas otimizadas
+entityManagementAdapter; // Hierarquias de entidades
+inventoryCommandAdapter; // Event Sourcing para estoque
+processLifecycleAdapter; // Workflows complexos
+reportingQueryAdapter; // Consultas otimizadas
 ```
 
 #### **🔄 Padrão Container/Presenter**
+
 ```svelte
 <!-- Container (Smart) - Lógica de negócio -->
-<InventoryContainer 
+<InventoryContainer
   initialPageSize={20}
   autoRefresh={true}
 />
@@ -1395,11 +1486,12 @@ reportingQueryAdapter       // Consultas otimizadas
 ```
 
 #### **📊 Stores Otimizados**
+
 ```typescript
 // Store paginado com service adapter
 const inventoryStore = createPaginatedStore(
   (params) => inventoryCommandAdapter.getInventoryItems(params),
-  20
+  20,
 );
 
 // Configurações dinâmicas
@@ -1410,12 +1502,14 @@ const $categoriaOptions = categoriasEPIOptions;
 ### **🚀 Benefícios Alcançados**
 
 #### **✅ Separação de Responsabilidades**
+
 - **Containers**: Estado, lógica de negócio, integração com services
-- **Presenters**: UI, eventos, acessibilidade  
+- **Presenters**: UI, eventos, acessibilidade
 - **Service Adapters**: Comunicação especializada com backend
 - **Stores**: Estado global reativo otimizado
 
 #### **✅ Backend Integration Ready**
+
 - **Event Sourcing**: Commands já estruturados para PostgreSQL
 - **Server-side Pagination**: Implementação completa
 - **Dynamic Configuration**: ENUMs carregados do backend
@@ -1423,8 +1517,9 @@ const $categoriaOptions = categoriasEPIOptions;
 - **Type Safety**: Contratos preparados para OpenAPI
 
 #### **✅ Performance Otimizada**
+
 - **Cache Inteligente**: Stores com TTL configurável
-- **Debounce**: Reduz chamadas desnecessárias  
+- **Debounce**: Reduz chamadas desnecessárias
 - **Lazy Loading**: Componentes carregados sob demanda
 - **Virtualização**: Suporte para listas grandes
 
@@ -1438,6 +1533,7 @@ Implementação bem-sucedida de melhorias significativas na interface, com foco 
 ### **🎯 Melhorias Implementadas (Janeiro 2025)**
 
 #### **✅ Sistema de Navegação Redesenhado**
+
 - **Header com Logo Real**: Substituição do mockup por assets SVG exportados do Figma
   - `logo-icon.svg` e `logo-text.svg` integrados
   - Posicionamento preciso do módulo header (108px spacing)
@@ -1450,11 +1546,13 @@ Implementação bem-sucedida de melhorias significativas na interface, com foco 
   - Busca em tempo real com truncamento de nomes longos
 
 #### **✅ Sistema de Cores Unificado**
+
 - **Paleta Primary Atualizada**: Tons de azul harmonizados (50-950)
 - **Paleta Gray Customizada**: Tons neutros consistentes
 - **Theme Bridge**: Acesso programático aos design tokens via `theme.ts`
 
 #### **✅ Componentes Robustos**
+
 - **SearchableDropdown Customizado**: Implementação não-Flowbite para evitar conflitos
   - Dropdown personalizado com eventos nativos
   - Auto-close em cliques externos
@@ -1465,6 +1563,7 @@ Implementação bem-sucedida de melhorias significativas na interface, com foco 
   - Botão de limpar como ícone (TrashBinOutline)
 
 #### **✅ Gestão de Estoque Otimizada**
+
 - **Tabela Simplificada**: Remoção da coluna "Lote" (controle não-rígido)
   - Busca focada apenas em localização
   - Interface mais limpa e objetiva
@@ -1480,6 +1579,7 @@ Implementação bem-sucedida de melhorias significativas na interface, com foco 
 ### **🔧 Soluções Técnicas Implementadas**
 
 #### **🚫 Resolução de Conflitos Críticos**
+
 - **Problema de Componentes Dinâmicos**: Identificado e resolvido conflito entre `svelte:component` e dropdowns Flowbite
   - Causa: Componentes dinâmicos interferindo com event listeners globais
   - Solução: Implementação de dropdowns customizados com eventos nativos
@@ -1488,6 +1588,7 @@ Implementação bem-sucedida de melhorias significativas na interface, com foco 
   - Separação entre filtros de negócio e helpers genéricos
 
 #### **⚡ Performance e Compatibilidade**
+
 - **Flowbite Svelte v0.48.6**: Manutenção da compatibilidade crítica com Svelte 4
 - **Auto-resize Inteligente**: Textarea que cresce conforme conteúdo
 - **Debounce em Filtros**: Busca otimizada com delay de 300ms
@@ -1533,16 +1634,19 @@ Implementação bem-sucedida de melhorias significativas na interface, com foco 
 ### **🚀 Roadmap de Evolução**
 
 #### **Curto Prazo (1-2 semanas)**
+
 - Finalizar consistência de spacing em todos os formulários
 - Implementar estados de erro unificados
 - Adicionar tooltips informativos
 
 #### **Médio Prazo (1 mês)**
+
 - Sistema de notificações toast melhorado
 - Modal de confirmação com variantes visuais
 - Breadcrumbs para navegação complexa
 
 #### **Longo Prazo (3 meses)**
+
 - PWA capabilities (offline, push notifications)
 - Theming avançado (multiple brands)
 - Analytics de UX integrado
@@ -1560,11 +1664,13 @@ Implementação bem-sucedida de melhorias significativas na interface, com foco 
 Com o sistema drawer 100% unificado e funcional, os próximos marcos são:
 
 #### **Curto Prazo (Próximas semanas)**
+
 1. **Migração do catálogo EPIs**: Converter modal para drawer seguindo o padrão estabelecido
 2. **Implementação de testes**: Unit tests para componentes críticos
 3. **Otimização de performance**: Bundle analysis e code splitting
 
 #### **Médio Prazo (Próximos meses)**
+
 4. **Expansão Container/Presenter**: Migrar páginas restantes para nova arquitetura
 5. **PWA capabilities**: Implementar service workers e funcionalidades offline
 6. **Dashboard avançado**: Implementar métricas e relatórios em tempo real
@@ -1576,6 +1682,7 @@ Com o sistema drawer 100% unificado e funcional, os próximos marcos são:
 ### **Roadmap Estratégico Inicial**
 
 #### **Curto Prazo (Janeiro-Fevereiro 2025)**
+
 1. **Execução do Plano de Modularização** (11-15 dias úteis)
    - Implementação das 4 fases documentadas
    - Migração gradual sem quebra de funcionalidades
@@ -1587,6 +1694,7 @@ Com o sistema drawer 100% unificado e funcional, os próximos marcos são:
    - Ajustes finos baseados em comportamento real
 
 #### **Médio Prazo (Março-Maio 2025)**
+
 3. **Otimizações Pós-Integração** (2-3 semanas)
    - Performance tuning com dados reais
    - Implementação de cache inteligente
@@ -1598,6 +1706,7 @@ Com o sistema drawer 100% unificado e funcional, os próximos marcos são:
    - Workflows de aprovação
 
 #### **Longo Prazo (Junho+ 2025)**
+
 5. **Evolução Enterprise** (contínuo)
    - PWA capabilities (offline, push notifications)
    - Multi-tenancy e white-label
@@ -1605,13 +1714,13 @@ Com o sistema drawer 100% unificado e funcional, os próximos marcos são:
 
 ### **Métricas de Sucesso Definidas**
 
-| Métrica | Atual | Meta Pós-Backend | Meta Q2 2025 |
-|---------|-------|------------------|--------------|
-| **Performance** | 92/100 | 95/100 | 98/100 |
-| **Bundle Size** | ~70% menor que React | Mantido | Melhorado 10% |
-| **Time to Interactive** | <2.0s | <1.5s | <1.0s |
-| **Test Coverage** | Não definido | >90% | >95% |
-| **API Response Time** | Mock instantâneo | <200ms | <100ms |
+| Métrica                 | Atual                | Meta Pós-Backend | Meta Q2 2025  |
+| ----------------------- | -------------------- | ---------------- | ------------- |
+| **Performance**         | 92/100               | 95/100           | 98/100        |
+| **Bundle Size**         | ~70% menor que React | Mantido          | Melhorado 10% |
+| **Time to Interactive** | <2.0s                | <1.5s            | <1.0s         |
+| **Test Coverage**       | Não definido         | >90%             | >95%          |
+| **API Response Time**   | Mock instantâneo     | <200ms           | <100ms        |
 
 ### **🎯 Estado Final Esperado**
 
@@ -1620,12 +1729,14 @@ O projeto evoluirá para um **sistema enterprise-grade** de gestão de EPIs, man
 ### **📋 Como Testar a Nova Arquitetura**
 
 #### **🧪 Página de Demonstração**
+
 ```bash
 npm run dev
 # Visitar: http://localhost:5176/estoque
 ```
 
 **O que você verá:**
+
 - ✅ **Container/Presenter pattern** em ação
 - ✅ **Service adapters especializados** funcionando
 - ✅ **Paginação server-side** simulada
@@ -1634,11 +1745,13 @@ npm run dev
 - ✅ **Cache inteligente** e debounce
 
 #### **🔍 Logs de Debug**
+
 A implementação inclui logs detalhados no console:
+
 ```
 🚀 InventoryContainer: Inicializando...
 📦 Dados de inventário carregados
-✅ Configurações de negócio carregadas com sucesso  
+✅ Configurações de negócio carregadas com sucesso
 💾 Salvando movimentação: {...}
 ✅ Movimentação registrada: mov-123
 ```
@@ -1646,6 +1759,7 @@ A implementação inclui logs detalhados no console:
 ### **🏆 Status Real da Implementação**
 
 **Conquistas Verificadas:**
+
 - ✅ **Base técnica sólida**: Dependências corretas, configurações adequadas
 - ✅ **Service adapters criados**: Estrutura completa com 13 adapters
 - ✅ **Container/Presenter**: Implementado na página de fichas
@@ -1654,6 +1768,7 @@ A implementação inclui logs detalhados no console:
 - ❌ **Build de produção**: Falha devido a erros TypeScript
 
 **Próximas Ações Críticas:**
+
 1. **Corrigir 382 erros TypeScript** (prioridade alta)
 2. **Migrar páginas restantes** para Container/Presenter
 3. **Completar integração backend** (40% restante)
@@ -1666,16 +1781,20 @@ A implementação inclui logs detalhados no console:
 ## 🎯 Roadmap Realista (Janeiro 2025)
 
 ### **⚡ Fase 1: Estabilização (1-2 semanas)**
+
 **Objetivo**: Sistema buildável e funcional
+
 1. **Corrigir 382 erros TypeScript** (2-3 dias)
    - Badge colors: implementar tipos corretos
-   - ErrorDisplay props: padronizar interfaces  
+   - ErrorDisplay props: padronizar interfaces
    - @apply CSS rules: resolver warnings
 2. **Testar build de produção** (1 dia)
 3. **Validar dev server** sem erros
 
 ### **🔧 Fase 2: Integração Backend Completa (1 semana)**
+
 **Objetivo**: 100% conectado ao backend real
+
 1. **Migrar ConfigurationService** (1 dia)
    - Remover MOCK_BUSINESS_CONFIG
    - Conectar a `/api/configuration`
@@ -1686,7 +1805,9 @@ A implementação inclui logs detalhados no console:
 4. **Testar endpoints em produção** (1 dia)
 
 ### **🏗️ Fase 3: Arquitetura Modular Completa (2-3 semanas)**
+
 **Objetivo**: Todas as páginas usando Container/Presenter
+
 1. **Migrar páginas principais** (1.5 semanas)
    - Estoque, Catálogo, Auditoria
    - Notas, Devoluções
@@ -1696,16 +1817,19 @@ A implementação inclui logs detalhados no console:
 4. **Documentar padrões finais** (1 dia)
 
 ### **📊 Métricas de Sucesso**
-| Critério | Estado Atual | Meta Fase 1 | Meta Fase 2 | Meta Fase 3 |
-|----------|--------------|-------------|-------------|-------------|
-| **Erros TS** | 382 | 0 | 0 | 0 |
-| **Build** | ❌ Falha | ✅ Sucesso | ✅ Sucesso | ✅ Sucesso |
-| **Backend** | 60% | 60% | 100% | 100% |
-| **Arquitetura** | 30% | 30% | 30% | 100% |
-| **Páginas migradas** | 1/13 | 1/13 | 1/13 | 13/13 |
+
+| Critério             | Estado Atual | Meta Fase 1 | Meta Fase 2 | Meta Fase 3 |
+| -------------------- | ------------ | ----------- | ----------- | ----------- |
+| **Erros TS**         | 382          | 0           | 0           | 0           |
+| **Build**            | ❌ Falha     | ✅ Sucesso  | ✅ Sucesso  | ✅ Sucesso  |
+| **Backend**          | 60%          | 60%         | 100%        | 100%        |
+| **Arquitetura**      | 30%          | 30%         | 30%         | 100%        |
+| **Páginas migradas** | 1/13         | 1/13        | 1/13        | 13/13       |
 
 ### **🎯 Resultado Esperado**
+
 Após 4-6 semanas: **Sistema enterprise-grade** com:
+
 - ✅ Zero erros TypeScript
 - ✅ Build de produção funcionando
 - ✅ 100% integrado com backend PostgreSQL

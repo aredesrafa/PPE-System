@@ -3,13 +3,15 @@
 ## ⚠️ **Problema Identificado**
 
 **Erro**: Drawer tentava carregar colaborador inexistente
+
 ```
 ApiError: Colaborador não encontrado
 at Object.getById (api.ts:91:15)
 at async loadFichaData (FichaDetailDrawer.svelte:52:7)
 ```
 
-**Causa**: 
+**Causa**:
+
 - ❌ Drawer estava **hardcoded** para buscar colaborador 'col-001'
 - ❌ Dados mockados usam IDs simples ('1', '2', '3', etc.)
 - ❌ Incompatibilidade entre código e dados mockados
@@ -19,6 +21,7 @@ at async loadFichaData (FichaDetailDrawer.svelte:52:7)
 ### **Dados Mockados Corretos**
 
 **Fichas EPI (`fichasEPIMock`)**:
+
 ```typescript
 {
   id: '1',
@@ -31,6 +34,7 @@ at async loadFichaData (FichaDetailDrawer.svelte:52:7)
 ```
 
 **Colaboradores (`colaboradoresMock`)**:
+
 ```typescript
 {
   id: '1', // ✅ Corresponde ao colaboradorId da ficha
@@ -47,12 +51,12 @@ at async loadFichaData (FichaDetailDrawer.svelte:52:7)
 // ❌ ANTES - Hardcoded e inconsistente
 ficha = {
   id: fichaId,
-  colaboradorId: 'col-001', // ID inexistente!
-  empresaId: 'emp-001',
+  colaboradorId: "col-001", // ID inexistente!
+  empresaId: "emp-001",
   // ...
 };
 
-colaborador = await colaboradoresExtendedAPI.getById('col-001'); // ERRO!
+colaborador = await colaboradoresExtendedAPI.getById("col-001"); // ERRO!
 ```
 
 ## ✅ **Correção Implementada**
@@ -65,14 +69,14 @@ async function loadFichaData() {
   try {
     // Buscar ficha real da API mockada
     ficha = await fichasExtendedAPI.getById(fichaId);
-    
+
     // Usar colaboradorId da ficha real
     colaborador = await colaboradoresExtendedAPI.getById(ficha.colaboradorId);
-    
+
     // Carregar entregas da ficha
     entregas = await entregasExtendedAPI.getByFicha(fichaId);
   } catch (err) {
-    error = 'Erro ao carregar dados da ficha';
+    error = "Erro ao carregar dados da ficha";
   }
 }
 ```
@@ -81,46 +85,50 @@ async function loadFichaData() {
 
 ```typescript
 // Adicionar fichasExtendedAPI ao import
-import { 
-  colaboradoresExtendedAPI, 
-  entregasExtendedAPI, 
-  fichasExtendedAPI // ✅ Adicionado
-} from '$lib/services/api';
+import {
+  colaboradoresExtendedAPI,
+  entregasExtendedAPI,
+  fichasExtendedAPI, // ✅ Adicionado
+} from "$lib/services/api";
 ```
 
 ## 🧪 **Dados de Teste Validados**
 
 ### **Fichas Disponíveis para Teste**
 
-| ID | Colaborador | Nome | Status |
-|----|-------------|------|---------|
-| `1` | `1` | João Silva Santos | ativo |
-| `2` | `2` | Maria Santos Oliveira | vencido |
-| `3` | `3` | Pedro Costa Lima | ativo |
+| ID  | Colaborador | Nome                  | Status  |
+| --- | ----------- | --------------------- | ------- |
+| `1` | `1`         | João Silva Santos     | ativo   |
+| `2` | `2`         | Maria Santos Oliveira | vencido |
+| `3` | `3`         | Pedro Costa Lima      | ativo   |
 
 ### **URLs de Teste**
 
 ✅ **Funcionam agora**:
+
 - `http://localhost:5175/fichas?ficha=1`
-- `http://localhost:5175/fichas?ficha=2`  
+- `http://localhost:5175/fichas?ficha=2`
 - `http://localhost:5175/fichas?ficha=3`
 
 ❌ **Ainda falhariam** (IDs inexistentes):
+
 - `http://localhost:5175/fichas?ficha=999`
 - `http://localhost:5175/fichas?ficha=col-001`
 
 ## 🎯 **Fluxo de Dados Corrigido**
 
 ### **1. Usuário Acessa URL**
+
 ```
 http://localhost:5175/fichas?ficha=1
 ```
 
 ### **2. Drawer Detecta Parâmetro**
+
 ```typescript
 // Página detecta fichaId="1" na URL
 $: {
-  const fichaIdFromUrl = $page.url.searchParams.get('ficha');
+  const fichaIdFromUrl = $page.url.searchParams.get("ficha");
   if (fichaIdFromUrl) {
     selectedFichaId = fichaIdFromUrl; // "1"
     showFichaDrawer = true;
@@ -129,6 +137,7 @@ $: {
 ```
 
 ### **3. Drawer Carrega Dados**
+
 ```typescript
 // loadFichaData() executa:
 ficha = await fichasExtendedAPI.getById("1");
@@ -139,6 +148,7 @@ colaborador = await colaboradoresExtendedAPI.getById("1");
 ```
 
 ### **4. Drawer Renderiza**
+
 ```svelte
 <!-- Header mostra nome do colaborador -->
 <h2>Ficha EPI</h2>
@@ -149,16 +159,19 @@ colaborador = await colaboradoresExtendedAPI.getById("1");
 ## 🔧 **APIs Utilizadas**
 
 ### **fichasExtendedAPI.getById()**
+
 - **Fonte**: `createCRUDAPI('Ficha EPI', fichasEPIMock, '/fichas')`
 - **Dados**: Array `fichasEPIMock` em `mockData.ts`
 - **Retorna**: Objeto `FichaEPI` completo
 
 ### **colaboradoresExtendedAPI.getById()**
+
 - **Fonte**: `createCRUDAPI('Colaborador', colaboradoresMock, '/colaboradores')`
 - **Dados**: Array `colaboradoresMock` em `mockData.ts`
 - **Retorna**: Objeto `Colaborador` completo
 
 ### **entregasExtendedAPI.getByFicha()**
+
 - **Método**: `filter(entrega => entrega.fichaEpiId === fichaId)`
 - **Dados**: Array `entregasMock` em `mockData.ts`
 - **Retorna**: Array de `Entrega[]` da ficha
@@ -166,16 +179,19 @@ colaborador = await colaboradoresExtendedAPI.getById("1");
 ## 📊 **Benefícios da Correção**
 
 ### **Consistência de Dados**
+
 - ✅ **Dados reais**: Usa fichas e colaboradores mockados reais
 - ✅ **Relacionamentos**: Mantém integridade entre ficha ↔ colaborador
 - ✅ **Flexibilidade**: Funciona com qualquer ID válido
 
 ### **Robustez**
+
 - ✅ **Error handling**: Captura erros de API
 - ✅ **Loading states**: Feedback visual durante carregamento
 - ✅ **Fallbacks**: Mensagens adequadas para dados não encontrados
 
 ### **Desenvolvimento**
+
 - ✅ **Testável**: IDs conhecidos para testes
 - ✅ **Escalável**: Fácil adicionar novos dados mockados
 - ✅ **Debugável**: Logs claros de erros
@@ -183,6 +199,7 @@ colaborador = await colaboradoresExtendedAPI.getById("1");
 ## 🧪 **Como Testar**
 
 ### **Teste 1: Drawer via URL**
+
 1. **Acesse**: `http://localhost:5175/fichas?ficha=1`
 2. **Resultado esperado**:
    - ✅ Página carrega (200 OK)
@@ -191,6 +208,7 @@ colaborador = await colaboradoresExtendedAPI.getById("1");
    - ✅ Console limpo (sem erros)
 
 ### **Teste 2: Drawer via Clique**
+
 1. **Acesse**: `http://localhost:5175/fichas`
 2. **Clique**: Ícone de olho na primeira ficha
 3. **Resultado esperado**:
@@ -199,6 +217,7 @@ colaborador = await colaboradoresExtendedAPI.getById("1");
    - ✅ Dados do colaborador carregam
 
 ### **Teste 3: Error Handling**
+
 1. **Acesse**: `http://localhost:5175/fichas?ficha=999`
 2. **Resultado esperado**:
    - ✅ Drawer abre
@@ -208,12 +227,14 @@ colaborador = await colaboradoresExtendedAPI.getById("1");
 ## 🚀 **Próximas Melhorias**
 
 ### **Funcionalidades Futuras**
+
 1. **Cache de Dados**: Evitar recarregar dados já carregados
 2. **Validação de IDs**: Verificar se fichaId é válido antes de tentar carregar
 3. **Loading Skeletons**: Placeholders mais sofisticados
 4. **Offline Support**: Dados em localStorage para uso offline
 
 ### **Dados Adicionais**
+
 1. **Mais Fichas**: Adicionar fichas para todos os colaboradores
 2. **Entregas Reais**: Dados de entregas mais completos
 3. **Itens de Ficha**: EPIs associados a cada ficha
@@ -225,6 +246,7 @@ colaborador = await colaboradoresExtendedAPI.getById("1");
 **Resultado**: Drawer agora carrega dados corretos das APIs mockadas!
 
 **Funcionalidades Testadas**:
+
 - ✅ Abertura via URL direta (`/fichas?ficha=1`)
 - ✅ Abertura via clique no ícone de olho
 - ✅ Carregamento de dados do colaborador

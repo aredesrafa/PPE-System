@@ -3,6 +3,7 @@
 Componente reutilizável para headers de drawers do sistema DataLife EPI.
 
 ## Design Reference
+
 - Figma: [Módulo EPI - Drawer Headers](https://www.figma.com/design/TwCLRJsnzdrmozHkVPHSid/M%C3%B3dulo-EPI?node-id=34-7100&t=VEat8YEcS8xUozDT-4)
 
 ## Uso Básico
@@ -23,22 +24,25 @@ Componente reutilizável para headers de drawers do sistema DataLife EPI.
 ## Props
 
 ### Obrigatórias
+
 - **`title`** (string): Título principal do drawer
 
 ### Opcionais
+
 - **`objectType`** (string): Texto em ALL CAPS no topo (ex: "FICHA EPI")
 - **`iconName`** (string): Nome do ícone principal (default: "UserOutline")
 - **`status`** (string): Status do objeto para exibir badge
 - **`statusType`** ('ficha' | 'colaborador' | 'entrega' | 'item' | 'movimento'): Tipo do status para cores corretas
 - **`additionalInfo`** (string[]): Array de informações adicionais (ex: CPF, empresa)
 - **`primaryAction`** (object | null): Botão de ação primária
-- **`secondaryAction`** (object | null): Botão de ação secundária  
+- **`secondaryAction`** (object | null): Botão de ação secundária
 - **`tertiaryAction`** (object | null): Botão de ação terciária
 - **`showMoreActions`** (boolean): Mostrar botão "..." de mais ações
 - **`showCloseButton`** (boolean): Mostrar botão fechar (default: true)
 - **`truncateTitle`** (boolean): Truncar título com "..." (default: true)
 
 ### Estrutura de Actions
+
 ```typescript
 {
   text: string;
@@ -58,6 +62,7 @@ Componente reutilizável para headers de drawers do sistema DataLife EPI.
 ## Variações
 
 ### 1. Header Completo (Template com todas as features)
+
 ```svelte
 <DrawerHeader
   objectType="FICHA EPI"
@@ -86,6 +91,7 @@ Componente reutilizável para headers de drawers do sistema DataLife EPI.
 ```
 
 ### 2. Header Sem Identificação do Objeto
+
 ```svelte
 <DrawerHeader
   title="João Claudio"
@@ -103,6 +109,7 @@ Componente reutilizável para headers de drawers do sistema DataLife EPI.
 ```
 
 ### 3. Header Simples
+
 ```svelte
 <DrawerHeader
   title="João Claudio"
@@ -119,6 +126,7 @@ Componente reutilizável para headers de drawers do sistema DataLife EPI.
 ```
 
 ### 4. Header Básico (Apenas Título)
+
 ```svelte
 <DrawerHeader
   title="Nome do Colaborador"
@@ -147,15 +155,18 @@ Componente reutilizável para headers de drawers do sistema DataLife EPI.
 ## Comportamentos
 
 ### Truncamento de Título
+
 - O título automaticamente trunca com "..." quando não couber
 - Pode ser desabilitado com `truncateTitle={false}`
 
 ### Responsividade
+
 - Elementos se adaptam ao espaço disponível
 - Botões se reorganizam conforme necessário
 - Informações adicionais quebram linha quando necessário
 
 ### Acessibilidade
+
 - Botões têm estados focus e hover apropriados
 - Suporte a navegação por teclado
 - Labels adequados para screen readers
@@ -163,6 +174,7 @@ Componente reutilizável para headers de drawers do sistema DataLife EPI.
 ## Exemplos de Uso por Contexto
 
 ### Ficha EPI
+
 ```svelte
 <DrawerHeader
   objectType="FICHA EPI"
@@ -180,6 +192,7 @@ Componente reutilizável para headers de drawers do sistema DataLife EPI.
 ```
 
 ### Estoque
+
 ```svelte
 <DrawerHeader
   objectType="ITEM ESTOQUE"
@@ -195,6 +208,7 @@ Componente reutilizável para headers de drawers do sistema DataLife EPI.
 ```
 
 ### Colaborador
+
 ```svelte
 <DrawerHeader
   title={colaborador.nome}

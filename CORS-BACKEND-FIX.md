@@ -13,6 +13,7 @@ curl -I -X OPTIONS https://epi-backend-s14g.onrender.com/api/fichas-epi \
 ```
 
 **Headers retornados:**
+
 - ✅ `access-control-allow-credentials: true`
 - ✅ `access-control-allow-headers: Content-Type,Authorization,Accept,X-Requested-With`
 - ✅ `access-control-allow-methods: GET,POST,PUT,DELETE,PATCH,OPTIONS`
@@ -23,29 +24,34 @@ curl -I -X OPTIONS https://epi-backend-s14g.onrender.com/api/fichas-epi \
 ### 1. main.ts - Configuração Global
 
 ```typescript
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { NestFactory } from "@nestjs/core";
+import { AppModule } from "./app.module";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  
+
   // ✅ CONFIGURAÇÃO CORS OBRIGATÓRIA
   app.enableCors({
     origin: [
-      'http://localhost:5175',
-      'http://localhost:5176', 
-      'http://localhost:5177',
-      'http://localhost:3000',
+      "http://localhost:5175",
+      "http://localhost:5176",
+      "http://localhost:5177",
+      "http://localhost:3000",
       // Adicionar domínio de produção quando houver
     ],
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With'],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "Accept",
+      "X-Requested-With",
+    ],
   });
 
   // Global prefix
-  app.setGlobalPrefix('api');
-  
+  app.setGlobalPrefix("api");
+
   const port = process.env.PORT || 3000;
   await app.listen(port);
 }
@@ -58,19 +64,26 @@ Se a configuração acima não funcionar, adicionar middleware:
 
 ```typescript
 // app.module.ts ou main.ts
-import * as cors from 'cors';
+import * as cors from "cors";
 
 // No main.ts, antes de app.listen():
-app.use(cors({
-  origin: [
-    'http://localhost:5175',
-    'http://localhost:5176', 
-    'http://localhost:5177'
-  ],
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With'],
-}));
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5175",
+      "http://localhost:5176",
+      "http://localhost:5177",
+    ],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "Accept",
+      "X-Requested-With",
+    ],
+  }),
+);
 ```
 
 ### 3. Verificação Após Deploy
@@ -83,6 +96,7 @@ curl -I -X OPTIONS https://epi-backend-s14g.onrender.com/api/fichas-epi \
 ```
 
 **Deve retornar:**
+
 ```
 Access-Control-Allow-Origin: http://localhost:5175
 Access-Control-Allow-Credentials: true
@@ -96,9 +110,9 @@ Para flexibilidade, usar variáveis de ambiente:
 
 ```typescript
 // main.ts
-const allowedOrigins = process.env.CORS_ORIGINS 
-  ? process.env.CORS_ORIGINS.split(',')
-  : ['http://localhost:5175', 'http://localhost:5176'];
+const allowedOrigins = process.env.CORS_ORIGINS
+  ? process.env.CORS_ORIGINS.split(",")
+  : ["http://localhost:5175", "http://localhost:5176"];
 
 app.enableCors({
   origin: allowedOrigins,

@@ -217,7 +217,7 @@
                       {ficha.colaborador.nome}
                     </span>
                     <span class="text-sm text-gray-500 dark:text-gray-400">
-                      {ficha.colaborador.cpf || 'CPF não informado'} • {ficha.colaborador.matricula || 'S/N'}
+                      {ficha.colaborador.cpf || 'CPF não informado'}
                     </span>
                   </div>
                 </TableBodyCell>

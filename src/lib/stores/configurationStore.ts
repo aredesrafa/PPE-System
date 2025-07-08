@@ -1,30 +1,30 @@
 /**
  * Configuration Store Dinâmico
- * 
+ *
  * Store reativo que carrega configurações do backend e as disponibiliza
  * globalmente para toda a aplicação.
- * 
+ *
  * Features:
  * - Configurações carregadas do backend
- * - Fallback para valores padrão 
+ * - Fallback para valores padrão
  * - Derivações para ENUMs específicos
  * - Type safety completa
  * - Error handling robusto
  */
 
-import { writable, derived, type Readable } from 'svelte/store';
-import { api } from '../services/core/apiClient';
-import { 
-  CategoriaEPI, 
-  StatusEstoqueItem, 
+import { writable, derived, type Readable } from "svelte/store";
+import { api } from "../services/core/apiClient";
+import {
+  CategoriaEPI,
+  StatusEstoqueItem,
   TipoMovimentacao,
   StatusEntrega,
   StatusEntregaItem,
   ConfiguracaoChave,
   type CategoriaEPIEnum,
   type StatusEstoqueItemEnum,
-  type TipoMovimentacaoEnum
-} from '../constants/enums';
+  type TipoMovimentacaoEnum,
+} from "../constants/enums";
 
 // ==================== TIPOS ====================
 
@@ -33,11 +33,11 @@ export interface SystemConfiguration {
   [ConfiguracaoChave.PERMITIR_ESTOQUE_NEGATIVO]: boolean;
   [ConfiguracaoChave.PERMITIR_AJUSTES_FORCADOS]: boolean;
   [ConfiguracaoChave.ESTOQUE_MINIMO_EQUIPAMENTO]: number;
-  
+
   // Feature flags para migração
   useV2Routes?: boolean;
   enableAdvancedReports?: boolean;
-  
+
   // Outras configurações que podem vir do backend
   [key: string]: any;
 }
@@ -73,7 +73,7 @@ const DEFAULT_CONFIGURATION: SystemConfiguration = {
   [ConfiguracaoChave.PERMITIR_AJUSTES_FORCADOS]: false,
   [ConfiguracaoChave.ESTOQUE_MINIMO_EQUIPAMENTO]: 10,
   useV2Routes: false,
-  enableAdvancedReports: true
+  enableAdvancedReports: true,
 };
 
 // ==================== FUNÇÃO DE INICIALIZAÇÃO ====================
@@ -84,35 +84,46 @@ const DEFAULT_CONFIGURATION: SystemConfiguration = {
 export async function initializeConfiguration(): Promise<SystemConfiguration> {
   configurationLoading.set(true);
   configurationError.set(null);
-  
+
   try {
     // Carrega configurações diretas (hardcoded conforme backend)
     // Note: /configuration endpoint may not exist yet, handle gracefully
-    const backendConfig = await api.get('/configuration').catch(error => {
-      console.warn('⚠️ Endpoint /configuration não encontrado, usando configurações padrão');
+    const backendConfig = await api.get("/configuration").catch((error) => {
+      console.warn(
+        "⚠️ Endpoint /configuration não encontrado, usando configurações padrão",
+      );
       return null;
     });
-    
+
     // Mescla com valores padrão
     const mergedConfig: SystemConfiguration = {
       ...DEFAULT_CONFIGURATION,
-      ...(backendConfig && typeof backendConfig === 'object' ? backendConfig : {})
+      ...(backendConfig && typeof backendConfig === "object"
+        ? backendConfig
+        : {}),
     };
-    
+
     configurationStore.set(mergedConfig);
     configurationLoading.set(false);
-    
-    console.log('✅ Configurações carregadas diretamente do cliente API:', mergedConfig);
+
+    console.log(
+      "✅ Configurações carregadas diretamente do cliente API:",
+      mergedConfig,
+    );
     return mergedConfig;
-    
   } catch (error) {
-    console.warn('⚠️ Erro inesperado ao carregar configurações, usando padrão:', error);
-    
+    console.warn(
+      "⚠️ Erro inesperado ao carregar configurações, usando padrão:",
+      error,
+    );
+
     // Em caso de erro, usa configurações padrão
     configurationStore.set(DEFAULT_CONFIGURATION);
-    configurationError.set(error instanceof Error ? error.message : 'Erro desconhecido');
+    configurationError.set(
+      error instanceof Error ? error.message : "Erro desconhecido",
+    );
     configurationLoading.set(false);
-    
+
     return DEFAULT_CONFIGURATION;
   }
 }
@@ -120,13 +131,16 @@ export async function initializeConfiguration(): Promise<SystemConfiguration> {
 /**
  * Atualiza uma configuração específica
  */
-export function updateConfiguration(key: keyof SystemConfiguration, value: any): void {
-  configurationStore.update(config => {
+export function updateConfiguration(
+  key: keyof SystemConfiguration,
+  value: any,
+): void {
+  configurationStore.update((config) => {
     if (!config) return config;
-    
+
     return {
       ...config,
-      [key]: value
+      [key]: value,
     };
   });
 }
@@ -146,22 +160,22 @@ export function resetConfiguration(): void {
  */
 export const permitirEstoqueNegativo: Readable<boolean> = derived(
   configurationStore,
-  $config => $config?.[ConfiguracaoChave.PERMITIR_ESTOQUE_NEGATIVO] ?? false
+  ($config) => $config?.[ConfiguracaoChave.PERMITIR_ESTOQUE_NEGATIVO] ?? false,
 );
 
 export const permitirAjustesForcados: Readable<boolean> = derived(
   configurationStore,
-  $config => $config?.[ConfiguracaoChave.PERMITIR_AJUSTES_FORCADOS] ?? false
+  ($config) => $config?.[ConfiguracaoChave.PERMITIR_AJUSTES_FORCADOS] ?? false,
 );
 
 export const estoqueMinimo: Readable<number> = derived(
   configurationStore,
-  $config => $config?.[ConfiguracaoChave.ESTOQUE_MINIMO_EQUIPAMENTO] ?? 10
+  ($config) => $config?.[ConfiguracaoChave.ESTOQUE_MINIMO_EQUIPAMENTO] ?? 10,
 );
 
 export const useV2Routes: Readable<boolean> = derived(
   configurationStore,
-  $config => $config?.useV2Routes ?? false
+  ($config) => $config?.useV2Routes ?? false,
 );
 
 // ==================== OPÇÕES PARA COMPONENTES UI ====================
@@ -171,11 +185,12 @@ export const useV2Routes: Readable<boolean> = derived(
  */
 export const categoriasEPIOptions: Readable<SelectOption[]> = derived(
   configurationStore,
-  () => Object.entries(CategoriaEPI).map(([key, value]) => ({
-    value,
-    label: getCategoryLabel(value),
-    category: 'epi'
-  }))
+  () =>
+    Object.entries(CategoriaEPI).map(([key, value]) => ({
+      value,
+      label: getCategoryLabel(value),
+      category: "epi",
+    })),
 );
 
 /**
@@ -183,11 +198,12 @@ export const categoriasEPIOptions: Readable<SelectOption[]> = derived(
  */
 export const statusEstoqueOptions: Readable<SelectOption[]> = derived(
   configurationStore,
-  () => Object.entries(StatusEstoqueItem).map(([key, value]) => ({
-    value,
-    label: getStatusEstoqueLabel(value),
-    category: 'estoque'
-  }))
+  () =>
+    Object.entries(StatusEstoqueItem).map(([key, value]) => ({
+      value,
+      label: getStatusEstoqueLabel(value),
+      category: "estoque",
+    })),
 );
 
 /**
@@ -195,12 +211,13 @@ export const statusEstoqueOptions: Readable<SelectOption[]> = derived(
  */
 export const tiposMovimentacaoOptions: Readable<SelectOption[]> = derived(
   configurationStore,
-  () => Object.entries(TipoMovimentacao).map(([key, value]) => ({
-    value,
-    label: getTipoMovimentacaoLabel(value),
-    category: value.startsWith('ESTORNO_') ? 'estorno' : 'movimentacao',
-    disabled: value.startsWith('ESTORNO_') // Estornos não são selecionáveis pelo usuário
-  }))
+  () =>
+    Object.entries(TipoMovimentacao).map(([key, value]) => ({
+      value,
+      label: getTipoMovimentacaoLabel(value),
+      category: value.startsWith("ESTORNO_") ? "estorno" : "movimentacao",
+      disabled: value.startsWith("ESTORNO_"), // Estornos não são selecionáveis pelo usuário
+    })),
 );
 
 /**
@@ -208,11 +225,12 @@ export const tiposMovimentacaoOptions: Readable<SelectOption[]> = derived(
  */
 export const statusEntregaOptions: Readable<SelectOption[]> = derived(
   configurationStore,
-  () => Object.entries(StatusEntrega).map(([key, value]) => ({
-    value,
-    label: getStatusEntregaLabel(value),
-    category: 'entrega'
-  }))
+  () =>
+    Object.entries(StatusEntrega).map(([key, value]) => ({
+      value,
+      label: getStatusEntregaLabel(value),
+      category: "entrega",
+    })),
 );
 
 /**
@@ -220,35 +238,36 @@ export const statusEntregaOptions: Readable<SelectOption[]> = derived(
  */
 export const statusEntregaItemOptions: Readable<SelectOption[]> = derived(
   configurationStore,
-  () => Object.entries(StatusEntregaItem).map(([key, value]) => ({
-    value,
-    label: getStatusEntregaItemLabel(value),
-    category: 'entrega_item'
-  }))
+  () =>
+    Object.entries(StatusEntregaItem).map(([key, value]) => ({
+      value,
+      label: getStatusEntregaItemLabel(value),
+      category: "entrega_item",
+    })),
 );
 
 // ==================== HELPERS PARA LABELS ====================
 
 function getCategoryLabel(categoria: CategoriaEPIEnum): string {
   const mapping: Record<CategoriaEPIEnum, string> = {
-    [CategoriaEPI.PROTECAO_CABECA]: 'Proteção da Cabeça',
-    [CategoriaEPI.PROTECAO_OLHOS]: 'Proteção dos Olhos',
-    [CategoriaEPI.PROTECAO_AUDITIVA]: 'Proteção Auditiva',
-    [CategoriaEPI.PROTECAO_RESPIRATORIA]: 'Proteção Respiratória',
-    [CategoriaEPI.PROTECAO_TRONCO]: 'Proteção do Tronco',
-    [CategoriaEPI.PROTECAO_MAOS]: 'Proteção das Mãos',
-    [CategoriaEPI.PROTECAO_PES]: 'Proteção dos Pés',
-    [CategoriaEPI.PROTECAO_QUEDAS]: 'Proteção Contra Quedas',
-    [CategoriaEPI.OUTROS]: 'Outros'
+    [CategoriaEPI.PROTECAO_CABECA]: "Proteção da Cabeça",
+    [CategoriaEPI.PROTECAO_OLHOS]: "Proteção dos Olhos",
+    [CategoriaEPI.PROTECAO_AUDITIVA]: "Proteção Auditiva",
+    [CategoriaEPI.PROTECAO_RESPIRATORIA]: "Proteção Respiratória",
+    [CategoriaEPI.PROTECAO_TRONCO]: "Proteção do Tronco",
+    [CategoriaEPI.PROTECAO_MAOS]: "Proteção das Mãos",
+    [CategoriaEPI.PROTECAO_PES]: "Proteção dos Pés",
+    [CategoriaEPI.PROTECAO_QUEDAS]: "Proteção Contra Quedas",
+    [CategoriaEPI.OUTROS]: "Outros",
   };
   return mapping[categoria] || categoria;
 }
 
 function getStatusEstoqueLabel(status: StatusEstoqueItemEnum): string {
   const mapping: Record<StatusEstoqueItemEnum, string> = {
-    [StatusEstoqueItem.DISPONIVEL]: 'Disponível',
-    [StatusEstoqueItem.AGUARDANDO_INSPECAO]: 'Aguardando Inspeção',
-    [StatusEstoqueItem.QUARENTENA]: 'Em Quarentena'
+    [StatusEstoqueItem.DISPONIVEL]: "Disponível",
+    [StatusEstoqueItem.AGUARDANDO_INSPECAO]: "Aguardando Inspeção",
+    [StatusEstoqueItem.QUARENTENA]: "Em Quarentena",
   };
   return mapping[status] || status;
 }
@@ -256,41 +275,44 @@ function getStatusEstoqueLabel(status: StatusEstoqueItemEnum): string {
 function getTipoMovimentacaoLabel(tipo: TipoMovimentacaoEnum): string {
   const mapping: Record<TipoMovimentacaoEnum, string> = {
     // Movimentações Diretas
-    [TipoMovimentacao.ENTRADA_NOTA]: 'Entrada por Nota',
-    [TipoMovimentacao.SAIDA_ENTREGA]: 'Saída por Entrega',
-    [TipoMovimentacao.ENTRADA_DEVOLUCAO]: 'Entrada por Devolução',
-    [TipoMovimentacao.SAIDA_TRANSFERENCIA]: 'Saída por Transferência',
-    [TipoMovimentacao.ENTRADA_TRANSFERENCIA]: 'Entrada por Transferência',
-    [TipoMovimentacao.SAIDA_DESCARTE]: 'Saída por Descarte',
-    [TipoMovimentacao.AJUSTE_POSITIVO]: 'Ajuste Positivo',
-    [TipoMovimentacao.AJUSTE_NEGATIVO]: 'Ajuste Negativo',
-    
+    [TipoMovimentacao.ENTRADA_NOTA]: "Entrada por Nota",
+    [TipoMovimentacao.SAIDA_ENTREGA]: "Saída por Entrega",
+    [TipoMovimentacao.ENTRADA_DEVOLUCAO]: "Entrada por Devolução",
+    [TipoMovimentacao.SAIDA_TRANSFERENCIA]: "Saída por Transferência",
+    [TipoMovimentacao.ENTRADA_TRANSFERENCIA]: "Entrada por Transferência",
+    [TipoMovimentacao.SAIDA_DESCARTE]: "Saída por Descarte",
+    [TipoMovimentacao.AJUSTE_POSITIVO]: "Ajuste Positivo",
+    [TipoMovimentacao.AJUSTE_NEGATIVO]: "Ajuste Negativo",
+
     // Estornos
-    [TipoMovimentacao.ESTORNO_ENTRADA_NOTA]: 'Estorno - Entrada por Nota',
-    [TipoMovimentacao.ESTORNO_SAIDA_ENTREGA]: 'Estorno - Saída por Entrega',
-    [TipoMovimentacao.ESTORNO_ENTRADA_DEVOLUCAO]: 'Estorno - Entrada por Devolução',
-    [TipoMovimentacao.ESTORNO_SAIDA_DESCARTE]: 'Estorno - Saída por Descarte',
-    [TipoMovimentacao.ESTORNO_SAIDA_TRANSFERENCIA]: 'Estorno - Saída por Transferência',
-    [TipoMovimentacao.ESTORNO_ENTRADA_TRANSFERENCIA]: 'Estorno - Entrada por Transferência',
-    [TipoMovimentacao.ESTORNO_AJUSTE_POSITIVO]: 'Estorno - Ajuste Positivo',
-    [TipoMovimentacao.ESTORNO_AJUSTE_NEGATIVO]: 'Estorno - Ajuste Negativo'
+    [TipoMovimentacao.ESTORNO_ENTRADA_NOTA]: "Estorno - Entrada por Nota",
+    [TipoMovimentacao.ESTORNO_SAIDA_ENTREGA]: "Estorno - Saída por Entrega",
+    [TipoMovimentacao.ESTORNO_ENTRADA_DEVOLUCAO]:
+      "Estorno - Entrada por Devolução",
+    [TipoMovimentacao.ESTORNO_SAIDA_DESCARTE]: "Estorno - Saída por Descarte",
+    [TipoMovimentacao.ESTORNO_SAIDA_TRANSFERENCIA]:
+      "Estorno - Saída por Transferência",
+    [TipoMovimentacao.ESTORNO_ENTRADA_TRANSFERENCIA]:
+      "Estorno - Entrada por Transferência",
+    [TipoMovimentacao.ESTORNO_AJUSTE_POSITIVO]: "Estorno - Ajuste Positivo",
+    [TipoMovimentacao.ESTORNO_AJUSTE_NEGATIVO]: "Estorno - Ajuste Negativo",
   };
   return mapping[tipo] || tipo;
 }
 
 function getStatusEntregaLabel(status: string): string {
   const mapping: Record<string, string> = {
-    'PENDENTE_ASSINATURA': 'Pendente Assinatura',
-    'ASSINADA': 'Assinada',
-    'CANCELADA': 'Cancelada'
+    PENDENTE_ASSINATURA: "Pendente Assinatura",
+    ASSINADA: "Assinada",
+    CANCELADA: "Cancelada",
   };
   return mapping[status] || status;
 }
 
 function getStatusEntregaItemLabel(status: string): string {
   const mapping: Record<string, string> = {
-    'COM_COLABORADOR': 'Com Colaborador',
-    'DEVOLVIDO': 'Devolvido'
+    COM_COLABORADOR: "Com Colaborador",
+    DEVOLVIDO: "Devolvido",
   };
   return mapping[status] || status;
 }
@@ -300,18 +322,23 @@ function getStatusEntregaItemLabel(status: string): string {
 /**
  * Hook para verificar se feature está habilitada
  */
-export function useFeatureFlag(flag: keyof SystemConfiguration): Readable<boolean> {
-  return derived(configurationStore, $config => Boolean($config?.[flag]));
+export function useFeatureFlag(
+  flag: keyof SystemConfiguration,
+): Readable<boolean> {
+  return derived(configurationStore, ($config) => Boolean($config?.[flag]));
 }
 
 /**
  * Obtém valor de configuração específica
  */
 export function getConfigValue<T>(
-  key: keyof SystemConfiguration, 
-  defaultValue: T
+  key: keyof SystemConfiguration,
+  defaultValue: T,
 ): Readable<T> {
-  return derived(configurationStore, $config => $config?.[key] as T ?? defaultValue);
+  return derived(
+    configurationStore,
+    ($config) => ($config?.[key] as T) ?? defaultValue,
+  );
 }
 
 /**
@@ -319,7 +346,7 @@ export function getConfigValue<T>(
  */
 export const isConfigurationLoaded: Readable<boolean> = derived(
   configurationStore,
-  $config => $config !== null
+  ($config) => $config !== null,
 );
 
 // ==================== EXPORT CONSOLIDADO ====================
@@ -329,7 +356,7 @@ export const configurationHelpers = {
   updateConfiguration,
   resetConfiguration,
   useFeatureFlag,
-  getConfigValue
+  getConfigValue,
 };
 
 export default configurationStore;

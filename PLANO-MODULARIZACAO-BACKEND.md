@@ -13,6 +13,7 @@ Este documento detalha o plano completo para modularizar o frontend Svelte e pre
 ## 🚨 **DESCOBERTAS CRÍTICAS DA REVISÃO**
 
 ### **Complexidade Subestimada do Backend**
+
 A análise inicial baseou-se em uma visão simplificada. O backend PostgreSQL implementa:
 
 - **16 tipos de movimentação** diferentes (incluindo operações `ESTORNO`)
@@ -24,9 +25,11 @@ A análise inicial baseou-se em uma visão simplificada. O backend PostgreSQL im
 ## 🎯 Objetivos Principais
 
 ### **Objetivo Primário**
+
 Refatorar a arquitetura do frontend para suportar tanto APIs mockadas quanto o backend real, sem quebrar a funcionalidade existente.
 
 ### **Objetivos Específicos**
+
 1. **Desacoplar serviços** da implementação mockada atual
 2. **Implementar padrões arquiteturais** que suportem Event Sourcing do backend
 3. **Criar abstração de paginação** server-side
@@ -35,11 +38,14 @@ Refatorar a arquitetura do frontend para suportar tanto APIs mockadas quanto o b
 ## 🔍 Análise de Incompatibilidades Identificadas
 
 ### **1. Incompatibilidade de Padrão de API**
+
 **Problema Atual:**
+
 - Frontend usa `createCRUDAPI` genérico assumindo operações simples de CRUD
 - Backend implementa Event Sourcing para estoque (command-based)
 
 **Evidência:**
+
 ```typescript
 // Frontend atual (CRUD)
 api.estoque.update(item) // Tenta atualizar quantidade diretamente
@@ -49,11 +55,14 @@ POST /movimentacoes-estoque { tipo: 'entrada', quantidade: 10 } // Registra even
 ```
 
 ### **2. Incompatibilidade de Paginação**
+
 **Problema Atual:**
+
 - Frontend faz `getAll()` e pagina no cliente
 - Backend implementa paginação server-side
 
 **Evidência:**
+
 ```typescript
 // Frontend atual
 const items = await api.getAll(); // Pega tudo
@@ -63,7 +72,6 @@ const paginated = items.slice(start, end); // Pagina no cliente
 GET /api/tipos-epi?page=1&limit=20 // Paginação no servidor
 // Retorna: { data: [...], total: 150, page: 1, pageSize: 20 }
 ```
-
 
 ## 🏗️ Arquitetura Proposta
 
@@ -109,6 +117,7 @@ src/lib/components/
 ### **Fase 0: Configuração Dinâmica de Negócio (NOVA - 1 dia)**
 
 #### **0.1 ConfigurationService para ENUMs Dinâmicos**
+
 **CRÍTICO**: O backend possui ENUMs complexos que devem ser carregados dinamicamente.
 
 **Arquivo:** `src/lib/services/core/configurationService.ts`
@@ -139,7 +148,7 @@ interface BusinessConfiguration {
 
 class ConfigurationService {
   async loadBusinessRules(): Promise<BusinessConfiguration> {
-    return api.get<BusinessConfiguration>('/api/v1/configuration');
+    return api.get<BusinessConfiguration>("/api/v1/configuration");
   }
 }
 
@@ -147,8 +156,9 @@ export const configurationService = new ConfigurationService();
 ```
 
 **Store de Configuração:**
+
 ```typescript
-import { writable } from 'svelte/store';
+import { writable } from "svelte/store";
 
 export const businessConfigStore = writable<BusinessConfiguration | null>(null);
 
@@ -162,6 +172,7 @@ export async function initializeBusinessConfig() {
 ### **Fase 1: Fundações com Service Adapters Especializados (3-4 dias)**
 
 #### **1.1 Configuração de Tooling**
+
 ```bash
 # Instalar dependências
 npm install -D openapi-typescript
@@ -172,6 +183,7 @@ echo '"gen-types": "openapi-typescript openapi.yaml -o src/lib/types/api.generat
 ```
 
 #### **1.2 Criação do Cliente HTTP Central**
+
 **Arquivo:** `src/lib/services/core/apiClient.ts`
 
 ```typescript
@@ -181,9 +193,13 @@ interface ApiError extends Error {
 }
 
 class ApiError extends Error {
-  constructor(message: string, public status: number, public response?: any) {
+  constructor(
+    message: string,
+    public status: number,
+    public response?: any,
+  ) {
     super(message);
-    this.name = 'ApiError';
+    this.name = "ApiError";
   }
 }
 
@@ -193,46 +209,46 @@ interface ApiRequestOptions extends RequestInit {
 }
 
 export async function apiClient<T>(
-  endpoint: string, 
-  options: ApiRequestOptions = {}
+  endpoint: string,
+  options: ApiRequestOptions = {},
 ): Promise<T> {
   const { skipAuth = false, timeout = 10000, ...fetchOptions } = options;
-  
+
   // Headers padrão
   const headers = new Headers(fetchOptions.headers);
-  headers.set('Content-Type', 'application/json');
-  headers.set('Accept', 'application/json');
-  
+  headers.set("Content-Type", "application/json");
+  headers.set("Accept", "application/json");
+
   // Headers de autenticação serão implementados por outra equipe
   // Placeholder para integração futura
-  
+
   // Controller para timeout
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeout);
-  
+
   try {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       ...fetchOptions,
       headers,
-      signal: controller.signal
+      signal: controller.signal,
     });
-    
+
     clearTimeout(timeoutId);
-    
+
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       throw new ApiError(
         errorData.message || `HTTP ${response.status}`,
         response.status,
-        errorData
+        errorData,
       );
     }
-    
+
     return await response.json();
   } catch (error) {
     clearTimeout(timeoutId);
-    if (error.name === 'AbortError') {
-      throw new ApiError('Request timeout', 408);
+    if (error.name === "AbortError") {
+      throw new ApiError("Request timeout", 408);
     }
     throw error;
   }
@@ -240,33 +256,34 @@ export async function apiClient<T>(
 
 // Funções auxiliares para diferentes métodos HTTP
 export const api = {
-  get: <T>(endpoint: string, options?: ApiRequestOptions) => 
-    apiClient<T>(endpoint, { ...options, method: 'GET' }),
-    
+  get: <T>(endpoint: string, options?: ApiRequestOptions) =>
+    apiClient<T>(endpoint, { ...options, method: "GET" }),
+
   post: <T>(endpoint: string, data?: any, options?: ApiRequestOptions) =>
     apiClient<T>(endpoint, {
       ...options,
-      method: 'POST',
-      body: data ? JSON.stringify(data) : undefined
+      method: "POST",
+      body: data ? JSON.stringify(data) : undefined,
     }),
-    
+
   put: <T>(endpoint: string, data?: any, options?: ApiRequestOptions) =>
     apiClient<T>(endpoint, {
       ...options,
-      method: 'PUT',
-      body: data ? JSON.stringify(data) : undefined
+      method: "PUT",
+      body: data ? JSON.stringify(data) : undefined,
     }),
-    
+
   delete: <T>(endpoint: string, options?: ApiRequestOptions) =>
-    apiClient<T>(endpoint, { ...options, method: 'DELETE' })
+    apiClient<T>(endpoint, { ...options, method: "DELETE" }),
 };
 ```
 
 #### **1.3 Factory de Store Paginado**
+
 **Arquivo:** `src/lib/stores/paginatedStore.ts`
 
 ```typescript
-import { writable, type Readable } from 'svelte/store';
+import { writable, type Readable } from "svelte/store";
 
 export interface PaginatedResponse<T> {
   data: T[];
@@ -290,7 +307,7 @@ export interface PaginationParams {
   page?: number;
   limit?: number;
   sort?: string;
-  order?: 'asc' | 'desc';
+  order?: "asc" | "desc";
   filters?: Record<string, any>;
 }
 
@@ -303,9 +320,8 @@ export interface PaginatedStore<T> extends Readable<PaginatedState<T>> {
 
 export function createPaginatedStore<T>(
   fetchFunction: (params: PaginationParams) => Promise<PaginatedResponse<T>>,
-  initialPageSize: number = 20
+  initialPageSize: number = 20,
 ): PaginatedStore<T> {
-  
   const initialState: PaginatedState<T> = {
     items: [],
     total: 0,
@@ -313,24 +329,24 @@ export function createPaginatedStore<T>(
     pageSize: initialPageSize,
     totalPages: 0,
     loading: false,
-    error: null
+    error: null,
   };
-  
+
   const { subscribe, set, update } = writable(initialState);
-  
+
   let currentParams: PaginationParams = {
     page: 1,
-    limit: initialPageSize
+    limit: initialPageSize,
   };
-  
+
   async function fetchPage(params: PaginationParams = {}) {
     currentParams = { ...currentParams, ...params };
-    
-    update(state => ({ ...state, loading: true, error: null }));
-    
+
+    update((state) => ({ ...state, loading: true, error: null }));
+
     try {
       const response = await fetchFunction(currentParams);
-      
+
       set({
         items: response.data,
         total: response.total,
@@ -338,47 +354,51 @@ export function createPaginatedStore<T>(
         pageSize: response.pageSize,
         totalPages: response.totalPages,
         loading: false,
-        error: null
+        error: null,
       });
     } catch (error) {
-      update(state => ({
+      update((state) => ({
         ...state,
         loading: false,
-        error: error instanceof Error ? error.message : 'Erro desconhecido'
+        error: error instanceof Error ? error.message : "Erro desconhecido",
       }));
     }
   }
-  
+
   async function setFilters(filters: Record<string, any>) {
     currentParams = { ...currentParams, filters, page: 1 };
     await fetchPage(currentParams);
   }
-  
+
   async function reload() {
     await fetchPage(currentParams);
   }
-  
+
   function reset() {
     currentParams = { page: 1, limit: initialPageSize };
     set(initialState);
   }
-  
+
   return {
     subscribe,
     fetchPage,
     setFilters,
     reload,
-    reset
+    reset,
   };
 }
 ```
 
 #### **1.4 Refatoração do Serviço de Estoque**
+
 **Arquivo:** `src/lib/services/inventory/inventoryService.ts`
 
 ```typescript
-import { api } from '../core/apiClient';
-import type { PaginatedResponse, PaginationParams } from '$lib/stores/paginatedStore';
+import { api } from "../core/apiClient";
+import type {
+  PaginatedResponse,
+  PaginationParams,
+} from "$lib/stores/paginatedStore";
 
 // Tipos específicos do domínio de estoque
 export interface ItemEstoqueDTO {
@@ -388,7 +408,7 @@ export interface ItemEstoqueDTO {
   quantidade: number;
   localizacao?: string;
   dataValidade?: string;
-  status: 'disponivel' | 'baixo' | 'vencendo' | 'vencido' | 'esgotado';
+  status: "disponivel" | "baixo" | "vencendo" | "vencido" | "esgotado";
   dataUltimaMovimentacao: string;
   // Dados expandidos (populados pelo backend)
   tipoEPI?: TipoEPIDTO;
@@ -431,15 +451,19 @@ export interface MovimentacaoEstoqueDTO {
 class EntityManagementAdapter {
   // Context-aware fetching para hierarquias
   async getContratadas(): Promise<ContratadaDTO[]> {
-    return api.get<ContratadaDTO[]>('/contratadas');
+    return api.get<ContratadaDTO[]>("/contratadas");
   }
-  
-  async getColaboradoresByContratada(contratadaId: string): Promise<ColaboradorDTO[]> {
-    return api.get<ColaboradorDTO[]>(`/colaboradores?contratadaId=${contratadaId}`);
+
+  async getColaboradoresByContratada(
+    contratadaId: string,
+  ): Promise<ColaboradorDTO[]> {
+    return api.get<ColaboradorDTO[]>(
+      `/colaboradores?contratadaId=${contratadaId}`,
+    );
   }
-  
+
   async getTiposEPIByCategoria(categoria?: string): Promise<TipoEPIDTO[]> {
-    const params = categoria ? `?categoria=${categoria}` : '';
+    const params = categoria ? `?categoria=${categoria}` : "";
     return api.get<TipoEPIDTO[]>(`/tipos-epi${params}`);
   }
 }
@@ -447,52 +471,59 @@ class EntityManagementAdapter {
 // 2. InventoryCommandAdapter - Para Event Sourcing
 class InventoryCommandAdapter {
   // QUERIES - Buscar dados de estoque
-  async getInventoryItems(params: PaginationParams = {}): Promise<PaginatedResponse<ItemEstoqueDTO>> {
+  async getInventoryItems(
+    params: PaginationParams = {},
+  ): Promise<PaginatedResponse<ItemEstoqueDTO>> {
     const searchParams = new URLSearchParams();
-    
-    if (params.page) searchParams.set('page', params.page.toString());
-    if (params.limit) searchParams.set('limit', params.limit.toString());
-    if (params.sort) searchParams.set('sort', params.sort);
-    if (params.order) searchParams.set('order', params.order);
-    
+
+    if (params.page) searchParams.set("page", params.page.toString());
+    if (params.limit) searchParams.set("limit", params.limit.toString());
+    if (params.sort) searchParams.set("sort", params.sort);
+    if (params.order) searchParams.set("order", params.order);
+
     // Filtros específicos de estoque
     if (params.filters) {
       Object.entries(params.filters).forEach(([key, value]) => {
-        if (value !== null && value !== undefined && value !== '') {
+        if (value !== null && value !== undefined && value !== "") {
           searchParams.set(key, value.toString());
         }
       });
     }
-    
+
     return api.get<PaginatedResponse<ItemEstoqueDTO>>(
-      `/estoque/itens?${searchParams.toString()}`
+      `/estoque/itens?${searchParams.toString()}`,
     );
   }
-  
+
   async getItemById(id: string): Promise<ItemEstoqueDTO> {
     return api.get<ItemEstoqueDTO>(`/estoque/itens/${id}`);
   }
-  
+
   async getMovementHistory(
-    itemId?: string, 
-    params: PaginationParams = {}
+    itemId?: string,
+    params: PaginationParams = {},
   ): Promise<PaginatedResponse<MovimentacaoEstoqueDTO>> {
     const searchParams = new URLSearchParams();
-    
-    if (itemId) searchParams.set('itemId', itemId);
-    if (params.page) searchParams.set('page', params.page.toString());
-    if (params.limit) searchParams.set('limit', params.limit.toString());
-    
+
+    if (itemId) searchParams.set("itemId", itemId);
+    if (params.page) searchParams.set("page", params.page.toString());
+    if (params.limit) searchParams.set("limit", params.limit.toString());
+
     return api.get<PaginatedResponse<MovimentacaoEstoqueDTO>>(
-      `/estoque/movimentacoes?${searchParams.toString()}`
+      `/estoque/movimentacoes?${searchParams.toString()}`,
     );
   }
-  
+
   // COMMANDS - Registrar movimentações (Event Sourcing)
-  async registerMovement(movementData: NovaMovimentacaoForm): Promise<MovimentacaoEstoqueDTO> {
-    return api.post<MovimentacaoEstoqueDTO>('/estoque/movimentacoes', movementData);
+  async registerMovement(
+    movementData: NovaMovimentacaoForm,
+  ): Promise<MovimentacaoEstoqueDTO> {
+    return api.post<MovimentacaoEstoqueDTO>(
+      "/estoque/movimentacoes",
+      movementData,
+    );
   }
-  
+
   async registerEntry(data: {
     tipoEPIId: string;
     almoxarifadoId: string;
@@ -504,10 +535,10 @@ class InventoryCommandAdapter {
   }): Promise<MovimentacaoEstoqueDTO> {
     return this.registerMovement({
       ...data,
-      tipoMovimentacao: 'entrada_nota'
+      tipoMovimentacao: "entrada_nota",
     });
   }
-  
+
   // COMMAND METHODS - Event Sourcing
   async registrarAjusteContagem(data: {
     itemEstoqueId: string;
@@ -516,21 +547,27 @@ class InventoryCommandAdapter {
     motivo: string;
   }): Promise<MovimentacaoEstoqueDTO> {
     const quantidade = data.novaQuantidade - data.quantidadeAnterior;
-    const tipoMovimentacao = quantidade > 0 ? 'AJUSTE_POSITIVO' : 'AJUSTE_NEGATIVO';
-    
+    const tipoMovimentacao =
+      quantidade > 0 ? "AJUSTE_POSITIVO" : "AJUSTE_NEGATIVO";
+
     return this.registerMovement({
       itemEstoqueId: data.itemEstoqueId,
       tipoMovimentacao,
       quantidade: Math.abs(quantidade),
-      motivo: data.motivo
+      motivo: data.motivo,
     });
   }
 
   // ESTORNO - Operação crítica para Event Sourcing
-  async criarEstorno(data: EstornoMovimentacaoForm): Promise<MovimentacaoEstoqueDTO> {
-    return api.post<MovimentacaoEstoqueDTO>('/movimentacoes-estoque/estornos', data);
+  async criarEstorno(
+    data: EstornoMovimentacaoForm,
+  ): Promise<MovimentacaoEstoqueDTO> {
+    return api.post<MovimentacaoEstoqueDTO>(
+      "/movimentacoes-estoque/estornos",
+      data,
+    );
   }
-  
+
   async registerTransfer(data: {
     itemId: string;
     almoxarifadoDestinoId: string;
@@ -538,25 +575,25 @@ class InventoryCommandAdapter {
     motivo: string;
   }): Promise<MovimentacaoEstoqueDTO[]> {
     const item = await this.getItemById(data.itemId);
-    
+
     // Transferência gera 2 movimentações: saída + entrada
     const saida = await this.registerMovement({
       tipoEPIId: item.tipoEPIId,
       almoxarifadoId: item.almoxarifadoId,
-      tipoMovimentacao: 'transferencia',
+      tipoMovimentacao: "transferencia",
       quantidade: -data.quantidade, // Saída é negativa
-      motivo: data.motivo
+      motivo: data.motivo,
     });
-    
+
     const entrada = await this.registerMovement({
       tipoEPIId: item.tipoEPIId,
       almoxarifadoId: data.almoxarifadoDestinoId,
-      tipoMovimentacao: 'entrada_nota',
+      tipoMovimentacao: "entrada_nota",
       quantidade: data.quantidade,
       motivo: data.motivo,
-      documentoReferencia: `Transferência ${saida.id}`
+      documentoReferencia: `Transferência ${saida.id}`,
     });
-    
+
     return [saida, entrada];
   }
 }
@@ -566,38 +603,39 @@ export const inventoryService = new InventoryService();
 
 // 3. ProcessLifecycleAdapter - Para workflows complexos
 class ProcessLifecycleAdapter {
-  // Workflow de assinatura
-  async registrarAssinatura(entregaId: string, assinaturaData: {
-    assinatura: string;
-  }): Promise<EntregaDTO> {
-    return api.post<EntregaDTO>(`/entregas/${entregaId}/assinatura`, assinaturaData);
-  }
-  
-  async processarDevolucao(entregaId: string, devolucaoData: {
-    motivo: string;
-    observacoes?: string;
-  }): Promise<EntregaDTO> {
-    return api.post<EntregaDTO>(`/entregas/${entregaId}/devolucao`, devolucaoData);
-  }
+// Workflow de assinatura
+async registrarAssinatura(entregaId: string, assinaturaData: {
+assinatura: string;
+}): Promise<EntregaDTO> {
+return api.post<EntregaDTO>(`/entregas/${entregaId}/assinatura`, assinaturaData);
+}
+
+async processarDevolucao(entregaId: string, devolucaoData: {
+motivo: string;
+observacoes?: string;
+}): Promise<EntregaDTO> {
+return api.post<EntregaDTO>(`/entregas/${entregaId}/devolucao`, devolucaoData);
+}
 }
 
 // 4. ReportingQueryAdapter - Para consultas especializadas
 class ReportingQueryAdapter {
-  async getRelatorioDescartes(filters: {
-    dataInicio?: string;
-    dataFim?: string;
-    categoria?: string;
-  }): Promise<RelatorioDescartesDTO> {
-    const params = new URLSearchParams(filters as any).toString();
-    return api.get<RelatorioDescartesDTO>(`/relatorios/descartes?${params}`);
-  }
+async getRelatorioDescartes(filters: {
+dataInicio?: string;
+dataFim?: string;
+categoria?: string;
+}): Promise<RelatorioDescartesDTO> {
+const params = new URLSearchParams(filters as any).toString();
+return api.get<RelatorioDescartesDTO>(`/relatorios/descartes?${params}`);
+}
 }
 
 export const entityManagementAdapter = new EntityManagementAdapter();
 export const inventoryCommandAdapter = new InventoryCommandAdapter();
 export const processLifecycleAdapter = new ProcessLifecycleAdapter();
 export const reportingQueryAdapter = new ReportingQueryAdapter();
-```
+
+````
 
 ### **Fase 2: Estado Normalizado e Container/Presenter Avançado (4-5 dias)**
 
@@ -613,13 +651,13 @@ export const reportingQueryAdapter = new ReportingQueryAdapter();
   import InventoryTablePresenter from '$lib/components/presenters/InventoryTable.svelte';
   import MovementModalPresenter from '$lib/components/presenters/MovementModal.svelte';
   import { notify } from '$lib/stores/notificationStore';
-  
+
   // Store de estoque com paginação
   const inventoryStore = createPaginatedStore(
     inventoryService.getInventoryItems.bind(inventoryService),
     20
   );
-  
+
   // Estado local do container
   let showMovementModal = false;
   let selectedItem: ItemEstoqueDTO | null = null;
@@ -629,12 +667,12 @@ export const reportingQueryAdapter = new ReportingQueryAdapter();
     vencimento: 'todos'
   };
   let searchTerm = '';
-  
+
   // Carregamento inicial
   onMount(() => {
     inventoryStore.fetchPage();
   });
-  
+
   // Reatividade para filtros
   $: {
     const activeFilters = {
@@ -643,45 +681,45 @@ export const reportingQueryAdapter = new ReportingQueryAdapter();
     };
     inventoryStore.setFilters(activeFilters);
   }
-  
+
   // Event handlers (lógica de negócio)
   function handlePageChange(event: CustomEvent<{ page: number }>) {
     inventoryStore.fetchPage({ page: event.detail.page });
   }
-  
+
   function handleItemEdit(event: CustomEvent<{ item: ItemEstoqueDTO }>) {
     selectedItem = event.detail.item;
     showMovementModal = true;
   }
-  
+
   async function handleMovementSave(event: CustomEvent<NovaMovimentacaoForm>) {
     try {
       await inventoryService.registerMovement(event.detail);
       showMovementModal = false;
       selectedItem = null;
-      
+
       // Recarregar dados
       await inventoryStore.reload();
-      
+
       notify.success('Movimentação registrada', 'Estoque atualizado com sucesso');
     } catch (error) {
       notify.error('Erro ao salvar', error.message);
     }
   }
-  
+
   function handleMovementCancel() {
     showMovementModal = false;
     selectedItem = null;
   }
-  
+
   function handleSearchChange(event: CustomEvent<{ value: string }>) {
     searchTerm = event.detail.value;
   }
-  
+
   function handleFilterChange(event: CustomEvent<{ key: string; value: string }>) {
     filters = { ...filters, [event.detail.key]: event.detail.value };
   }
-  
+
   function handleClearFilters() {
     filters = { status: 'todos', categoria: 'todas', vencimento: 'todos' };
     searchTerm = '';
@@ -717,7 +755,7 @@ export const reportingQueryAdapter = new ReportingQueryAdapter();
     on:cancel={handleMovementCancel}
   />
 {/if}
-```
+````
 
 **Presenter:** `src/lib/components/presenters/InventoryTable.svelte`
 
@@ -730,7 +768,7 @@ export const reportingQueryAdapter = new ReportingQueryAdapter();
   import SearchableDropdown from '$lib/components/common/SearchableDropdown.svelte';
   import LoadingSpinner from '$lib/components/common/LoadingSpinner.svelte';
   import ErrorDisplay from '$lib/components/common/ErrorDisplay.svelte';
-  
+
   // Props recebidas do container
   export let items: ItemEstoqueDTO[] = [];
   export let loading: boolean = false;
@@ -740,7 +778,7 @@ export const reportingQueryAdapter = new ReportingQueryAdapter();
   export let totalPages: number = 0;
   export let searchTerm: string = '';
   export let filters: Record<string, string> = {};
-  
+
   // Event dispatcher para comunicação com container
   const dispatch = createEventDispatcher<{
     pageChange: { page: number };
@@ -749,7 +787,7 @@ export const reportingQueryAdapter = new ReportingQueryAdapter();
     filterChange: { key: string; value: string };
     clearFilters: void;
   }>();
-  
+
   // Opções para dropdowns (poderiam vir do container também)
   const statusOptions = [
     { value: 'todos', label: 'Todos os Status' },
@@ -759,31 +797,31 @@ export const reportingQueryAdapter = new ReportingQueryAdapter();
     { value: 'vencido', label: 'Vencido' },
     { value: 'esgotado', label: 'Esgotado' }
   ];
-  
+
   // Verifica se há filtros ativos
-  $: hasActiveFilters = searchTerm || 
-    Object.entries(filters).some(([key, value]) => 
+  $: hasActiveFilters = searchTerm ||
+    Object.entries(filters).some(([key, value]) =>
       value !== 'todos' && value !== 'todas' && value !== ''
     );
-  
+
   // Funções de evento (dispatch apenas)
   function handleSearchInput(event: Event) {
     const value = (event.target as HTMLInputElement).value;
     dispatch('searchChange', { value });
   }
-  
+
   function handleFilterChange(key: string, value: string) {
     dispatch('filterChange', { key, value });
   }
-  
+
   function handleItemClick(item: ItemEstoqueDTO) {
     dispatch('itemEdit', { item });
   }
-  
+
   function handlePageChange(newPage: number) {
     dispatch('pageChange', { page: newPage });
   }
-  
+
   function getStatusBadgeColor(status: string) {
     switch (status) {
       case 'disponivel': return 'green';
@@ -835,7 +873,7 @@ export const reportingQueryAdapter = new ReportingQueryAdapter();
               on:input={handleSearchInput}
             />
           </div>
-          
+
           <!-- Status Filter -->
           <SearchableDropdown
             options={statusOptions}
@@ -843,14 +881,14 @@ export const reportingQueryAdapter = new ReportingQueryAdapter();
             placeholder="Status"
             on:change={(e) => handleFilterChange('status', e.detail)}
           />
-          
+
           <!-- More filters... -->
-          
+
           <!-- Clear Filters -->
           {#if hasActiveFilters}
-            <Button 
-              color="alternative" 
-              class="rounded-sm h-10 w-10 p-0 flex items-center justify-center" 
+            <Button
+              color="alternative"
+              class="rounded-sm h-10 w-10 p-0 flex items-center justify-center"
               on:click={() => dispatch('clearFilters')}
               title="Limpar Filtros"
             >
@@ -861,7 +899,7 @@ export const reportingQueryAdapter = new ReportingQueryAdapter();
           {/if}
         </div>
       </div>
-      
+
       <!-- Table -->
       <div class="min-w-[980px] overflow-x-auto">
         <!-- Table implementation... -->
@@ -887,7 +925,7 @@ export const reportingQueryAdapter = new ReportingQueryAdapter();
           </div>
         {/if}
       </div>
-      
+
       <!-- Pagination -->
       {#if totalPages > 1}
         <div class="flex items-center justify-between px-6 py-4 border-t">
@@ -897,7 +935,7 @@ export const reportingQueryAdapter = new ReportingQueryAdapter();
           <div class="flex space-x-2">
             <Button
               size="sm"
-              color="alternative" 
+              color="alternative"
               disabled={page === 1}
               on:click={() => handlePageChange(page - 1)}
             >
@@ -922,17 +960,19 @@ export const reportingQueryAdapter = new ReportingQueryAdapter();
 ### **Fase 3: Integração com Backend Real (2-3 dias)**
 
 #### **3.1 Atualização do Cliente API**
+
 ```typescript
 // Remover mock, usar fetch real
-export const API_BASE_URL = import.meta.env.PROD 
-  ? 'https://api.datalife-epi.com' 
-  : 'http://localhost:3000/api';
+export const API_BASE_URL = import.meta.env.PROD
+  ? "https://api.datalife-epi.com"
+  : "http://localhost:3000/api";
 
 // Implementação de autenticação será feita por outra equipe
 // Placeholder para integração futura
 ```
 
 #### **3.2 Migração Gradual de Serviços**
+
 - Substituir mock por implementação real serviço por serviço
 - Validar tipos com API real
 - Ajustar mapeamentos conforme necessário
@@ -941,17 +981,18 @@ export const API_BASE_URL = import.meta.env.PROD
 
 ### **Cronograma Detalhado**
 
-| Fase | Descrição | Duração | Dependências |
-|------|-----------|---------|--------------|
-| **Fase 0** | Configuração Dinâmica de Negócio | 1 dia | - |
-| **Fase 1** | Service Adapters Especializados | 3-4 dias | Fase 0 |
-| **Fase 2** | Estado Normalizado + Container/Presenter | 4-5 dias | Fase 1 |
-| **Fase 3** | Integração Backend Real | 3-4 dias | Fase 2 |
-| **Testes** | Testes e Ajustes | 2-3 dias | Todas |
+| Fase       | Descrição                                | Duração  | Dependências |
+| ---------- | ---------------------------------------- | -------- | ------------ |
+| **Fase 0** | Configuração Dinâmica de Negócio         | 1 dia    | -            |
+| **Fase 1** | Service Adapters Especializados          | 3-4 dias | Fase 0       |
+| **Fase 2** | Estado Normalizado + Container/Presenter | 4-5 dias | Fase 1       |
+| **Fase 3** | Integração Backend Real                  | 3-4 dias | Fase 2       |
+| **Testes** | Testes e Ajustes                         | 2-3 dias | Todas        |
 
 **Total Estimado: 13-18 dias úteis** (após remoção da camada de autenticação)
 
 ### **Recursos Necessários**
+
 - 1 desenvolvedor Svelte/TypeScript sênior
 - Acesso ao backend documentado
 - Ambiente de desenvolvimento/teste
@@ -960,6 +1001,7 @@ export const API_BASE_URL = import.meta.env.PROD
 ## 🎯 Critérios de Sucesso
 
 ### **Critérios Técnicos**
+
 - [ ] Zero breaking changes na UI durante migração
 - [ ] Tipagem forte mantida em 100% do código
 - [ ] Performance mantida ou melhorada
@@ -967,6 +1009,7 @@ export const API_BASE_URL = import.meta.env.PROD
 - [ ] Bundle size não aumentado
 
 ### **Critérios de Negócio**
+
 - [ ] Todas as funcionalidades atuais preservadas
 - [ ] Integração com backend real funcionando
 - [ ] Paginação server-side implementada
@@ -976,14 +1019,15 @@ export const API_BASE_URL = import.meta.env.PROD
 
 ### **Riscos Identificados**
 
-| Risco | Probabilidade | Impacto | Mitigação |
-|-------|---------------|---------|-----------|
-| **Incompatibilidade de tipos** | Média | Alto | Validação contínua com OpenAPI |
-| **Performance degradada** | Baixa | Médio | Testes de performance em cada fase |
-| **Breaking changes no backend** | Baixa | Alto | Versionamento de API |
-| **Complexidade de Event Sourcing** | Média | Alto | POC inicial e documentação |
+| Risco                              | Probabilidade | Impacto | Mitigação                          |
+| ---------------------------------- | ------------- | ------- | ---------------------------------- |
+| **Incompatibilidade de tipos**     | Média         | Alto    | Validação contínua com OpenAPI     |
+| **Performance degradada**          | Baixa         | Médio   | Testes de performance em cada fase |
+| **Breaking changes no backend**    | Baixa         | Alto    | Versionamento de API               |
+| **Complexidade de Event Sourcing** | Média         | Alto    | POC inicial e documentação         |
 
 ### **Estratégias de Mitigação**
+
 1. **Desenvolvimento incremental** - Cada fase é testável independentemente
 2. **Feature flags** - Permitir rollback rápido se necessário
 3. **Testes automatizados** - Validação contínua da integridade
@@ -992,12 +1036,14 @@ export const API_BASE_URL = import.meta.env.PROD
 ## 📈 Benefícios Esperados
 
 ### **Benefícios Técnicos**
+
 - **Arquitetura escalável** preparada para crescimento
 - **Manutenibilidade melhorada** com separação clara de responsabilidades
 - **Performance otimizada** com paginação server-side
 - **Tipagem robusta** com contratos auto-gerados
 
 ### **Benefícios de Negócio**
+
 - **Time-to-market reduzido** para novas funcionalidades
 - **Menor taxa de bugs** com arquitetura bem definida
 - **Facilidade de onboarding** de novos desenvolvedores
@@ -1006,12 +1052,14 @@ export const API_BASE_URL = import.meta.env.PROD
 ## 🔄 Próximos Passos
 
 ### **Ações Imediatas**
+
 1. [ ] Aprovação do plano pela equipe
 2. [ ] Setup do ambiente de desenvolvimento
 3. [ ] Criação do arquivo OpenAPI inicial
 4. [ ] Início da Fase 1
 
 ### **Dependências Externas CRÍTICAS**
+
 - [ ] **Endpoint de configuração**: `GET /api/v1/configuration` para ENUMs dinâmicos
 - [ ] **Especificação OpenAPI completa** com todos os 16 tipos de movimentação
 - [ ] **Documentação de workflows** de assinatura e devolução
@@ -1021,11 +1069,13 @@ export const API_BASE_URL = import.meta.env.PROD
 ## 🚨 **QUESTÕES CRÍTICAS PARA O BACKEND TEAM**
 
 ### **Sobre Idempotência e Consistência**
+
 1. **Comandos são idempotentes?** Posso reenviar `POST /movimentacoes-estoque` com `Idempotency-Key`?
 2. **Consistência eventual?** Após command aceito, mudança aparece imediatamente em queries?
 3. **Validação de negócio**: Quem impede quantidade negativa - frontend ou backend?
 
 ### **Sobre Autorização** (Será tratado por outra equipe)
+
 _Questões de autenticação e autorização serão implementadas futuramente por equipe especializada._
 
 ---

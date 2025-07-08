@@ -1,11 +1,14 @@
 /**
  * Tipos específicos para Service Adapters
- * 
+ *
  * DTOs e interfaces que espelham exatamente o backend PostgreSQL
  * para garantir compatibilidade total na integração futura.
  */
 
-import type { PaginatedResponse, PaginationParams } from '$lib/stores/paginatedStore';
+import type {
+  PaginatedResponse,
+  PaginationParams,
+} from "$lib/stores/paginatedStore";
 
 // Re-export for external use
 export type { PaginatedResponse, PaginationParams };
@@ -45,15 +48,15 @@ export interface ColaboradorDTO {
 export interface TipoEPIDTO {
   id: string;
   // ✅ COMPATIBILIDADE: Suporta ambas estruturas do backend
-  numeroCA?: string;        // v3.4 e anterior
-  codigo?: string;          // v3.5+ (novo campo)
-  nomeEquipamento?: string; // v3.4 e anterior  
-  nome?: string;            // v3.5+ (novo campo)
+  numeroCA?: string; // v3.4 e anterior
+  codigo?: string; // v3.5+ (novo campo)
+  nomeEquipamento?: string; // v3.4 e anterior
+  nome?: string; // v3.5+ (novo campo)
   descricao?: string;
   fabricante?: string;
   categoria: string;
   vidaUtilDias?: number;
-  validadeMeses?: number;   // v3.5+ (substitui vidaUtilDias)
+  validadeMeses?: number; // v3.5+ (substitui vidaUtilDias)
   valorMedio?: number;
   observacoes?: string;
   ativo: boolean;
@@ -80,7 +83,7 @@ export interface UsuarioDTO {
   id: string;
   nome: string;
   email: string;
-  perfil: 'admin' | 'gerente' | 'usuario';
+  perfil: "admin" | "gerente" | "usuario";
   ativo: boolean;
   createdAt: string;
   updatedAt: string;
@@ -95,7 +98,7 @@ export interface ItemEstoqueDTO {
   quantidade: number;
   localizacao?: string;
   dataValidade?: string;
-  status: 'disponivel' | 'baixo' | 'vencendo' | 'vencido' | 'esgotado';
+  status: "disponivel" | "baixo" | "vencendo" | "vencido" | "esgotado";
   dataUltimaMovimentacao: string;
   createdAt: string;
   updatedAt: string;
@@ -273,10 +276,10 @@ export interface DevolucaoItem {
 
 export interface HistoricoEventoItem {
   id: string;
-  tipo: 'entrega' | 'devolucao' | 'vencimento';
+  tipo: "entrega" | "devolucao" | "vencimento";
   acao: string; // ✅ ALINHADO: Campo usado pelo FichaDetailPresenter
   descricao: string;
-  dataEvento: string; // ✅ ALINHADO: Campo usado pelo FichaDetailPresenter  
+  dataEvento: string; // ✅ ALINHADO: Campo usado pelo FichaDetailPresenter
   responsavel: string;
   detalhes?: any; // ✅ NOVO: Campo para detalhes do evento
 }
@@ -307,7 +310,7 @@ export interface EntregaItemDTO {
   dataValidade?: string;
   // ✅ CAMPOS BACKEND v3.5 (top-level)
   tipoEpiNome?: string;
-  tipoEpiCodigo?: string; 
+  tipoEpiCodigo?: string;
   tipoEpiCategoria?: string;
   quantidadeEntregue?: number;
   // Dados expandidos (v3.4 compatibilidade)
@@ -320,27 +323,27 @@ export interface EntregaItemDTO {
 // Interface para o relatório de movimentações (event source completo)
 // Baseada na documentação oficial do backend
 export interface RelatorioMovimentacaoDTO {
-  id: string;                    // UUID da movimentação
-  data: string;                  // ISO date-time da movimentação
-  almoxarifadoNome: string;      // Nome do almoxarifado
-  tipoEpiNome: string;           // Nome do equipamento/EPI
-  tipoMovimentacao: string;      // Tipo da operação (ENTRADA_NOTA, SAIDA_ENTREGA, etc.)
-  quantidade: number;            // Quantidade movimentada
-  usuarioNome: string;           // Nome do responsável
-  observacoes?: string;          // Observações (opcional)
-  documento?: string;            // Número do documento (opcional)
-  entregaId?: string;            // ID da entrega (correlacionado via timestamp para SAIDA_ENTREGA)
-  colaboradorNome?: string;      // Nome do colaborador (correlacionado via entrega para SAIDA_ENTREGA)
+  id: string; // UUID da movimentação
+  data: string; // ISO date-time da movimentação
+  almoxarifadoNome: string; // Nome do almoxarifado
+  tipoEpiNome: string; // Nome do equipamento/EPI
+  tipoMovimentacao: string; // Tipo da operação (ENTRADA_NOTA, SAIDA_ENTREGA, etc.)
+  quantidade: number; // Quantidade movimentada
+  usuarioNome: string; // Nome do responsável
+  observacoes?: string; // Observações (opcional)
+  documento?: string; // Número do documento (opcional)
+  entregaId?: string; // ID da entrega (correlacionado via timestamp para SAIDA_ENTREGA)
+  colaboradorNome?: string; // Nome do colaborador (correlacionado via entrega para SAIDA_ENTREGA)
 }
 
 // Interface conforme documentação real do backend
 export interface ResumoAuditoria {
-  totalMovimentacoes: number;    // Total de registros
-  totalEntradas: number;         // Soma das entradas
-  totalSaidas: number;          // Soma das saídas
-  saldoInicialPeriodo: number;  // Saldo inicial
-  saldoFinalPeriodo: number;    // Saldo final
-  variacao: number;             // Variação no período
+  totalMovimentacoes: number; // Total de registros
+  totalEntradas: number; // Soma das entradas
+  totalSaidas: number; // Soma das saídas
+  saldoInicialPeriodo: number; // Saldo inicial
+  saldoFinalPeriodo: number; // Saldo final
+  variacao: number; // Variação no período
 }
 
 export interface RelatorioMovimentacoesResponse {
@@ -348,7 +351,7 @@ export interface RelatorioMovimentacoesResponse {
   data: {
     movimentacoes: RelatorioMovimentacaoDTO[];
     resumo: ResumoAuditoria;
-    dataGeracao: string;         // ISO date-time
+    dataGeracao: string; // ISO date-time
   };
   message: string;
 }
@@ -471,7 +474,7 @@ export interface InventoryParams extends PaginationParams {
   almoxarifadoId?: string;
   status?: string;
   categoria?: string;
-  vencimento?: 'vencido' | 'vencendo' | 'valido';
+  vencimento?: "vencido" | "vencendo" | "valido";
   includeExpanded?: boolean; // Para incluir dados de tipoEPI e almoxarifado
 }
 
@@ -550,12 +553,12 @@ export interface ValidationError extends ServiceError {
 /**
  * Tipo para criar forms a partir de DTOs
  */
-export type CreateForm<T> = Omit<T, 'id' | 'createdAt' | 'updatedAt'>;
+export type CreateForm<T> = Omit<T, "id" | "createdAt" | "updatedAt">;
 
 /**
  * Tipo para atualizar forms a partir de DTOs
  */
-export type UpdateForm<T> = Partial<Omit<T, 'id' | 'createdAt' | 'updatedAt'>>;
+export type UpdateForm<T> = Partial<Omit<T, "id" | "createdAt" | "updatedAt">>;
 
 /**
  * Tipo para requests com dados expandidos

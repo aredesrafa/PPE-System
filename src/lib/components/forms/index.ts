@@ -1,16 +1,16 @@
 /**
  * Forms Components - DataLife EPI
- * 
+ *
  * Componentes de formulário padronizados que seguem o design system.
  * Todos os componentes usam FormField como base para consistência.
  */
 
 // Componente base
-export { default as FormField } from './FormField.svelte';
+export { default as FormField } from "./FormField.svelte";
 
 // Componentes de input
-export { default as TextInput } from './TextInput.svelte';
-export { default as SelectInput } from './SelectInput.svelte';
+export { default as TextInput } from "./TextInput.svelte";
+export { default as SelectInput } from "./SelectInput.svelte";
 
 // Tipos úteis para TypeScript
 export interface FormOption {

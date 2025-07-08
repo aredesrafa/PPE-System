@@ -1,7 +1,7 @@
 // Utilitários para manipulação de datas
 // Portados do projeto React original
 
-import { format, differenceInDays, isAfter, isBefore, addDays } from 'date-fns';
+import { format, differenceInDays, isAfter, isBefore, addDays } from "date-fns";
 
 /**
  * Formata uma data para exibição
@@ -9,14 +9,17 @@ import { format, differenceInDays, isAfter, isBefore, addDays } from 'date-fns';
  * @param fallback - Texto a exibir se a data for inválida
  * @returns Data formatada em formato brasileiro (dd/MM/yyyy)
  */
-export function formatarData(date: string | Date | null | undefined, fallback = '-'): string {
+export function formatarData(
+  date: string | Date | null | undefined,
+  fallback = "-",
+): string {
   if (!date) return fallback;
-  
+
   try {
-    const dateObj = typeof date === 'string' ? new Date(date) : date;
-    return format(dateObj, 'dd/MM/yyyy');
+    const dateObj = typeof date === "string" ? new Date(date) : date;
+    return format(dateObj, "dd/MM/yyyy");
   } catch (error) {
-    console.warn('Erro ao formatar data:', date, error);
+    console.warn("Erro ao formatar data:", date, error);
     return fallback;
   }
 }
@@ -27,14 +30,17 @@ export function formatarData(date: string | Date | null | undefined, fallback = 
  * @param fallback - Texto a exibir se a data for inválida
  * @returns Data formatada com hora (dd/MM/yyyy • HH:mm)
  */
-export function formatarDataComHora(date: string | Date | null | undefined, fallback = '-'): string {
+export function formatarDataComHora(
+  date: string | Date | null | undefined,
+  fallback = "-",
+): string {
   if (!date) return fallback;
-  
+
   try {
-    const dateObj = typeof date === 'string' ? new Date(date) : date;
-    return format(dateObj, 'dd/MM/yyyy • HH:mm');
+    const dateObj = typeof date === "string" ? new Date(date) : date;
+    return format(dateObj, "dd/MM/yyyy • HH:mm");
   } catch (error) {
-    console.warn('Erro ao formatar data com hora:', date, error);
+    console.warn("Erro ao formatar data com hora:", date, error);
     return fallback;
   }
 }
@@ -45,14 +51,17 @@ export function formatarDataComHora(date: string | Date | null | undefined, fall
  * @param fallback - Texto a exibir se a data for inválida
  * @returns Data formatada em formato brasileiro (dd/MM/yyyy HH:mm)
  */
-export function formatarDataHora(date: string | Date | null | undefined, fallback = '-'): string {
+export function formatarDataHora(
+  date: string | Date | null | undefined,
+  fallback = "-",
+): string {
   if (!date) return fallback;
-  
+
   try {
-    const dateObj = typeof date === 'string' ? new Date(date) : date;
-    return format(dateObj, 'dd/MM/yyyy HH:mm');
+    const dateObj = typeof date === "string" ? new Date(date) : date;
+    return format(dateObj, "dd/MM/yyyy HH:mm");
   } catch (error) {
-    console.warn('Erro ao formatar data e hora:', date, error);
+    console.warn("Erro ao formatar data e hora:", date, error);
     return fallback;
   }
 }
@@ -62,28 +71,30 @@ export function formatarDataHora(date: string | Date | null | undefined, fallbac
  * @param date - Data para comparar
  * @returns Período relativo formatado
  */
-export function formatarPeriodoRelativo(date: string | Date | null | undefined): string {
-  if (!date) return '-';
-  
+export function formatarPeriodoRelativo(
+  date: string | Date | null | undefined,
+): string {
+  if (!date) return "-";
+
   try {
-    const dateObj = typeof date === 'string' ? new Date(date) : date;
+    const dateObj = typeof date === "string" ? new Date(date) : date;
     const hoje = new Date();
     const dias = differenceInDays(dateObj, hoje);
-    
+
     if (dias === 0) {
-      return 'hoje';
+      return "hoje";
     } else if (dias === 1) {
-      return 'amanhã';
+      return "amanhã";
     } else if (dias === -1) {
-      return 'ontem';
+      return "ontem";
     } else if (dias > 0) {
-      return `em ${dias} dia${dias > 1 ? 's' : ''}`;
+      return `em ${dias} dia${dias > 1 ? "s" : ""}`;
     } else {
-      return `há ${Math.abs(dias)} dia${Math.abs(dias) > 1 ? 's' : ''}`;
+      return `há ${Math.abs(dias)} dia${Math.abs(dias) > 1 ? "s" : ""}`;
     }
   } catch (error) {
-    console.warn('Erro ao calcular período relativo:', date, error);
-    return '-';
+    console.warn("Erro ao calcular período relativo:", date, error);
+    return "-";
   }
 }
 
@@ -94,12 +105,12 @@ export function formatarPeriodoRelativo(date: string | Date | null | undefined):
  */
 export function isDataVencida(date: string | Date | null | undefined): boolean {
   if (!date) return false;
-  
+
   try {
-    const dateObj = typeof date === 'string' ? new Date(date) : date;
+    const dateObj = typeof date === "string" ? new Date(date) : date;
     return isBefore(dateObj, new Date());
   } catch (error) {
-    console.warn('Erro ao verificar vencimento:', date, error);
+    console.warn("Erro ao verificar vencimento:", date, error);
     return false;
   }
 }
@@ -110,16 +121,19 @@ export function isDataVencida(date: string | Date | null | undefined): boolean {
  * @param diasAntecipacao - Número de dias de antecipação para considerar "próximo"
  * @returns true se a data estiver próxima do vencimento
  */
-export function isProximoVencimento(date: string | Date | null | undefined, diasAntecipacao = 30): boolean {
+export function isProximoVencimento(
+  date: string | Date | null | undefined,
+  diasAntecipacao = 30,
+): boolean {
   if (!date) return false;
-  
+
   try {
-    const dateObj = typeof date === 'string' ? new Date(date) : date;
+    const dateObj = typeof date === "string" ? new Date(date) : date;
     const dataLimite = addDays(new Date(), diasAntecipacao);
-    
+
     return isAfter(dateObj, new Date()) && isBefore(dateObj, dataLimite);
   } catch (error) {
-    console.warn('Erro ao verificar proximidade do vencimento:', date, error);
+    console.warn("Erro ao verificar proximidade do vencimento:", date, error);
     return false;
   }
 }
@@ -129,14 +143,16 @@ export function isProximoVencimento(date: string | Date | null | undefined, dias
  * @param date - Data de vencimento
  * @returns Número de dias (positivo = futuro, negativo = passado)
  */
-export function diasParaVencimento(date: string | Date | null | undefined): number | null {
+export function diasParaVencimento(
+  date: string | Date | null | undefined,
+): number | null {
   if (!date) return null;
-  
+
   try {
-    const dateObj = typeof date === 'string' ? new Date(date) : date;
+    const dateObj = typeof date === "string" ? new Date(date) : date;
     return differenceInDays(dateObj, new Date());
   } catch (error) {
-    console.warn('Erro ao calcular dias para vencimento:', date, error);
+    console.warn("Erro ao calcular dias para vencimento:", date, error);
     return null;
   }
 }
@@ -150,23 +166,23 @@ export function formatarPeriodoDias(dias: number): string {
   if (dias >= 365) {
     const anos = Math.floor(dias / 365);
     const mesesRestantes = Math.floor((dias % 365) / 30);
-    
-    let resultado = `${anos} ano${anos > 1 ? 's' : ''}`;
+
+    let resultado = `${anos} ano${anos > 1 ? "s" : ""}`;
     if (mesesRestantes > 0) {
-      resultado += ` e ${mesesRestantes} mês${mesesRestantes > 1 ? 'es' : ''}`;
+      resultado += ` e ${mesesRestantes} mês${mesesRestantes > 1 ? "es" : ""}`;
     }
     return resultado;
   } else if (dias >= 30) {
     const meses = Math.floor(dias / 30);
     const diasRestantes = dias % 30;
-    
-    let resultado = `${meses} mês${meses > 1 ? 'es' : ''}`;
+
+    let resultado = `${meses} mês${meses > 1 ? "es" : ""}`;
     if (diasRestantes > 0) {
-      resultado += ` e ${diasRestantes} dia${diasRestantes > 1 ? 's' : ''}`;
+      resultado += ` e ${diasRestantes} dia${diasRestantes > 1 ? "s" : ""}`;
     }
     return resultado;
   } else {
-    return `${dias} dia${dias > 1 ? 's' : ''}`;
+    return `${dias} dia${dias > 1 ? "s" : ""}`;
   }
 }
 
@@ -176,15 +192,18 @@ export function formatarPeriodoDias(dias: number): string {
  * @param diasAlerta - Dias para alerta (padrão: 30)
  * @returns Cor para o badge/status ('green', 'yellow', 'red')
  */
-export function getCorVencimento(date: string | Date | null | undefined, diasAlerta = 30): 'green' | 'yellow' | 'red' | 'dark' {
-  if (!date) return 'dark';
-  
+export function getCorVencimento(
+  date: string | Date | null | undefined,
+  diasAlerta = 30,
+): "green" | "yellow" | "red" | "dark" {
+  if (!date) return "dark";
+
   if (isDataVencida(date)) {
-    return 'red';
+    return "red";
   } else if (isProximoVencimento(date, diasAlerta)) {
-    return 'yellow';
+    return "yellow";
   } else {
-    return 'green';
+    return "green";
   }
 }
 
@@ -194,18 +213,21 @@ export function getCorVencimento(date: string | Date | null | undefined, diasAle
  * @param diasAlerta - Dias para alerta (padrão: 30)
  * @returns Texto do status
  */
-export function getStatusVencimento(date: string | Date | null | undefined, diasAlerta = 30): string {
-  if (!date) return 'Sem data';
-  
+export function getStatusVencimento(
+  date: string | Date | null | undefined,
+  diasAlerta = 30,
+): string {
+  if (!date) return "Sem data";
+
   if (isDataVencida(date)) {
     const dias = Math.abs(diasParaVencimento(date) || 0);
-    return `Vencido há ${dias} dia${dias > 1 ? 's' : ''}`;
+    return `Vencido há ${dias} dia${dias > 1 ? "s" : ""}`;
   } else if (isProximoVencimento(date, diasAlerta)) {
     const dias = diasParaVencimento(date) || 0;
-    return `Vence em ${dias} dia${dias > 1 ? 's' : ''}`;
+    return `Vence em ${dias} dia${dias > 1 ? "s" : ""}`;
   } else {
     const dias = diasParaVencimento(date) || 0;
-    return `Válido por mais ${dias} dia${dias > 1 ? 's' : ''}`;
+    return `Válido por mais ${dias} dia${dias > 1 ? "s" : ""}`;
   }
 }
 
@@ -214,14 +236,16 @@ export function getStatusVencimento(date: string | Date | null | undefined, dias
  * @param date - Data para converter
  * @returns String ISO ou null se inválida
  */
-export function toISOString(date: string | Date | null | undefined): string | null {
+export function toISOString(
+  date: string | Date | null | undefined,
+): string | null {
   if (!date) return null;
-  
+
   try {
-    const dateObj = typeof date === 'string' ? new Date(date) : date;
+    const dateObj = typeof date === "string" ? new Date(date) : date;
     return dateObj.toISOString();
   } catch (error) {
-    console.warn('Erro ao converter para ISO string:', date, error);
+    console.warn("Erro ao converter para ISO string:", date, error);
     return null;
   }
 }

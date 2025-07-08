@@ -3,6 +3,7 @@
 ## ✅ Implementação Realizada
 
 ### **🎨 Novo Padrão de UI**
+
 Migração completa dos modais de EPI para drawers seguindo o padrão estabelecido na página `/fichas`:
 
 - **Drawer lateral** com largura máxima de 940px
@@ -14,6 +15,7 @@ Migração completa dos modais de EPI para drawers seguindo o padrão estabeleci
 ### **🏗️ Estrutura Implementada**
 
 #### **Novo Component: `EPIDetailDrawer.svelte`**
+
 - **Localização:** `src/lib/components/presenters/EPIDetailDrawer.svelte`
 - **Padrão:** Container/Presenter architecture
 - **Funcionalidades:**
@@ -24,6 +26,7 @@ Migração completa dos modais de EPI para drawers seguindo o padrão estabeleci
   - ✅ Mapeamento correto de dados
 
 #### **Tabs Implementadas:**
+
 1. **Informações Gerais** - Dados principais do EPI
 2. **Especificações** - Placeholder para especificações técnicas
 3. **Histórico** - Placeholder para histórico de alterações
@@ -31,12 +34,14 @@ Migração completa dos modais de EPI para drawers seguindo o padrão estabeleci
 ### **🔧 Integração com CatalogContainer**
 
 #### **Migração Completa:**
+
 - ❌ **Removido:** `EPIFormModalPresenter.svelte` (modal antigo)
 - ✅ **Implementado:** `EPIDetailDrawer.svelte` (drawer novo)
 - ✅ **Atualizado:** Handlers no `CatalogContainer`
 - ✅ **Mapeamento:** Dados corretos para os adapters
 
 #### **Estados e Handlers:**
+
 - `showEPIDrawer` - controle de abertura
 - `drawerMode` - 'view' | 'edit' | 'create'
 - `selectedEPI` - EPI selecionado
@@ -47,6 +52,7 @@ Migração completa dos modais de EPI para drawers seguindo o padrão estabeleci
 ### **🎯 Consistência de UI Alcançada**
 
 #### **Padrão Unificado:**
+
 - **Header igual:** Mesmo layout do drawer de fichas
 - **Posicionamento:** Top: 64px (altura do header)
 - **Z-index:** 50 (consistente)
@@ -54,6 +60,7 @@ Migração completa dos modais de EPI para drawers seguindo o padrão estabeleci
 - **CSS classes:** Padronizadas
 
 #### **Comportamento Consistente:**
+
 - **Esc para fechar**
 - **Click fora para fechar**
 - **Transições suaves**
@@ -62,16 +69,19 @@ Migração completa dos modais de EPI para drawers seguindo o padrão estabeleci
 ### **📋 Campos do Formulário**
 
 #### **Campos Obrigatórios:**
+
 - Nome do Equipamento (texto)
 - Número CA (numérico)
 - Categoria (dropdown)
 - Status (dropdown)
 
 #### **Campos Opcionais:**
+
 - Vida Útil em dias (numérico)
 - Descrição (textarea)
 
 #### **Validações Implementadas:**
+
 - ✅ Campos obrigatórios
 - ✅ Número CA apenas números
 - ✅ Vida útil entre 1-3650 dias
@@ -80,6 +90,7 @@ Migração completa dos modais de EPI para drawers seguindo o padrão estabeleci
 ### **🔄 Mapeamento de Dados**
 
 #### **Frontend → Backend:**
+
 ```typescript
 const saveData = {
   nomeEquipamento: formData.nomeEquipamento,
@@ -87,7 +98,7 @@ const saveData = {
   categoria: formData.categoria,
   vidaUtilDias: formData.vidaUtilDias,
   descricao: formData.descricao,
-  ativo: formData.status === 'ATIVO' // Mapeamento correto
+  ativo: formData.status === "ATIVO", // Mapeamento correto
 };
 ```
 
@@ -105,12 +116,14 @@ const saveData = {
 ### **📊 Melhorias de UX**
 
 #### **Antes (Modal):**
+
 - ❌ Modal pequeno e limitado
 - ❌ UI inconsistente com resto da aplicação
 - ❌ Campos desorganizados
 - ❌ Validação básica
 
 #### **Depois (Drawer):**
+
 - ✅ Drawer amplo (940px) com espaço adequado
 - ✅ UI 100% consistente com padrão da aplicação
 - ✅ Organização por tabs

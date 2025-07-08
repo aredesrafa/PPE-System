@@ -1,6 +1,7 @@
 # ✅ API Endpoints Implementados para Otimização do Frontend
 
 ## 🎯 Objetivo ✅ CONCLUÍDO
+
 Reduzir drasticamente a complexidade do `fichaProcessAdapter.ts` através de endpoints backend otimizados.
 
 **Status**: ✅ **IMPLEMENTAÇÃO COMPLETA** - Todos os endpoints funcionais e testados
@@ -61,7 +62,7 @@ Substituir 3 chamadas separadas por uma única, com dados **completamente proces
         "categoria": "string",
         "quantidade": 1,
         "dataDevolucao": "2024-01-20",
-        "motivo": "devolução padrão|danificado|troca", // 
+        "motivo": "devolução padrão|danificado|troca", //
         "motivoDisplay": "Devolução Padrão|Equipamento Danificado|Troca de Tamanho", // ← Legível
         "status": "processada|cancelada",
         "podeProcessar": true, // ← Lógica de negócio
@@ -83,7 +84,7 @@ Substituir 3 chamadas separadas por uma única, com dados **completamente proces
           {
             "id": "uuid",
             "nomeEquipamento": "string", // ← Já resolvido pelo backend
-            "numeroCA": "string", // ← Já resolvido pelo backend  
+            "numeroCA": "string", // ← Já resolvido pelo backend
             "categoria": "string",
             "quantidade": 1
           }
@@ -108,7 +109,7 @@ Substituir 3 chamadas separadas por uma única, com dados **completamente proces
           "resumo": "3x Capacete (CA 12345)", // ← Resumo formatado pelo backend
           "dados": {
             "quantidade": 3,
-            "equipamento": "Capacete", 
+            "equipamento": "Capacete",
             "numeroCA": "12345",
             "categoria": "Proteção da Cabeça"
           }
@@ -126,6 +127,7 @@ Substituir 3 chamadas separadas por uma única, com dados **completamente proces
 ```
 
 **Benefícios:**
+
 - Elimina 3 chamadas API simultâneas
 - Remove lógica de status do frontend
 - Remove processamento de histórico complexo
@@ -150,7 +152,7 @@ Substituir listagem com pós-processamento por dados prontos:
         },
         "status": "ativa|inativa|vencida|pendente_devolucao", // ← Calculado
         "totalEpisAtivos": 3, // ← Pré-calculado
-        "totalEpisVencidos": 1, // ← Pré-calculado  
+        "totalEpisVencidos": 1, // ← Pré-calculado
         "proximoVencimento": "2024-02-01", // ← Pré-calculado
         "ultimaAtualizacao": "2024-01-15T10:30:00Z"
       }
@@ -166,6 +168,7 @@ Substituir listagem com pós-processamento por dados prontos:
 ```
 
 **Parâmetros suportados:**
+
 - `search` (busca em nome, matrícula, EPI)
 - `status` (filtro de status)
 - `cargo` (filtro por cargo)
@@ -177,6 +180,7 @@ Substituir listagem com pós-processamento por dados prontos:
 Substituir lógica complexa de criação por processo simplificado:
 
 **Request:**
+
 ```json
 {
   "fichaEpiId": "uuid",
@@ -192,6 +196,7 @@ Substituir lógica complexa de criação por processo simplificado:
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -212,6 +217,7 @@ Substituir lógica complexa de criação por processo simplificado:
 ```
 
 **Backend faz:**
+
 - Expande quantidade em itens individuais
 - Gera IDs únicos para rastreamento
 - Calcula data limite de devolução
@@ -223,6 +229,7 @@ Substituir lógica complexa de criação por processo simplificado:
 Simplificar processo de devolução:
 
 **Request:**
+
 ```json
 {
   "devolucoes": [
@@ -236,6 +243,7 @@ Simplificar processo de devolução:
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -253,34 +261,48 @@ Simplificar processo de devolução:
 ### **Funções de FichaDetailPresenter.svelte a Eliminar (Análise Completa):**
 
 #### **1. Mapeamento de Status (CRÍTICO) - 68 linhas identificadas**
+
 ```typescript
 // Frontend atual - getStatusFichaInfo() (linhas 112-123)
 function getStatusFichaInfo(status) {
   switch (status) {
-    case 'ativa': return { color: 'green', label: 'Ativa' };
-    case 'vencida': return { color: 'red', label: 'Vencida' };
-    case 'suspensa': return { color: 'yellow', label: 'Suspensa' };
-    default: return { color: 'gray', label: 'Indefinida' };
+    case "ativa":
+      return { color: "green", label: "Ativa" };
+    case "vencida":
+      return { color: "red", label: "Vencida" };
+    case "suspensa":
+      return { color: "yellow", label: "Suspensa" };
+    default:
+      return { color: "gray", label: "Indefinida" };
   }
 }
 
 // Frontend atual - getStatusEntregaInfo() (linhas 125-136)
 function getStatusEntregaInfo(status) {
   switch (status) {
-    case 'assinado': return { color: 'green', label: 'Assinado' };
-    case 'nao_assinado': return { color: 'yellow', label: 'Pendente Assinatura' };
-    case 'cancelado': return { color: 'red', label: 'Cancelado' };
-    default: return { color: 'gray', label: 'Indefinido' };
+    case "assinado":
+      return { color: "green", label: "Assinado" };
+    case "nao_assinado":
+      return { color: "yellow", label: "Pendente Assinatura" };
+    case "cancelado":
+      return { color: "red", label: "Cancelado" };
+    default:
+      return { color: "gray", label: "Indefinido" };
   }
 }
 
 // Frontend atual - formatarStatusLegivel() (linhas 308-352) - 44 linhas
 function formatarStatusLegivel(status: string): string {
   const statusMap: Record<string, string> = {
-    'ATIVA': 'Ativa', 'INATIVA': 'Inativa', 'SUSPENSA': 'Suspensa',
-    'PENDENTE_ASSINATURA': 'Pendente Assinatura', 'ASSINADA': 'Assinada',
-    'COM_COLABORADOR': 'Com Colaborador', 'DEVOLVIDO': 'Devolvido',
-    'DISPONIVEL': 'Disponível', 'BAIXO_ESTOQUE': 'Baixo Estoque',
+    ATIVA: "Ativa",
+    INATIVA: "Inativa",
+    SUSPENSA: "Suspensa",
+    PENDENTE_ASSINATURA: "Pendente Assinatura",
+    ASSINADA: "Assinada",
+    COM_COLABORADOR: "Com Colaborador",
+    DEVOLVIDO: "Devolvido",
+    DISPONIVEL: "Disponível",
+    BAIXO_ESTOQUE: "Baixo Estoque",
     // ... 40+ mapeamentos status técnico → legível
   };
 }
@@ -289,52 +311,70 @@ function formatarStatusLegivel(status: string): string {
 ```
 
 #### **2. Formatação de Histórico (CRÍTICO) - 130 linhas identificadas**
+
 ```typescript
 // Frontend atual - formatarItensHistorico() (linhas 358-485) - A FUNÇÃO MAIS COMPLEXA
 function formatarItensHistorico(itens: any[]): string {
   // Criar mapa de nomes de EPIs a partir de equipamentos em posse e entregas
   const equipamentosMap = new Map<string, { nome: string; ca: string }>();
-  
+
   // 1. Usar equipamentos em posse (dados atuais)
   if (fichaData?.equipamentosEmPosse) {
-    fichaData.equipamentosEmPosse.forEach(eq => {
-      equipamentosMap.set(eq.entregaId, { nome: eq.nomeEquipamento, ca: eq.registroCA });
+    fichaData.equipamentosEmPosse.forEach((eq) => {
+      equipamentosMap.set(eq.entregaId, {
+        nome: eq.nomeEquipamento,
+        ca: eq.registroCA,
+      });
     });
   }
-  
+
   // 2. Correlacionar prazos com tipos de EPI (ESTRATÉGIA COMPLEXA)
   const prazoParaEpiMap = new Map<string, { nome: string; ca: string }>();
   if (fichaData?.entregas) {
-    fichaData.entregas.forEach(entrega => {
+    fichaData.entregas.forEach((entrega) => {
       // Lógica complexa de correlação entre entregas e equipamentos
       // Mapear prazo -> tipo de EPI
       // 80+ linhas de processamento de dados
     });
   }
-  
+
   // 3. Agrupar itens por tipo/nome de EPI
-  const itensPorTipo = new Map<string, { quantidade: number; prazos: string[] }>();
+  const itensPorTipo = new Map<
+    string,
+    { quantidade: number; prazos: string[] }
+  >();
   // Lógica de agrupamento e formatação final
-  
-  return linhas.join('\n'); // Resultado: "• 3x Capacete (prazo: 15/02/2024)"
+
+  return linhas.join("\n"); // Resultado: "• 3x Capacete (prazo: 15/02/2024)"
 }
 
 // Backend deveria retornar: detalhes.resumo: "3x Capacete (CA 12345, prazo: 15/02/2024)"
 ```
 
 #### **3. Detecção de Mudanças de Status (MÉDIO) - 42 linhas identificadas**
+
 ```typescript
 // Frontend atual - formatarMudancaStatus() (linhas 261-303)
 function formatarMudancaStatus(detalhes: any): string | null {
   // Procurar por campos que indicam mudança de status (várias variações possíveis)
-  const statusAnterior = detalhes.statusAnterior || detalhes.statusAntigo || 
-                        detalhes.statusPrevio || detalhes.statusAntes || 
-                        detalhes.statusFrom || detalhes.fromStatus || 
-                        detalhes.anterior || detalhes.de || detalhes.oldStatus;
-                        
-  const statusNovo = detalhes.statusNovo || detalhes.statusAtual || 
-                    detalhes.statusDepois || detalhes.novoStatus || 
-                    detalhes.statusTo || detalhes.toStatus;
+  const statusAnterior =
+    detalhes.statusAnterior ||
+    detalhes.statusAntigo ||
+    detalhes.statusPrevio ||
+    detalhes.statusAntes ||
+    detalhes.statusFrom ||
+    detalhes.fromStatus ||
+    detalhes.anterior ||
+    detalhes.de ||
+    detalhes.oldStatus;
+
+  const statusNovo =
+    detalhes.statusNovo ||
+    detalhes.statusAtual ||
+    detalhes.statusDepois ||
+    detalhes.novoStatus ||
+    detalhes.statusTo ||
+    detalhes.toStatus;
 
   // Também verificar se há campos diretos como "de" e "para"
   const de = detalhes.de || detalhes.from;
@@ -343,10 +383,14 @@ function formatarMudancaStatus(detalhes: any): string | null {
   // Lógica complexa para detectar mudanças implícitas baseado no tipo de evento
   if (detalhes.tipoAcao || detalhes.acao) {
     switch (acao?.toLowerCase()) {
-      case 'devolucao': return 'Com Colaborador → Devolvido';
-      case 'entrega': return 'Disponível → Com Colaborador';
-      case 'cancelamento': return 'Ativa → Cancelada';
-      case 'assinatura': return 'Pendente Assinatura → Assinada';
+      case "devolucao":
+        return "Com Colaborador → Devolvido";
+      case "entrega":
+        return "Disponível → Com Colaborador";
+      case "cancelamento":
+        return "Ativa → Cancelada";
+      case "assinatura":
+        return "Pendente Assinatura → Assinada";
     }
   }
 }
@@ -355,30 +399,31 @@ function formatarMudancaStatus(detalhes: any): string | null {
 ```
 
 #### **4. Configuração de UI por Tipo (MÉDIO) - 61 linhas identificadas**
+
 ```typescript
 // Frontend atual - getEventoIconConfig() (linhas 147-192) - 46 linhas
 function getEventoIconConfig(tipo: string) {
   switch (tipo) {
-    case 'criacao':
+    case "criacao":
       return {
-        icon: 'DocumentPlusOutline',
-        bgColor: 'bg-blue-100 dark:bg-blue-900',
-        iconColor: 'text-blue-600 dark:text-blue-400',
-        badgeColor: 'blue'
+        icon: "DocumentPlusOutline",
+        bgColor: "bg-blue-100 dark:bg-blue-900",
+        iconColor: "text-blue-600 dark:text-blue-400",
+        badgeColor: "blue",
       };
-    case 'entrega':
+    case "entrega":
       return {
-        icon: 'TruckOutline',
-        bgColor: 'bg-green-100 dark:bg-green-900',
-        iconColor: 'text-green-600 dark:text-green-400',
-        badgeColor: 'green'
+        icon: "TruckOutline",
+        bgColor: "bg-green-100 dark:bg-green-900",
+        iconColor: "text-green-600 dark:text-green-400",
+        badgeColor: "green",
       };
-    case 'devolucao':
+    case "devolucao":
       return {
-        icon: 'ArrowUturnLeftOutline',
-        bgColor: 'bg-orange-100 dark:bg-orange-900',
-        iconColor: 'text-orange-600 dark:text-orange-400',
-        badgeColor: 'orange'
+        icon: "ArrowUturnLeftOutline",
+        bgColor: "bg-orange-100 dark:bg-orange-900",
+        iconColor: "text-orange-600 dark:text-orange-400",
+        badgeColor: "orange",
       };
     // ... 6 tipos diferentes com configurações completas
   }
@@ -387,45 +432,52 @@ function getEventoIconConfig(tipo: string) {
 // Frontend atual - getEventoLabel() (linhas 194-209) - 15 linhas
 function getEventoLabel(tipo: string): string {
   switch (tipo) {
-    case 'criacao': return 'Criação';
-    case 'entrega': return 'Entrega';
-    case 'devolucao': return 'Devolução';
-    case 'cancelamento': return 'Cancelamento';
-    case 'vencimento': return 'Vencimento';
-    default: return 'Evento';
+    case "criacao":
+      return "Criação";
+    case "entrega":
+      return "Entrega";
+    case "devolucao":
+      return "Devolução";
+    case "cancelamento":
+      return "Cancelamento";
+    case "vencimento":
+      return "Vencimento";
+    default:
+      return "Evento";
   }
 }
 
-// Backend deveria retornar: tipoDisplay: { 
-//   tipo: "entrega", cor: "green", label: "Entrega" 
+// Backend deveria retornar: tipoDisplay: {
+//   tipo: "entrega", cor: "green", label: "Entrega"
 // }
 // Frontend mapeia: tipo → ícone, cor → classes CSS
 ```
 
 #### **5. Formatação de CPF e Iniciais (BAIXO) - 49 linhas identificadas**
+
 ```typescript
 // Frontend atual - getInitials() (linhas 138-145) - 7 linhas
 function getInitials(nome: string): string {
   return nome
-    .split(' ')
-    .map(n => n[0])
-    .join('')
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
     .toUpperCase()
     .slice(0, 2);
 }
 
 // Frontend atual - formatarValorDetalhe() (linhas 214-256) - 42 linhas
 function formatarValorDetalhe(chave: string, valor: any): string {
-  if (valor === null || valor === undefined) return '-';
-  
-  if (typeof valor === 'string') {
+  if (valor === null || valor === undefined) return "-";
+
+  if (typeof valor === "string") {
     // Se é uma data ISO, formatar
     if (valor.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/)) {
       return formatarData(valor);
     }
     return valor;
   }
-  
+
   // Lógica complexa para objetos, arrays, números...
   // 30+ linhas de formatação de tipos diversos
 }
@@ -437,18 +489,24 @@ function formatarValorDetalhe(chave: string, valor: any): string {
 ```
 
 ### Status de Ficha (CRÍTICO)
+
 ```typescript
 // Frontend atual (complexo)
-function mapearStatusBackendParaFrontend(status, devolucaoPendente, episExpirados) {
-  if (devolucaoPendente) return 'pendente_devolucao';
-  if (episExpirados > 0 && status === 'ATIVA') return 'vencida';
+function mapearStatusBackendParaFrontend(
+  status,
+  devolucaoPendente,
+  episExpirados,
+) {
+  if (devolucaoPendente) return "pendente_devolucao";
+  if (episExpirados > 0 && status === "ATIVA") return "vencida";
   // ...
 }
 
 // Backend deveria retornar direto: "ativa|inativa|vencida|pendente_devolucao"
 ```
 
-### Cálculo de Vencimento (CRÍTICO)  
+### Cálculo de Vencimento (CRÍTICO)
+
 ```typescript
 // Frontend atual (complexo)
 calcularStatusVencimento(dataLimiteDevolucao) {
@@ -461,6 +519,7 @@ calcularStatusVencimento(dataLimiteDevolucao) {
 ```
 
 ### Expansão de Itens (CRÍTICO)
+
 ```typescript
 // Frontend atual (complexo - 50+ linhas)
 for (let i = 0; i < item.quantidade; i++) {
@@ -478,10 +537,12 @@ for (let i = 0; i < item.quantidade; i++) {
 ### **Redução de Código Total**
 
 #### **fichaProcessAdapter.ts**
+
 - **Atual**: 1,429 linhas
 - **Estimado após backend**: ~300 linhas (4x menor)
 
 #### **FichaDetailPresenter.svelte**
+
 - **Atual**: 1,011 linhas
 - **Lógica de negócio removível**: 280 linhas (abordagem balanceada)
   - `formatarItensHistorico()`: 130 linhas → **Eliminada** (backend retorna resumo)
@@ -497,6 +558,7 @@ for (let i = 0; i < item.quantidade; i++) {
 - **Mapeamentos simples mantidos no frontend**: ~50 linhas
 
 #### **Total de Redução (Abordagem Balanceada)**
+
 - **Antes**: 2,440 linhas (adapter + presenter)
 - **Depois**: 1,030 linhas (300 + 730)
 - **Redução**: 1,410 linhas (57.8% menor)
@@ -504,6 +566,7 @@ for (let i = 0; i < item.quantidade; i++) {
 - **Flexibilidade de UI mantida**: Frontend controla ícones, CSS, temas
 
 ### **Performance (Abordagem Balanceada)**
+
 - **Atual**: 3-5 chamadas API por ficha
 - **Após**: 1 chamada API por ficha (3-5x mais rápido)
 - **Lógica complexa**: 85% eliminada do frontend
@@ -511,6 +574,7 @@ for (let i = 0; i < item.quantidade; i++) {
 - **Carregamento UI**: 3x mais rápido
 
 ### **Manutenibilidade (Abordagem Balanceada)**
+
 - **85% da lógica de negócio** removida do frontend
 - **Transformações complexas eliminadas** (correlação de dados)
 - **Cache e sincronização** drasticamente simplificados
@@ -518,6 +582,7 @@ for (let i = 0; i < item.quantidade; i++) {
 - **Flexibilidade UI preservada** (temas, ícones, responsividade)
 
 ### **Experiência do Usuário**
+
 - Carregamento mais rápido
 - Menos estados de loading
 - Dados sempre sincronizados
@@ -525,6 +590,7 @@ for (let i = 0; i < item.quantidade; i++) {
 - Menos erros de inconsistência de dados
 
 ### **Experiência do Desenvolvedor**
+
 - Código frontend mais simples e focado em UI
 - Menos debugging de lógica de negócio
 - Desenvolvimento de novas features mais rápido
@@ -556,54 +622,59 @@ for (let i = 0; i < item.quantidade; i++) {
 ### ✅ **Mudanças Realizadas**
 
 #### **1. Dados de UI Rebalanceados**
+
 - **Antes**: Backend retornava classes CSS específicas (`bg-green-100 dark:bg-green-900`)
 - **Depois**: Backend retorna cores semânticas (`"cor": "green"`)
 - **Benefício**: Frontend mantém controle sobre temas e CSS
 
 #### **2. Estrutura de Dados Simplificada**
+
 - **Antes**: `detalhes.campos[]` com formatação complexa
 - **Depois**: `detalhes.dados{}` com estrutura clara
 - **Benefício**: Dados organizados sem formatação hardcoded
 
 #### **3. Configurações de Ícones Otimizadas**
+
 - **Antes**: Backend retornava nomes de ícones específicos (`TruckOutline`)
 - **Depois**: Backend retorna tipos semânticos (`"tipo": "entrega"`)
 - **Benefício**: Frontend pode trocar biblioteca de ícones sem afetar backend
 
 #### **4. Mapeamentos Mantidos no Frontend**
+
 ```typescript
 // Mantido no frontend (15 linhas ao invés de 46)
 const iconMap = {
-  entrega: 'TruckOutline',
-  devolucao: 'ArrowUturnLeftOutline',
+  entrega: "TruckOutline",
+  devolucao: "ArrowUturnLeftOutline",
   // ...
 };
 
 const colorMap = {
-  green: 'text-green-600 bg-green-100',
-  red: 'text-red-600 bg-red-100',
+  green: "text-green-600 bg-green-100",
+  red: "text-red-600 bg-red-100",
   // ...
 };
 ```
 
 #### **5. Motivação de Devolução Atualizada**
+
 - **Alteração específica**: "vencimento" → "devolução padrão"
 - **Impacto**: Terminologia mais clara para usuários
 
 ### 📊 **Resultados da Abordagem Balanceada**
 
-| Métrica | Valor |
-|---------|-------|
-| **Redução total de código** | 57.8% (1,410 linhas) |
-| **Lógica de negócio eliminada** | 85% |
-| **Performance** | 3x melhor |
-| **Flexibilidade UI** | **Preservada** |
-| **Acoplamento backend↔frontend** | **Reduzido** |
+| Métrica                           | Valor                |
+| --------------------------------- | -------------------- |
+| **Redução total de código**       | 57.8% (1,410 linhas) |
+| **Lógica de negócio eliminada**   | 85%                  |
+| **Performance**                   | 3x melhor            |
+| **Flexibilidade UI**              | **Preservada**       |
+| **Acoplamento backend↔frontend** | **Reduzido**         |
 
 ### 🎯 **Princípios da Solução Final**
 
 1. **Backend**: Dados de negócio processados e estruturados
-2. **Frontend**: Mapeamentos UI simples e flexíveis  
+2. **Frontend**: Mapeamentos UI simples e flexíveis
 3. **Separação**: Lógica vs. Apresentação claramente definida
 4. **Flexibilidade**: Temas, ícones e CSS controlados pelo frontend
 5. **Performance**: Dados prontos para consumo com mínimo processamento

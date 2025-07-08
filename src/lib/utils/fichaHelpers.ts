@@ -25,7 +25,7 @@ export function getFichaPageUrl(fichaId: string): string {
  * @returns ID da ficha se presente na URL, null caso contrário
  */
 export function extractFichaIdFromUrl(url: URL): string | null {
-  return url.searchParams.get('ficha');
+  return url.searchParams.get("ficha");
 }
 
 /**
@@ -34,7 +34,7 @@ export function extractFichaIdFromUrl(url: URL): string | null {
  * @returns true se a URL contém parâmetro de ficha
  */
 export function isDrawerUrl(url: URL): boolean {
-  return url.searchParams.has('ficha');
+  return url.searchParams.has("ficha");
 }
 
 /**
@@ -43,8 +43,11 @@ export function isDrawerUrl(url: URL): boolean {
  * @param baseUrl URL base do site (ex: https://app.datalife.com)
  * @returns URL completa e copiável
  */
-export function createShareableFichaLink(fichaId: string, baseUrl: string = ''): string {
-  const cleanBaseUrl = baseUrl.replace(/\/$/, ''); // Remove trailing slash
+export function createShareableFichaLink(
+  fichaId: string,
+  baseUrl: string = "",
+): string {
+  const cleanBaseUrl = baseUrl.replace(/\/$/, ""); // Remove trailing slash
   return `${cleanBaseUrl}${getFichaDrawerUrl(fichaId)}`;
 }
 
@@ -56,18 +59,18 @@ export function createShareableFichaLink(fichaId: string, baseUrl: string = ''):
  * @returns Objeto com dados para QR Code
  */
 export function generateFichaQRData(
-  fichaId: string, 
+  fichaId: string,
   colaboradorNome?: string,
-  baseUrl: string = ''
+  baseUrl: string = "",
 ) {
   return {
     url: createShareableFichaLink(fichaId, baseUrl),
     data: {
-      type: 'ficha_epi',
+      type: "ficha_epi",
       fichaId,
       colaboradorNome,
-      timestamp: new Date().toISOString()
-    }
+      timestamp: new Date().toISOString(),
+    },
   };
 }
 
@@ -78,10 +81,14 @@ export function generateFichaQRData(
  */
 export function isValidFichaId(fichaId: string): boolean {
   // Aceitar UUIDs ou IDs alfanuméricos com hífen/underscore
-  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  const uuidRegex =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   const alphanumericRegex = /^[a-zA-Z0-9_-]+$/;
-  
-  return fichaId.length > 0 && (uuidRegex.test(fichaId) || alphanumericRegex.test(fichaId));
+
+  return (
+    fichaId.length > 0 &&
+    (uuidRegex.test(fichaId) || alphanumericRegex.test(fichaId))
+  );
 }
 
 /**
@@ -92,20 +99,20 @@ export function isValidFichaId(fichaId: string): boolean {
  */
 export function buildFichaNavigation(fichaId: string, currentUrl: URL) {
   const url = new URL(currentUrl);
-  url.pathname = '/fichas';
-  url.searchParams.set('ficha', fichaId);
-  
+  url.pathname = "/fichas";
+  url.searchParams.set("ficha", fichaId);
+
   return {
     pathname: url.pathname,
     search: url.search,
-    fullUrl: url.toString()
+    fullUrl: url.toString(),
   };
 }
 
 // Constantes úteis
 export const FICHA_URL_PATTERNS = {
   drawer: /^\/fichas\?.*ficha=([^&]+)/,
-  page: /^\/fichas\/(.+)$/
+  page: /^\/fichas\/(.+)$/,
 } as const;
 
 /**
@@ -116,27 +123,27 @@ export const FICHA_URL_PATTERNS = {
  */
 export function parseFichaUrl(pathname: string, search: string) {
   const fullPath = pathname + search;
-  
+
   // Verificar se é drawer
   const drawerMatch = fullPath.match(FICHA_URL_PATTERNS.drawer);
   if (drawerMatch) {
     return {
-      type: 'drawer' as const,
-      fichaId: decodeURIComponent(drawerMatch[1])
+      type: "drawer" as const,
+      fichaId: decodeURIComponent(drawerMatch[1]),
     };
   }
-  
+
   // Verificar se é página completa
   const pageMatch = pathname.match(FICHA_URL_PATTERNS.page);
   if (pageMatch) {
     return {
-      type: 'page' as const,
-      fichaId: decodeURIComponent(pageMatch[1])
+      type: "page" as const,
+      fichaId: decodeURIComponent(pageMatch[1]),
     };
   }
-  
+
   return {
     type: null,
-    fichaId: null
+    fichaId: null,
   };
 }

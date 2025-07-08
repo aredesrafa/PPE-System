@@ -1,6 +1,6 @@
 /**
  * Catalog Adapter - Service Adapter para Catálogo de EPIs
- * 
+ *
  * Responsável por:
  * - CRUD de tipos de EPI
  * - Filtros e busca
@@ -8,8 +8,8 @@
  * - Cache otimizado
  */
 
-import { api, createUrlWithParams } from '../core/apiClient';
-import type { PaginatedResponse } from '../../stores/paginatedStore';
+import { api, createUrlWithParams } from "../core/apiClient";
+import type { PaginatedResponse } from "../../stores/paginatedStore";
 
 // ==================== TIPOS ====================
 
@@ -19,7 +19,7 @@ export interface TipoEPI {
   numeroCa: string;
   numeroCA?: string; // fallback compatibility
   categoria: string;
-  status: 'ATIVO' | 'DESCONTINUADO';
+  status: "ATIVO" | "DESCONTINUADO";
   vidaUtilDias?: number; // em dias
   validadePadrao?: number; // fallback compatibility
   descricao?: string;
@@ -67,7 +67,7 @@ class CatalogCache {
     this.cache.set(key, {
       data,
       timestamp: Date.now(),
-      ttl
+      ttl,
     });
   }
 
@@ -97,21 +97,26 @@ class CatalogCache {
 
 class CatalogAdapter {
   private cache = new CatalogCache();
-  private baseUrl = '/tipos-epi';
+  private baseUrl = "/tipos-epi";
 
   // ==================== CONSULTAS ====================
 
   /**
    * Lista tipos de EPI com paginação e filtros
    */
-  async getTiposEPI(params: CatalogFilterParams = {}): Promise<PaginatedResponse<TipoEPI>> {
-    console.log('📋 CatalogAdapter: Carregando tipos de EPI do backend real', params);
+  async getTiposEPI(
+    params: CatalogFilterParams = {},
+  ): Promise<PaginatedResponse<TipoEPI>> {
+    console.log(
+      "📋 CatalogAdapter: Carregando tipos de EPI do backend real",
+      params,
+    );
 
     const cacheKey = `tipos-epi-${JSON.stringify(params)}`;
     const cached = this.cache.get<PaginatedResponse<TipoEPI>>(cacheKey);
-    
+
     if (cached) {
-      console.log('💾 Cache hit para tipos EPI');
+      console.log("💾 Cache hit para tipos EPI");
       return cached;
     }
 
@@ -122,13 +127,13 @@ class CatalogAdapter {
         limit: params.pageSize || 10,
         ...(params.search && { search: params.search }),
         ...(params.categoria && { categoria: params.categoria }),
-        ...(params.ativo !== undefined && { ativo: params.ativo })
+        ...(params.ativo !== undefined && { ativo: params.ativo }),
       };
 
-      const url = createUrlWithParams('/tipos-epi', queryParams);
+      const url = createUrlWithParams("/tipos-epi", queryParams);
       const response = await api.get(url);
-      
-      console.log('🔗 Resposta da API tipos-epi:', response);
+
+      console.log("🔗 Resposta da API tipos-epi:", response);
 
       // Mapear resposta do backend para o formato esperado
       const mappedItems: TipoEPI[] = response.data.items.map((item: any) => ({
@@ -137,15 +142,15 @@ class CatalogAdapter {
         numeroCa: item.numeroCa,
         numeroCA: item.numeroCa, // compatibility
         categoria: item.categoria,
-        status: item.status || 'ATIVO',
+        status: item.status || "ATIVO",
         vidaUtilDias: item.vidaUtilDias,
         validadePadrao: item.vidaUtilDias, // compatibility
-        descricao: item.descricao || '',
-        ativo: item.status === 'ATIVO',
+        descricao: item.descricao || "",
+        ativo: item.status === "ATIVO",
         createdAt: item.createdAt,
         updatedAt: item.updatedAt,
         dataCriacao: item.createdAt, // compatibility
-        dataAtualizacao: item.updatedAt || item.createdAt // compatibility
+        dataAtualizacao: item.updatedAt || item.createdAt, // compatibility
       }));
 
       const paginatedResponse: PaginatedResponse<TipoEPI> = {
@@ -153,16 +158,22 @@ class CatalogAdapter {
         total: response.data.pagination.total,
         page: response.data.pagination.page,
         pageSize: response.data.pagination.limit,
-        totalPages: response.data.pagination.totalPages
+        totalPages: response.data.pagination.totalPages,
       };
-      
+
       this.cache.set(cacheKey, paginatedResponse);
-      console.log('✅ Tipos EPI carregados do backend real:', mappedItems.length, 'itens');
-      
+      console.log(
+        "✅ Tipos EPI carregados do backend real:",
+        mappedItems.length,
+        "itens",
+      );
+
       return paginatedResponse;
     } catch (error) {
-      console.error('❌ Erro ao carregar tipos EPI do backend:', error);
-      throw new Error('Não foi possível carregar o catálogo de EPIs do backend');
+      console.error("❌ Erro ao carregar tipos EPI do backend:", error);
+      throw new Error(
+        "Não foi possível carregar o catálogo de EPIs do backend",
+      );
     }
   }
 
@@ -170,11 +181,11 @@ class CatalogAdapter {
    * Busca um tipo de EPI específico
    */
   async getTipoEPIById(id: string): Promise<TipoEPI> {
-    console.log('🔍 CatalogAdapter: Buscando tipo EPI do backend real', id);
+    console.log("🔍 CatalogAdapter: Buscando tipo EPI do backend real", id);
 
     const cacheKey = `tipo-epi-${id}`;
     const cached = this.cache.get<TipoEPI>(cacheKey);
-    
+
     if (cached) {
       return cached;
     }
@@ -183,8 +194,8 @@ class CatalogAdapter {
       // Chamada para API real
       const url = `/tipos-epi/${id}`;
       const response = await api.get(url);
-      
-      console.log('🔗 Resposta da API tipo-epi específico:', response);
+
+      console.log("🔗 Resposta da API tipo-epi específico:", response);
 
       // Mapear resposta do backend para o formato esperado
       const item = response.data;
@@ -194,23 +205,23 @@ class CatalogAdapter {
         numeroCa: item.numeroCa,
         numeroCA: item.numeroCa, // compatibility
         categoria: item.categoria,
-        status: item.status || 'ATIVO',
+        status: item.status || "ATIVO",
         vidaUtilDias: item.vidaUtilDias,
         validadePadrao: item.vidaUtilDias, // compatibility
-        descricao: item.descricao || '',
-        ativo: item.status === 'ATIVO',
+        descricao: item.descricao || "",
+        ativo: item.status === "ATIVO",
         createdAt: item.createdAt,
         updatedAt: item.updatedAt,
         dataCriacao: item.createdAt, // compatibility
-        dataAtualizacao: item.updatedAt || item.createdAt // compatibility
+        dataAtualizacao: item.updatedAt || item.createdAt, // compatibility
       };
 
       this.cache.set(cacheKey, tipoEPI);
-      console.log('✅ Tipo EPI específico carregado do backend real');
+      console.log("✅ Tipo EPI específico carregado do backend real");
       return tipoEPI;
     } catch (error) {
-      console.error('❌ Erro ao buscar tipo EPI do backend:', error);
-      throw new Error('Não foi possível buscar o tipo de EPI do backend');
+      console.error("❌ Erro ao buscar tipo EPI do backend:", error);
+      throw new Error("Não foi possível buscar o tipo de EPI do backend");
     }
   }
 
@@ -220,7 +231,7 @@ class CatalogAdapter {
    * Cria um novo tipo de EPI
    */
   async createTipoEPI(data: CreateTipoEPIData): Promise<TipoEPI> {
-    console.log('➕ CatalogAdapter: Criando tipo EPI no backend real', data);
+    console.log("➕ CatalogAdapter: Criando tipo EPI no backend real", data);
 
     try {
       // Mapear dados para formato do backend
@@ -230,12 +241,12 @@ class CatalogAdapter {
         categoria: data.categoria,
         vidaUtilDias: data.vidaUtilDias,
         descricao: data.descricao,
-        status: 'ATIVO'
+        status: "ATIVO",
       };
 
-      const response = await api.post('/tipos-epi', backendData);
-      
-      console.log('🔗 Resposta da criação no backend:', response);
+      const response = await api.post("/tipos-epi", backendData);
+
+      console.log("🔗 Resposta da criação no backend:", response);
 
       // Mapear resposta de volta para o formato frontend
       const item = response.data;
@@ -245,25 +256,25 @@ class CatalogAdapter {
         numeroCa: item.numeroCa,
         numeroCA: item.numeroCa, // compatibility
         categoria: item.categoria,
-        status: item.status || 'ATIVO',
+        status: item.status || "ATIVO",
         vidaUtilDias: item.vidaUtilDias,
         validadePadrao: item.vidaUtilDias, // compatibility
-        descricao: item.descricao || '',
-        ativo: item.status === 'ATIVO',
+        descricao: item.descricao || "",
+        ativo: item.status === "ATIVO",
         createdAt: item.createdAt,
         updatedAt: item.updatedAt,
         dataCriacao: item.createdAt, // compatibility
-        dataAtualizacao: item.updatedAt || item.createdAt // compatibility
+        dataAtualizacao: item.updatedAt || item.createdAt, // compatibility
       };
 
       // Limpar cache relacionado
       this.cache.clear();
-      
-      console.log('✅ Tipo EPI criado com sucesso no backend:', newTipoEPI.id);
+
+      console.log("✅ Tipo EPI criado com sucesso no backend:", newTipoEPI.id);
       return newTipoEPI;
     } catch (error) {
-      console.error('❌ Erro ao criar tipo EPI no backend:', error);
-      throw new Error('Não foi possível criar o tipo de EPI');
+      console.error("❌ Erro ao criar tipo EPI no backend:", error);
+      throw new Error("Não foi possível criar o tipo de EPI");
     }
   }
 
@@ -271,22 +282,28 @@ class CatalogAdapter {
    * Atualiza um tipo de EPI
    */
   async updateTipoEPI(id: string, data: UpdateTipoEPIData): Promise<TipoEPI> {
-    console.log('📝 CatalogAdapter: Atualizando tipo EPI no backend real', id, data);
+    console.log(
+      "📝 CatalogAdapter: Atualizando tipo EPI no backend real",
+      id,
+      data,
+    );
 
     try {
       // Mapear dados para formato do backend
       const backendData: any = {};
-      
-      if (data.nomeEquipamento) backendData.nomeEquipamento = data.nomeEquipamento;
+
+      if (data.nomeEquipamento)
+        backendData.nomeEquipamento = data.nomeEquipamento;
       if (data.numeroCa) backendData.numeroCa = data.numeroCa;
       if (data.categoria) backendData.categoria = data.categoria;
       if (data.vidaUtilDias) backendData.vidaUtilDias = data.vidaUtilDias;
       if (data.descricao !== undefined) backendData.descricao = data.descricao;
-      if (data.ativo !== undefined) backendData.status = data.ativo ? 'ATIVO' : 'DESCONTINUADO';
+      if (data.ativo !== undefined)
+        backendData.status = data.ativo ? "ATIVO" : "DESCONTINUADO";
 
       const response = await api.put(`/tipos-epi/${id}`, backendData);
-      
-      console.log('🔗 Resposta da atualização no backend:', response);
+
+      console.log("🔗 Resposta da atualização no backend:", response);
 
       // Mapear resposta de volta para o formato frontend
       const item = response.data;
@@ -296,26 +313,26 @@ class CatalogAdapter {
         numeroCa: item.numeroCa,
         numeroCA: item.numeroCa, // compatibility
         categoria: item.categoria,
-        status: item.status || 'ATIVO',
+        status: item.status || "ATIVO",
         vidaUtilDias: item.vidaUtilDias,
         validadePadrao: item.vidaUtilDias, // compatibility
-        descricao: item.descricao || '',
-        ativo: item.status === 'ATIVO',
+        descricao: item.descricao || "",
+        ativo: item.status === "ATIVO",
         createdAt: item.createdAt,
         updatedAt: item.updatedAt,
         dataCriacao: item.createdAt, // compatibility
-        dataAtualizacao: item.updatedAt || item.createdAt // compatibility
+        dataAtualizacao: item.updatedAt || item.createdAt, // compatibility
       };
 
       // Limpar cache relacionado
       this.cache.delete(`tipo-epi-${id}`);
       this.cache.clear(); // Limpar lista também
-      
-      console.log('✅ Tipo EPI atualizado com sucesso no backend');
+
+      console.log("✅ Tipo EPI atualizado com sucesso no backend");
       return updatedTipoEPI;
     } catch (error) {
-      console.error('❌ Erro ao atualizar tipo EPI no backend:', error);
-      throw new Error('Não foi possível atualizar o tipo de EPI');
+      console.error("❌ Erro ao atualizar tipo EPI no backend:", error);
+      throw new Error("Não foi possível atualizar o tipo de EPI");
     }
   }
 
@@ -323,16 +340,16 @@ class CatalogAdapter {
    * Remove um tipo de EPI (soft delete)
    */
   async deleteTipoEPI(id: string): Promise<void> {
-    console.log('🗑️ CatalogAdapter: Removendo tipo EPI no backend real', id);
+    console.log("🗑️ CatalogAdapter: Removendo tipo EPI no backend real", id);
 
     try {
       // Usar soft delete (atualizar status para INATIVO)
       await this.updateTipoEPI(id, { ativo: false });
-      
-      console.log('✅ Tipo EPI removido com sucesso no backend');
+
+      console.log("✅ Tipo EPI removido com sucesso no backend");
     } catch (error) {
-      console.error('❌ Erro ao remover tipo EPI no backend:', error);
-      throw new Error('Não foi possível remover o tipo de EPI');
+      console.error("❌ Erro ao remover tipo EPI no backend:", error);
+      throw new Error("Não foi possível remover o tipo de EPI");
     }
   }
 
@@ -343,7 +360,7 @@ class CatalogAdapter {
    */
   clearCache(): void {
     this.cache.clear();
-    console.log('🗑️ Cache do catálogo limpo');
+    console.log("🗑️ Cache do catálogo limpo");
   }
 
   /**
@@ -355,27 +372,30 @@ class CatalogAdapter {
     try {
       // Buscar todos os tipos de EPI (limitado pelo backend a 100, mas isso é suficiente)
       const data = await this.getTiposEPI({ pageSize: 100 });
-      
+
       // Se há mais de 100 tipos, isso indicaria que precisamos de paginação adicional
       if (data.data && data.data.length >= 100) {
-        console.warn('⚠️ Mais de 100 tipos de EPI encontrados. Filtros podem estar incompletos.');
+        console.warn(
+          "⚠️ Mais de 100 tipos de EPI encontrados. Filtros podem estar incompletos.",
+        );
       }
-      
-      const categorias = [...new Set(data.data.map(item => item.categoria))]
+
+      const categorias = [...new Set(data.data.map((item) => item.categoria))]
         .filter(Boolean)
         .sort()
-        .map(cat => ({ value: cat, label: cat }));
+        .map((cat) => ({ value: cat, label: cat }));
 
-      console.log('✅ Opções de filtros carregadas:', { categorias: categorias.length });
-      
+      console.log("✅ Opções de filtros carregadas:", {
+        categorias: categorias.length,
+      });
+
       return { categorias };
     } catch (error) {
-      console.error('❌ Erro ao carregar opções de filtros:', error);
+      console.error("❌ Erro ao carregar opções de filtros:", error);
       // Retornar opções vazias em caso de erro
       return { categorias: [] };
     }
   }
-
 }
 
 // ==================== EXPORT ====================

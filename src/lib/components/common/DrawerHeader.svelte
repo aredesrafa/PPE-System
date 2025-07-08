@@ -71,20 +71,20 @@
 
   <!-- Content Area (expandir para preencher espaço disponível) -->
   <div class="flex-1 min-w-0 flex flex-col">
-    <!-- Object Type (ALL CAPS) -->
+    <!-- Object Type (ALL CAPS) with Icon Before -->
     {#if objectType}
-      <p class="text-xs font-medium text-gray-900 dark:text-white uppercase tracking-wider mb-1" style="font-size: 11px;">
-        {objectType}
-      </p>
+      <div class="flex items-center gap-2">
+        <div class="flex-shrink-0">
+          <Icon name={iconName} className="text-gray-900 dark:text-white" size="w-4 h-4" />
+        </div>
+        <p class="text-xs font-medium text-gray-900 dark:text-white uppercase tracking-wider" style="font-size: 11px;">
+          {objectType}
+        </p>
+      </div>
     {/if}
 
-    <!-- Main Row: Icon + Title + Status + Actions -->
+    <!-- Main Row: Title + Status + Actions -->
     <div class="flex items-center gap-2.5">
-      <!-- Icon -->
-      <div class="flex-shrink-0">
-        <Icon name={iconName} className="text-gray-900 dark:text-white" size="w-6 h-6" />
-      </div>
-
       <!-- Title -->
       <h2 
         class="font-medium text-gray-900 dark:text-white {truncateTitle ? 'truncate' : ''} flex-1 min-w-0"

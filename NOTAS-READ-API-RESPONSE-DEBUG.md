@@ -1,13 +1,15 @@
 # 🔍 Notas READ API Response Debug Summary
+
 **Data:** 07 de Janeiro de 2025  
-**Status:** Debug Implementation - Test Ready  
+**Status:** Debug Implementation - Test Ready
 
 ## 🐛 Current Issue
 
 **Problem**: Note items, quantities, and warehouse information still not displaying correctly in the frontend despite previous fixes.
 
-**User Report**: 
-- Note creation works successfully 
+**User Report**:
+
+- Note creation works successfully
 - Console logs show `raw_itens: undefined`
 - Quantity columns show empty/zero
 - Warehouse information not populated
@@ -17,7 +19,7 @@
 ### **1. Enhanced Logging Added**
 
 ```typescript
-console.log('🔄 Normalizando dados da nota:', {
+console.log("🔄 Normalizando dados da nota:", {
   id: nota.id,
   raw_itens: nota.itens,
   raw__itens: nota._itens,
@@ -30,7 +32,7 @@ console.log('🔄 Normalizando dados da nota:', {
   responsavel: nota.responsavel,
   allFields: Object.keys(nota),
   itensIsArray: Array.isArray(nota.itens),
-  itensLength: nota.itens?.length || 0
+  itensLength: nota.itens?.length || 0,
 });
 ```
 
@@ -39,23 +41,26 @@ console.log('🔄 Normalizando dados da nota:', {
 ```typescript
 // Support multiple item formats from API
 const rawItens = nota.itens || nota._itens || [];
-const itensNormalizados = Array.isArray(rawItens) ? rawItens.map((item: any) => {
-  console.log('🔧 Normalizando item:', {
-    item_id: item.id,
-    quantidade: item.quantidade,
-    tipoEpi: item.tipoEpi,
-    tipoEpiId: item.tipoEpiId,
-    estoqueItemId: item.estoqueItemId
-  });
-  // ... normalization logic
-}) : [];
+const itensNormalizados = Array.isArray(rawItens)
+  ? rawItens.map((item: any) => {
+      console.log("🔧 Normalizando item:", {
+        item_id: item.id,
+        quantidade: item.quantidade,
+        tipoEpi: item.tipoEpi,
+        tipoEpiId: item.tipoEpiId,
+        estoqueItemId: item.estoqueItemId,
+      });
+      // ... normalization logic
+    })
+  : [];
 ```
 
 ### **3. Updated Include Parameters**
 
 Changed from generic "almoxarifado" to specific relationship names:
+
 ```typescript
-include: 'itens,responsavel,almoxarifadoOrigem,almoxarifadoDestino'
+include: "itens,responsavel,almoxarifadoOrigem,almoxarifadoDestino";
 ```
 
 ### **4. Status Field Mapping Fix**
@@ -79,17 +84,18 @@ almoxarifado_destino: nota.almoxarifado_destino || nota.almoxarifadoDestino,
 
 ### **Debug Information to Collect:**
 
-1. **API Response Format**: 
+1. **API Response Format**:
    - Check what fields are actually returned by `/api/notas-movimentacao`
    - Verify if `include` parameter is supported
    - Compare list vs detail endpoint responses
 
 2. **Console Logs to Monitor**:
+
    ```javascript
    // Look for these logs:
-   "🔄 Normalizando dados da nota:"  // Raw API data
-   "🔧 Normalizando item:"           // Individual item processing  
-   "✅ Itens normalizados:"          // Final normalized items
+   "🔄 Normalizando dados da nota:"; // Raw API data
+   "🔧 Normalizando item:"; // Individual item processing
+   "✅ Itens normalizados:"; // Final normalized items
    ```
 
 3. **Field Verification**:
@@ -99,7 +105,7 @@ almoxarifado_destino: nota.almoxarifado_destino || nota.almoxarifadoDestino,
 
 ### **Test Cases:**
 
-1. **Load Notes Page**: 
+1. **Load Notes Page**:
    - Check console for normalization logs
    - Verify `itensIsArray` and `itensLength` values
    - Confirm `allFields` shows expected API structure
@@ -116,11 +122,13 @@ almoxarifado_destino: nota.almoxarifado_destino || nota.almoxarifadoDestino,
 ## 🎯 Expected Outcomes
 
 ### **If Include Parameter Works:**
+
 - `raw_itens` should contain array of items
 - `itensLength` should be > 0 for notes with items
 - Items should display in table
 
 ### **If Include Parameter Doesn't Work:**
+
 - `raw_itens` will remain undefined
 - Need to implement alternative strategy
 - May need individual API calls for note details

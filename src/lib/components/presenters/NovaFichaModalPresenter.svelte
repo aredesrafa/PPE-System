@@ -101,7 +101,7 @@
     
     <!-- Contratada -->
     <div>
-      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+      <label for="contratada-select" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
         Contratada
       </label>
       {#if loadingContratadas}
@@ -122,7 +122,7 @@
     
     <!-- Colaborador -->
     <div>
-      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+      <label for="colaborador-select" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
         Colaborador
       </label>
       {#if loadingColaboradores}

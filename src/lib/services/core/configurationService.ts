@@ -1,14 +1,14 @@
 /**
  * Configuration Service para ENUMs Dinâmicos
- * 
+ *
  * Este serviço carrega configurações de negócio dinamicamente do backend,
  * incluindo tipos de movimentação, categorias de EPI, status de entrega, etc.
- * 
+ *
  * CRÍTICO: O backend possui ENUMs complexos que devem ser carregados dinamicamente
  * ao invés de hardcoded no frontend.
  */
 
-import { api } from './apiClient';
+import { api } from "./apiClient";
 
 export interface BusinessConfigurationItem {
   code: string;
@@ -31,52 +31,176 @@ export interface BusinessConfiguration {
  */
 const MOCK_BUSINESS_CONFIG: BusinessConfiguration = {
   tiposMovimentacao: [
-    { code: 'entrada_nota', label: 'Entrada por Nota', description: 'Entrada de itens via nota fiscal' },
-    { code: 'saida_entrega', label: 'Saída por Entrega', description: 'Saída para entrega a colaborador' },
-    { code: 'transferencia', label: 'Transferência', description: 'Transferência entre almoxarifados' },
-    { code: 'ajuste_positivo', label: 'Ajuste Positivo', description: 'Ajuste para aumentar estoque' },
-    { code: 'ajuste_negativo', label: 'Ajuste Negativo', description: 'Ajuste para diminuir estoque' },
-    { code: 'devolucao', label: 'Devolução', description: 'Devolução de item por colaborador' },
-    { code: 'descarte', label: 'Descarte', description: 'Descarte de item vencido ou danificado' },
-    { code: 'estorno', label: 'Estorno', description: 'Estorno de movimentação anterior' }
+    {
+      code: "entrada_nota",
+      label: "Entrada por Nota",
+      description: "Entrada de itens via nota fiscal",
+    },
+    {
+      code: "saida_entrega",
+      label: "Saída por Entrega",
+      description: "Saída para entrega a colaborador",
+    },
+    {
+      code: "transferencia",
+      label: "Transferência",
+      description: "Transferência entre almoxarifados",
+    },
+    {
+      code: "ajuste_positivo",
+      label: "Ajuste Positivo",
+      description: "Ajuste para aumentar estoque",
+    },
+    {
+      code: "ajuste_negativo",
+      label: "Ajuste Negativo",
+      description: "Ajuste para diminuir estoque",
+    },
+    {
+      code: "devolucao",
+      label: "Devolução",
+      description: "Devolução de item por colaborador",
+    },
+    {
+      code: "descarte",
+      label: "Descarte",
+      description: "Descarte de item vencido ou danificado",
+    },
+    {
+      code: "estorno",
+      label: "Estorno",
+      description: "Estorno de movimentação anterior",
+    },
   ],
   categoriasEPI: [
-    { code: 'protecao_cabeca', label: 'Proteção da Cabeça', description: 'Capacetes, bonés, etc.' },
-    { code: 'protecao_olhos', label: 'Proteção dos Olhos', description: 'Óculos, viseiras, etc.' },
-    { code: 'protecao_auditiva', label: 'Proteção Auditiva', description: 'Protetores auriculares' },
-    { code: 'protecao_respiratoria', label: 'Proteção Respiratória', description: 'Máscaras, respiradores' },
-    { code: 'protecao_tronco', label: 'Proteção do Tronco', description: 'Aventais, coletes, jaquetas' },
-    { code: 'protecao_maos', label: 'Proteção das Mãos', description: 'Luvas de diversos tipos' },
-    { code: 'protecao_pes', label: 'Proteção dos Pés', description: 'Calçados de segurança' },
-    { code: 'protecao_queda', label: 'Proteção contra Quedas', description: 'Cintos, talabartes, etc.' }
+    {
+      code: "protecao_cabeca",
+      label: "Proteção da Cabeça",
+      description: "Capacetes, bonés, etc.",
+    },
+    {
+      code: "protecao_olhos",
+      label: "Proteção dos Olhos",
+      description: "Óculos, viseiras, etc.",
+    },
+    {
+      code: "protecao_auditiva",
+      label: "Proteção Auditiva",
+      description: "Protetores auriculares",
+    },
+    {
+      code: "protecao_respiratoria",
+      label: "Proteção Respiratória",
+      description: "Máscaras, respiradores",
+    },
+    {
+      code: "protecao_tronco",
+      label: "Proteção do Tronco",
+      description: "Aventais, coletes, jaquetas",
+    },
+    {
+      code: "protecao_maos",
+      label: "Proteção das Mãos",
+      description: "Luvas de diversos tipos",
+    },
+    {
+      code: "protecao_pes",
+      label: "Proteção dos Pés",
+      description: "Calçados de segurança",
+    },
+    {
+      code: "protecao_queda",
+      label: "Proteção contra Quedas",
+      description: "Cintos, talabartes, etc.",
+    },
   ],
   statusEntrega: [
-    { code: 'pendente_assinatura', label: 'Pendente de Assinatura', description: 'Aguardando assinatura do colaborador' },
-    { code: 'assinada', label: 'Assinada', description: 'Entrega confirmada e assinada' },
-    { code: 'devolvido', label: 'Devolvido', description: 'Item devolvido pelo colaborador' },
-    { code: 'vencido', label: 'Vencido', description: 'Item vencido e deve ser substituído' },
-    { code: 'cancelada', label: 'Cancelada', description: 'Entrega cancelada' }
+    {
+      code: "pendente_assinatura",
+      label: "Pendente de Assinatura",
+      description: "Aguardando assinatura do colaborador",
+    },
+    {
+      code: "assinada",
+      label: "Assinada",
+      description: "Entrega confirmada e assinada",
+    },
+    {
+      code: "devolvido",
+      label: "Devolvido",
+      description: "Item devolvido pelo colaborador",
+    },
+    {
+      code: "vencido",
+      label: "Vencido",
+      description: "Item vencido e deve ser substituído",
+    },
+    { code: "cancelada", label: "Cancelada", description: "Entrega cancelada" },
   ],
   statusFicha: [
-    { code: 'ativa', label: 'Ativa', description: 'Ficha ativa do colaborador' },
-    { code: 'inativa', label: 'Inativa', description: 'Ficha inativada' },
-    { code: 'pendente', label: 'Pendente', description: 'Ficha com pendências' },
-    { code: 'completa', label: 'Completa', description: 'Ficha com todos os EPIs entregues' }
+    {
+      code: "ativa",
+      label: "Ativa",
+      description: "Ficha ativa do colaborador",
+    },
+    { code: "inativa", label: "Inativa", description: "Ficha inativada" },
+    {
+      code: "pendente",
+      label: "Pendente",
+      description: "Ficha com pendências",
+    },
+    {
+      code: "completa",
+      label: "Completa",
+      description: "Ficha com todos os EPIs entregues",
+    },
   ],
   statusEstoque: [
-    { code: 'disponivel', label: 'Disponível', description: 'Item disponível em estoque' },
-    { code: 'baixo', label: 'Estoque Baixo', description: 'Quantidade abaixo do mínimo' },
-    { code: 'vencendo', label: 'Próximo ao Vencimento', description: 'Vence em até 30 dias' },
-    { code: 'vencido', label: 'Vencido', description: 'Item com validade expirada' },
-    { code: 'esgotado', label: 'Esgotado', description: 'Sem itens em estoque' },
-    { code: 'bloqueado', label: 'Bloqueado', description: 'Item bloqueado para uso' }
+    {
+      code: "disponivel",
+      label: "Disponível",
+      description: "Item disponível em estoque",
+    },
+    {
+      code: "baixo",
+      label: "Estoque Baixo",
+      description: "Quantidade abaixo do mínimo",
+    },
+    {
+      code: "vencendo",
+      label: "Próximo ao Vencimento",
+      description: "Vence em até 30 dias",
+    },
+    {
+      code: "vencido",
+      label: "Vencido",
+      description: "Item com validade expirada",
+    },
+    {
+      code: "esgotado",
+      label: "Esgotado",
+      description: "Sem itens em estoque",
+    },
+    {
+      code: "bloqueado",
+      label: "Bloqueado",
+      description: "Item bloqueado para uso",
+    },
   ],
   tiposNota: [
-    { code: 'entrada', label: 'Entrada', description: 'Nota de entrada de mercadorias' },
-    { code: 'transferencia', label: 'Transferência', description: 'Nota de transferência' },
-    { code: 'devolucao', label: 'Devolução', description: 'Nota de devolução' },
-    { code: 'descarte', label: 'Descarte', description: 'Nota de descarte' }
-  ]
+    {
+      code: "entrada",
+      label: "Entrada",
+      description: "Nota de entrada de mercadorias",
+    },
+    {
+      code: "transferencia",
+      label: "Transferência",
+      description: "Nota de transferência",
+    },
+    { code: "devolucao", label: "Devolução", description: "Nota de devolução" },
+    { code: "descarte", label: "Descarte", description: "Nota de descarte" },
+  ],
 };
 
 class ConfigurationService {
@@ -96,30 +220,32 @@ class ConfigurationService {
 
     try {
       // Conectar ao backend real - endpoint de configuração
-      const config = await api.get<BusinessConfiguration>('/api/v1/configuration');
-      
+      const config = await api.get<BusinessConfiguration>(
+        "/api/v1/configuration",
+      );
+
       // Fallback para mock em caso de erro de conexão
       if (!config) {
-        console.warn('⚠️ Backend não disponível, usando configuração mock');
-        await new Promise(resolve => setTimeout(resolve, 100));
+        console.warn("⚠️ Backend não disponível, usando configuração mock");
+        await new Promise((resolve) => setTimeout(resolve, 100));
         const config = MOCK_BUSINESS_CONFIG;
       }
-      
+
       // Atualizar cache
       this.cache = config;
       this.cacheExpiry = Date.now() + this.CACHE_DURATION;
-      
+
       return config;
     } catch (error) {
-      console.error('Erro ao carregar configurações de negócio:', error);
-      
+      console.error("Erro ao carregar configurações de negócio:", error);
+
       // Em caso de erro, usar dados do cache (se existir) ou mock data
       if (this.cache) {
-        console.warn('Usando configurações do cache devido ao erro');
+        console.warn("Usando configurações do cache devido ao erro");
         return this.cache;
       }
-      
-      console.warn('Usando configurações mock devido ao erro');
+
+      console.warn("Usando configurações mock devido ao erro");
       return MOCK_BUSINESS_CONFIG;
     }
   }
@@ -127,7 +253,9 @@ class ConfigurationService {
   /**
    * Busca uma configuração específica por categoria
    */
-  async getConfigByCategory(category: keyof BusinessConfiguration): Promise<BusinessConfigurationItem[]> {
+  async getConfigByCategory(
+    category: keyof BusinessConfiguration,
+  ): Promise<BusinessConfigurationItem[]> {
     const config = await this.loadBusinessRules();
     return config[category] || [];
   }
@@ -135,9 +263,12 @@ class ConfigurationService {
   /**
    * Busca um item específico por código em uma categoria
    */
-  async getConfigItem(category: keyof BusinessConfiguration, code: string): Promise<BusinessConfigurationItem | null> {
+  async getConfigItem(
+    category: keyof BusinessConfiguration,
+    code: string,
+  ): Promise<BusinessConfigurationItem | null> {
     const items = await this.getConfigByCategory(category);
-    return items.find(item => item.code === code) || null;
+    return items.find((item) => item.code === code) || null;
   }
 
   /**
@@ -160,28 +291,30 @@ class ConfigurationService {
 export const configurationService = new ConfigurationService();
 
 // Helper functions para facilitar o uso nos componentes
-export async function getTiposMovimentacao(): Promise<BusinessConfigurationItem[]> {
-  return configurationService.getConfigByCategory('tiposMovimentacao');
+export async function getTiposMovimentacao(): Promise<
+  BusinessConfigurationItem[]
+> {
+  return configurationService.getConfigByCategory("tiposMovimentacao");
 }
 
 export async function getCategoriasEPI(): Promise<BusinessConfigurationItem[]> {
-  return configurationService.getConfigByCategory('categoriasEPI');
+  return configurationService.getConfigByCategory("categoriasEPI");
 }
 
 export async function getStatusEntrega(): Promise<BusinessConfigurationItem[]> {
-  return configurationService.getConfigByCategory('statusEntrega');
+  return configurationService.getConfigByCategory("statusEntrega");
 }
 
 export async function getStatusFicha(): Promise<BusinessConfigurationItem[]> {
-  return configurationService.getConfigByCategory('statusFicha');
+  return configurationService.getConfigByCategory("statusFicha");
 }
 
 export async function getStatusEstoque(): Promise<BusinessConfigurationItem[]> {
-  return configurationService.getConfigByCategory('statusEstoque');
+  return configurationService.getConfigByCategory("statusEstoque");
 }
 
 export async function getTiposNota(): Promise<BusinessConfigurationItem[]> {
-  return configurationService.getConfigByCategory('tiposNota');
+  return configurationService.getConfigByCategory("tiposNota");
 }
 
 // ==================== CONFIGURAÇÕES GERAIS DO SISTEMA ====================
@@ -190,7 +323,7 @@ export interface ConfiguracaoSistemaDTO {
   chave: string;
   valor: string;
   valorParsed: boolean | number | string;
-  tipo: 'BOOLEAN' | 'NUMBER' | 'STRING';
+  tipo: "BOOLEAN" | "NUMBER" | "STRING";
   descricao: string;
   createdAt: string;
 }
@@ -198,21 +331,25 @@ export interface ConfiguracaoSistemaDTO {
 /**
  * ✅ CONECTADO AO BACKEND REAL: Lista todas as configurações do sistema
  */
-export async function getConfiguracoesSistema(): Promise<ConfiguracaoSistemaDTO[]> {
+export async function getConfiguracoesSistema(): Promise<
+  ConfiguracaoSistemaDTO[]
+> {
   try {
-    console.log('⚙️ Carregando configurações do sistema...');
-    
+    console.log("⚙️ Carregando configurações do sistema...");
+
     const response = await api.get<{
       success: boolean;
       data: ConfiguracaoSistemaDTO[];
       message: string;
-    }>('/configuracoes');
-    
-    console.log('✅ Configurações do sistema carregadas:', response.data.length);
+    }>("/configuracoes");
+
+    console.log(
+      "✅ Configurações do sistema carregadas:",
+      response.data.length,
+    );
     return response.data;
-    
   } catch (error) {
-    console.error('❌ Erro ao carregar configurações do sistema:', error);
+    console.error("❌ Erro ao carregar configurações do sistema:", error);
     throw error;
   }
 }
@@ -220,10 +357,13 @@ export async function getConfiguracoesSistema(): Promise<ConfiguracaoSistemaDTO[
 /**
  * ✅ CONECTADO AO BACKEND REAL: Atualiza uma configuração específica
  */
-export async function updateConfiguracaoSistema(chave: string, valor: string): Promise<ConfiguracaoSistemaDTO> {
+export async function updateConfiguracaoSistema(
+  chave: string,
+  valor: string,
+): Promise<ConfiguracaoSistemaDTO> {
   try {
-    console.log('💾 Atualizando configuração do sistema:', chave, '→', valor);
-    
+    console.log("💾 Atualizando configuração do sistema:", chave, "→", valor);
+
     const response = await api.put<{
       success: boolean;
       data: {
@@ -232,17 +372,16 @@ export async function updateConfiguracaoSistema(chave: string, valor: string): P
       };
       message: string;
     }>(`/configuracoes/${chave}`, { valor });
-    
-    console.log('✅ Configuração do sistema atualizada:', {
+
+    console.log("✅ Configuração do sistema atualizada:", {
       chave,
       valorAnterior: response.data.valorAnterior,
-      valorNovo: response.data.configuracao.valor
+      valorNovo: response.data.configuracao.valor,
     });
-    
+
     return response.data.configuracao;
-    
   } catch (error) {
-    console.error('❌ Erro ao atualizar configuração do sistema:', error);
+    console.error("❌ Erro ao atualizar configuração do sistema:", error);
     throw error;
   }
 }
@@ -250,12 +389,14 @@ export async function updateConfiguracaoSistema(chave: string, valor: string): P
 /**
  * ✅ HELPER: Busca configuração por chave
  */
-export async function getConfiguracaoPorChave(chave: string): Promise<ConfiguracaoSistemaDTO | null> {
+export async function getConfiguracaoPorChave(
+  chave: string,
+): Promise<ConfiguracaoSistemaDTO | null> {
   try {
     const configuracoes = await getConfiguracoesSistema();
-    return configuracoes.find(config => config.chave === chave) || null;
+    return configuracoes.find((config) => config.chave === chave) || null;
   } catch (error) {
-    console.error('❌ Erro ao buscar configuração:', chave, error);
+    console.error("❌ Erro ao buscar configuração:", chave, error);
     return null;
   }
 }
@@ -263,29 +404,34 @@ export async function getConfiguracaoPorChave(chave: string): Promise<Configurac
 /**
  * ✅ HELPER: Atualiza configuração booleana
  */
-export async function updateConfiguracaoBoolean(chave: string, valor: boolean): Promise<ConfiguracaoSistemaDTO> {
+export async function updateConfiguracaoBoolean(
+  chave: string,
+  valor: boolean,
+): Promise<ConfiguracaoSistemaDTO> {
   return updateConfiguracaoSistema(chave, valor.toString());
 }
 
 /**
  * ✅ HELPER: Mapeia configurações para objeto simples
  */
-export function mapConfiguracoesToObject(configuracoes: ConfiguracaoSistemaDTO[]): Record<string, any> {
+export function mapConfiguracoesToObject(
+  configuracoes: ConfiguracaoSistemaDTO[],
+): Record<string, any> {
   const result: Record<string, any> = {};
-  
-  configuracoes.forEach(config => {
+
+  configuracoes.forEach((config) => {
     result[config.chave] = config.valorParsed;
   });
-  
+
   return result;
 }
 
 // ==================== CHAVES DE CONFIGURAÇÃO CONHECIDAS ====================
 
 export const CONFIG_KEYS = {
-  PERMITIR_ESTOQUE_NEGATIVO: 'PERMITIR_ESTOQUE_NEGATIVO',
-  PERMITIR_AJUSTES_FORCADOS: 'PERMITIR_AJUSTES_FORCADOS',
-  ESTOQUE_MINIMO_EQUIPAMENTO: 'ESTOQUE_MINIMO_EQUIPAMENTO'
+  PERMITIR_ESTOQUE_NEGATIVO: "PERMITIR_ESTOQUE_NEGATIVO",
+  PERMITIR_AJUSTES_FORCADOS: "PERMITIR_AJUSTES_FORCADOS",
+  ESTOQUE_MINIMO_EQUIPAMENTO: "ESTOQUE_MINIMO_EQUIPAMENTO",
 } as const;
 
-export type ConfigKey = typeof CONFIG_KEYS[keyof typeof CONFIG_KEYS];
+export type ConfigKey = (typeof CONFIG_KEYS)[keyof typeof CONFIG_KEYS];

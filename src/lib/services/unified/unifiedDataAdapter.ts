@@ -1,21 +1,19 @@
 /**
  * Unified Data Adapter - Solução Definitiva
- * 
+ *
  * Adapter unificado que resolve problemas de:
  * - Cache fragmentado
- * - Carregamento ineficiente de opções de filtros  
+ * - Carregamento ineficiente de opções de filtros
  * - Inconsistências entre adapters
  * - Performance para grandes volumes (1000+ itens)
  */
 
-import { api, createUrlWithParams } from '../core/apiClient';
-import type { 
-  PaginatedResponse 
-} from '$lib/stores/paginatedStore';
-import type { 
+import { api, createUrlWithParams } from "../core/apiClient";
+import type { PaginatedResponse } from "$lib/stores/paginatedStore";
+import type {
   EnhancedPaginationParams,
-  FilterOptionsResponse 
-} from '$lib/stores/enhancedPaginatedStore';
+  FilterOptionsResponse,
+} from "$lib/stores/enhancedPaginatedStore";
 
 // ==================== INTERFACES UNIFICADAS ====================
 
@@ -29,7 +27,7 @@ export interface TipoEPIUnified extends BaseEntity {
   nomeEquipamento: string;
   numeroCA: string;
   categoria: string;
-  status: 'ATIVO' | 'DESCONTINUADO';
+  status: "ATIVO" | "DESCONTINUADO";
   validadePadrao?: number;
   descricao?: string;
   ativo: boolean; // Derived from status for compatibility
@@ -61,19 +59,19 @@ export interface AlmoxarifadoUnified extends BaseEntity {
 export interface UnifiedSearchParams extends EnhancedPaginationParams {
   // Campos de busca comuns
   search?: string;
-  
+
   // Filtros comuns
   ativo?: boolean;
   categoria?: string;
   status?: string;
   almoxarifadoId?: string;
-  
+
   // Filtros específicos do estoque
   quantidadeMin?: number;
   quantidadeMax?: number;
   dataValidadeInicio?: string;
   dataValidadeFim?: string;
-  
+
   // Opções de expansão
   includeExpanded?: boolean;
   includeAggregate?: boolean;
@@ -87,10 +85,10 @@ interface CacheConfig {
 }
 
 const CACHE_CONFIGS: Record<string, CacheConfig> = {
-  'tipos-epi': { ttl: 10 * 60 * 1000, maxSize: 1000 }, // 10 min - dados menos voláteis
-  'estoque': { ttl: 2 * 60 * 1000, maxSize: 500 }, // 2 min - dados voláteis
-  'filter-options': { ttl: 30 * 60 * 1000, maxSize: 100 }, // 30 min - opções estáticas
-  'almoxarifados': { ttl: 15 * 60 * 1000, maxSize: 100 } // 15 min - dados semi-estáticos
+  "tipos-epi": { ttl: 10 * 60 * 1000, maxSize: 1000 }, // 10 min - dados menos voláteis
+  estoque: { ttl: 2 * 60 * 1000, maxSize: 500 }, // 2 min - dados voláteis
+  "filter-options": { ttl: 30 * 60 * 1000, maxSize: 100 }, // 30 min - opções estáticas
+  almoxarifados: { ttl: 15 * 60 * 1000, maxSize: 100 }, // 15 min - dados semi-estáticos
 };
 
 class UnifiedDataCache {
@@ -109,15 +107,15 @@ class UnifiedDataCache {
   set(key: string, data: any): void {
     const config = this.getCacheConfig(key);
     const timestamp = Date.now();
-    
+
     this.cache.set(key, { data, timestamp, ttl: config.ttl });
-    
+
     // Controle de tamanho
-    const currentSize = this.sizes.get(key.split('-')[0]) || 0;
+    const currentSize = this.sizes.get(key.split("-")[0]) || 0;
     if (currentSize >= config.maxSize) {
-      this.evictOldest(key.split('-')[0]);
+      this.evictOldest(key.split("-")[0]);
     }
-    this.sizes.set(key.split('-')[0], currentSize + 1);
+    this.sizes.set(key.split("-")[0], currentSize + 1);
   }
 
   get(key: string): any | null {
@@ -136,14 +134,16 @@ class UnifiedDataCache {
   delete(key: string): void {
     if (this.cache.has(key)) {
       this.cache.delete(key);
-      const prefix = key.split('-')[0];
+      const prefix = key.split("-")[0];
       const currentSize = this.sizes.get(prefix) || 0;
       this.sizes.set(prefix, Math.max(0, currentSize - 1));
     }
   }
 
   private evictOldest(prefix: string): void {
-    const keysToCheck = Array.from(this.cache.keys()).filter(k => k.startsWith(prefix));
+    const keysToCheck = Array.from(this.cache.keys()).filter((k) =>
+      k.startsWith(prefix),
+    );
     if (keysToCheck.length === 0) return;
 
     const oldest = keysToCheck.reduce((oldest, current) => {
@@ -156,10 +156,10 @@ class UnifiedDataCache {
   }
 
   invalidateByPattern(pattern: string): void {
-    const keysToDelete = Array.from(this.cache.keys()).filter(key => 
-      key.includes(pattern)
+    const keysToDelete = Array.from(this.cache.keys()).filter((key) =>
+      key.includes(pattern),
     );
-    keysToDelete.forEach(key => this.delete(key));
+    keysToDelete.forEach((key) => this.delete(key));
   }
 
   clear(): void {
@@ -170,7 +170,7 @@ class UnifiedDataCache {
   getStats(): { totalKeys: number; sizeByType: Record<string, number> } {
     return {
       totalKeys: this.cache.size,
-      sizeByType: Object.fromEntries(this.sizes)
+      sizeByType: Object.fromEntries(this.sizes),
     };
   }
 }
@@ -185,12 +185,14 @@ class UnifiedDataAdapter {
   /**
    * Busca tipos de EPI com performance otimizada para grandes volumes
    */
-  async getTiposEPI(params: UnifiedSearchParams = {}): Promise<PaginatedResponse<TipoEPIUnified>> {
+  async getTiposEPI(
+    params: UnifiedSearchParams = {},
+  ): Promise<PaginatedResponse<TipoEPIUnified>> {
     const cacheKey = `tipos-epi-${JSON.stringify(params)}`;
     const cached = this.cache.get(cacheKey);
-    
+
     if (cached) {
-      console.log('📄 Cache hit - tipos EPI');
+      console.log("📄 Cache hit - tipos EPI");
       return cached;
     }
 
@@ -199,47 +201,55 @@ class UnifiedDataAdapter {
         page: params.page || 1,
         limit: params.limit || 20,
         ...(params.search && { search: params.search }),
-        ...(params.categoria && params.categoria !== 'todas' && { categoria: params.categoria }),
-        ...(params.status && params.status !== 'todos' && { status: params.status }),
+        ...(params.categoria &&
+          params.categoria !== "todas" && { categoria: params.categoria }),
+        ...(params.status &&
+          params.status !== "todos" && { status: params.status }),
         ...(params.ativo !== undefined && { ativo: params.ativo }),
-        ...(params.includeAggregate && { includeEstoque: true })
+        ...(params.includeAggregate && { includeEstoque: true }),
       };
 
-      const url = createUrlWithParams('/tipos-epi', queryParams);
+      const url = createUrlWithParams("/tipos-epi", queryParams);
       const response = await api.get(url);
-      
+
       // Mapear resposta para formato unificado conforme estrutura real da API
-      const mappedItems: TipoEPIUnified[] = response.data.items.map((item: any) => ({
-        id: item.id,
-        nomeEquipamento: item.nomeEquipamento,
-        numeroCA: item.numeroCa,
-        categoria: item.categoria,
-        status: item.status || 'ATIVO',
-        validadePadrao: item.vidaUtilDias,
-        descricao: item.descricao || '',
-        ativo: item.status === 'ATIVO', // Derived field for compatibility
-        createdAt: item.createdAt,
-        updatedAt: item.updatedAt || item.createdAt,
-        // Campos agregados se solicitados
-        ...(item.totalEstoque && { totalEstoque: item.totalEstoque }),
-        ...(item.estoqueDisponivel && { estoqueDisponivel: item.estoqueDisponivel })
-      }));
+      const mappedItems: TipoEPIUnified[] = response.data.items.map(
+        (item: any) => ({
+          id: item.id,
+          nomeEquipamento: item.nomeEquipamento,
+          numeroCA: item.numeroCa,
+          categoria: item.categoria,
+          status: item.status || "ATIVO",
+          validadePadrao: item.vidaUtilDias,
+          descricao: item.descricao || "",
+          ativo: item.status === "ATIVO", // Derived field for compatibility
+          createdAt: item.createdAt,
+          updatedAt: item.updatedAt || item.createdAt,
+          // Campos agregados se solicitados
+          ...(item.totalEstoque && { totalEstoque: item.totalEstoque }),
+          ...(item.estoqueDisponivel && {
+            estoqueDisponivel: item.estoqueDisponivel,
+          }),
+        }),
+      );
 
       const result: PaginatedResponse<TipoEPIUnified> = {
         data: mappedItems,
         total: response.data.pagination.total,
         page: response.data.pagination.page,
         pageSize: response.data.pagination.limit,
-        totalPages: response.data.pagination.totalPages
+        totalPages: response.data.pagination.totalPages,
       };
-      
+
       this.cache.set(cacheKey, result);
-      console.log(`✅ Tipos EPI carregados: ${mappedItems.length} itens (${result.total} total)`);
-      
+      console.log(
+        `✅ Tipos EPI carregados: ${mappedItems.length} itens (${result.total} total)`,
+      );
+
       return result;
     } catch (error) {
-      console.error('❌ Erro ao carregar tipos EPI:', error);
-      throw new Error('Não foi possível carregar o catálogo de EPIs');
+      console.error("❌ Erro ao carregar tipos EPI:", error);
+      throw new Error("Não foi possível carregar o catálogo de EPIs");
     }
   }
 
@@ -248,12 +258,14 @@ class UnifiedDataAdapter {
   /**
    * Busca itens de estoque com dados expandidos
    */
-  async getEstoqueItems(params: UnifiedSearchParams = {}): Promise<PaginatedResponse<ItemEstoqueUnified>> {
+  async getEstoqueItems(
+    params: UnifiedSearchParams = {},
+  ): Promise<PaginatedResponse<ItemEstoqueUnified>> {
     const cacheKey = `estoque-${JSON.stringify(params)}`;
     const cached = this.cache.get(cacheKey);
-    
+
     if (cached) {
-      console.log('📄 Cache hit - estoque');
+      console.log("📄 Cache hit - estoque");
       return cached;
     }
 
@@ -263,67 +275,78 @@ class UnifiedDataAdapter {
         limit: params.limit || 20,
         includeExpanded: true, // Sempre incluir dados expandidos
         ...(params.search && { search: params.search }),
-        ...(params.status && params.status !== 'todos' && { status: params.status }),
-        ...(params.categoria && params.categoria !== 'todas' && { categoria: params.categoria }),
+        ...(params.status &&
+          params.status !== "todos" && { status: params.status }),
+        ...(params.categoria &&
+          params.categoria !== "todas" && { categoria: params.categoria }),
         ...(params.almoxarifadoId && { almoxarifadoId: params.almoxarifadoId }),
         ...(params.quantidadeMin && { quantidadeMin: params.quantidadeMin }),
-        ...(params.quantidadeMax && { quantidadeMax: params.quantidadeMax })
+        ...(params.quantidadeMax && { quantidadeMax: params.quantidadeMax }),
       };
 
-      const url = createUrlWithParams('/estoque-itens', queryParams);
+      const url = createUrlWithParams("/estoque-itens", queryParams);
       const response = await api.get(url);
-      
+
       // Mapear resposta para formato unificado
-      const mappedItems: ItemEstoqueUnified[] = response.data.items.map((item: any) => ({
-        id: item.id,
-        tipoEPIId: item.tipoEpiId,
-        almoxarifadoId: item.almoxarifadoId,
-        quantidade: item.quantidade,
-        localizacao: item.localizacao || '',
-        status: item.status,
-        lote: item.lote,
-        dataValidade: item.dataValidade,
-        createdAt: item.createdAt,
-        updatedAt: item.updatedAt,
-        // Dados expandidos
-        tipoEPI: item.tipoEpi ? {
-          id: item.tipoEpi.id,
-          nomeEquipamento: item.tipoEpi.nomeEquipamento,
-          numeroCA: item.tipoEpi.numeroCa,
-          categoria: item.tipoEpi.categoria,
-          status: item.tipoEpi.status || 'ATIVO',
-          validadePadrao: item.tipoEpi.vidaUtilDias,
-          descricao: item.tipoEpi.descricao || '',
-          ativo: item.tipoEpi.status === 'ATIVO',
-          createdAt: item.tipoEpi.createdAt,
-          updatedAt: item.tipoEpi.updatedAt || item.tipoEpi.createdAt
-        } : undefined,
-        almoxarifado: item.almoxarifado ? {
-          id: item.almoxarifado.id,
-          nome: item.almoxarifado.nome,
-          localizacao: item.almoxarifado.localizacao || '',
-          ativo: item.almoxarifado.status === 'ATIVO',
-          unidadeNegocioId: item.almoxarifado.unidadeNegocioId || '',
-          createdAt: item.almoxarifado.createdAt,
-          updatedAt: item.almoxarifado.updatedAt || item.almoxarifado.createdAt
-        } : undefined
-      }));
+      const mappedItems: ItemEstoqueUnified[] = response.data.items.map(
+        (item: any) => ({
+          id: item.id,
+          tipoEPIId: item.tipoEpiId,
+          almoxarifadoId: item.almoxarifadoId,
+          quantidade: item.quantidade,
+          localizacao: item.localizacao || "",
+          status: item.status,
+          lote: item.lote,
+          dataValidade: item.dataValidade,
+          createdAt: item.createdAt,
+          updatedAt: item.updatedAt,
+          // Dados expandidos
+          tipoEPI: item.tipoEpi
+            ? {
+                id: item.tipoEpi.id,
+                nomeEquipamento: item.tipoEpi.nomeEquipamento,
+                numeroCA: item.tipoEpi.numeroCa,
+                categoria: item.tipoEpi.categoria,
+                status: item.tipoEpi.status || "ATIVO",
+                validadePadrao: item.tipoEpi.vidaUtilDias,
+                descricao: item.tipoEpi.descricao || "",
+                ativo: item.tipoEpi.status === "ATIVO",
+                createdAt: item.tipoEpi.createdAt,
+                updatedAt: item.tipoEpi.updatedAt || item.tipoEpi.createdAt,
+              }
+            : undefined,
+          almoxarifado: item.almoxarifado
+            ? {
+                id: item.almoxarifado.id,
+                nome: item.almoxarifado.nome,
+                localizacao: item.almoxarifado.localizacao || "",
+                ativo: item.almoxarifado.status === "ATIVO",
+                unidadeNegocioId: item.almoxarifado.unidadeNegocioId || "",
+                createdAt: item.almoxarifado.createdAt,
+                updatedAt:
+                  item.almoxarifado.updatedAt || item.almoxarifado.createdAt,
+              }
+            : undefined,
+        }),
+      );
 
       const result: PaginatedResponse<ItemEstoqueUnified> = {
         data: mappedItems,
         total: response.data.pagination.total,
         page: response.data.pagination.page,
         pageSize: response.data.pagination.limit,
-        totalPages: response.data.pagination.totalPages
+        totalPages: response.data.pagination.totalPages,
       };
-      
+
       this.cache.set(cacheKey, result);
-      console.log(`✅ Estoque carregado: ${mappedItems.length} itens (${result.total} total)`);
-      
+      console.log(
+        `✅ Estoque carregado: ${mappedItems.length} itens (${result.total} total)`,
+      );
+
       return result;
     } catch (error) {
-      console.error('❌ Erro ao carregar estoque:', error);
-      throw new Error('Não foi possível carregar os dados de estoque');
+      console.error("❌ Erro ao carregar estoque:", error);
+      throw new Error("Não foi possível carregar os dados de estoque");
     }
   }
 
@@ -334,68 +357,68 @@ class UnifiedDataAdapter {
    * Resolve o problema de performance ao buscar opções para 1000+ tipos
    */
   async getFilterOptions(): Promise<FilterOptionsResponse> {
-    const cacheKey = 'filter-options-unified';
+    const cacheKey = "filter-options-unified";
     const cached = this.cache.get(cacheKey);
-    
+
     if (cached) {
-      console.log('📄 Cache hit - filter options');
+      console.log("📄 Cache hit - filter options");
       return cached;
     }
 
     try {
-      console.log('🌐 Carregando opções de filtros com fallback...');
-      
+      console.log("🌐 Carregando opções de filtros com fallback...");
+
       // ✅ STRATEGY FALLBACK: Extrair opções dos dados principais do endpoint
       const [tiposEpiResponse, almoxarifadosResponse] = await Promise.all([
-        api.get('/tipos-epi?limit=100'), // Carregar todos os tipos para extrair filtros
-        api.get('/almoxarifados?ativo=true&limit=100') // Almoxarifados ativos
+        api.get("/tipos-epi?limit=100"), // Carregar todos os tipos para extrair filtros
+        api.get("/almoxarifados?ativo=true&limit=100"), // Almoxarifados ativos
       ]);
 
       // Extrair categorias únicas dos dados (removido fabricantes - campo inexistente)
       const categorias = new Set<string>();
-      
+
       tiposEpiResponse.data.items.forEach((item: any) => {
         if (item.categoria) categorias.add(item.categoria);
       });
 
       const options: FilterOptionsResponse = {
         categorias: [
-          { value: 'todas', label: 'Todas as Categorias' },
-          ...Array.from(categorias).map(cat => ({
+          { value: "todas", label: "Todas as Categorias" },
+          ...Array.from(categorias).map((cat) => ({
             value: cat,
-            label: this.formatCategoryLabel(cat)
-          }))
+            label: this.formatCategoryLabel(cat),
+          })),
         ],
         status: [
-          { value: 'todos', label: 'Todos os Status' },
-          { value: 'ATIVO', label: 'Ativo' },
-          { value: 'DESCONTINUADO', label: 'Descontinuado' }
+          { value: "todos", label: "Todos os Status" },
+          { value: "ATIVO", label: "Ativo" },
+          { value: "DESCONTINUADO", label: "Descontinuado" },
         ],
         almoxarifados: [
-          { value: '', label: 'Todos os Almoxarifados' },
+          { value: "", label: "Todos os Almoxarifados" },
           ...almoxarifadosResponse.data.items.map((alm: any) => ({
             value: alm.id,
-            label: alm.nome
-          }))
-        ]
+            label: alm.nome,
+          })),
+        ],
       };
 
       this.cache.set(cacheKey, options);
-      console.log('✅ Opções de filtros carregadas de forma otimizada');
-      
+      console.log("✅ Opções de filtros carregadas de forma otimizada");
+
       return options;
     } catch (error) {
-      console.error('❌ Erro ao carregar opções de filtros:', error);
-      
+      console.error("❌ Erro ao carregar opções de filtros:", error);
+
       // Fallback com opções vazias
       return {
-        categorias: [{ value: 'todas', label: 'Todas as Categorias' }],
+        categorias: [{ value: "todas", label: "Todas as Categorias" }],
         status: [
-          { value: 'todos', label: 'Todos os Status' },
-          { value: 'ATIVO', label: 'Ativo' },
-          { value: 'DESCONTINUADO', label: 'Descontinuado' }
+          { value: "todos", label: "Todos os Status" },
+          { value: "ATIVO", label: "Ativo" },
+          { value: "DESCONTINUADO", label: "Descontinuado" },
         ],
-        almoxarifados: [{ value: '', label: 'Todos os Almoxarifados' }]
+        almoxarifados: [{ value: "", label: "Todos os Almoxarifados" }],
       };
     }
   }
@@ -407,11 +430,11 @@ class UnifiedDataAdapter {
    */
   private formatCategoryLabel(categoria: string): string {
     if (!categoria) return categoria;
-    
+
     return categoria
-      .split('_')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-      .join(' ');
+      .split("_")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(" ");
   }
 
   // ==================== ALMOXARIFADOS ====================
@@ -420,57 +443,64 @@ class UnifiedDataAdapter {
    * Busca almoxarifados ativos
    */
   async getAlmoxarifados(): Promise<AlmoxarifadoUnified[]> {
-    const cacheKey = 'almoxarifados-ativos';
+    const cacheKey = "almoxarifados-ativos";
     const cached = this.cache.get(cacheKey);
-    
+
     if (cached) {
-      console.log('📄 Cache hit - almoxarifados');
+      console.log("📄 Cache hit - almoxarifados");
       return cached;
     }
 
     try {
-      const response = await api.get('/almoxarifados?ativo=true&limit=100');
-      
-      const almoxarifados: AlmoxarifadoUnified[] = response.data.items.map((item: any) => ({
-        id: item.id,
-        nome: item.nome,
-        localizacao: item.localizacao || '',
-        ativo: item.status === 'ATIVO',
-        unidadeNegocioId: item.unidadeNegocioId || '',
-        createdAt: item.createdAt,
-        updatedAt: item.updatedAt || item.createdAt
-      }));
+      const response = await api.get("/almoxarifados?ativo=true&limit=100");
+
+      const almoxarifados: AlmoxarifadoUnified[] = response.data.items.map(
+        (item: any) => ({
+          id: item.id,
+          nome: item.nome,
+          localizacao: item.localizacao || "",
+          ativo: item.status === "ATIVO",
+          unidadeNegocioId: item.unidadeNegocioId || "",
+          createdAt: item.createdAt,
+          updatedAt: item.updatedAt || item.createdAt,
+        }),
+      );
 
       this.cache.set(cacheKey, almoxarifados);
       console.log(`✅ Almoxarifados carregados: ${almoxarifados.length} itens`);
-      
+
       return almoxarifados;
     } catch (error) {
-      console.error('❌ Erro ao carregar almoxarifados:', error);
-      throw new Error('Não foi possível carregar os almoxarifados');
+      console.error("❌ Erro ao carregar almoxarifados:", error);
+      throw new Error("Não foi possível carregar os almoxarifados");
     }
   }
 
   // ==================== HELPER METHODS ====================
-  
+
   /**
    * Formata labels de categoria para exibição
    */
   private formatCategoryLabel(category: string): string {
     const categoryLabels: Record<string, string> = {
-      'PROTECAO_CABECA': 'Proteção da Cabeça',
-      'PROTECAO_AUDITIVA': 'Proteção Auditiva',
-      'PROTECAO_OCULAR': 'Proteção Ocular',
-      'PROTECAO_RESPIRATORIA': 'Proteção Respiratória',
-      'PROTECAO_MAOS': 'Proteção das Mãos',
-      'PROTECAO_PES': 'Proteção dos Pés',
-      'PROTECAO_CORPO': 'Proteção do Corpo',
-      'PROTECAO_GERAL': 'Proteção Geral',
-      'PROTECAO_ALTURA': 'Proteção contra Quedas'
+      PROTECAO_CABECA: "Proteção da Cabeça",
+      PROTECAO_AUDITIVA: "Proteção Auditiva",
+      PROTECAO_OCULAR: "Proteção Ocular",
+      PROTECAO_RESPIRATORIA: "Proteção Respiratória",
+      PROTECAO_MAOS: "Proteção das Mãos",
+      PROTECAO_PES: "Proteção dos Pés",
+      PROTECAO_CORPO: "Proteção do Corpo",
+      PROTECAO_GERAL: "Proteção Geral",
+      PROTECAO_ALTURA: "Proteção contra Quedas",
     };
-    
-    return categoryLabels[category] || category.replace(/_/g, ' ').toLowerCase()
-      .replace(/\b\w/g, l => l.toUpperCase());
+
+    return (
+      categoryLabels[category] ||
+      category
+        .replace(/_/g, " ")
+        .toLowerCase()
+        .replace(/\b\w/g, (l) => l.toUpperCase())
+    );
   }
 
   // ==================== CACHE MANAGEMENT ====================
@@ -478,8 +508,10 @@ class UnifiedDataAdapter {
   /**
    * Invalida cache relacionado a uma entidade
    */
-  invalidateCache(entity: 'tipos-epi' | 'estoque' | 'almoxarifados' | 'all'): void {
-    if (entity === 'all') {
+  invalidateCache(
+    entity: "tipos-epi" | "estoque" | "almoxarifados" | "all",
+  ): void {
+    if (entity === "all") {
       this.cache.clear();
     } else {
       this.cache.invalidateByPattern(entity);
@@ -499,7 +531,7 @@ class UnifiedDataAdapter {
    */
   clearCache(): void {
     this.cache.clear();
-    console.log('🗑️ Cache completamente limpo');
+    console.log("🗑️ Cache completamente limpo");
   }
 }
 

@@ -3,9 +3,9 @@
  * Permite atualizações dinâmicas durante devoluções e entregas
  */
 
-import { writable } from 'svelte/store';
-import type { FichaDetailData } from '$lib/types/serviceTypes';
-import type { EquipamentoEmPosseItem } from '$lib/types/serviceTypes';
+import { writable } from "svelte/store";
+import type { FichaDetailData } from "$lib/types/serviceTypes";
+import type { EquipamentoEmPosseItem } from "$lib/types/serviceTypes";
 
 // Interface para DevolucaoItem (usada pelo store)
 export interface DevolucaoItem {
@@ -17,7 +17,7 @@ export interface DevolucaoItem {
   dataDevolucao: Date;
   motivo: string;
   observacoes?: string;
-  status: 'pendente' | 'concluida' | 'cancelada';
+  status: "pendente" | "concluida" | "cancelada";
   quantidade: number;
 }
 
@@ -25,23 +25,27 @@ export interface DevolucaoItem {
 export const fichaDataStore = writable<Map<string, FichaDetailData>>(new Map());
 
 // Store para devoluções pendentes
-export const devolucoesPendentesStore = writable<Map<string, DevolucaoItem[]>>(new Map());
+export const devolucoesPendentesStore = writable<Map<string, DevolucaoItem[]>>(
+  new Map(),
+);
 
 /**
  * Atualiza a ficha após uma devolução de equipamento
  */
 export function updateFichaAfterDevolucao(
-  fichaId: string, 
-  equipamentoId: string, 
+  fichaId: string,
+  equipamentoId: string,
   motivo: string,
-  observacoes?: string
+  observacoes?: string,
 ) {
-  fichaDataStore.update(cache => {
+  fichaDataStore.update((cache) => {
     const fichaData = cache.get(fichaId);
     if (!fichaData) return cache;
 
     // Encontrar o equipamento sendo devolvido
-    const equipamentoIndex = fichaData.equipamentosEmPosse.findIndex(eq => eq.id === equipamentoId);
+    const equipamentoIndex = fichaData.equipamentosEmPosse.findIndex(
+      (eq) => eq.id === equipamentoId,
+    );
     if (equipamentoIndex === -1) return cache;
 
     const equipamento = fichaData.equipamentosEmPosse[equipamentoIndex];
@@ -58,9 +62,9 @@ export function updateFichaAfterDevolucao(
       entregaId: equipamento.entregaId,
       dataDevolucao: new Date(),
       motivo: motivo,
-      observacoes: observacoes || '',
-      status: 'concluida',
-      quantidade: equipamento.quantidade
+      observacoes: observacoes || "",
+      status: "concluida",
+      quantidade: equipamento.quantidade,
     };
 
     // Adicionar à lista de devoluções (inicializa se não existir)
@@ -78,7 +82,11 @@ export function updateFichaAfterDevolucao(
     return cache;
   });
 
-  console.log('✅ Store atualizado após devolução:', { fichaId, equipamentoId, motivo });
+  console.log("✅ Store atualizado após devolução:", {
+    fichaId,
+    equipamentoId,
+    motivo,
+  });
 }
 
 /**
@@ -86,8 +94,8 @@ export function updateFichaAfterDevolucao(
  */
 export function getFichaFromCache(fichaId: string): FichaDetailData | null {
   let fichaData: FichaDetailData | null = null;
-  
-  fichaDataStore.subscribe(cache => {
+
+  fichaDataStore.subscribe((cache) => {
     fichaData = cache.get(fichaId) || null;
   })();
 
@@ -98,7 +106,7 @@ export function getFichaFromCache(fichaId: string): FichaDetailData | null {
  * Salva dados da ficha no cache
  */
 export function setFichaInCache(fichaId: string, fichaData: FichaDetailData) {
-  fichaDataStore.update(cache => {
+  fichaDataStore.update((cache) => {
     cache.set(fichaId, fichaData);
     return cache;
   });
@@ -110,7 +118,7 @@ export function setFichaInCache(fichaId: string, fichaData: FichaDetailData) {
 export function clearFichaCache() {
   fichaDataStore.set(new Map());
   devolucoesPendentesStore.set(new Map());
-  console.log('🧹 Cache de fichas limpo');
+  console.log("🧹 Cache de fichas limpo");
 }
 
 /**
@@ -118,9 +126,9 @@ export function clearFichaCache() {
  */
 export function updateFichaAfterEntrega(
   fichaId: string,
-  novoEquipamento: EquipamentoEmPosseItem
+  novoEquipamento: EquipamentoEmPosseItem,
 ) {
-  fichaDataStore.update(cache => {
+  fichaDataStore.update((cache) => {
     const fichaData = cache.get(fichaId);
     if (!fichaData) return cache;
 
@@ -132,5 +140,8 @@ export function updateFichaAfterEntrega(
     return cache;
   });
 
-  console.log('✅ Store atualizado após entrega:', { fichaId, equipamento: novoEquipamento.nomeEquipamento });
+  console.log("✅ Store atualizado após entrega:", {
+    fichaId,
+    equipamento: novoEquipamento.nomeEquipamento,
+  });
 }

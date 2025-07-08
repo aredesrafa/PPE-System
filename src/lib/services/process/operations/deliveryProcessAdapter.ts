@@ -1,11 +1,11 @@
 /**
  * Delivery Process Adapter - Operações de Entrega Simplificadas
- * 
+ *
  * Responsabilidade: Operações de entrega com backend inteligente.
  * Backend faz expansão de itens, geração de IDs e cálculo de prazos.
  */
 
-import { api } from '../../core/apiClient';
+import { api } from "../../core/apiClient";
 
 // ==================== INTERFACES ====================
 
@@ -52,7 +52,7 @@ export interface DeliveryCompleteResult {
       dataLimiteDevolucao: string;
     }>;
     totalItens: number;
-    statusEntrega: 'pendente_assinatura';
+    statusEntrega: "pendente_assinatura";
   };
 }
 
@@ -67,68 +67,74 @@ export interface CancelDeliveryPayload {
 // ==================== ADAPTER CLASS ====================
 
 class DeliveryProcessAdapter {
-  
   /**
    * Criar entrega usando endpoint específico da ficha
    * Endpoint correto: /fichas-epi/:id/entregas
    */
-  async createDelivery(payload: CreateDeliveryPayload): Promise<DeliveryCompleteResult> {
-    console.log('🚚 DeliveryProcessAdapter: Criando entrega via ficha específica...');
-    console.log('🔍 FichaEpiId:', payload.fichaEpiId);
-    console.log('🔍 ResponsavelId:', payload.responsavelId);
-    console.log('🔍 Itens count:', payload.itens?.length || 0);
-    
+  async createDelivery(
+    payload: CreateDeliveryPayload,
+  ): Promise<DeliveryCompleteResult> {
+    console.log(
+      "🚚 DeliveryProcessAdapter: Criando entrega via ficha específica...",
+    );
+    console.log("🔍 FichaEpiId:", payload.fichaEpiId);
+    console.log("🔍 ResponsavelId:", payload.responsavelId);
+    console.log("🔍 Itens count:", payload.itens?.length || 0);
+
     // Validar que temos dados essenciais
     if (!payload.fichaEpiId) {
-      throw new Error('fichaEpiId é obrigatório');
+      throw new Error("fichaEpiId é obrigatório");
     }
     if (!payload.responsavelId) {
-      throw new Error('responsavelId é obrigatório');
+      throw new Error("responsavelId é obrigatório");
     }
     if (!payload.itens || payload.itens.length === 0) {
-      throw new Error('Pelo menos um item é obrigatório');
+      throw new Error("Pelo menos um item é obrigatório");
     }
-    
+
     try {
       // Montar payload conforme implementação REAL do backend
       // CRÍTICO: Número de objetos em 'itens' deve ser IGUAL ao campo 'quantidade'
       const itensExpandidos = [];
-      payload.itens.forEach(item => {
+      payload.itens.forEach((item) => {
         // Para cada quantidade, criar um objeto separado no array
         for (let i = 0; i < item.quantidade; i++) {
           itensExpandidos.push({
             estoqueItemOrigemId: item.estoqueItemId,
-            numeroSerie: `SER-${item.estoqueItemId}-${i + 1}` // Série única para cada item
+            numeroSerie: `SER-${item.estoqueItemId}-${i + 1}`, // Série única para cada item
           });
         }
       });
-      
+
       const deliveryData = {
         fichaEpiId: payload.fichaEpiId, // NECESSÁRIO no body conforme validação do backend
         quantidade: itensExpandidos.length, // Deve ser igual ao número de objetos em itens
         itens: itensExpandidos,
         assinaturaColaborador: "placeholder_signature", // Temporary placeholder
-        observacoes: payload.observacoes || '',
-        usuarioId: payload.responsavelId
+        observacoes: payload.observacoes || "",
+        usuarioId: payload.responsavelId,
       };
-      
-      console.log('📋 Payload formatado para backend:', deliveryData);
-      
-      const response = await api.post<DeliveryCompleteResult>(`/fichas-epi/${payload.fichaEpiId}/entregas`, deliveryData);
-      
-      console.log('✅ Entrega criada via endpoint da ficha:');
+
+      console.log("📋 Payload formatado para backend:", deliveryData);
+
+      const response = await api.post<DeliveryCompleteResult>(
+        `/fichas-epi/${payload.fichaEpiId}/entregas`,
+        deliveryData,
+      );
+
+      console.log("✅ Entrega criada via endpoint da ficha:");
       console.log(`  - Ficha ID: ${payload.fichaEpiId}`);
       console.log(`  - Response:`, response);
-      
+
       return response;
     } catch (error) {
-      console.error('❌ Erro ao criar entrega via ficha:', error);
-      
+      console.error("❌ Erro ao criar entrega via ficha:", error);
+
       // Log mais detalhado do erro para debug
       if (error.response?.data) {
-        console.error('❌ Detalhes do erro do backend:', error.response.data);
+        console.error("❌ Detalhes do erro do backend:", error.response.data);
       }
-      
+
       throw error;
     }
   }
@@ -136,15 +142,20 @@ class DeliveryProcessAdapter {
   /**
    * Validar entrega antes de criar (opcional)
    */
-  async validateDelivery(payload: CreateDeliveryPayload): Promise<{valid: boolean; errors?: string[]}> {
-    console.log('🔍 DeliveryProcessAdapter: Validando entrega antes de criar:', payload);
-    
+  async validateDelivery(
+    payload: CreateDeliveryPayload,
+  ): Promise<{ valid: boolean; errors?: string[] }> {
+    console.log(
+      "🔍 DeliveryProcessAdapter: Validando entrega antes de criar:",
+      payload,
+    );
+
     try {
       const response = await api.post(`/fichas-epi/entregas/validar`, payload);
-      console.log('✅ Validação da entrega concluída:', response);
+      console.log("✅ Validação da entrega concluída:", response);
       return response;
     } catch (error) {
-      console.error('❌ Erro na validação da entrega:', error);
+      console.error("❌ Erro na validação da entrega:", error);
       throw error;
     }
   }
@@ -153,20 +164,29 @@ class DeliveryProcessAdapter {
    * Confirmar assinatura de entrega
    * Endpoint correto: PUT /api/fichas-epi/entregas/:entregaId/assinar
    */
-  async confirmSignature(entregaId: string, payload: ConfirmSignaturePayload): Promise<void> {
-    console.log('✍️ DeliveryProcessAdapter: Confirmando assinatura:', entregaId);
-    
+  async confirmSignature(
+    entregaId: string,
+    payload: ConfirmSignaturePayload,
+  ): Promise<void> {
+    console.log(
+      "✍️ DeliveryProcessAdapter: Confirmando assinatura:",
+      entregaId,
+    );
+
     try {
       // Usar endpoint correto da documentação (seção 10.6)
       const assinaturaData = {
         assinaturaColaborador: payload.assinatura,
-        observacoes: 'Entrega assinada pelo colaborador'
+        observacoes: "Entrega assinada pelo colaborador",
       };
-      
-      await api.put(`/fichas-epi/entregas/${entregaId}/assinar`, assinaturaData);
-      console.log('✅ Assinatura confirmada');
+
+      await api.put(
+        `/fichas-epi/entregas/${entregaId}/assinar`,
+        assinaturaData,
+      );
+      console.log("✅ Assinatura confirmada");
     } catch (error) {
-      console.error('❌ Erro ao confirmar assinatura:', error);
+      console.error("❌ Erro ao confirmar assinatura:", error);
       throw error;
     }
   }
@@ -174,14 +194,17 @@ class DeliveryProcessAdapter {
   /**
    * Cancelar entrega
    */
-  async cancelDelivery(entregaId: string, payload: CancelDeliveryPayload): Promise<void> {
-    console.log('❌ DeliveryProcessAdapter: Cancelando entrega:', entregaId);
-    
+  async cancelDelivery(
+    entregaId: string,
+    payload: CancelDeliveryPayload,
+  ): Promise<void> {
+    console.log("❌ DeliveryProcessAdapter: Cancelando entrega:", entregaId);
+
     try {
       await api.post(`/entregas/${entregaId}/cancel`, payload);
-      console.log('✅ Entrega cancelada');
+      console.log("✅ Entrega cancelada");
     } catch (error) {
-      console.error('❌ Erro ao cancelar entrega:', error);
+      console.error("❌ Erro ao cancelar entrega:", error);
       throw error;
     }
   }
@@ -190,16 +213,19 @@ class DeliveryProcessAdapter {
    * Imprimir entrega (gerar PDF)
    */
   async printDelivery(entregaId: string): Promise<Blob> {
-    console.log('🖨️ DeliveryProcessAdapter: Gerando PDF da entrega:', entregaId);
-    
+    console.log(
+      "🖨️ DeliveryProcessAdapter: Gerando PDF da entrega:",
+      entregaId,
+    );
+
     try {
       const response = await api.get(`/entregas/${entregaId}/print`, {
-        responseType: 'blob'
+        responseType: "blob",
       });
-      console.log('✅ PDF gerado');
+      console.log("✅ PDF gerado");
       return response as Blob;
     } catch (error) {
-      console.error('❌ Erro ao gerar PDF:', error);
+      console.error("❌ Erro ao gerar PDF:", error);
       throw error;
     }
   }
@@ -207,15 +233,21 @@ class DeliveryProcessAdapter {
   /**
    * Editar entrega (antes da assinatura)
    */
-  async updateDelivery(entregaId: string, payload: Partial<CreateDeliveryPayload>): Promise<DeliveryCompleteResult> {
-    console.log('✏️ DeliveryProcessAdapter: Editando entrega:', entregaId);
-    
+  async updateDelivery(
+    entregaId: string,
+    payload: Partial<CreateDeliveryPayload>,
+  ): Promise<DeliveryCompleteResult> {
+    console.log("✏️ DeliveryProcessAdapter: Editando entrega:", entregaId);
+
     try {
-      const response = await api.put<DeliveryCompleteResult>(`/entregas/${entregaId}`, payload);
-      console.log('✅ Entrega editada');
+      const response = await api.put<DeliveryCompleteResult>(
+        `/entregas/${entregaId}`,
+        payload,
+      );
+      console.log("✅ Entrega editada");
       return response;
     } catch (error) {
-      console.error('❌ Erro ao editar entrega:', error);
+      console.error("❌ Erro ao editar entrega:", error);
       throw error;
     }
   }
@@ -225,15 +257,18 @@ class DeliveryProcessAdapter {
   /**
    * Criar devolução de EPI
    */
-  async createDevolucao(entregaId: string, payload: {
-    itens: Array<{
-      itemEntregaId: string;
-      quantidade: number;
-      motivo: string;
-      observacoes?: string;
-    }>;
-    responsavelId: string;
-  }): Promise<{
+  async createDevolucao(
+    entregaId: string,
+    payload: {
+      itens: Array<{
+        itemEntregaId: string;
+        quantidade: number;
+        motivo: string;
+        observacoes?: string;
+      }>;
+      responsavelId: string;
+    },
+  ): Promise<{
     success: boolean;
     data: {
       devolucaoId: string;
@@ -241,14 +276,21 @@ class DeliveryProcessAdapter {
       status: string;
     };
   }> {
-    console.log('🔄 DeliveryProcessAdapter: Criando devolução:', entregaId, payload);
-    
+    console.log(
+      "🔄 DeliveryProcessAdapter: Criando devolução:",
+      entregaId,
+      payload,
+    );
+
     try {
-      const response = await api.post(`/fichas-epi/entregas/${entregaId}/devolucao`, payload);
-      console.log('✅ Devolução criada com sucesso:', response);
+      const response = await api.post(
+        `/fichas-epi/entregas/${entregaId}/devolucao`,
+        payload,
+      );
+      console.log("✅ Devolução criada com sucesso:", response);
       return response;
     } catch (error) {
-      console.error('❌ Erro ao criar devolução:', error);
+      console.error("❌ Erro ao criar devolução:", error);
       throw error;
     }
   }
@@ -256,24 +298,34 @@ class DeliveryProcessAdapter {
   /**
    * Validar devolução antes de processar
    */
-  async validateDevolucao(entregaId: string, payload: {
-    itens: Array<{
-      itemEntregaId: string;
-      quantidade: number;
-    }>;
-  }): Promise<{
+  async validateDevolucao(
+    entregaId: string,
+    payload: {
+      itens: Array<{
+        itemEntregaId: string;
+        quantidade: number;
+      }>;
+    },
+  ): Promise<{
     valid: boolean;
     errors?: string[];
     warnings?: string[];
   }> {
-    console.log('🔍 DeliveryProcessAdapter: Validando devolução:', entregaId, payload);
-    
+    console.log(
+      "🔍 DeliveryProcessAdapter: Validando devolução:",
+      entregaId,
+      payload,
+    );
+
     try {
-      const response = await api.post(`/fichas-epi/entregas/${entregaId}/devolucao/validar`, payload);
-      console.log('✅ Validação de devolução concluída:', response);
+      const response = await api.post(
+        `/fichas-epi/entregas/${entregaId}/devolucao/validar`,
+        payload,
+      );
+      console.log("✅ Validação de devolução concluída:", response);
       return response;
     } catch (error) {
-      console.error('❌ Erro na validação de devolução:', error);
+      console.error("❌ Erro na validação de devolução:", error);
       throw error;
     }
   }
@@ -302,14 +354,17 @@ class DeliveryProcessAdapter {
       }>;
     };
   }> {
-    console.log('🔄 DeliveryProcessAdapter: Processando devoluções em lote:', payload);
-    
+    console.log(
+      "🔄 DeliveryProcessAdapter: Processando devoluções em lote:",
+      payload,
+    );
+
     try {
-      const response = await api.post('/devolucoes/process-batch', payload);
-      console.log('✅ Devoluções em lote processadas:', response);
+      const response = await api.post("/devolucoes/process-batch", payload);
+      console.log("✅ Devoluções em lote processadas:", response);
       return response;
     } catch (error) {
-      console.error('❌ Erro ao processar devoluções em lote:', error);
+      console.error("❌ Erro ao processar devoluções em lote:", error);
       throw error;
     }
   }

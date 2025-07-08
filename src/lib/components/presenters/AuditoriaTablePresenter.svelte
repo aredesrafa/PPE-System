@@ -94,6 +94,11 @@
   }
   
   function formatTipoMovimentacao(tipo: string): string {
+    // Verificar se tipo é válido
+    if (!tipo || typeof tipo !== 'string') {
+      return 'Tipo Desconhecido';
+    }
+    
     const tipoFormatado = tiposMovimentacao.find(t => t.value === tipo);
     if (tipoFormatado) {
       return tipoFormatado.label;
@@ -104,6 +109,11 @@
   }
   
   function getTipoMovimentacaoColor(tipo: string): string {
+    // Verificar se tipo é válido
+    if (!tipo || typeof tipo !== 'string') {
+      return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
+    }
+    
     // Estornos têm prioridade (laranja)
     if (tipo.startsWith('ESTORNO_')) {
       return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300';

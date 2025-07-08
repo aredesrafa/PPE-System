@@ -1,22 +1,23 @@
 /**
  * Cliente HTTP Central
- * 
+ *
  * Cliente HTTP centralizado com tratamento de erros, timeout, retry e preparação
  * para autenticação futura. Oferece uma interface consistente para todas as
  * chamadas de API do frontend.
  */
 
-import { browser } from '$app/environment';
+import { browser } from "$app/environment";
 
 // Configurações da API - Usar proxy em desenvolvimento, URL direta em produção
-export const API_BASE_URL = typeof window !== 'undefined' && window.location.hostname === 'localhost' 
-  ? '/api'  // Usar proxy em desenvolvimento
-  : 'https://epi-backend-s14g.onrender.com/api'; // URL direta em produção
+export const API_BASE_URL =
+  typeof window !== "undefined" && window.location.hostname === "localhost"
+    ? "/api" // Usar proxy em desenvolvimento
+    : "https://epi-backend-s14g.onrender.com/api"; // URL direta em produção
 
 // Interfaces para request unificado
 export interface RequestConfig {
   endpoint: string;
-  method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+  method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
   data?: any;
   params?: Record<string, any>;
   headers?: Record<string, string>;
@@ -28,13 +29,13 @@ export interface RequestConfig {
  */
 export class ApiError extends Error {
   constructor(
-    message: string, 
-    public status: number, 
+    message: string,
+    public status: number,
     public response?: any,
-    public endpoint?: string
+    public endpoint?: string,
   ) {
     super(message);
-    this.name = 'ApiError';
+    this.name = "ApiError";
   }
 
   /**
@@ -75,24 +76,30 @@ export interface ApiRequestOptions extends RequestInit {
 const DEFAULT_OPTIONS: ApiRequestOptions = {
   timeout: 30000, // 30 segundos (cold start do backend pode demorar)
   retries: 3,
-  retryDelay: 2000 // 2 segundos
+  retryDelay: 2000, // 2 segundos
 };
 
 /**
  * Cliente HTTP principal
  */
 export async function apiClient<T>(
-  endpoint: string, 
-  options: ApiRequestOptions = {}
+  endpoint: string,
+  options: ApiRequestOptions = {},
 ): Promise<T> {
   const config = { ...DEFAULT_OPTIONS, ...options };
-  const { skipAuth = false, timeout, retries, retryDelay, ...fetchOptions } = config;
-  
+  const {
+    skipAuth = false,
+    timeout,
+    retries,
+    retryDelay,
+    ...fetchOptions
+  } = config;
+
   // Headers padrão
   const headers = new Headers(fetchOptions.headers);
-  headers.set('Content-Type', 'application/json');
-  headers.set('Accept', 'application/json');
-  
+  headers.set("Content-Type", "application/json");
+  headers.set("Accept", "application/json");
+
   // Headers de autenticação serão implementados por outra equipe
   // TODO: Implementar quando a equipe de auth disponibilizar o sistema
   if (!skipAuth) {
@@ -102,107 +109,119 @@ export async function apiClient<T>(
     //   headers.set('Authorization', `Bearer ${token}`);
     // }
   }
-  
+
   // Função para fazer a requisição com retry
   async function makeRequest(attempt: number = 1): Promise<T> {
     // Durante SSR, retornar dados vazios ou erro para evitar CORS
     if (!browser) {
-      throw new ApiError('API calls are only available in browser', 0, null, endpoint);
+      throw new ApiError(
+        "API calls are only available in browser",
+        0,
+        null,
+        endpoint,
+      );
     }
-    
+
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeout);
-    
+
     try {
       // Garantir URL absoluta sempre - SvelteKit requer URLs absolutas no SSR
       let url: string;
-      if (endpoint.startsWith('http')) {
+      if (endpoint.startsWith("http")) {
         url = endpoint;
       } else {
         // Garantir que sempre temos uma URL absoluta
-        const cleanEndpoint = endpoint.startsWith('/') ? endpoint : '/' + endpoint;
+        const cleanEndpoint = endpoint.startsWith("/")
+          ? endpoint
+          : "/" + endpoint;
         url = `${API_BASE_URL}${cleanEndpoint}`;
       }
-      
+
       console.log(`🌐 Fazendo requisição para: ${url}`);
-      
+
       const response = await fetch(url, {
         ...fetchOptions,
         headers,
         signal: controller.signal,
-        mode: 'cors' // Forçar modo CORS
+        mode: "cors", // Forçar modo CORS
       });
-      
+
       clearTimeout(timeoutId);
-      
+
       // Tratamento de erros HTTP
       if (!response.ok) {
         let errorData: any = {};
-        const contentType = response.headers.get('content-type');
-        
-        if (contentType && contentType.includes('application/json')) {
+        const contentType = response.headers.get("content-type");
+
+        if (contentType && contentType.includes("application/json")) {
           try {
             errorData = await response.json();
           } catch {
             // Se não conseguir fazer parse do JSON, usar resposta vazia
           }
         }
-        
-        const message = errorData.message || 
-                       errorData.error || 
-                       `HTTP ${response.status}: ${response.statusText}`;
-        
+
+        const message =
+          errorData.message ||
+          errorData.error ||
+          `HTTP ${response.status}: ${response.statusText}`;
+
         throw new ApiError(message, response.status, errorData, endpoint);
       }
-      
+
       // Verificar se há conteúdo para retornar
-      const contentLength = response.headers.get('content-length');
-      if (contentLength === '0' || response.status === 204) {
+      const contentLength = response.headers.get("content-length");
+      if (contentLength === "0" || response.status === 204) {
         return {} as T;
       }
-      
-      const contentType = response.headers.get('content-type');
-      if (contentType && contentType.includes('application/json')) {
-        return await response.json() as T;
+
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        return (await response.json()) as T;
       }
-      
+
       // Se não for JSON, retornar como texto
-      return await response.text() as unknown as T;
-      
+      return (await response.text()) as unknown as T;
     } catch (error) {
       clearTimeout(timeoutId);
-      
+
       // Tratar timeout
-      if (error instanceof Error && error.name === 'AbortError') {
-        throw new ApiError('Request timeout', 408, null, endpoint);
+      if (error instanceof Error && error.name === "AbortError") {
+        throw new ApiError("Request timeout", 408, null, endpoint);
       }
-      
+
       // Tratar erros de rede
-      if (error instanceof TypeError && error.message.includes('fetch')) {
-        throw new ApiError('Network error', 0, null, endpoint);
+      if (error instanceof TypeError && error.message.includes("fetch")) {
+        throw new ApiError("Network error", 0, null, endpoint);
       }
-      
+
       // Se já é ApiError, repassar
       if (error instanceof ApiError) {
         // Implementar retry para erros de rede ou 5xx
-        if ((error.isNetworkError || error.status >= 500) && attempt < (retries || 0)) {
-          console.warn(`Tentativa ${attempt} falhou, tentando novamente em ${retryDelay}ms...`);
-          await new Promise(resolve => setTimeout(resolve, retryDelay));
+        if (
+          (error.isNetworkError || error.status >= 500) &&
+          attempt < (retries || 0)
+        ) {
+          console.warn(
+            `Tentativa ${attempt} falhou, tentando novamente em ${retryDelay}ms...`,
+          );
+          await new Promise((resolve) => setTimeout(resolve, retryDelay));
           return makeRequest(attempt + 1);
         }
         throw error;
       }
-      
+
       // Erro genérico
       throw new ApiError(
-        error instanceof Error ? error.message : 'Unknown error',
+        error instanceof Error ? error.message : "Unknown error",
         0,
         null,
-        endpoint
+        endpoint,
       );
     }
   }
-  
+
   return makeRequest();
 }
 
@@ -213,90 +232,112 @@ export const api = {
   /**
    * GET request
    */
-  get: <T>(endpoint: string, options?: ApiRequestOptions): Promise<T> => 
-    apiClient<T>(endpoint, { ...options, method: 'GET' }),
-    
+  get: <T>(endpoint: string, options?: ApiRequestOptions): Promise<T> =>
+    apiClient<T>(endpoint, { ...options, method: "GET" }),
+
   /**
    * POST request
    */
-  post: <T>(endpoint: string, data?: any, options?: ApiRequestOptions): Promise<T> =>
+  post: <T>(
+    endpoint: string,
+    data?: any,
+    options?: ApiRequestOptions,
+  ): Promise<T> =>
     apiClient<T>(endpoint, {
       ...options,
-      method: 'POST',
-      body: data ? JSON.stringify(data) : undefined
+      method: "POST",
+      body: data ? JSON.stringify(data) : undefined,
     }),
-    
+
   /**
    * PUT request
    */
-  put: <T>(endpoint: string, data?: any, options?: ApiRequestOptions): Promise<T> =>
+  put: <T>(
+    endpoint: string,
+    data?: any,
+    options?: ApiRequestOptions,
+  ): Promise<T> =>
     apiClient<T>(endpoint, {
       ...options,
-      method: 'PUT',
-      body: data ? JSON.stringify(data) : undefined
+      method: "PUT",
+      body: data ? JSON.stringify(data) : undefined,
     }),
-    
+
   /**
    * PATCH request
    */
-  patch: <T>(endpoint: string, data?: any, options?: ApiRequestOptions): Promise<T> =>
+  patch: <T>(
+    endpoint: string,
+    data?: any,
+    options?: ApiRequestOptions,
+  ): Promise<T> =>
     apiClient<T>(endpoint, {
       ...options,
-      method: 'PATCH',
-      body: data ? JSON.stringify(data) : undefined
+      method: "PATCH",
+      body: data ? JSON.stringify(data) : undefined,
     }),
-    
+
   /**
    * DELETE request
    */
   delete: <T>(endpoint: string, options?: ApiRequestOptions): Promise<T> =>
-    apiClient<T>(endpoint, { ...options, method: 'DELETE' }),
+    apiClient<T>(endpoint, { ...options, method: "DELETE" }),
 
   /**
    * Método unificado de request
    */
   async request<T>(config: RequestConfig): Promise<T> {
-    const { endpoint, method = 'GET', data, params, headers = {}, timeout = 10000 } = config;
-    
+    const {
+      endpoint,
+      method = "GET",
+      data,
+      params,
+      headers = {},
+      timeout = 10000,
+    } = config;
+
     const url = createUrlWithParams(endpoint, params || {});
     const requestHeaders = {
-      'Content-Type': 'application/json',
-      ...headers
+      "Content-Type": "application/json",
+      ...headers,
     };
 
     const options: ApiRequestOptions = {
       method,
       headers: requestHeaders,
-      timeout
+      timeout,
     };
 
-    if (data && ['POST', 'PUT', 'PATCH'].includes(method)) {
+    if (data && ["POST", "PUT", "PATCH"].includes(method)) {
       options.body = JSON.stringify(data);
     }
 
     return apiClient<T>(url, options);
-  }
+  },
 };
 
 /**
  * Helper para criar URLs com query parameters
  */
-export function createUrlWithParams(baseUrl: string, params: Record<string, any>): string {
+export function createUrlWithParams(
+  baseUrl: string,
+  params: Record<string, any>,
+): string {
   // Se baseUrl não tem protocolo, é um path relativo
-  const urlString = baseUrl.startsWith('/') ? baseUrl : '/' + baseUrl;
-  
-  const url = new URL(urlString, 'http://dummy.com');
-  
+  const urlString = baseUrl.startsWith("/") ? baseUrl : "/" + baseUrl;
+
+  const url = new URL(urlString, "http://dummy.com");
+
   Object.entries(params).forEach(([key, value]) => {
-    if (value !== null && value !== undefined && value !== '') {
+    if (value !== null && value !== undefined && value !== "") {
       if (Array.isArray(value)) {
-        value.forEach(v => url.searchParams.append(key, String(v)));
+        value.forEach((v) => url.searchParams.append(key, String(v)));
       } else {
         url.searchParams.set(key, String(value));
       }
     }
   });
-  
+
   // Retornar apenas path + search (será combinado com API_BASE_URL no apiClient)
   return url.pathname + url.search;
 }
@@ -308,21 +349,21 @@ if (browser && !import.meta.env.PROD) {
   const originalFetch = fetch;
   window.fetch = async (input, init) => {
     const start = performance.now();
-    
+
     try {
       const response = await originalFetch(input, init);
       const duration = performance.now() - start;
-      
+
       console.log(
-        `🌐 ${init?.method || 'GET'} ${input} - ${response.status} (${duration.toFixed(2)}ms)`
+        `🌐 ${init?.method || "GET"} ${input} - ${response.status} (${duration.toFixed(2)}ms)`,
       );
-      
+
       return response;
     } catch (error) {
       const duration = performance.now() - start;
       console.error(
-        `❌ ${init?.method || 'GET'} ${input} - ERROR (${duration.toFixed(2)}ms)`,
-        error
+        `❌ ${init?.method || "GET"} ${input} - ERROR (${duration.toFixed(2)}ms)`,
+        error,
       );
       throw error;
     }
@@ -332,31 +373,34 @@ if (browser && !import.meta.env.PROD) {
 /**
  * Health check para verificar se o backend está ativo
  */
-export async function healthCheck(): Promise<{ healthy: boolean; message: string }> {
+export async function healthCheck(): Promise<{
+  healthy: boolean;
+  message: string;
+}> {
   try {
-    console.log('🏥 Verificando health do backend...');
-    const response = await apiClient<any>('/health', { 
-      timeout: 15000, 
-      retries: 1 
+    console.log("🏥 Verificando health do backend...");
+    const response = await apiClient<any>("/health", {
+      timeout: 15000,
+      retries: 1,
     });
-    
-    console.log('✅ Backend está saudável:', response);
-    return { healthy: true, message: 'Backend operacional' };
+
+    console.log("✅ Backend está saudável:", response);
+    return { healthy: true, message: "Backend operacional" };
   } catch (error) {
-    console.warn('⚠️ Backend pode estar iniciando:', error);
-    
+    console.warn("⚠️ Backend pode estar iniciando:", error);
+
     // Tentar endpoint alternativo
     try {
-      const docsResponse = await apiClient<any>('/docs', { 
-        timeout: 20000, 
-        retries: 1 
+      const docsResponse = await apiClient<any>("/docs", {
+        timeout: 20000,
+        retries: 1,
       });
-      console.log('✅ Backend respondeu via /docs');
-      return { healthy: true, message: 'Backend operacional (via docs)' };
+      console.log("✅ Backend respondeu via /docs");
+      return { healthy: true, message: "Backend operacional (via docs)" };
     } catch {
-      return { 
-        healthy: false, 
-        message: 'Backend indisponível - pode estar fazendo cold start' 
+      return {
+        healthy: false,
+        message: "Backend indisponível - pode estar fazendo cold start",
       };
     }
   }
@@ -376,7 +420,7 @@ export const errorUtils = {
     if (error instanceof Error) {
       return error.message;
     }
-    return 'Erro desconhecido';
+    return "Erro desconhecido";
   },
 
   /**
@@ -394,31 +438,31 @@ export const errorUtils = {
    */
   formatErrorForUser(error: unknown): { message: string; canRetry: boolean } {
     if (error instanceof ApiError) {
-      let message = '';
-      
+      let message = "";
+
       if (error.isAuthError) {
-        message = 'Sessão expirada. Faça login novamente.';
+        message = "Sessão expirada. Faça login novamente.";
       } else if (error.isNetworkError) {
-        message = 'Erro de conexão. Verifique sua internet.';
+        message = "Erro de conexão. Verifique sua internet.";
       } else if (error.status === 404) {
-        message = 'Recurso não encontrado.';
+        message = "Recurso não encontrado.";
       } else if (error.status === 422) {
-        message = error.response?.message || 'Dados inválidos.';
+        message = error.response?.message || "Dados inválidos.";
       } else {
-        message = error.message || 'Erro interno do servidor.';
+        message = error.message || "Erro interno do servidor.";
       }
-      
+
       return {
         message,
-        canRetry: this.shouldShowRetry(error)
+        canRetry: this.shouldShowRetry(error),
       };
     }
-    
+
     return {
-      message: 'Erro inesperado. Tente novamente.',
-      canRetry: true
+      message: "Erro inesperado. Tente novamente.",
+      canRetry: true,
     };
-  }
+  },
 };
 
 export default api;

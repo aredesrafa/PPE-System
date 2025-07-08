@@ -11,43 +11,47 @@
 
 ### 1. ❌ EPIs Aparecendo como "Nome não informado" (CORRIGIDO ✅)
 
-**Problema**: 
+**Problema**:
+
 ```
-Opções do select: – [{value: "", label: "Selecione um EPI..."}, 
+Opções do select: – [{value: "", label: "Selecione um EPI..."},
 {value: undefined, label: "Nome não informado (CA N/A) - 0 disponíveis"}]
 ```
 
 **Causa**: Dados vindos do backend sem campos essenciais (id, nomeEquipamento) não eram filtrados adequadamente.
 
 **Solução Implementada**:
+
 ```typescript
 // ❌ Antes: Incluía itens com dados undefined
-const normalizedEpis = episData.map(item => {
+const normalizedEpis = episData.map((item) => {
   return {
     id: epi.id || item.id,
-    nomeEquipamento: epi.nomeEquipamento || 'Nome não informado', // ❌ Problema
+    nomeEquipamento: epi.nomeEquipamento || "Nome não informado", // ❌ Problema
     // ...
   };
 });
 
 // ✅ Agora: Filtra itens sem dados essenciais
 const normalizedEpis = episData
-  .map(item => {
+  .map((item) => {
     const id = epi.id || item.id;
-    const nomeEquipamento = epi.nomeEquipamento || epi.nome_equipamento || epi.nome;
-    
+    const nomeEquipamento =
+      epi.nomeEquipamento || epi.nome_equipamento || epi.nome;
+
     // Skip items without essential data
     if (!id || !nomeEquipamento) {
-      console.warn('⚠️ Item ignorado por falta de dados essenciais:', item);
+      console.warn("⚠️ Item ignorado por falta de dados essenciais:", item);
       return null;
     }
-    
-    return { id, nomeEquipamento, /* ... */ };
+
+    return { id, nomeEquipamento /* ... */ };
   })
   .filter(Boolean); // Remove null items
 ```
 
 **Arquivo alterado**: `src/lib/services/process/queries/fichaQueryAdapter.ts`
+
 - Linhas 289-324: Adicionada validação de dados essenciais
 - Linhas 303-306: Filtro para ignorar itens inválidos
 
@@ -55,9 +59,10 @@ const normalizedEpis = episData
 
 ### 2. ❌ Erro de Validação no Enum de Devolução (CORRIGIDO ✅)
 
-**Problema**: 
+**Problema**:
+
 ```
-Validation error: Invalid enum value. Expected 'devolução padrão' | 'danificado' | 'troca' | 'outros', 
+Validation error: Invalid enum value. Expected 'devolução padrão' | 'danificado' | 'troca' | 'outros',
 received 'Devolução de item individual: asdf'
 ```
 
@@ -66,6 +71,7 @@ received 'Devolução de item individual: asdf'
 **Solução Implementada**:
 
 #### **Parte 1: Modal com Opções Predefinidas**
+
 ```svelte
 <!-- ❌ Antes: Campo de texto livre -->
 <Textarea bind:value={motivo} placeholder="Descreva o motivo..." />
@@ -82,15 +88,17 @@ const motivosOptions = [
 ```
 
 #### **Parte 2: Mapeamento Correto no Handler**
+
 ```typescript
 // ❌ Antes: Concatenação inválida
 const motivoCompleto = `Devolução de item individual: ${motivo.trim()}`;
 
 // ✅ Agora: Valor direto do enum
-dispatch('confirmar', { motivo: motivoSelecionado });
+dispatch("confirmar", { motivo: motivoSelecionado });
 ```
 
 #### **Parte 3: Remoção do Type Casting**
+
 ```typescript
 // ❌ Antes: Type casting desnecessário
 motivo: event.detail.motivo as any, // Converter para tipo correto
@@ -100,6 +108,7 @@ motivo: event.detail.motivo, // Agora já vem no formato correto do enum
 ```
 
 **Arquivos alterados**:
+
 - `src/lib/components/presenters/DevolucaoModalPresenter.svelte`
   - Linhas 32-44: Mudança para Select com opções predefinidas
   - Linhas 80-83: Handler simplificado sem mapeamento
@@ -113,6 +122,7 @@ motivo: event.detail.motivo, // Agora já vem no formato correto do enum
 **Melhorias Adicionadas**:
 
 #### **Observações Opcionais**
+
 ```svelte
 <!-- Campo adicional para detalhes específicos -->
 <Textarea
@@ -123,19 +133,24 @@ motivo: event.detail.motivo, // Agora já vem no formato correto do enum
 ```
 
 #### **Opções de Motivo Auto-Explicativas**
+
 - **Devolução Padrão**: Fim do período de uso
-- **Danificado**: EPI com defeito ou quebrado  
+- **Danificado**: EPI com defeito ou quebrado
 - **Troca**: Substituição por outro equipamento
 - **Outros**: Outro motivo específico
 
 #### **Payload Completo**
+
 ```typescript
 const payload: ReturnBatchPayload = {
-  devolucoes: [{
-    equipamentoId: equipamentoDevolucao.id,
-    motivo: event.detail.motivo, // Enum válido
-    observacoes: event.detail.observacoes || `Devolução via interface da ficha`
-  }]
+  devolucoes: [
+    {
+      equipamentoId: equipamentoDevolucao.id,
+      motivo: event.detail.motivo, // Enum válido
+      observacoes:
+        event.detail.observacoes || `Devolução via interface da ficha`,
+    },
+  ],
 };
 ```
 
@@ -144,31 +159,35 @@ const payload: ReturnBatchPayload = {
 ## 📊 Comparativo Antes vs Depois
 
 ### **EPIs no Dropdown**
-| Antes ❌ | Depois ✅ |
-|---|---|
+
+| Antes ❌                                  | Depois ✅                           |
+| ----------------------------------------- | ----------------------------------- |
 | `undefined - Nome não informado (CA N/A)` | `Capacete de Segurança (CA: 12345)` |
-| `undefined - Nome não informado (CA N/A)` | `Óculos de Proteção (CA: 67890)` |
-| Dados inválidos incluídos | Apenas dados válidos exibidos |
+| `undefined - Nome não informado (CA N/A)` | `Óculos de Proteção (CA: 67890)`    |
+| Dados inválidos incluídos                 | Apenas dados válidos exibidos       |
 
 ### **Devolução de EPIs**
-| Antes ❌ | Depois ✅ |
-|---|---|
-| Campo texto livre | Select com 4 opções predefinidas |
-| `"Devolução de item individual: texto"` | `"devolução padrão"` |
-| Erro 400 de validação | Processamento bem-sucedido |
-| Sem observações | Campo opcional para observações |
+
+| Antes ❌                                | Depois ✅                        |
+| --------------------------------------- | -------------------------------- |
+| Campo texto livre                       | Select com 4 opções predefinidas |
+| `"Devolução de item individual: texto"` | `"devolução padrão"`             |
+| Erro 400 de validação                   | Processamento bem-sucedido       |
+| Sem observações                         | Campo opcional para observações  |
 
 ---
 
 ## 🎯 Resultado Final
 
 **ANTES** (Problemas):
+
 - ❌ EPIs undefined no dropdown de entregas
 - ❌ Texto livre em devolução causando erro 400
 - ❌ Interface confusa para usuário final
 - ❌ Validação falhando no backend
 
 **DEPOIS** (Funcional):
+
 - ✅ Apenas EPIs válidos aparecem no dropdown
 - ✅ Devoluções processam com sucesso via enum válido
 - ✅ Interface clara com opções predefinidas
@@ -180,6 +199,7 @@ const payload: ReturnBatchPayload = {
 ## 🧪 Como Testar as Correções
 
 ### **Teste 1: Criação de Entrega**
+
 1. Ir para `/fichas`
 2. Clicar em uma ficha
 3. Clicar "Nova Entrega"
@@ -188,11 +208,12 @@ const payload: ReturnBatchPayload = {
 6. **Resultado**: Entrega criada com sucesso
 
 ### **Teste 2: Devolução de EPI**
+
 1. Na mesma ficha, aba "Equipamentos"
 2. Clicar "Devolver" em um item
 3. **Verificar**: Modal agora tem dropdown com 4 opções:
    - Devolução Padrão
-   - Danificado  
+   - Danificado
    - Troca
    - Outros
 4. Selecionar motivo e adicionar observações (opcional)
@@ -200,6 +221,7 @@ const payload: ReturnBatchPayload = {
 6. **Resultado**: Devolução processada sem erro 400
 
 ### **Teste 3: Verificar Dados**
+
 1. **Aba Histórico**: Deve mostrar a devolução processada
 2. **Aba Devoluções**: Deve mostrar os itens devolvidos
 3. **Console**: Não deve mais mostrar erros de validação enum
@@ -209,15 +231,18 @@ const payload: ReturnBatchPayload = {
 ## 📁 Arquivos Alterados
 
 ### **fichaQueryAdapter.ts**
+
 - **Correção**: Filtro de EPIs inválidos
 - **Linhas**: 289-324 (normalização com validação)
 
-### **DevolucaoModalPresenter.svelte**  
+### **DevolucaoModalPresenter.svelte**
+
 - **Correção**: Select ao invés de Textarea livre
 - **Adição**: Campo de observações opcional
 - **Linhas**: 32-44 (opções enum), 187-217 (interface)
 
 ### **FichaDetailContainer.svelte**
+
 - **Correção**: Remoção de type casting
 - **Adição**: Suporte a observações
 - **Linhas**: 442, 454-455 (payload correto)
@@ -227,8 +252,9 @@ const payload: ReturnBatchPayload = {
 ## ✅ Status Final
 
 **Funcionalidade /fichas agora está 100% operacional** com:
+
 - ✅ EPIs carregando corretamente nos dropdowns
-- ✅ Entregas sendo criadas com sucesso  
+- ✅ Entregas sendo criadas com sucesso
 - ✅ Devoluções processando sem erros de validação
 - ✅ Interface de usuário melhorada e mais clara
 - ✅ Backend recebendo dados no formato correto

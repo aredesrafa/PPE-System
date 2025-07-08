@@ -1,4 +1,3 @@
-
 ---
 # Especificação Técnica Detalhada: Módulo de Gestão de Fichas de EPI e Estoque
 
