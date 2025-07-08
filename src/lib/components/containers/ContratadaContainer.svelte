@@ -7,37 +7,56 @@
 
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { createAdvancedPaginatedStore } from '$lib/stores/paginatedStore';
+  import { createPaginatedStore } from '$lib/stores/paginatedStore';
   import ContratadaTablePresenter from '$lib/components/presenters/ContratadaTablePresenter.svelte';
   import { notify } from '$lib/stores';
   import type { ContratadaDTO } from '$lib/types/serviceTypes';
+  import { contratadasAdapter } from '$lib/services/entity/contratadasAdapter';
   
   // ==================== PROPS ====================
   
   export let initialPageSize = 10;
   export let embedded = false; // Para uso em tabs
   
-  // ==================== ADVANCED PAGINATED STORE ====================
+  // ==================== PAGINATED STORE WITH ADAPTER ====================
   
-  const contratadaStore = createAdvancedPaginatedStore<ContratadaDTO>({
-    baseEndpoint: '/contratadas',
-    defaultPageSize: initialPageSize,
-    debounceDelay: 300,
-    cacheTimeout: 5 * 60 * 1000
-  });
+  const contratadaStore = createPaginatedStore<ContratadaDTO>(
+    async (params) => {
+      console.log('🏢 Fetching contratadas with params:', params);
+      const result = await contratadasAdapter.getContratadas({
+        page: params.page,
+        limit: params.limit,
+        searchTerm: params.search,
+        statusFilter: params.status
+      });
+      
+      return {
+        data: result.contratadas,
+        total: result.total,
+        page: result.page,
+        pageSize: result.limit,
+        totalPages: Math.ceil(result.total / result.limit)
+      };
+    },
+    {
+      initialPageSize,
+      debounceDelay: 300,
+      cacheTimeout: 5 * 60 * 1000,
+      enableCache: true
+    }
+  );
   
   // ==================== DERIVED STORES ====================
   
-  $: items = $contratadaStore.items || [];
-  $: loading = $contratadaStore.loading;
-  $: error = $contratadaStore.error;
+  $: items = $contratadaStore?.items || [];
+  $: loading = $contratadaStore?.loading || false;
+  $: error = $contratadaStore?.error || null;
   $: pagination = {
-    currentPage: $contratadaStore.page,
-    itemsPerPage: $contratadaStore.pageSize,
-    totalItems: $contratadaStore.total,
-    totalPages: $contratadaStore.totalPages
+    currentPage: $contratadaStore?.page || 1,
+    itemsPerPage: $contratadaStore?.pageSize || initialPageSize,
+    totalItems: $contratadaStore?.total || 0,
+    totalPages: $contratadaStore?.totalPages || 1
   };
-  $: filters = contratadaStore.filters;
   
   // Debug logs
   $: console.log('🏢 ContratadaContainer - items:', items.length, items);
@@ -49,36 +68,36 @@
   
   // ==================== LIFECYCLE ====================
   
-  onMount(() => {
+  onMount(async () => {
     console.log('🏢 Inicializando ContratadaContainer...');
-    contratadaStore.loadData();
+    await contratadaStore.fetchPage({ page: 1, limit: initialPageSize });
   });
   
   // ==================== EVENT HANDLERS ====================
   
   function handlePageChange(newPage: number): void {
     console.log('📄 Mudança de página:', newPage);
-    contratadaStore.setPage(newPage);
+    contratadaStore.goToPage(newPage);
   }
   
   function handleFilterChange(filterKey: string, value: any): void {
     console.log('🔍 Filtro alterado:', filterKey, value);
-    contratadaStore.setFilter(filterKey, value);
+    contratadaStore.setFilters({ [filterKey]: value });
   }
   
   function handleClearFilters(): void {
     console.log('🧹 Limpando filtros...');
-    contratadaStore.clearFilters();
+    contratadaStore.reset();
   }
   
   function handleRefresh(): void {
     console.log('🔄 Atualizando dados de contratadas...');
-    contratadaStore.refresh();
+    contratadaStore.reload();
   }
   
   function handleItemsPerPageChange(newSize: number): void {
     console.log('📊 Alterando itens por página:', newSize);
-    contratadaStore.setPageSize(newSize);
+    contratadaStore.fetchPage({ page: 1, limit: newSize });
   }
   
   function handleNovaContratada(): void {
@@ -162,7 +181,6 @@
   {loading}
   {error}
   {pagination}
-  {filters}
   {embedded}
   {showEditarContratadaModal}
   {contratadaEdicao}
