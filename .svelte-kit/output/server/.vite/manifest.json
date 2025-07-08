@@ -5,7 +5,8 @@
     "src": ".svelte-kit/generated/server/internal.js",
     "isEntry": true,
     "imports": [
-      "_internal.js"
+      "_internal.js",
+      "_paths.js"
     ]
   },
   "_Button.js": {
@@ -155,7 +156,8 @@
     "name": "internal",
     "imports": [
       "_ssr.js",
-      "_ssr2.js"
+      "_ssr2.js",
+      "_paths.js"
     ]
   },
   "_modalStore.js": {
@@ -166,6 +168,10 @@
       "_ssr.js",
       "_Button.js"
     ]
+  },
+  "_paths.js": {
+    "file": "chunks/paths.js",
+    "name": "paths"
   },
   "_ssr.js": {
     "file": "chunks/ssr.js",
@@ -199,9 +205,10 @@
     "src": "node_modules/@sveltejs/kit/src/runtime/server/index.js",
     "isEntry": true,
     "imports": [
-      "_internal.js",
+      "_paths.js",
       "_exports.js",
-      "_index.js"
+      "_index.js",
+      "_internal.js"
     ]
   },
   "src/routes/+layout.svelte": {
@@ -216,6 +223,7 @@
       "_FileDocOutline.js",
       "_Button.js",
       "_ChevronDownOutline.js",
+      "_paths.js",
       "_stores.js"
     ],
     "css": [

@@ -1,20 +1,6 @@
 import { c as create_ssr_component, s as setContext, v as validate_component, m as missing_component } from "./ssr.js";
 import { a as afterUpdate } from "./ssr2.js";
-let base = "/epi35-front";
-let assets = base;
-const app_dir = "_app";
-const initial = { base, assets };
-function override(paths) {
-  base = paths.base;
-  assets = paths.assets;
-}
-function reset() {
-  base = initial.base;
-  assets = initial.assets;
-}
-function set_assets(path) {
-  assets = initial.assets = path;
-}
+import "./paths.js";
 let public_env = {};
 let safe_public_env = {};
 function set_private_env(environment) {
@@ -117,7 +103,7 @@ const options = {
   root: Root,
   service_worker: false,
   templates: {
-    app: ({ head, body, assets: assets2, nonce, env }) => '<!doctype html>\n<html lang="pt-BR" %sveltekit.theme%>\n  <head>\n    <meta charset="utf-8" />\n    <link rel="icon" href="' + assets2 + '/favicon.svg" type="image/svg+xml" />\n    <meta name="viewport" content="width=device-width, initial-scale=1" />\n    <title>DataLife EPI - Sistema de Gerenciamento</title>\n    <link rel="preconnect" href="https://fonts.googleapis.com" />\n    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />\n    <link\n      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"\n      rel="stylesheet"\n    />\n    ' + head + '\n  </head>\n  <body data-sveltekit-preload-data="hover" class="bg-gray-50 dark:bg-gray-900">\n    <div style="display: contents" class="h-full">' + body + "</div>\n  </body>\n</html>\n",
+    app: ({ head, body, assets, nonce, env }) => '<!doctype html>\n<html lang="pt-BR" %sveltekit.theme%>\n  <head>\n    <meta charset="utf-8" />\n    <link rel="icon" href="' + assets + '/favicon.svg" type="image/svg+xml" />\n    <meta name="viewport" content="width=device-width, initial-scale=1" />\n    <title>DataLife EPI - Sistema de Gerenciamento</title>\n    <link rel="preconnect" href="https://fonts.googleapis.com" />\n    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />\n    <link\n      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"\n      rel="stylesheet"\n    />\n    ' + head + '\n  </head>\n  <body data-sveltekit-preload-data="hover" class="bg-gray-50 dark:bg-gray-900">\n    <div style="display: contents" class="h-full">' + body + "</div>\n  </body>\n</html>\n",
     error: ({ status, message }) => '<!doctype html>\n<html lang="en">\n	<head>\n		<meta charset="utf-8" />\n		<title>' + message + `</title>
 
 		<style>
@@ -189,7 +175,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "2tbqr"
+  version_hash: "10nwec9"
 };
 async function get_hooks() {
   let handle;
@@ -208,23 +194,17 @@ async function get_hooks() {
   };
 }
 export {
-  assets as a,
-  base as b,
-  app_dir as c,
-  read_implementation as d,
-  options as e,
-  set_private_env as f,
+  set_private_env as a,
+  prerendering as b,
+  set_public_env as c,
+  set_safe_public_env as d,
+  set_read_implementation as e,
+  set_building as f,
   get_hooks as g,
-  prerendering as h,
-  set_public_env as i,
-  set_safe_public_env as j,
-  set_read_implementation as k,
-  set_assets as l,
-  set_building as m,
-  set_manifest as n,
-  override as o,
+  set_manifest as h,
+  set_prerendering as i,
+  options as o,
   public_env as p,
-  set_prerendering as q,
-  reset as r,
+  read_implementation as r,
   safe_public_env as s
 };

@@ -13,15 +13,16 @@
   import Header from './Header.svelte';
   import { page } from '$app/stores';
   import { onMount } from 'svelte';
+  import { base } from '$app/paths';
   
   const menuItems = [
     { 
-      href: '/', 
+      href: `${base}/`, 
       label: 'Dashboard', 
       icon: HomeOutline 
     },
     { 
-      href: '/fichas', 
+      href: `${base}/fichas`, 
       label: 'Fichas EPI', 
       icon: FileDocOutline 
     },
@@ -29,16 +30,16 @@
       label: 'Gestão Estoque', 
       icon: FolderOpenOutline,
       dropdown: [
-        { href: '/estoque', label: 'Estoque' },
-        { href: '/notas', label: 'Notas' },
-        { href: '/catalogo', label: 'Catálogo' }
+        { href: `${base}/estoque`, label: 'Estoque' },
+        { href: `${base}/notas`, label: 'Notas' },
+        { href: `${base}/catalogo`, label: 'Catálogo' }
       ]
     },
     { 
       label: 'Relatórios', 
       icon: ChartOutline,
       dropdown: [
-        { href: '/relatorios/auditoria', label: 'Auditoria' }
+        { href: `${base}/relatorios/auditoria`, label: 'Auditoria' }
       ]
     }
   ];
@@ -138,7 +139,7 @@
     <!-- Footer -->
     <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 dark:border-gray-700">
       <a 
-        href="/configuracoes" 
+        href="{base}/configuracoes" 
         class="flex items-center p-2 text-sm rounded-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition duration-75 {currentPath === '/configuracoes' ? 'text-primary-600 dark:text-primary-400 bg-gray-100 dark:bg-gray-700' : 'text-gray-900 dark:text-white'}"
         on:click={handleSidebarLinkClick}
       >

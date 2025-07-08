@@ -5,6 +5,7 @@
   import { themeStore } from '$lib/stores/themeStore';
   import { selectedCompanyStore } from '$lib/stores/companyStore';
   import { writable, derived } from 'svelte/store';
+  import { base } from '$app/paths';
   
   // Notificações reativas com store
   const notificationsStore = writable([
@@ -84,12 +85,12 @@
     <div class="flex items-center">
       <div class="flex items-center mr-3">
         <img 
-          src="/src/lib/assets/logo-icon.svg" 
+          src="{base}/logo-icon.svg" 
           alt="DataLife Logo" 
           class="w-8 h-8 mr-2"
         />
         <img 
-          src="/src/lib/assets/logo-text.svg" 
+          src="{base}/logo-text.svg" 
           alt="DataLife" 
           class="h-5"
         />
@@ -188,7 +189,7 @@
             <div class="w-4 h-4 bg-gray-400 rounded"></div>
             Perfil
           </DropdownItem>
-          <DropdownItem class="flex items-center gap-2 text-sm" href="/configuracoes">
+          <DropdownItem class="flex items-center gap-2 text-sm" href="{base}/configuracoes">
             <div class="w-4 h-4 bg-gray-400 rounded"></div>
             Configurações
           </DropdownItem>

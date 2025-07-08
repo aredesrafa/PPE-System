@@ -6,6 +6,7 @@ import { F as FileDocOutline } from "../../chunks/FileDocOutline.js";
 import { i as is_void, F as Frame, B as Badge, a as Button } from "../../chunks/Button.js";
 import * as dom from "@floating-ui/dom";
 import { C as ChevronDownOutline } from "../../chunks/ChevronDownOutline.js";
+import { b as base } from "../../chunks/paths.js";
 import { p as page } from "../../chunks/stores.js";
 const CategoriaEPI = {
   PROTECAO_CABECA: "PROTECAO_CABECA",
@@ -1804,7 +1805,7 @@ const Header = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   $$unsubscribe_unreadCount();
   $$unsubscribe_notificationsStore();
   $$unsubscribe_themeStore();
-  return ` <header class="${"px-4 h-16 fixed left-0 right-0 top-0 z-50 border-b " + escape(headerClasses, true)}"><div class="flex items-center w-full h-full"> <button type="button" class="${"lg:hidden rounded-sm p-2 " + escape(buttonClasses, true)}">${validate_component(BarsOutline, "BarsOutline").$$render($$result, { class: "w-5 h-5" }, {}, {})}</button>  <div class="flex items-center" data-svelte-h="svelte-1w2a502"><div class="flex items-center mr-3"><img src="/src/lib/assets/logo-icon.svg" alt="DataLife Logo" class="w-8 h-8 mr-2"> <img src="/src/lib/assets/logo-text.svg" alt="DataLife" class="h-5"></div></div>  <div class="hidden lg:flex items-center" style="margin-left: 108px;"><button type="button" class="${"flex items-center gap-2 p-2 rounded-sm " + escape(buttonClasses, true)}">${validate_component(GridOutline, "GridOutline").$$render($$result, { class: "w-4 h-4" }, {}, {})} <span class="${"text-base font-normal " + escape(
+  return ` <header class="${"px-4 h-16 fixed left-0 right-0 top-0 z-50 border-b " + escape(headerClasses, true)}"><div class="flex items-center w-full h-full"> <button type="button" class="${"lg:hidden rounded-sm p-2 " + escape(buttonClasses, true)}">${validate_component(BarsOutline, "BarsOutline").$$render($$result, { class: "w-5 h-5" }, {}, {})}</button>  <div class="flex items-center" data-svelte-h="svelte-1yd55dk"><div class="flex items-center mr-3"><img src="${escape(base, true) + "/logo-icon.svg"}" alt="DataLife Logo" class="w-8 h-8 mr-2"> <img src="${escape(base, true) + "/logo-text.svg"}" alt="DataLife" class="h-5"></div></div>  <div class="hidden lg:flex items-center" style="margin-left: 108px;"><button type="button" class="${"flex items-center gap-2 p-2 rounded-sm " + escape(buttonClasses, true)}">${validate_component(GridOutline, "GridOutline").$$render($$result, { class: "w-4 h-4" }, {}, {})} <span class="${"text-base font-normal " + escape(
     needsCustomColor ? "text-white" : "text-gray-900 dark:text-white",
     true
   )}">Gestão de EPI</span></button></div>  <div class="flex-1"></div>  <div class="flex items-center space-x-3"> ${validate_component(CompanySelector, "CompanySelector").$$render($$result, { headerType: companyBadge }, {}, {})}  <div class="relative"><button type="button" class="${"rounded-sm p-2 relative " + escape(buttonClasses, true)}">${validate_component(BellOutline, "BellOutline").$$render($$result, { class: "w-5 h-5" }, {}, {})} ${$unreadCount > 0 ? `<span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-xs flex items-center justify-center text-white font-medium">${escape($unreadCount > 9 ? "9+" : $unreadCount)}</span>` : ``}</button> ${validate_component(Dropdown, "Dropdown").$$render($$result, { placement: "bottom-end", class: "w-80" }, {}, {
@@ -1856,7 +1857,7 @@ const Header = create_ssr_component(($$result, $$props, $$bindings, slots) => {
         $$result,
         {
           class: "flex items-center gap-2 text-sm",
-          href: "/configuracoes"
+          href: base + "/configuracoes"
         },
         {},
         {
@@ -1893,12 +1894,12 @@ const MainLayout = create_ssr_component(($$result, $$props, $$bindings, slots) =
   $$unsubscribe_page = subscribe(page, (value) => $page = value);
   const menuItems = [
     {
-      href: "/",
+      href: `${base}/`,
       label: "Dashboard",
       icon: HomeOutline
     },
     {
-      href: "/fichas",
+      href: `${base}/fichas`,
       label: "Fichas EPI",
       icon: FileDocOutline
     },
@@ -1906,9 +1907,15 @@ const MainLayout = create_ssr_component(($$result, $$props, $$bindings, slots) =
       label: "Gestão Estoque",
       icon: FolderOpenOutline,
       dropdown: [
-        { href: "/estoque", label: "Estoque" },
-        { href: "/notas", label: "Notas" },
-        { href: "/catalogo", label: "Catálogo" }
+        {
+          href: `${base}/estoque`,
+          label: "Estoque"
+        },
+        { href: `${base}/notas`, label: "Notas" },
+        {
+          href: `${base}/catalogo`,
+          label: "Catálogo"
+        }
       ]
     },
     {
@@ -1916,7 +1923,7 @@ const MainLayout = create_ssr_component(($$result, $$props, $$bindings, slots) =
       icon: ChartOutline,
       dropdown: [
         {
-          href: "/relatorios/auditoria",
+          href: `${base}/relatorios/auditoria`,
           label: "Auditoria"
         }
       ]
@@ -1979,7 +1986,7 @@ const MainLayout = create_ssr_component(($$result, $$props, $$bindings, slots) =
         }
       })}`;
     }
-  })}  <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 dark:border-gray-700"><a href="/configuracoes" class="${"flex items-center p-2 text-sm rounded-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition duration-75 " + escape(
+  })}  <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 dark:border-gray-700"><a href="${escape(base, true) + "/configuracoes"}" class="${"flex items-center p-2 text-sm rounded-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition duration-75 " + escape(
     currentPath === "/configuracoes" ? "text-primary-600 dark:text-primary-400 bg-gray-100 dark:bg-gray-700" : "text-gray-900 dark:text-white",
     true
   )}">${validate_component(CogOutline, "CogOutline").$$render($$result, { class: "w-5 h-5 mr-3" }, {}, {})} <span data-svelte-h="svelte-p2tmt2">Configurações</span></a></div></div></aside>  <div class="p-4 lg:ml-64 bg-gray-50 dark:bg-gray-900 min-h-screen"><div class="pt-16">${slots.default ? slots.default({}) : ``}</div></div>`;
