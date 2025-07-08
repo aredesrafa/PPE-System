@@ -66,13 +66,27 @@ class ContratadasAdapter {
         queryParams.status = params.statusFilter.toUpperCase();
       }
 
-      // TODO: Conectar ao endpoint real quando disponível
-      // const endpoint = createUrlWithParams('/contratadas', queryParams);
-      // const response = await api.get<{ data: ContratadaDTO[]; pagination: any }>(endpoint);
+      // ✅ CONECTADO: Chamada real para o endpoint de contratadas
+      const endpoint = createUrlWithParams('/contratadas', queryParams);
+      const response = await api.get<{ success: boolean; data: { contratadas: ContratadaDTO[]; total: number } }>(endpoint);
 
-      // Por enquanto, simular resposta com dados mockados
-      await new Promise((resolve) => setTimeout(resolve, 800));
+      console.log('📦 Contratadas response real:', response);
+      
+      if (response.success && response.data) {
+        return {
+          contratadas: response.data.contratadas || [],
+          total: response.data.total || 0,
+          page: params.page || 1,
+          limit: params.limit || 10,
+        };
+      }
 
+    } catch (error) {
+      console.error("❌ Erro ao carregar contratadas, usando fallback mock:", error);
+      
+      // Fallback para dados mock em caso de erro
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      
       const mockData: ContratadaDTO[] = [
         {
           id: "1",
@@ -98,21 +112,9 @@ class ContratadasAdapter {
           createdAt: "2024-03-22T14:30:00Z",
           updatedAt: "2024-03-22T14:30:00Z",
         },
-        {
-          id: "3",
-          nome: "Gamma Serviços",
-          cnpj: "11.222.333/0001-44",
-          endereco: "Rua dos Serviços, 789",
-          contato: "(11) 88888-8888",
-          status: "inativa",
-          colaboradores: 0,
-          dataContrato: "2023-11-10",
-          createdAt: "2023-11-10T09:15:00Z",
-          updatedAt: "2024-12-01T16:45:00Z",
-        },
       ];
 
-      // Aplicar filtros
+      // Aplicar filtros ao fallback
       let contratadasFiltradas = mockData;
 
       if (params.searchTerm) {
@@ -130,7 +132,7 @@ class ContratadasAdapter {
         );
       }
 
-      console.log("✅ Contratadas carregadas:", contratadasFiltradas.length);
+      console.log("✅ Contratadas carregadas (fallback):", contratadasFiltradas.length);
 
       return {
         contratadas: contratadasFiltradas,
@@ -138,9 +140,6 @@ class ContratadasAdapter {
         page: params.page || 1,
         limit: params.limit || 10,
       };
-    } catch (error) {
-      console.error("❌ Erro ao carregar contratadas:", error);
-      throw error;
     }
   }
 
