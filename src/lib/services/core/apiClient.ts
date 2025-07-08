@@ -8,11 +8,13 @@
 
 import { browser } from "$app/environment";
 
-// Configurações da API - Usar proxy em desenvolvimento, URL direta em produção
+// Configurações da API - Usar proxy em desenvolvimento, URL direta em produção/GitHub Pages
 export const API_BASE_URL =
-  typeof window !== "undefined" && window.location.hostname === "localhost"
-    ? "/api" // Usar proxy em desenvolvimento
-    : "https://epi-backend-s14g.onrender.com/api"; // URL direta em produção
+  typeof window !== "undefined" && 
+  (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") &&
+  window.location.port !== ""
+    ? "/api" // Usar proxy em desenvolvimento local
+    : "https://epi-backend-s14g.onrender.com/api"; // URL direta em produção e GitHub Pages
 
 // Interfaces para request unificado
 export interface RequestConfig {
