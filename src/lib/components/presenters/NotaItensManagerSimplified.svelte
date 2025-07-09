@@ -328,11 +328,12 @@
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <!-- Seleção de EPI/Item -->
             <div class="md:col-span-2">
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label for="item-select-{index}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 {usaTiposEpi ? 'Tipo de EPI' : 'Item do Estoque'}
               </label>
               <Select
-                bind:value={usaTiposEpi ? item.tipo_epi_id : item.estoque_item_id}
+                id="item-select-{index}"
+                value={usaTiposEpi ? item.tipo_epi_id : item.estoque_item_id}
                 disabled={readonly}
                 class="rounded-sm text-sm"
                 on:change={(e) => atualizarItem(index, usaTiposEpi ? 'tipo_epi_id' : 'estoque_item_id', e.target.value)}
@@ -346,17 +347,18 @@
 
             <!-- Quantidade -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label for="quantidade-{index}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Quantidade
                 {#if item.quantidade_disponivel !== undefined}
                   <span class="text-xs text-gray-500">(máx: {item.quantidade_disponivel})</span>
                 {/if}
               </label>
               <Input
+                id="quantidade-{index}"
                 type="number"
                 min="1"
                 max={item.quantidade_disponivel || undefined}
-                bind:value={item.quantidade}
+                value={item.quantidade}
                 disabled={readonly}
                 placeholder="Qtd"
                 class="rounded-sm text-sm"
@@ -367,14 +369,15 @@
             <!-- Custo unitário (apenas para entradas) -->
             {#if isEntrada}
               <div class="md:col-span-3">
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label for="custo-{index}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Custo Unitário (R$)
                 </label>
                 <Input
+                  id="custo-{index}"
                   type="number"
                   min="0"
                   step="0.01"
-                  bind:value={item.custo_unitario}
+                  value={item.custo_unitario}
                   disabled={readonly}
                   placeholder="Custo unitário (R$)"
                   class="rounded-sm text-sm"
