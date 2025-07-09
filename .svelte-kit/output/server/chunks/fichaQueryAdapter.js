@@ -1,4 +1,4 @@
-import { a as api } from "./modalStore.js";
+import { b as api } from "./Button.js";
 class FichaQueryAdapter {
   /**
    * Buscar ficha completa com dados pré-processados pelo backend

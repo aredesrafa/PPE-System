@@ -16,6 +16,7 @@
   import { createPaginatedStore } from '$lib/stores/paginatedStore';
   import { businessConfigStore } from '$lib/stores/businessConfigStore';
   import { notify } from '$lib/stores';
+  import { api } from '$lib/services/core/apiClient';
   import FichasTablePresenter from '../presenters/FichasTablePresenter.svelte';
   import FichaDetailContainer from '../containers/FichaDetailContainer.svelte';
   import NovaFichaModalPresenter from '../presenters/NovaFichaModalPresenter.svelte';
@@ -199,14 +200,8 @@
       loadingContratadas = true;
       console.log('🔄 Carregando contratadas da API...');
       
-      // Chamada real para API de contratadas  
-      const response = await fetch('/api/contratadas');
-      
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-      
-      const result = await response.json();
+      // ✅ CORREÇÃO: Usar apiClient para compatibilidade local/GitHub Pages
+      const result = await api.get('/contratadas');
       
       console.log('📦 Raw API response for contratadas:', result);
       console.log('📦 result.data structure:', result.data);

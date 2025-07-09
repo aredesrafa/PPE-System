@@ -1,6 +1,6 @@
 import { c as create_ssr_component, a as compute_rest_props, j as getContext, d as spread, g as add_attribute, h as escape, f as escape_attribute_value, e as escape_object, i as createEventDispatcher, v as validate_component, l as each, k as subscribe } from "../../../../chunks/ssr.js";
 import { R as RefreshOutline, L as LoadingSpinner, E as ErrorDisplay, T as Table, a as TableHead, b as TableHeadCell, c as TableBody, d as TableBodyRow, e as TableBodyCell, f as createPaginatedStore } from "../../../../chunks/ErrorDisplay.js";
-import { a as Button, B as Badge } from "../../../../chunks/Button.js";
+import { a as Button, B as Badge, b as api } from "../../../../chunks/Button.js";
 import { C as Card } from "../../../../chunks/Card.js";
 import { L as Label } from "../../../../chunks/Label.js";
 import { I as Input } from "../../../../chunks/modalStore.js";
@@ -702,13 +702,10 @@ const AuditoriaContainer = create_ssr_component(($$result, $$props, $$bindings, 
     if (params.usuarioId) searchParams.set("usuarioId", params.usuarioId);
     if (params.dataInicio) searchParams.set("dataInicio", params.dataInicio);
     if (params.dataFim) searchParams.set("dataFim", params.dataFim);
-    console.log("📋 Buscando movimentações:", `/api/relatorios/movimentacoes?${searchParams}`);
+    console.log("📋 Buscando movimentações:", `/relatorios/movimentacoes?${searchParams}`);
     try {
-      const response = await fetch(`/api/relatorios/movimentacoes?${searchParams}`);
-      if (!response.ok) {
-        throw new Error(`Backend retornou ${response.status}: ${response.statusText}`);
-      }
-      const result = await response.json();
+      const endpoint = `/relatorios/movimentacoes?${searchParams}`;
+      const result = await api.get(endpoint);
       console.log("✅ Dados recebidos do backend:", result);
       console.log("📊 Estrutura dos dados:", {
         success: result.success,

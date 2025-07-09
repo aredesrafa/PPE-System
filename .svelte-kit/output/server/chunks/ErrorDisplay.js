@@ -1,7 +1,7 @@
 import { c as create_ssr_component, a as compute_rest_props, v as validate_component, b as compute_slots, d as spread, g as add_attribute, e as escape_object, f as escape_attribute_value, s as setContext, j as getContext, k as subscribe, l as each, h as escape } from "./ssr.js";
 import { w as writable } from "./index.js";
 import { twMerge, twJoin } from "tailwind-merge";
-import { f as fade, F as Frame, C as CloseButton, a as Button } from "./Button.js";
+import { f as fade, F as Frame, C as CloseButton, b as api, a as Button } from "./Button.js";
 import { A as ArrowRightOutline, E as ExclamationCircleOutline } from "./ExclamationCircleOutline.js";
 const TransitionFrame = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let $$restProps = compute_rest_props($$props, ["transition", "params", "open"]);
@@ -471,6 +471,47 @@ const RefreshOutline = create_ssr_component(($$result, $$props, $$bindings, slot
     {}
   )}>${title.id && title.title ? `<title${add_attribute("id", title.id, 0)}>${escape(title.title)}</title>` : ``}${desc.id && desc.desc ? `<desc${add_attribute("id", desc.id, 0)}>${escape(desc.desc)}</desc>` : ``}<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"${add_attribute("stroke-width", strokeWidth, 0)} d="M17.651 7.65a7.131 7.131 0 0 0-12.68 3.15M18.001 4v4h-4m-7.652 8.35a7.13 7.13 0 0 0 12.68-3.15M6 20v-4h4"></path></svg>`} `;
 });
+function removeNonNumeric(str) {
+  return str.replace(/\D/g, "");
+}
+function isValidCPF(cpf) {
+  const numbers = removeNonNumeric(cpf);
+  if (numbers.length !== 11) return false;
+  if (/^(\d)\1{10}$/.test(numbers)) return false;
+  let sum = 0;
+  for (let i = 0; i < 9; i++) {
+    sum += parseInt(numbers[i]) * (10 - i);
+  }
+  let digit1 = sum * 10 % 11;
+  if (digit1 === 10) digit1 = 0;
+  sum = 0;
+  for (let i = 0; i < 10; i++) {
+    sum += parseInt(numbers[i]) * (11 - i);
+  }
+  let digit2 = sum * 10 % 11;
+  if (digit2 === 10) digit2 = 0;
+  return digit1 === parseInt(numbers[9]) && digit2 === parseInt(numbers[10]);
+}
+function isValidCNPJ(cnpj) {
+  const numbers = removeNonNumeric(cnpj);
+  if (numbers.length !== 14) return false;
+  if (/^(\d)\1{13}$/.test(numbers)) return false;
+  const weights1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+  let sum = 0;
+  for (let i = 0; i < 12; i++) {
+    sum += parseInt(numbers[i]) * weights1[i];
+  }
+  let digit1 = sum % 11;
+  digit1 = digit1 < 2 ? 0 : 11 - digit1;
+  const weights2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+  sum = 0;
+  for (let i = 0; i < 13; i++) {
+    sum += parseInt(numbers[i]) * weights2[i];
+  }
+  let digit2 = sum % 11;
+  digit2 = digit2 < 2 ? 0 : 11 - digit2;
+  return digit1 === parseInt(numbers[12]) && digit2 === parseInt(numbers[13]);
+}
 function createPaginatedStore(fetchFunction, options = {}) {
   const {
     initialPageSize = 20,
@@ -728,18 +769,9 @@ function createAdvancedPaginatedStore(config = {}) {
         if (params.ativo !== void 0 && params.ativo !== "") {
           queryParams.append("ativa", String(params.ativo));
         }
-        const url = `/api/contratadas?${queryParams.toString()}`;
-        console.log("🌐 Fetching contratadas from:", url);
-        const response = await fetch(url, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json"
-          }
-        });
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
-        const result = await response.json();
+        const endpoint = `/contratadas?${queryParams.toString()}`;
+        console.log("🌐 Fetching contratadas from:", `/api${endpoint}`);
+        const result = await api.get(endpoint);
         console.log("📦 Contratadas response:", result);
         console.log("📦 Data array:", result.data);
         console.log("📦 Data length:", result.data?.length);
@@ -774,18 +806,9 @@ function createAdvancedPaginatedStore(config = {}) {
         if (params.ativo !== void 0 && params.ativo !== "") {
           queryParams.append("ativo", String(params.ativo));
         }
-        const url = `/api/colaboradores?${queryParams.toString()}`;
-        console.log("🌐 Fetching colaboradores from:", url);
-        const response = await fetch(url, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json"
-          }
-        });
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
-        const result = await response.json();
+        const endpoint = `/colaboradores?${queryParams.toString()}`;
+        console.log("🌐 Fetching colaboradores from:", `/api${endpoint}`);
+        const result = await api.get(endpoint);
         console.log("📦 Colaboradores response:", result);
         if (!result.success) {
           throw new Error(result.message || "Erro na resposta da API");
@@ -953,17 +976,7 @@ function createAdvancedPaginatedStore(config = {}) {
     if (config.baseEndpoint === "/contratadas") {
       try {
         console.log("🆕 Criando contratada:", data);
-        const response = await fetch("/api/contratadas", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(data)
-        });
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
-        const result = await response.json();
+        const result = await api.post("/contratadas", data);
         console.log("✅ Contratada criada:", result);
         if (!result.success) {
           throw new Error(result.message || "Erro ao criar contratada");
@@ -977,17 +990,22 @@ function createAdvancedPaginatedStore(config = {}) {
     } else if (config.baseEndpoint === "/colaboradores") {
       try {
         console.log("🆕 Criando colaborador:", data);
-        const response = await fetch("/api/colaboradores", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(data)
-        });
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        const colaboradorData = data;
+        if (colaboradorData.cpf && !isValidCPF(colaboradorData.cpf)) {
+          throw new Error("CPF inválido. Verifique o formato e os dígitos verificadores.");
         }
-        const result = await response.json();
+        if (!colaboradorData.contratadaId) {
+          throw new Error("Contratada é obrigatória. Selecione uma contratada válida.");
+        }
+        const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+        if (!uuidRegex.test(colaboradorData.contratadaId)) {
+          throw new Error("ID da contratada inválido. Selecione uma contratada válida da lista.");
+        }
+        const payload = {
+          ...colaboradorData,
+          cpf: colaboradorData.cpf ? colaboradorData.cpf.replace(/\D/g, "") : void 0
+        };
+        const result = await api.post("/colaboradores", payload);
         console.log("✅ Colaborador criado:", result);
         if (!result.success) {
           throw new Error(result.message || "Erro ao criar colaborador");
@@ -1006,17 +1024,7 @@ function createAdvancedPaginatedStore(config = {}) {
     if (config.baseEndpoint === "/contratadas") {
       try {
         console.log("✏️ Atualizando contratada:", id, data);
-        const response = await fetch(`/api/contratadas/${id}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(data)
-        });
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
-        const result = await response.json();
+        const result = await api.put(`/contratadas/${id}`, data);
         console.log("✅ Contratada atualizada:", result);
         if (!result.success) {
           throw new Error(result.message || "Erro ao atualizar contratada");
@@ -1030,17 +1038,7 @@ function createAdvancedPaginatedStore(config = {}) {
     } else if (config.baseEndpoint === "/colaboradores") {
       try {
         console.log("✏️ Atualizando colaborador:", id, data);
-        const response = await fetch(`/api/colaboradores/${id}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(data)
-        });
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
-        const result = await response.json();
+        const result = await api.put(`/colaboradores/${id}`, data);
         console.log("✅ Colaborador atualizado:", result);
         if (!result.success) {
           throw new Error(result.message || "Erro ao atualizar colaborador");
@@ -1059,16 +1057,7 @@ function createAdvancedPaginatedStore(config = {}) {
     if (config.baseEndpoint === "/contratadas") {
       try {
         console.log("🗑️ Excluindo contratada:", id);
-        const response = await fetch(`/api/contratadas/${id}`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json"
-          }
-        });
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
-        const result = await response.json();
+        const result = await api.delete(`/contratadas/${id}`);
         console.log("✅ Contratada excluída:", result);
         if (!result.success) {
           throw new Error(result.message || "Erro ao excluir contratada");
@@ -1082,16 +1071,7 @@ function createAdvancedPaginatedStore(config = {}) {
     } else if (config.baseEndpoint === "/colaboradores") {
       try {
         console.log("🗑️ Excluindo colaborador:", id);
-        const response = await fetch(`/api/colaboradores/${id}`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json"
-          }
-        });
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
-        const result = await response.json();
+        const result = await api.delete(`/colaboradores/${id}`);
         console.log("✅ Colaborador excluído:", result);
         if (!result.success) {
           throw new Error(result.message || "Erro ao excluir colaborador");
@@ -1272,5 +1252,6 @@ export {
   TableBodyRow as d,
   TableBodyCell as e,
   createPaginatedStore as f,
-  createAdvancedPaginatedStore as g
+  createAdvancedPaginatedStore as g,
+  isValidCNPJ as i
 };

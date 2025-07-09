@@ -69,13 +69,34 @@ class ContratadasAdapter {
 
       // ✅ CONECTADO: Chamada real para o endpoint de contratadas
       const endpoint = createUrlWithParams('/contratadas', queryParams);
-      const response = await api.get<{ success: boolean; data: { contratadas: ContratadaDTO[]; total: number } }>(endpoint);
+      const response = await api.get<{ success: boolean; data: { contratadas: any[]; total: number } }>(endpoint);
 
       console.log('📦 Contratadas response real:', response);
+      console.log('📦 Estrutura dos dados:', {
+        success: response.success,
+        contratadas: response.data?.contratadas?.length || 0,
+        total: response.data?.total || 0
+      });
       
       if (response.success && response.data) {
+        // Mapear dados do backend para interface do frontend
+        const contratadas = response.data.contratadas.map((item: any) => ({
+          id: item.id,
+          nome: item.nome,
+          cnpj: item.cnpjFormatado || item.cnpj,
+          endereco: item.endereco || '',
+          contato: item.contato || '',
+          status: item.status || 'ativa',
+          colaboradores: item.colaboradores || 0,
+          dataContrato: item.dataContrato || item.createdAt?.split('T')[0] || '',
+          createdAt: item.createdAt,
+          updatedAt: item.updatedAt || item.createdAt
+        }));
+
+        console.log('✅ Contratadas mapeadas:', contratadas.length);
+
         return {
-          contratadas: response.data.contratadas || [],
+          contratadas,
           total: response.data.total || 0,
           page: params.page || 1,
           limit: params.limit || 10,

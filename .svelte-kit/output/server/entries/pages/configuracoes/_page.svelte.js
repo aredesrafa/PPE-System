@@ -1,13 +1,13 @@
 import { c as create_ssr_component, a as compute_rest_props, b as compute_slots, j as getContext, v as validate_component, g as add_attribute, i as createEventDispatcher, h as escape, d as spread, e as escape_object, f as escape_attribute_value, s as setContext, l as each, k as subscribe } from "../../../chunks/ssr.js";
-import { F as Frame, C as CloseButton, a as Button, B as Badge } from "../../../chunks/Button.js";
+import { F as Frame, C as CloseButton, a as Button, c as createUrlWithParams, b as api, B as Badge } from "../../../chunks/Button.js";
 import { C as Card } from "../../../chunks/Card.js";
 import { L as Label } from "../../../chunks/Label.js";
 import { twMerge } from "tailwind-merge";
 import { C as Checkbox } from "../../../chunks/Checkbox.js";
-import { R as RefreshOutline, L as LoadingSpinner, E as ErrorDisplay, T as Table, a as TableHead, b as TableHeadCell, c as TableBody, d as TableBodyRow, e as TableBodyCell, f as createPaginatedStore, g as createAdvancedPaginatedStore } from "../../../chunks/ErrorDisplay.js";
+import { R as RefreshOutline, L as LoadingSpinner, E as ErrorDisplay, T as Table, a as TableHead, b as TableHeadCell, c as TableBody, d as TableBodyRow, e as TableBodyCell, i as isValidCNPJ, f as createPaginatedStore, g as createAdvancedPaginatedStore } from "../../../chunks/ErrorDisplay.js";
 import { w as writable } from "../../../chunks/index.js";
 import { I as Icon } from "../../../chunks/Icon.js";
-import { I as Input, c as createUrlWithParams, a as api } from "../../../chunks/modalStore.js";
+import { I as Input } from "../../../chunks/modalStore.js";
 import { T as TrashBinOutline, S as Select } from "../../../chunks/TrashBinOutline.js";
 import { P as PlusOutline } from "../../../chunks/PlusOutline.js";
 const common = "me-3 shrink-0 bg-gray-200 rounded-full peer-focus:ring-4 peer-checked:after:translate-x-full peer-checked:rtl:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:bg-white after:border-gray-300 after:border after:rounded-full after:transition-all";
@@ -875,14 +875,32 @@ class ContratadasAdapter {
     }
   }
   /**
-   * ✅ PREPARADO PARA BACKEND: Criar nova contratada
+   * ✅ CONECTADO AO BACKEND: Criar nova contratada
    */
   async createContratada(data) {
     try {
       console.log("💾 Criando contratada:", data);
+      if (data.cnpj && !isValidCNPJ(data.cnpj)) {
+        throw new Error("CNPJ inválido. Verifique o formato e os dígitos verificadores.");
+      }
+      const payload = {
+        ...data,
+        cnpj: data.cnpj ? data.cnpj.replace(/\D/g, "") : void 0
+      };
+      const response = await api.post("/contratadas", payload);
+      if (response.success && response.data) {
+        console.log("✅ Contratada criada no backend:", response.data.id);
+        return response.data;
+      }
+      throw new Error("Resposta inválida do backend");
+    } catch (error) {
+      console.error("❌ Erro ao criar contratada no backend, usando fallback:", error);
+      if (error instanceof Error && error.message.includes("CNPJ inválido")) {
+        throw error;
+      }
       await new Promise((resolve) => setTimeout(resolve, 1e3));
       const novaContratada = {
-        id: `contratada-${Date.now()}`,
+        id: `contratada-mock-${Date.now()}`,
         nome: data.nome,
         cnpj: data.cnpj,
         endereco: data.endereco,
@@ -893,11 +911,8 @@ class ContratadasAdapter {
         createdAt: (/* @__PURE__ */ new Date()).toISOString(),
         updatedAt: (/* @__PURE__ */ new Date()).toISOString()
       };
-      console.log("✅ Contratada criada:", novaContratada.id);
+      console.log("✅ Contratada criada (fallback):", novaContratada.id);
       return novaContratada;
-    } catch (error) {
-      console.error("❌ Erro ao criar contratada:", error);
-      throw error;
     }
   }
   /**

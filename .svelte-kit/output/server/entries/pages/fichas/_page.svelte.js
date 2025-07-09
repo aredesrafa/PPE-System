@@ -1,8 +1,8 @@
 import { c as create_ssr_component, i as createEventDispatcher, v as validate_component, h as escape, l as each, k as subscribe } from "../../../chunks/ssr.js";
 import { f as fichaQueryAdapter } from "../../../chunks/fichaQueryAdapter.js";
+import { a as Button, B as Badge } from "../../../chunks/Button.js";
 import { L as LoadingSpinner, E as ErrorDisplay, R as RefreshOutline, T as Table, a as TableHead, b as TableHeadCell, c as TableBody, d as TableBodyRow, e as TableBodyCell, f as createPaginatedStore } from "../../../chunks/ErrorDisplay.js";
 import { I as Input } from "../../../chunks/modalStore.js";
-import { a as Button, B as Badge } from "../../../chunks/Button.js";
 import { C as Card } from "../../../chunks/Card.js";
 import { C as Checkbox } from "../../../chunks/Checkbox.js";
 import { E as EyeOutline } from "../../../chunks/DrawerHeader.svelte_svelte_type_style_lang.js";
