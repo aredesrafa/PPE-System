@@ -221,23 +221,19 @@ class NotasMovimentacaoAdapter {
       const response = await api.post<any>(this.baseEndpoint, backendData);
 
       console.log("✅ Nota criada:", response);
-      console.log("🔍 Estrutura da resposta para debug:", JSON.stringify(response, null, 2));
 
       // API retorna no formato padrão
       if (response.success && response.data) {
-        console.log("✅ Retornando dados com sucesso:", response.data);
         return {
           success: response.success,
           data: response.data,
         };
       } else if (response.data) {
-        console.log("✅ Retornando apenas dados:", response.data);
         return {
           success: true,
           data: response.data,
         };
       } else {
-        console.log("✅ Retornando resposta completa:", response);
         return {
           success: true,
           data: response,

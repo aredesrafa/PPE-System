@@ -385,7 +385,6 @@
         // Criar nova nota
         const response = await notasMovimentacaoAdapter.criarNota(notaData);
         console.log('📝 Resposta da criação da nota:', response);
-        console.log('🔍 Estrutura completa da resposta:', JSON.stringify(response, null, 2));
         
         // Extrair ID de forma mais defensiva
         notaId = response?.data?.id || response?.id || response?.data?.uuid || response?.uuid;

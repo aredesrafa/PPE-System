@@ -434,7 +434,7 @@
   on:clearFilters={handleClearFilters}
   on:pageChange={(e) => handlePageChange(e.detail.page)}
   on:itemEdit={(e) => handleItemEdit(e.detail.item)}
-  on:itemHistory={(e) => handleItemHistory(e.detail.item)}
+  on:itemHistory={handleItemHistory}
   on:newMovement={handleNewMovement}
 />
 
