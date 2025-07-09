@@ -59,12 +59,11 @@
     lastOpen = open;
   }
 
-  // Form data
-  let formData: CriarNotaMovimentacaoRequest = {
-    tipo: 'ENTRADA',
-    almoxarifado_id: '',
-    almoxarifado_destino_id: '',
-    descricao: '',
+  // Form data corrigido para formato da API
+  let formData = {
+    tipo_nota: 'ENTRADA' as TipoNotaEnum,
+    almoxarifado_origem_id: '',
+    almoxarifado_destino_id: '', 
     observacoes: '',
     data_documento: new Date().toISOString().split('T')[0],
     itens: []
@@ -136,13 +135,13 @@
         await loadNotaData();
       } else {
         // Nova nota: configurar valores padrão
-        formData.tipo = tipo;
+        formData.tipo_nota = tipo;
         
         // Auto-selecionar almoxarifado padrão se ainda não definido
-        if (!formData.almoxarifado_id && almoxarifadoOptions.length > 0) {
+        if (!formData.almoxarifado_origem_id && almoxarifadoOptions.length > 0) {
           // Tentar selecionar o principal primeiro, senão o primeiro da lista
           const almoxarifadoPadrao = almoxarifadoOptions.find(opt => opt.isPrincipal) || almoxarifadoOptions[0];
-          formData.almoxarifado_id = almoxarifadoPadrao.value;
+          formData.almoxarifado_origem_id = almoxarifadoPadrao.value;
           
           console.log('🔧 Auto-selecionando almoxarifado padrão:', {
             selecionado: almoxarifadoPadrao.label,
@@ -163,9 +162,9 @@
       almoxarifadoDestinoOptions = almoxarifadoOptions;
       
       // Auto-selecionar almoxarifado padrão mesmo no fallback
-      if (mode !== 'edit' && !formData.almoxarifado_id) {
-        formData.almoxarifado_id = almoxarifadoOptions[0].value; // Primeiro do fallback
-        formData.tipo = tipo;
+      if (mode !== 'edit' && !formData.almoxarifado_origem_id) {
+        formData.almoxarifado_origem_id = almoxarifadoOptions[0].value; // Primeiro do fallback
+        formData.tipo_nota = tipo;
       }
       
       console.log('⚠️ NotesDetailDrawer: Usando fallback para almoxarifados - auto-selecionado:', almoxarifadoOptions[0].label);
@@ -180,10 +179,9 @@
     try {
       // Mapear dados da nota para o formulário
       formData = {
-        tipo: nota.tipo,
-        almoxarifado_id: nota.almoxarifado_id || '',
-        almoxarifado_destino_id: nota.almoxarifado_destino_id || '',
-        descricao: nota.descricao || '',
+        tipo_nota: nota.tipo,
+        almoxarifado_origem_id: nota.almoxarifado_id || nota.almoxarifadoOrigemId || '',
+        almoxarifado_destino_id: nota.almoxarifado_destino_id || nota.almoxarifadoDestinoId || '',
         observacoes: nota.observacoes || '',
         data_documento: nota.data_documento?.split('T')[0] || new Date().toISOString().split('T')[0],
         itens: []
@@ -192,10 +190,14 @@
       // Mapear itens se existirem
       if (nota.itens && nota.itens.length > 0) {
         itens = nota.itens.map(item => ({
+          temp_id: `existing_${item.id}`,
           tipo_epi_id: item.tipo_epi_id,
+          estoque_item_id: item.estoque_item_id,
           quantidade: item.quantidade,
           custo_unitario: item.custo_unitario || 0,
-          observacoes: item.observacoes || ''
+          equipamento_nome: item.equipamento_nome || '',
+          categoria: item.categoria || '',
+          numero_ca: item.equipamento_ca || ''
         }));
       }
 
@@ -208,10 +210,9 @@
   
   function resetForm(): void {
     formData = {
-      tipo: tipo,
-      almoxarifado_id: '',
+      tipo_nota: tipo,
+      almoxarifado_origem_id: '',
       almoxarifado_destino_id: '',
-      descricao: '',
       observacoes: '',
       data_documento: new Date().toISOString().split('T')[0],
       itens: []
@@ -228,8 +229,8 @@
     itemValidationErrors = [];
     
     // Para rascunho, apenas validações críticas
-    if (formData.tipo === 'TRANSFERENCIA' && formData.almoxarifado_id && formData.almoxarifado_destino_id) {
-      if (formData.almoxarifado_id === formData.almoxarifado_destino_id) {
+    if (formData.tipo_nota === 'TRANSFERENCIA' && formData.almoxarifado_origem_id && formData.almoxarifado_destino_id) {
+      if (formData.almoxarifado_origem_id === formData.almoxarifado_destino_id) {
         formErrors.almoxarifado_destino_id = 'Almoxarifado de destino deve ser diferente do origem';
       }
     }
@@ -250,25 +251,20 @@
     itemValidationErrors = [];
     
     // Validações obrigatórias para nota completa
-    if (!formData.almoxarifado_id) {
-      formErrors.almoxarifado_id = 'Almoxarifado é obrigatório';
+    if (!formData.almoxarifado_origem_id) {
+      formErrors.almoxarifado_origem_id = 'Almoxarifado é obrigatório';
     }
     
-    if (formData.tipo === 'TRANSFERENCIA' && !formData.almoxarifado_destino_id) {
+    if (formData.tipo_nota === 'TRANSFERENCIA' && !formData.almoxarifado_destino_id) {
       formErrors.almoxarifado_destino_id = 'Almoxarifado de destino é obrigatório para transferência';
     }
     
-    if (formData.tipo === 'TRANSFERENCIA' && formData.almoxarifado_id === formData.almoxarifado_destino_id) {
+    if (formData.tipo_nota === 'TRANSFERENCIA' && formData.almoxarifado_origem_id === formData.almoxarifado_destino_id) {
       formErrors.almoxarifado_destino_id = 'Almoxarifado de destino deve ser diferente do origem';
     }
 
     if (!formData.data_documento) {
       formErrors.data_documento = 'Data do documento é obrigatória';
-    }
-
-    // Validar descrição para nota completa
-    if (!formData.descricao || formData.descricao.trim() === '') {
-      formErrors.descricao = 'Descrição é obrigatória para nota completa';
     }
 
     // Validar itens obrigatoriamente
@@ -278,7 +274,7 @@
     }
 
     // Validar se todos os itens têm custo (para entradas)
-    if (formData.tipo === 'ENTRADA') {
+    if (formData.tipo_nota === 'ENTRADA') {
       const itensSemCusto = itens.filter(item => !item.custo_unitario || item.custo_unitario <= 0);
       if (itensSemCusto.length > 0) {
         itemValidationErrors = [`${itensSemCusto.length} ${itensSemCusto.length === 1 ? 'item não possui' : 'itens não possuem'} custo unitário válido`];
@@ -315,10 +311,13 @@
     saveLoading = true;
     
     try {
-      // Preparar dados para salvar
-      const notaData: CriarNotaMovimentacaoRequest = {
-        ...formData,
-        itens: itens
+      // Preparar dados para salvar com formato correto da API
+      const notaData = {
+        tipo_nota: formData.tipo_nota,
+        almoxarifado_origem_id: formData.almoxarifado_origem_id,
+        almoxarifado_destino_id: formData.almoxarifado_destino_id || undefined,
+        data_documento: formData.data_documento,
+        observacoes: formData.observacoes || undefined
       };
 
       let notaId: string;
@@ -327,13 +326,36 @@
         // Criar nova nota
         const response = await notasMovimentacaoAdapter.criarNota(notaData);
         notaId = response.id;
+        
+        // Adicionar itens se existirem
+        if (itens.length > 0) {
+          for (const item of itens) {
+            const itemData = {
+              tipo_epi_id: item.tipo_epi_id,
+              estoque_item_id: item.estoque_item_id,
+              quantidade: item.quantidade,
+              custo_unitario: item.custo_unitario
+            };
+            
+            await notasMovimentacaoAdapter.adicionarItem(notaId, itemData);
+          }
+        }
+        
+        // Se modo é concluida, concluir a nota
+        if (modo === 'concluida') {
+          await notasMovimentacaoAdapter.concluirNota(notaId);
+        }
+        
       } else {
         // Atualizar nota existente
         if (!nota?.id) {
           throw new Error('ID da nota não encontrado');
         }
         
-        await notasMovimentacaoAdapter.atualizarNota(nota.id, notaData);
+        await notasMovimentacaoAdapter.atualizarNota(nota.id, {
+          data_documento: notaData.data_documento,
+          observacoes: notaData.observacoes
+        });
         notaId = nota.id;
       }
 
@@ -378,9 +400,9 @@
 
   // ==================== COMPUTED PROPERTIES ====================
   
-  $: drawerTitle = mode === 'create' ? `Nova Nota - ${getTipoNotaLabel(formData.tipo)}` : 
-    mode === 'edit' ? `Editar Nota - ${getTipoNotaLabel(formData.tipo)}` : 
-    `Visualizar Nota - ${getTipoNotaLabel(formData.tipo)}`;
+  $: drawerTitle = mode === 'create' ? `Nova Nota - ${getTipoNotaLabel(formData.tipo_nota)}` : 
+    mode === 'edit' ? `Editar Nota - ${getTipoNotaLabel(formData.tipo_nota)}` : 
+    `Visualizar Nota - ${getTipoNotaLabel(formData.tipo_nota)}`;
 
   $: totalItens = itens.length;
   
@@ -416,13 +438,13 @@
   // ==================== REACTIVE STATEMENTS ====================
   
   // Atualizar opções de almoxarifado destino baseado no tipo
-  $: if (formData.tipo !== 'TRANSFERENCIA') {
+  $: if (formData.tipo_nota !== 'TRANSFERENCIA') {
     formData.almoxarifado_destino_id = '';
   }
 
   // Filtrar almoxarifado destino para não incluir o de origem
   $: almoxarifadoDestinoFiltrado = almoxarifadoDestinoOptions.filter(
-    alm => alm.value !== formData.almoxarifado_id
+    alm => alm.value !== formData.almoxarifado_origem_id
   );
 </script>
 
@@ -499,19 +521,19 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <!-- Tipo -->
           <div>
-            <Label for="tipo" class="mb-2 text-gray-900 dark:text-white">Tipo de Nota</Label>
+            <Label for="tipo_nota" class="mb-2 text-gray-900 dark:text-white">Tipo de Nota</Label>
             <Select
-              id="tipo"
-              bind:value={formData.tipo}
+              id="tipo_nota"
+              bind:value={formData.tipo_nota}
               disabled={mode === 'view'}
-              class="rounded-sm {formErrors.tipo ? 'border-red-500' : ''}"
+              class="rounded-sm {formErrors.tipo_nota ? 'border-red-500' : ''}"
             >
               <option value="ENTRADA">Entrada</option>
               <option value="TRANSFERENCIA">Transferência</option>
               <option value="DESCARTE">Descarte</option>
             </Select>
-            {#if formErrors.tipo}
-              <p class="text-red-500 dark:text-red-400 text-sm mt-1">{formErrors.tipo}</p>
+            {#if formErrors.tipo_nota}
+              <p class="text-red-500 dark:text-red-400 text-sm mt-1">{formErrors.tipo_nota}</p>
             {/if}
           </div>
 
@@ -524,7 +546,7 @@
               size="md"
               bind:value={formData.data_documento}
               disabled={mode === 'view'}
-              class="rounded-sm h-10 {formErrors.data_documento ? 'border-red-500' : ''}"
+              class="rounded-sm h-10 text-sm {formErrors.data_documento ? 'border-red-500' : ''}"
             />
             {#if formErrors.data_documento}
               <p class="text-red-500 dark:text-red-400 text-sm mt-1">{formErrors.data_documento}</p>
@@ -533,17 +555,17 @@
 
           <!-- Almoxarifado Origem -->
           <div>
-            <Label for="almoxarifado_id" class="mb-2 text-gray-900 dark:text-white">
+            <Label for="almoxarifado_origem_id" class="mb-2 text-gray-900 dark:text-white">
               Almoxarifado 
-              {#if almoxarifadoOptions.find(opt => opt.value === formData.almoxarifado_id)?.isPrincipal}
+              {#if almoxarifadoOptions.find(opt => opt.value === formData.almoxarifado_origem_id)?.isPrincipal}
                 <span class="text-xs text-primary-600 dark:text-primary-400 font-medium">(Principal)</span>
               {/if}
             </Label>
             <Select
-              id="almoxarifado_id"
-              bind:value={formData.almoxarifado_id}
+              id="almoxarifado_origem_id"
+              bind:value={formData.almoxarifado_origem_id}
               disabled={mode === 'view'}
-              class="rounded-sm {formErrors.almoxarifado_id ? 'border-red-500' : ''}"
+              class="rounded-sm {formErrors.almoxarifado_origem_id ? 'border-red-500' : ''}"
             >
               <option value="">Selecione um almoxarifado</option>
               {#each almoxarifadoOptions as option}
@@ -552,13 +574,13 @@
                 </option>
               {/each}
             </Select>
-            {#if formErrors.almoxarifado_id}
-              <p class="text-red-500 dark:text-red-400 text-sm mt-1">{formErrors.almoxarifado_id}</p>
+            {#if formErrors.almoxarifado_origem_id}
+              <p class="text-red-500 dark:text-red-400 text-sm mt-1">{formErrors.almoxarifado_origem_id}</p>
             {/if}
           </div>
 
           <!-- Almoxarifado Destino (apenas para transferência) -->
-          {#if formData.tipo === 'TRANSFERENCIA'}
+          {#if formData.tipo_nota === 'TRANSFERENCIA'}
             <div>
               <Label for="almoxarifado_destino_id" class="mb-2 text-gray-900 dark:text-white">Almoxarifado Destino</Label>
               <Select
@@ -579,36 +601,23 @@
           {/if}
         </div>
 
-        <!-- Descrição -->
+        <!-- Observações (campo único, não obrigatório) -->
         <div>
-          <Label for="descricao" class="mb-2 text-gray-900 dark:text-white">
-            Descrição 
-            <span class="text-xs text-gray-500 dark:text-gray-400">(obrigatória para nota completa)</span>
+          <Label for="observacoes" class="mb-2 text-gray-900 dark:text-white">
+            Observações 
+            <span class="text-xs text-gray-500 dark:text-gray-400">(opcional)</span>
           </Label>
-          <Textarea
-            id="descricao"
-            bind:value={formData.descricao}
-            disabled={mode === 'view'}
-            placeholder="Descrição da movimentação..."
-            rows="3"
-            class="rounded-sm {formErrors.descricao ? 'border-red-500' : ''}"
-          />
-          {#if formErrors.descricao}
-            <p class="text-red-500 dark:text-red-400 text-sm mt-1">{formErrors.descricao}</p>
-          {/if}
-        </div>
-
-        <!-- Observações -->
-        <div>
-          <Label for="observacoes" class="mb-2 text-gray-900 dark:text-white">Observações</Label>
           <Textarea
             id="observacoes"
             bind:value={formData.observacoes}
             disabled={mode === 'view'}
-            placeholder="Observações adicionais..."
-            rows="2"
-            class="rounded-sm"
+            placeholder="Observações sobre a movimentação..."
+            rows="3"
+            class="rounded-sm {formErrors.observacoes ? 'border-red-500' : ''}"
           />
+          {#if formErrors.observacoes}
+            <p class="text-red-500 dark:text-red-400 text-sm mt-1">{formErrors.observacoes}</p>
+          {/if}
         </div>
       </div>
 
@@ -616,8 +625,8 @@
       <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
         <NotaItensManagerSimplified
           bind:itens
-          tipo={formData.tipo}
-          almoxarifadoId={formData.almoxarifado_id}
+          tipo={formData.tipo_nota}
+          almoxarifadoId={formData.almoxarifado_origem_id}
           readonly={mode === 'view'}
           on:itensChanged={handleItensChange}
           on:validationError={handleItensValidationChange}

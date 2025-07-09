@@ -299,9 +299,9 @@
     </Card>
   {:else}
     <!-- Lista de itens - Layout card-based -->
-    <div class="space-y-4">
+    <div class="space-y-0">
       {#each itens as item, index (item.temp_id)}
-        <Card size="sm" class="rounded-sm">
+        <div class="w-full border border-gray-200 dark:border-gray-700 rounded-sm p-4 bg-white dark:bg-gray-800">
           <!-- Header do card -->
           <div class="flex items-start justify-between mb-4">
             <h5 class="text-sm font-medium text-gray-900 dark:text-white">
@@ -436,22 +436,33 @@
               <span class="text-sm">{validationErrors[item.temp_id]}</span>
             </Alert>
           {/if}
-        </Card>
+        </div>
       {/each}
     </div>
 
     <!-- Resumo total -->
-    {#if isEntrada && itens.length > 0}
-      <Card size="sm" class="bg-gray-50 dark:bg-gray-800 rounded-sm">
+    {#if itens.length > 0}
+      <div class="w-full border border-gray-200 dark:border-gray-700 rounded-sm p-4 bg-gray-50 dark:bg-gray-800">
         <div class="flex justify-between items-center">
-          <span class="text-sm font-medium text-gray-900 dark:text-white">
-            Total Geral:
-          </span>
-          <span class="text-lg font-bold text-green-600 dark:text-green-400">
-            R$ {itens.reduce((total, item) => total + (item.quantidade * (item.custo_unitario || 0)), 0).toFixed(2)}
-          </span>
+          <div class="flex items-center space-x-4">
+            <span class="text-sm font-medium text-gray-900 dark:text-white">
+              Total de Itens: {itens.length}
+            </span>
+            {#if isEntrada}
+              <span class="text-sm font-medium text-gray-900 dark:text-white">
+                Valor Total: 
+                <span class="text-lg font-bold text-green-600 dark:text-green-400">
+                  R$ {itens.reduce((total, item) => {
+                    const quantidade = item.quantidade || 0;
+                    const custo = item.custo_unitario || 0;
+                    return total + (quantidade * custo);
+                  }, 0).toFixed(2)}
+                </span>
+              </span>
+            {/if}
+          </div>
         </div>
-      </Card>
+      </div>
     {/if}
   {/if}
 </div>

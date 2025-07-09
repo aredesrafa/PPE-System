@@ -212,17 +212,17 @@
 
   // ==================== FILTER OPTIONS ====================
   
-  // Opções estáticas de filtros (podem ser carregadas do backend depois)
+  // Opções de filtros carregadas do backend
   $: categoriaOptions = [
     { value: 'todas', label: 'Todas as Categorias' },
-    { value: 'EPI_CABECA', label: 'EPI de Cabeça' },
-    { value: 'EPI_OLHOS_FACE', label: 'EPI de Olhos e Face' },
-    { value: 'EPI_AUDITIVA', label: 'EPI Auditiva' },
-    { value: 'EPI_RESPIRATORIA', label: 'EPI Respiratória' },
-    { value: 'EPI_MAOS_BRACOS', label: 'EPI de Mãos e Braços' },
-    { value: 'EPI_TRONCO', label: 'EPI de Tronco' },
-    { value: 'EPI_MEMBROS_INFERIORES', label: 'EPI de Membros Inferiores' },
-    { value: 'EPI_CORPO_INTEIRO', label: 'EPI de Corpo Inteiro' }
+    { value: 'PROTECAO_CABECA', label: 'Proteção da Cabeça' },
+    { value: 'PROTECAO_OLHOS_ROSTO', label: 'Proteção dos Olhos e Rosto' },
+    { value: 'PROTECAO_OUVIDOS', label: 'Proteção Auditiva' },
+    { value: 'PROTECAO_RESPIRATORIA', label: 'Proteção Respiratória' },
+    { value: 'PROTECAO_MAOS_BRACCOS', label: 'Proteção das Mãos e Braços' },
+    { value: 'PROTECAO_PES', label: 'Proteção dos Pés' },
+    { value: 'PROTECAO_CLIMATICA', label: 'Proteção Climática' },
+    { value: 'ROUPA_APROXIMACAO', label: 'Roupa de Aproximação' }
   ];
 
   // ==================== COMPUTED PROPERTIES ====================

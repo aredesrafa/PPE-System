@@ -41,16 +41,16 @@
   let formData: Partial<TipoEPI> = {};
   let formErrors: Record<string, string> = {};
   
-  // Opções para dropdowns
+  // Opções para dropdowns - usando os valores corretos do backend
   const categoriaOptions = [
-    { value: 'EPI_CABECA', label: 'EPI de Cabeça', name: 'EPI de Cabeça' },
-    { value: 'EPI_OLHOS_FACE', label: 'EPI de Olhos e Face', name: 'EPI de Olhos e Face' },
-    { value: 'EPI_AUDITIVA', label: 'EPI Auditiva', name: 'EPI Auditiva' },
-    { value: 'EPI_RESPIRATORIA', label: 'EPI Respiratória', name: 'EPI Respiratória' },
-    { value: 'EPI_MAOS_BRACOS', label: 'EPI de Mãos e Braços', name: 'EPI de Mãos e Braços' },
-    { value: 'EPI_TRONCO', label: 'EPI de Tronco', name: 'EPI de Tronco' },
-    { value: 'EPI_MEMBROS_INFERIORES', label: 'EPI de Membros Inferiores', name: 'EPI de Membros Inferiores' },
-    { value: 'EPI_CORPO_INTEIRO', label: 'EPI de Corpo Inteiro', name: 'EPI de Corpo Inteiro' }
+    { value: 'PROTECAO_CABECA', label: 'Proteção da Cabeça', name: 'Proteção da Cabeça' },
+    { value: 'PROTECAO_OLHOS_ROSTO', label: 'Proteção dos Olhos e Rosto', name: 'Proteção dos Olhos e Rosto' },
+    { value: 'PROTECAO_OUVIDOS', label: 'Proteção Auditiva', name: 'Proteção Auditiva' },
+    { value: 'PROTECAO_RESPIRATORIA', label: 'Proteção Respiratória', name: 'Proteção Respiratória' },
+    { value: 'PROTECAO_MAOS_BRACCOS', label: 'Proteção das Mãos e Braços', name: 'Proteção das Mãos e Braços' },
+    { value: 'PROTECAO_PES', label: 'Proteção dos Pés', name: 'Proteção dos Pés' },
+    { value: 'PROTECAO_CLIMATICA', label: 'Proteção Climática', name: 'Proteção Climática' },
+    { value: 'ROUPA_APROXIMACAO', label: 'Roupa de Aproximação', name: 'Roupa de Aproximação' }
   ];
 
   const statusOptions = [
@@ -86,7 +86,7 @@
       formData = {
         nomeEquipamento: '',
         numeroCa: '',
-        categoria: 'EPI_CABECA',
+        categoria: 'PROTECAO_CABECA',
         status: 'ATIVO',
         vidaUtilDias: 365,
         descricao: ''
@@ -157,7 +157,7 @@
         nomeEquipamento: formData.nomeEquipamento,
         numeroCa: formData.numeroCa,
         categoria: formData.categoria,
-        vidaUtilDias: formData.vidaUtilDias,
+        vidaUtilDias: Number(formData.vidaUtilDias) || 365,
         descricao: formData.descricao,
         ativo: formData.status === 'ATIVO'
       };

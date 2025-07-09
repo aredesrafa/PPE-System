@@ -74,44 +74,44 @@ const MOCK_BUSINESS_CONFIG: BusinessConfiguration = {
   ],
   categoriasEPI: [
     {
-      code: "protecao_cabeca",
+      code: "PROTECAO_CABECA",
       label: "Proteção da Cabeça",
       description: "Capacetes, bonés, etc.",
     },
     {
-      code: "protecao_olhos",
+      code: "PROTECAO_OLHOS_ROSTO",
       label: "Proteção dos Olhos",
       description: "Óculos, viseiras, etc.",
     },
     {
-      code: "protecao_auditiva",
+      code: "PROTECAO_OUVIDOS",
       label: "Proteção Auditiva",
       description: "Protetores auriculares",
     },
     {
-      code: "protecao_respiratoria",
+      code: "PROTECAO_RESPIRATORIA",
       label: "Proteção Respiratória",
       description: "Máscaras, respiradores",
     },
     {
-      code: "protecao_tronco",
-      label: "Proteção do Tronco",
-      description: "Aventais, coletes, jaquetas",
-    },
-    {
-      code: "protecao_maos",
+      code: "PROTECAO_MAOS_BRACCOS",
       label: "Proteção das Mãos",
       description: "Luvas de diversos tipos",
     },
     {
-      code: "protecao_pes",
+      code: "PROTECAO_PES",
       label: "Proteção dos Pés",
       description: "Calçados de segurança",
     },
     {
-      code: "protecao_queda",
-      label: "Proteção contra Quedas",
-      description: "Cintos, talabartes, etc.",
+      code: "PROTECAO_CLIMATICA",
+      label: "Proteção Climática",
+      description: "Proteção contra intempéries",
+    },
+    {
+      code: "ROUPA_APROXIMACAO",
+      label: "Roupa de Aproximação",
+      description: "Roupas especiais para aproximação",
     },
   ],
   statusEntrega: [
@@ -221,7 +221,7 @@ class ConfigurationService {
     try {
       // Conectar ao backend real - endpoint de configuração
       const config = await api.get<BusinessConfiguration>(
-        "/api/v1/configuration",
+        "/v1/configuration",
       );
 
       // Fallback para mock em caso de erro de conexão
