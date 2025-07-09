@@ -302,7 +302,7 @@
     <div class="flex space-x-2">
       <Button size="sm" color="primary" class="rounded-sm" on:click={handleNovaNota}>
         <PlusOutline class="w-4 h-4 mr-2" />
-        Nova Nota
+        Nova Movimentação
       </Button>
     </div>
   </div>
@@ -533,7 +533,7 @@
         </p>
         <Button size="sm" color="primary" class="rounded-sm" on:click={handleNovaNota}>
           <PlusOutline class="w-4 h-4 mr-2" />
-          Nova Nota
+          Nova Movimentação
         </Button>
       </div>
     </Card>

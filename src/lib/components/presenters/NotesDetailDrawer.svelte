@@ -137,16 +137,33 @@
         // Nova nota: configurar valores padrão
         formData.tipo_nota = tipo;
         
-        // Auto-selecionar almoxarifado padrão se ainda não definido
-        if (!formData.almoxarifado_origem_id && almoxarifadoOptions.length > 0) {
-          // Tentar selecionar o principal primeiro, senão o primeiro da lista
+        // Auto-selecionar almoxarifado padrão baseado no tipo de nota
+        if (almoxarifadoOptions.length > 0) {
           const almoxarifadoPadrao = almoxarifadoOptions.find(opt => opt.isPrincipal) || almoxarifadoOptions[0];
-          formData.almoxarifado_origem_id = almoxarifadoPadrao.value;
           
-          console.log('🔧 Auto-selecionando almoxarifado padrão:', {
+          if (formData.tipo_nota === 'ENTRADA') {
+            // Para ENTRADA: almoxarifado de destino é obrigatório (onde os itens vão entrar)
+            if (!formData.almoxarifado_destino_id) {
+              formData.almoxarifado_destino_id = almoxarifadoPadrao.value;
+            }
+          } else if (formData.tipo_nota === 'TRANSFERENCIA') {
+            // Para TRANSFERENCIA: tanto origem quanto destino são obrigatórios
+            if (!formData.almoxarifado_origem_id) {
+              formData.almoxarifado_origem_id = almoxarifadoPadrao.value;
+            }
+          } else if (formData.tipo_nota === 'DESCARTE') {
+            // Para DESCARTE: almoxarifado de origem é obrigatório (de onde sai)
+            if (!formData.almoxarifado_origem_id) {
+              formData.almoxarifado_origem_id = almoxarifadoPadrao.value;
+            }
+          }
+          
+          console.log('🔧 Auto-selecionando almoxarifado baseado no tipo:', {
+            tipo: formData.tipo_nota,
             selecionado: almoxarifadoPadrao.label,
             isPrincipal: almoxarifadoPadrao.isPrincipal,
-            id: almoxarifadoPadrao.value
+            origem_id: formData.almoxarifado_origem_id,
+            destino_id: formData.almoxarifado_destino_id
           });
         }
       }
@@ -162,9 +179,17 @@
       almoxarifadoDestinoOptions = almoxarifadoOptions;
       
       // Auto-selecionar almoxarifado padrão mesmo no fallback
-      if (mode !== 'edit' && !formData.almoxarifado_origem_id) {
-        formData.almoxarifado_origem_id = almoxarifadoOptions[0].value; // Primeiro do fallback
+      if (mode !== 'edit') {
         formData.tipo_nota = tipo;
+        const almoxarifadoPadrao = almoxarifadoOptions[0];
+        
+        if (tipo === 'ENTRADA' && !formData.almoxarifado_destino_id) {
+          formData.almoxarifado_destino_id = almoxarifadoPadrao.value;
+        } else if (tipo === 'TRANSFERENCIA' && !formData.almoxarifado_origem_id) {
+          formData.almoxarifado_origem_id = almoxarifadoPadrao.value;
+        } else if (tipo === 'DESCARTE' && !formData.almoxarifado_origem_id) {
+          formData.almoxarifado_origem_id = almoxarifadoPadrao.value;
+        }
       }
       
       console.log('⚠️ NotesDetailDrawer: Usando fallback para almoxarifados - auto-selecionado:', almoxarifadoOptions[0].label);
@@ -250,17 +275,28 @@
     formErrors = {};
     itemValidationErrors = [];
     
-    // Validações obrigatórias para nota completa
-    if (!formData.almoxarifado_origem_id) {
-      formErrors.almoxarifado_origem_id = 'Almoxarifado é obrigatório';
-    }
-    
-    if (formData.tipo_nota === 'TRANSFERENCIA' && !formData.almoxarifado_destino_id) {
-      formErrors.almoxarifado_destino_id = 'Almoxarifado de destino é obrigatório para transferência';
-    }
-    
-    if (formData.tipo_nota === 'TRANSFERENCIA' && formData.almoxarifado_origem_id === formData.almoxarifado_destino_id) {
-      formErrors.almoxarifado_destino_id = 'Almoxarifado de destino deve ser diferente do origem';
+    // Validações baseadas no tipo de nota
+    if (formData.tipo_nota === 'ENTRADA') {
+      // Para ENTRADA: almoxarifado de destino é obrigatório
+      if (!formData.almoxarifado_destino_id) {
+        formErrors.almoxarifado_destino_id = 'Almoxarifado de destino é obrigatório para entrada';
+      }
+    } else if (formData.tipo_nota === 'TRANSFERENCIA') {
+      // Para TRANSFERENCIA: tanto origem quanto destino são obrigatórios
+      if (!formData.almoxarifado_origem_id) {
+        formErrors.almoxarifado_origem_id = 'Almoxarifado de origem é obrigatório para transferência';
+      }
+      if (!formData.almoxarifado_destino_id) {
+        formErrors.almoxarifado_destino_id = 'Almoxarifado de destino é obrigatório para transferência';
+      }
+      if (formData.almoxarifado_origem_id === formData.almoxarifado_destino_id) {
+        formErrors.almoxarifado_destino_id = 'Almoxarifado de destino deve ser diferente do origem';
+      }
+    } else if (formData.tipo_nota === 'DESCARTE') {
+      // Para DESCARTE: almoxarifado de origem é obrigatório
+      if (!formData.almoxarifado_origem_id) {
+        formErrors.almoxarifado_origem_id = 'Almoxarifado de origem é obrigatório para descarte';
+      }
     }
 
     if (!formData.data_documento) {
@@ -553,31 +589,60 @@
             {/if}
           </div>
 
-          <!-- Almoxarifado Origem -->
-          <div>
-            <Label for="almoxarifado_origem_id" class="mb-2 text-gray-900 dark:text-white">
-              Almoxarifado 
-              {#if almoxarifadoOptions.find(opt => opt.value === formData.almoxarifado_origem_id)?.isPrincipal}
-                <span class="text-xs text-primary-600 dark:text-primary-400 font-medium">(Principal)</span>
+          <!-- Almoxarifado - baseado no tipo de nota -->
+          {#if formData.tipo_nota === 'ENTRADA'}
+            <!-- Para ENTRADA: mostrar apenas almoxarifado de destino -->
+            <div>
+              <Label for="almoxarifado_destino_id" class="mb-2 text-gray-900 dark:text-white">
+                Almoxarifado de Destino
+                {#if almoxarifadoOptions.find(opt => opt.value === formData.almoxarifado_destino_id)?.isPrincipal}
+                  <span class="text-xs text-primary-600 dark:text-primary-400 font-medium">(Principal)</span>
+                {/if}
+              </Label>
+              <Select
+                id="almoxarifado_destino_id"
+                bind:value={formData.almoxarifado_destino_id}
+                disabled={mode === 'view'}
+                class="rounded-sm {formErrors.almoxarifado_destino_id ? 'border-red-500' : ''}"
+              >
+                <option value="">Selecione um almoxarifado</option>
+                {#each almoxarifadoOptions as option}
+                  <option value={option.value}>
+                    {option.label}{option.isPrincipal ? ' (Principal)' : ''}
+                  </option>
+                {/each}
+              </Select>
+              {#if formErrors.almoxarifado_destino_id}
+                <p class="text-red-500 dark:text-red-400 text-sm mt-1">{formErrors.almoxarifado_destino_id}</p>
               {/if}
-            </Label>
-            <Select
-              id="almoxarifado_origem_id"
-              bind:value={formData.almoxarifado_origem_id}
-              disabled={mode === 'view'}
-              class="rounded-sm {formErrors.almoxarifado_origem_id ? 'border-red-500' : ''}"
-            >
-              <option value="">Selecione um almoxarifado</option>
-              {#each almoxarifadoOptions as option}
-                <option value={option.value}>
-                  {option.label}{option.isPrincipal ? ' (Principal)' : ''}
-                </option>
-              {/each}
-            </Select>
-            {#if formErrors.almoxarifado_origem_id}
-              <p class="text-red-500 dark:text-red-400 text-sm mt-1">{formErrors.almoxarifado_origem_id}</p>
-            {/if}
-          </div>
+            </div>
+          {:else}
+            <!-- Para TRANSFERENCIA e DESCARTE: mostrar almoxarifado de origem -->
+            <div>
+              <Label for="almoxarifado_origem_id" class="mb-2 text-gray-900 dark:text-white">
+                Almoxarifado de Origem
+                {#if almoxarifadoOptions.find(opt => opt.value === formData.almoxarifado_origem_id)?.isPrincipal}
+                  <span class="text-xs text-primary-600 dark:text-primary-400 font-medium">(Principal)</span>
+                {/if}
+              </Label>
+              <Select
+                id="almoxarifado_origem_id"
+                bind:value={formData.almoxarifado_origem_id}
+                disabled={mode === 'view'}
+                class="rounded-sm {formErrors.almoxarifado_origem_id ? 'border-red-500' : ''}"
+              >
+                <option value="">Selecione um almoxarifado</option>
+                {#each almoxarifadoOptions as option}
+                  <option value={option.value}>
+                    {option.label}{option.isPrincipal ? ' (Principal)' : ''}
+                  </option>
+                {/each}
+              </Select>
+              {#if formErrors.almoxarifado_origem_id}
+                <p class="text-red-500 dark:text-red-400 text-sm mt-1">{formErrors.almoxarifado_origem_id}</p>
+              {/if}
+            </div>
+          {/if}
 
           <!-- Almoxarifado Destino (apenas para transferência) -->
           {#if formData.tipo_nota === 'TRANSFERENCIA'}
@@ -626,7 +691,7 @@
         <NotaItensManagerSimplified
           bind:itens
           tipo={formData.tipo_nota}
-          almoxarifadoId={formData.almoxarifado_origem_id}
+          almoxarifadoId={formData.tipo_nota === 'ENTRADA' ? formData.almoxarifado_destino_id : formData.almoxarifado_origem_id}
           readonly={mode === 'view'}
           on:itensChanged={handleItensChange}
           on:validationError={handleItensValidationChange}

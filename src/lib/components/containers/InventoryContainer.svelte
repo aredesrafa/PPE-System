@@ -23,6 +23,7 @@
   import InventoryTablePresenter from '../presenters/InventoryTablePresenter.svelte';
   import MovementModalPresenter from '../presenters/MovementModalPresenter.svelte';
   import HistoryModalPresenter from '../presenters/HistoryModalPresenter.svelte';
+  import NotesDetailDrawer from '../presenters/NotesDetailDrawer.svelte';
   import type { 
     ItemEstoqueDTO, 
     NovaMovimentacaoForm,
@@ -51,6 +52,7 @@
   // Estado local para modais
   let showMovementModal = false;
   let showHistoryModal = false;
+  let showNotesDrawer = false;
   let selectedItem: ItemEstoqueDTO | null = null;
   let selectedItemForHistory: ItemEstoqueDTO | null = null;
   let movementLoading = false;
@@ -308,8 +310,39 @@
    */
   function handleNewMovement(): void {
     selectedItem = null; // Nova movimentação não tem item específico
-    showMovementModal = true;
+    showNotesDrawer = true;
     console.log('➕ Nova movimentação');
+  }
+  
+  /**
+   * Handler para fechar drawer de notas
+   */
+  function handleNotesDrawerClose(): void {
+    showNotesDrawer = false;
+    selectedItem = null;
+    console.log('❌ Drawer de notas fechado');
+  }
+  
+  /**
+   * Handler para salvar nota
+   */
+  async function handleNotesSave(event: any): Promise<void> {
+    try {
+      console.log('💾 Salvando nota:', event.detail);
+      
+      // Fechar drawer
+      showNotesDrawer = false;
+      selectedItem = null;
+      
+      // Recarregar dados
+      await loadInventoryData();
+      
+      notify.success('Nota salva', 'Movimentação registrada com sucesso');
+      
+    } catch (error) {
+      console.error('❌ Erro ao salvar nota:', error);
+      notify.error('Erro ao salvar', 'Não foi possível registrar a movimentação');
+    }
   }
   
   // ==================== COMPUTED PROPERTIES ====================
@@ -428,5 +461,14 @@
     show={showHistoryModal}
     on:close={handleHistoryClose}
     on:filterChange={handleHistoryPeriodChange}
+  />
+{/if}
+
+{#if showNotesDrawer}
+  <NotesDetailDrawer
+    open={showNotesDrawer}
+    mode="create"
+    on:close={handleNotesDrawerClose}
+    on:save={handleNotesSave}
   />
 {/if}
