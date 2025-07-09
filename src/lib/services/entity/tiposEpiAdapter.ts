@@ -160,7 +160,28 @@ class TiposEpiAdapter {
 
       const response = await this.listarTiposEpi(params);
 
-      const opcoes = response.data.map((tipo) => {
+      // Helper function to validate ID format
+      const isValidId = (id: string): boolean => {
+        // Check if it's a valid UUID
+        const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+        // Check if it's a valid custom ID (6 alphanumeric characters)
+        const customIdRegex = /^[A-Z0-9]{6}$/;
+        
+        return uuidRegex.test(id) || customIdRegex.test(id);
+      };
+
+      // Filter out items with invalid IDs first
+      const validTipos = response.data.filter(tipo => {
+        const valid = isValidId(tipo.id);
+        if (!valid) {
+          console.warn(`⚠️ Tipo EPI com ID inválido ignorado: ${tipo.id} - ${tipo.nomeEquipamento}`);
+        }
+        return valid;
+      });
+
+      console.log(`🔍 Tipos EPI válidos: ${validTipos.length} de ${response.data.length}`);
+
+      const opcoes = validTipos.map((tipo) => {
         console.log(
           "🔍 Mapeando tipo EPI completo:",
           JSON.stringify(tipo, null, 2),

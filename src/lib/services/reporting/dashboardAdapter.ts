@@ -35,10 +35,28 @@ export interface QuickStats {
   entregasHoje: number;
 }
 
+export interface TopContratada {
+  contratada: {
+    id: string;
+    nome: string;
+    cnpjFormatado: string;
+  };
+  totalColaboradores: number;
+  totalEpisAtivos: number;
+}
+
+export interface ContratadaStats {
+  total: number;
+  colaboradoresVinculados: number;
+  colaboradoresSemContratada: number;
+  topContratadas: TopContratada[];
+}
+
 export interface DashboardData {
   metrics: DashboardMetrics;
   activities: ActivityItem[];
   quickStats: QuickStats;
+  contratadaStats: ContratadaStats; // New field
   lastUpdated: string;
 }
 
@@ -53,12 +71,31 @@ class DashboardAdapter {
       console.log('📊 Carregando dados do dashboard...');
 
       // ✅ Chamada real para o endpoint do backend
-      const response = await api.get<{ success: boolean; data: any }>('/relatorios/dashboard');
+      const [dashboardResponse, contratadaStatsResponse] = await Promise.all([
+        api.get<{ success: boolean; data: any }>('/relatorios/dashboard'),
+        api.get<{ success: boolean; data: any }>('/contratadas/estatisticas').then(response => {
+          console.log('🔍 Raw contratada stats response.data:', response.data);
+          console.log('🔍 Raw contratada stats response.data.topContratadas:', response.data.topContratadas);
+          if (response.data.topContratadas && response.data.topContratadas.length > 0) {
+            console.log('🔍 First topContratada item:', JSON.stringify(response.data.topContratadas[0], null, 2));
+          }
+          return response;
+        })
+      ]);
 
-      console.log('📊 Dashboard response:', response);
+      console.log('📊 Dashboard response:', dashboardResponse);
+      console.log('🏢 Contratada Stats response:', contratadaStatsResponse);
 
-      if (response.success && response.data) {
-        const data = response.data;
+      if (dashboardResponse.success && dashboardResponse.data && contratadaStatsResponse.success && contratadaStatsResponse.data) {
+        const data = dashboardResponse.data;
+        const contratadaStats = {
+          ...contratadaStatsResponse.data,
+          topContratadas: contratadaStatsResponse.data.topContratadas.map((item: any) => ({
+            contratada: item.contratada,
+            totalColaboradores: item.totalColaboradores,
+            totalEpisAtivos: item.totalEpisAtivos || 0 // Ensure it's not undefined
+          }))
+        };
 
         // Mapear dados reais do backend para o formato esperado
         const metrics: DashboardMetrics = {
@@ -78,13 +115,15 @@ class DashboardAdapter {
         console.log('✅ Dashboard dados mapeados:', {
           metrics,
           activitiesCount: activities.length,
-          quickStats
+          quickStats,
+          contratadaStats
         });
 
         return {
           metrics,
           activities,
           quickStats,
+          contratadaStats,
           lastUpdated: data.dataAtualizacao || new Date().toISOString()
         };
       }

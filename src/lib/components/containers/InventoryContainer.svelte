@@ -217,14 +217,14 @@
     kardexData = null;
     
     try {
-      // Verificar se o item tem os dados necessários
-      if (!selectedItemForHistory.almoxarifadoId || !selectedItemForHistory.tipoEPIId) {
+      // Verificar se o item tem os dados necessários (estrutura corrigida)
+      if (!selectedItemForHistory.almoxarifado?.id || !selectedItemForHistory.tipoEPI?.id) {
         throw new Error('Item não possui dados necessários para buscar histórico');
       }
 
       const params = {
-        almoxarifadoId: selectedItemForHistory.almoxarifadoId,
-        tipoEpiId: selectedItemForHistory.tipoEPIId,
+        almoxarifadoId: selectedItemForHistory.almoxarifado.id,
+        tipoEpiId: selectedItemForHistory.tipoEPI.id,
         dataInicio,
         dataFim
       };
@@ -379,7 +379,9 @@
       storeItems: $inventoryStore.items?.length || 0,
       storeLoading: $inventoryStore.loading,
       storeError: $inventoryStore.error,
-      storeTotal: $inventoryStore.total
+      storeTotal: $inventoryStore.total,
+      statusOptions: statusOptions?.length || 0,
+      statusOptionsData: statusOptions
     });
   }
   
@@ -427,6 +429,7 @@
     categoria: presentationData.filters.categoriaFilter
   }}
   categoriaOptions={presentationData.filterOptions.categorias}
+  statusOptions={presentationData.filterOptions.status}
   on:searchChange={(e) => handleSearchChange(e.detail.value)}
   on:filterChange={(e) => {
     if (e.detail.key === 'status') {

@@ -527,6 +527,7 @@
     },
     filterOptions
   };
+
 </script>
 
 <!-- Backend Status Indicator -->

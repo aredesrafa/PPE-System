@@ -29,13 +29,14 @@
     FileDocOutline,
     ArrowUpOutline,
     ArrowDownOutline,
-    CalendarDaysOutline,
+    CalendarMonthOutline,
     CloseOutline
   } from 'flowbite-svelte-icons';
   import { formatDate } from '$lib/utils/dateHelpers';
   import type { ItemEstoqueDTO } from '$lib/types/serviceTypes';
 
   // ==================== INTERFACES ====================
+  // Forçar reload para testar
 
   export interface KardexMovimentacao {
     data: string;
@@ -184,7 +185,7 @@
     <!-- Period Filter -->
     <div class="flex items-center justify-between">
       <div class="flex items-center space-x-2">
-        <CalendarDaysOutline class="w-4 h-4 text-gray-500 dark:text-gray-400" />
+        <CalendarMonthOutline class="w-4 h-4 text-gray-500 dark:text-gray-400" />
         <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
           Período:
         </span>

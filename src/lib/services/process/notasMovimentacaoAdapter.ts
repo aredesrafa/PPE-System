@@ -27,24 +27,24 @@ import type {
 class NotasMovimentacaoAdapter {
   private baseEndpoint = "/notas-movimentacao";
 
-  // Cache removido - dados vêm pré-processados do endpoint /resumo
+  // Cache removido - dados vêm diretamente do endpoint principal
 
   // ==================== CONSULTAS ====================
 
   /**
-   * Lista notas usando endpoint /resumo otimizado
-   * Dados vêm pré-processados (nomes, contagens, valores)
+   * Lista notas usando endpoint principal
+   * Dados vêm com todos os campos incluindo createdAt
    */
   async listarNotas(
     params: NotasMovimentacaoFilterParams = {},
   ): Promise<PaginatedResponse<NotaMovimentacao>> {
     console.log(
-      "📋 NotasMovimentacaoAdapter: Listando notas via /resumo",
+      "📋 NotasMovimentacaoAdapter: Listando notas via endpoint principal",
       params,
     );
 
     try {
-      const url = createUrlWithParams(`${this.baseEndpoint}/resumo`, {
+      const url = createUrlWithParams(this.baseEndpoint, {
         page: params.page?.toString(),
         limit: params.limit?.toString(),
         dataInicio: params.dataInicio,
@@ -61,11 +61,51 @@ class NotasMovimentacaoAdapter {
         retries: 2,
       });
 
-      console.log("✅ Notas resumo carregadas:", response);
+      console.log("✅ Notas carregadas:", response);
 
       if (response.success && response.data) {
+        // Mapear dados do backend otimizado para compatibilidade com frontend
+        const notasMapeadas = response.data.map((nota: any) => ({
+          // Campos principais (já vêm corretos do backend)
+          id: nota.id,
+          numero: nota.numero,
+          tipo: nota.tipo,
+          status: nota._status,
+          createdAt: nota.createdAt,
+          observacoes: nota.observacoes,
+          usuarioId: nota.usuarioId,
+          almoxarifadoOrigemId: nota.almoxarifadoOrigemId,
+          almoxarifadoDestinoId: nota.almoxarifadoDestinoId,
+          
+          // Campos para compatibilidade com frontend legacy
+          responsavel_id: nota.usuarioId,
+          almoxarifado_id: nota.almoxarifadoOrigemId || nota.almoxarifadoDestinoId,
+          almoxarifado_destino_id: nota.almoxarifadoDestinoId,
+          tipo_nota: nota.tipo,
+          _status: nota._status,
+          numero_documento: nota.numero,
+          data_documento: nota.createdAt,
+          created_at: nota.createdAt,
+          
+          // Campos otimizados que agora vêm do backend
+          responsavel_nome: nota.usuario?.nome || 'N/A',
+          almoxarifado_nome: nota.almoxarifadoOrigem?.nome || nota.almoxarifadoDestino?.nome || 'N/A',
+          almoxarifado_destino_nome: nota.almoxarifadoDestino?.nome,
+          total_itens: nota.totalItens || 0,
+          valor_total: nota.valorTotal || 0,
+          
+          // Itens da nota (agora vêm populados)
+          itens: nota._itens || [],
+          _itens: nota._itens || [],
+          
+          // Relacionamentos expandidos (já vêm do backend)
+          responsavel: nota.usuario,
+          almoxarifado: nota.almoxarifadoOrigem || nota.almoxarifadoDestino,
+          almoxarifado_destino: nota.almoxarifadoDestino
+        }));
+        
         return {
-          data: response.data, // Dados já vêm processados do backend
+          data: notasMapeadas,
           total: response.pagination?.total || 0,
           page: response.pagination?.page || 1,
           pageSize: response.pagination?.limit || 10,
@@ -298,6 +338,20 @@ class NotasMovimentacaoAdapter {
     console.log("➕ NotasMovimentacaoAdapter: Adicionando item", notaId, item);
 
     try {
+      // Validar ID antes de enviar para o backend
+      if (!item.tipo_epi_id) {
+        throw new Error('ID do tipo EPI é obrigatório');
+      }
+
+      // Verificar se é um UUID válido ou ID customizado
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      const customIdRegex = /^[A-Z0-9]{6}$/;
+      
+      if (!uuidRegex.test(item.tipo_epi_id) && !customIdRegex.test(item.tipo_epi_id)) {
+        console.error('❌ ID inválido detectado:', item.tipo_epi_id);
+        throw new Error(`ID do tipo EPI inválido: ${item.tipo_epi_id}. Deve ser um UUID válido ou ID customizado (ex: E4U302)`);
+      }
+
       // Usar formato conforme documentação (linha 911)
       const backendItemData = {
         tipoEpiId: item.tipo_epi_id,
@@ -520,6 +574,7 @@ class NotasMovimentacaoAdapter {
       };
     }
   }
+
 
   // ==================== FILTROS E OPÇÕES ====================
 

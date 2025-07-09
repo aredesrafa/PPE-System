@@ -285,10 +285,14 @@
         <PlusOutline class="w-8 h-8 text-gray-400" />
       </div>
       <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">
-        Nenhum item adicionado
+        {readonly ? 'Nenhum item encontrado' : 'Nenhum item adicionado'}
       </h3>
       <p class="text-gray-500 dark:text-gray-400 mb-4">
-        {usaTiposEpi ? 'Adicione EPIs do catálogo' : 'Selecione itens do estoque'}
+        {#if readonly}
+          Esta nota não possui itens registrados
+        {:else}
+          {usaTiposEpi ? 'Adicione EPIs do catálogo' : 'Selecione itens do estoque'}
+        {/if}
       </p>
       {#if !readonly}
         <Button size="sm" color="primary" class="rounded-sm" on:click={adicionarItem}>
@@ -412,7 +416,7 @@
                   <p class="text-sm font-medium text-gray-900 dark:text-white">
                     Qtd: {item.quantidade}
                   </p>
-                  {#if isEntrada && item.custo_unitario}
+                  {#if isEntrada && item.custo_unitario != null && typeof item.custo_unitario === 'number' && !isNaN(item.custo_unitario)}
                     <p class="text-xs text-gray-600 dark:text-gray-400">
                       Unit: R$ {item.custo_unitario.toFixed(2)}
                     </p>
@@ -454,7 +458,7 @@
                 <span class="text-lg font-bold text-green-600 dark:text-green-400">
                   R$ {itens.reduce((total, item) => {
                     const quantidade = item.quantidade || 0;
-                    const custo = item.custo_unitario || 0;
+                    const custo = (item.custo_unitario != null && typeof item.custo_unitario === 'number' && !isNaN(item.custo_unitario)) ? item.custo_unitario : 0;
                     return total + (quantidade * custo);
                   }, 0).toFixed(2)}
                 </span>

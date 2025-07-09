@@ -186,6 +186,16 @@ const MOCK_BUSINESS_CONFIG: BusinessConfiguration = {
       label: "Bloqueado",
       description: "Item bloqueado para uso",
     },
+    {
+      code: "quarentena",
+      label: "Em Quarentena",
+      description: "Item devolvido aguardando análise",
+    },
+    {
+      code: "aguarda_inspecao",
+      label: "Aguarda Inspeção",
+      description: "Item aguardando inspeção técnica",
+    },
   ],
   tiposNota: [
     {
@@ -220,7 +230,7 @@ class ConfigurationService {
 
     try {
       // Conectar ao backend real - endpoint de configuração
-      const config = await api.get<BusinessConfiguration>(
+      let config = await api.get<BusinessConfiguration>(
         "/v1/configuration",
       );
 
@@ -228,7 +238,7 @@ class ConfigurationService {
       if (!config) {
         console.warn("⚠️ Backend não disponível, usando configuração mock");
         await new Promise((resolve) => setTimeout(resolve, 100));
-        const config = MOCK_BUSINESS_CONFIG;
+        config = MOCK_BUSINESS_CONFIG;
       }
 
       // Atualizar cache

@@ -169,7 +169,7 @@
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
     {#if $loading}
       {#each Array(4) as _, i}
-        <Card size="sm" class="rounded-sm">
+        <Card size="sm" class="rounded-sm shadow-none">
           <div class="flex items-center justify-between animate-pulse">
             <div class="space-y-2">
               <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-24"></div>
@@ -184,7 +184,7 @@
       {/each}
     {:else}
       {#each metrics as metric}
-        <Card size="sm" class="rounded-sm">
+        <Card size="sm" class="rounded-sm shadow-none">
           <div class="flex items-center justify-between">
             <div>
               <p class="text-sm font-medium text-gray-600 dark:text-gray-400">{metric.title}</p>
@@ -207,9 +207,9 @@
   
   <!-- Main Content Grid -->
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-    <!-- Recent Activities - Expandido para ocupar 2/3 -->
-    <div class="lg:col-span-2">
-      <Card size="sm" class="rounded-sm w-full max-w-none">
+    <!-- Recent Activities e Top Contratadas - Expandido para ocupar 2/3 -->
+    <div class="lg:col-span-2 space-y-6">
+      <Card size="sm" class="rounded-sm w-full max-w-none shadow-none">
         <div class="flex items-center justify-between mb-4">
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Atividades Recentes</h3>
           <Button size="xs" color="alternative" class="rounded-sm" href="{base}/fichas">Ver Fichas</Button>
@@ -232,12 +232,33 @@
           {/each}
         </div>
       </Card>
+
+      <!-- Top Contratadas por EPIs Ativos -->
+      {#if $dashboardData && $dashboardData.contratadaStats && $dashboardData.contratadaStats.topContratadas.length > 0}
+        <Card size="sm" class="rounded-sm w-full max-w-none shadow-none">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">EPIs ativos por Contratada</h3>
+          <div class="space-y-3">
+            {#each $dashboardData.contratadaStats.topContratadas as item}
+              <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{item.contratada.nome}</p>
+                  <p class="text-xs text-gray-500 dark:text-gray-400">{item.contratada.cnpjFormatado}</p>
+                </div>
+                <div class="text-right ml-4">
+                  <Badge color="green" class="w-fit rounded-sm mb-1">{item.totalEpisAtivos} EPIs</Badge>
+                  <p class="text-xs text-gray-600 dark:text-gray-400">{item.totalColaboradores} Colab.</p>
+                </div>
+              </div>
+            {/each}
+          </div>
+        </Card>
+      {/if}
     </div>
     
     <!-- Quick Stats & Alerts -->
     <div class="space-y-6">
       <!-- Quick Stats -->
-      <Card size="sm" class="rounded-sm">
+      <Card size="sm" class="rounded-sm shadow-none">
         <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Estatísticas Rápidas</h3>
         
         <div class="space-y-3">
@@ -261,7 +282,7 @@
       </Card>
       
       <!-- Alerts -->
-      <Card size="sm" class="rounded-sm border-l-4 border-l-yellow-500">
+      <Card size="sm" class="rounded-sm border-l-4 border-l-yellow-500 shadow-none">
         <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Alertas</h3>
         <div class="space-y-2">
           <div class="flex items-center space-x-2">

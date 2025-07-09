@@ -51,6 +51,7 @@
     categoria: string;
   };
   export let categoriaOptions: Array<{ value: string; label: string }> = [];
+  export let statusOptions: Array<{ value: string; label: string }> = [];
 
   // ==================== EVENT DISPATCHER ====================
   
@@ -121,6 +122,12 @@
       case 'esgotado':
       case 'zero':
         return { color: 'gray' as const, label: 'Esgotado' };
+      case 'bloqueado':
+        return { color: 'red' as const, label: 'Bloqueado' };
+      case 'quarentena':
+        return { color: 'orange' as const, label: 'Em Quarentena' };
+      case 'aguarda_inspecao':
+        return { color: 'yellow' as const, label: 'Aguarda Inspeção' };
       default:
         return { color: 'blue' as const, label: status || 'Indefinido' };
     }
@@ -196,11 +203,7 @@
           
           <!-- Filtros em linha -->
           <SearchableDropdown
-            options={[
-              { value: 'todos', label: 'Todos' },
-              { value: 'disponivel', label: 'Disponível' },
-              { value: 'indisponivel', label: 'Indisponível' }
-            ]}
+            options={statusOptions}
             value={filters.status || 'todos'}
             placeholder="Status"
             class="min-w-[140px]"
