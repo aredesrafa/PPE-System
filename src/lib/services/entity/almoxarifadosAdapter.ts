@@ -13,10 +13,10 @@ import type { PaginatedResponse } from "$lib/stores/paginatedStore";
 export interface Almoxarifado {
   id: string;
   nome: string;
-  unidade_negocio_id: string;
-  is_principal: boolean;
-  created_at: string;
-  unidade_negocio?: {
+  unidadeNegocioId: string; // ✅ CORREÇÃO: Backend usa camelCase
+  isPrincipal: boolean; // ✅ CORREÇÃO: Backend usa camelCase
+  createdAt: string; // ✅ CORREÇÃO: Backend usa camelCase
+  unidadeNegocio?: {
     id: string;
     nome: string;
     codigo: string;
@@ -57,13 +57,14 @@ class AlmoxarifadosAdapter {
 
         let items: Almoxarifado[] = [];
 
-        if (response.data) {
-          items = Array.isArray(response.data)
-            ? response.data
-            : response.data.items || [];
+        // ✅ CORREÇÃO: Backend retorna { success: true, data: [...] }
+        if (response.success && response.data) {
+          items = Array.isArray(response.data) ? response.data : [];
         } else if (Array.isArray(response)) {
           items = response;
         }
+
+        console.log("🔍 Almoxarifados recebidos do backend:", items.map(a => ({ id: a.id, nome: a.nome })));
 
         console.log(
           "✅ Almoxarifados listados via endpoint direto:",
@@ -104,10 +105,10 @@ class AlmoxarifadosAdapter {
             almoxarifadosMap.set(alm.id, {
               id: alm.id,
               nome: alm.nome,
-              unidade_negocio_id: alm.unidadeNegocioId,
-              is_principal: alm.nome.toLowerCase().includes("central"), // Heurística
-              created_at: new Date().toISOString(),
-              unidade_negocio: {
+              unidadeNegocioId: alm.unidadeNegocioId, // ✅ CORREÇÃO: camelCase
+              isPrincipal: alm.nome.toLowerCase().includes("central"), // ✅ CORREÇÃO: camelCase
+              createdAt: new Date().toISOString(), // ✅ CORREÇÃO: camelCase
+              unidadeNegocio: {
                 id: alm.unidadeNegocio.id,
                 nome: alm.unidadeNegocio.nome,
                 codigo: alm.unidadeNegocio.codigo,
@@ -217,8 +218,8 @@ class AlmoxarifadosAdapter {
       const opcoes = almoxarifados.map((alm) => ({
         value: alm.id,
         label: alm.nome,
-        isPrincipal: alm.is_principal,
-        unidadeNegocio: alm.unidade_negocio?.nome,
+        isPrincipal: alm.isPrincipal, // ✅ CORREÇÃO: camelCase
+        unidadeNegocio: alm.unidadeNegocio?.nome, // ✅ CORREÇÃO: camelCase
       }));
 
       // Ordenar: principais primeiro, depois alfabético
@@ -309,7 +310,7 @@ class AlmoxarifadosAdapter {
 
     try {
       const todos = await this.listarAlmoxarifados();
-      const principais = todos.filter((alm) => alm.is_principal);
+      const principais = todos.filter((alm) => alm.isPrincipal); // ✅ CORREÇÃO: camelCase
 
       console.log(
         "✅ Almoxarifados principais encontrados:",
@@ -331,10 +332,10 @@ class AlmoxarifadosAdapter {
       {
         id: "567a1885-0763-4a13-b9f6-157daa39ddc3",
         nome: "Almoxarifado Central SP",
-        unidade_negocio_id: "d42d0657-4671-4026-ae34-61b74806ad9d",
-        is_principal: true,
-        created_at: new Date().toISOString(),
-        unidade_negocio: {
+        unidadeNegocioId: "d42d0657-4671-4026-ae34-61b74806ad9d", // ✅ CORREÇÃO: camelCase
+        isPrincipal: true, // ✅ CORREÇÃO: camelCase
+        createdAt: new Date().toISOString(), // ✅ CORREÇÃO: camelCase
+        unidadeNegocio: {
           id: "d42d0657-4671-4026-ae34-61b74806ad9d",
           nome: "Matriz São Paulo",
           codigo: "SP001",
@@ -343,10 +344,10 @@ class AlmoxarifadosAdapter {
       {
         id: "fallback-2",
         nome: "Almoxarifado Obra (Demo)",
-        unidade_negocio_id: "unidade-2",
-        is_principal: false,
-        created_at: new Date().toISOString(),
-        unidade_negocio: {
+        unidadeNegocioId: "unidade-2", // ✅ CORREÇÃO: camelCase
+        isPrincipal: false, // ✅ CORREÇÃO: camelCase
+        createdAt: new Date().toISOString(), // ✅ CORREÇÃO: camelCase
+        unidadeNegocio: {
           id: "unidade-2",
           nome: "Obra A",
           codigo: "OA01",
