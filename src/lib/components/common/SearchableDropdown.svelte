@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Button, Input } from 'flowbite-svelte';
   import { ChevronDownOutline, SearchOutline } from 'flowbite-svelte-icons';
-  import { createEventDispatcher } from 'svelte';
+  import { createEventDispatcher, onMount } from 'svelte';
   
   export let options: Array<{ value: string; label: string; disabled?: boolean }> = [];
   export let value: string = '';
@@ -19,6 +19,9 @@
   let searchTerm = '';
   let dropdownOpen = false;
   let dropdownElement: HTMLDivElement;
+  let buttonElement: HTMLButtonElement;
+  let dropdownStyle = '';
+  let dropdownPortalElement: HTMLDivElement;
   
   // Filtered options based on search term
   $: filteredOptions = options.filter(option =>
@@ -48,18 +51,97 @@
     searchTerm = target.value;
   }
   
+  function calculateDropdownPosition() {
+    if (!buttonElement) return;
+    
+    const rect = buttonElement.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
+    const dropdownHeight = 260; // max-h-60 = 240px + padding
+    
+    // Verificar se há espaço suficiente abaixo
+    const spaceBelow = viewportHeight - rect.bottom;
+    const spaceAbove = rect.top;
+    
+    let top: number;
+    let maxHeight: number;
+    
+    if (spaceBelow >= dropdownHeight || spaceBelow >= spaceAbove) {
+      // Posicionar abaixo
+      top = rect.bottom + 4;
+      maxHeight = Math.min(dropdownHeight, spaceBelow - 10);
+    } else {
+      // Posicionar acima
+      top = rect.top - dropdownHeight - 4;
+      maxHeight = Math.min(dropdownHeight, spaceAbove - 10);
+    }
+    
+    // Verificar se estamos dentro de um modal (classe flowbite modal backdrop)
+    const isInModal = buttonElement.closest('[role="dialog"]') || 
+                      buttonElement.closest('.fixed.inset-0') ||
+                      document.querySelector('.fixed.inset-0.z-40'); // Flowbite modal backdrop
+    
+    // Z-index adequado para modal (Flowbite usa z-50 para modais)
+    const zIndex = isInModal ? 999999 : 50000;
+    
+    dropdownStyle = `
+      position: fixed;
+      top: ${top}px;
+      left: ${rect.left}px;
+      width: ${rect.width}px;
+      max-height: ${maxHeight}px;
+      z-index: ${zIndex};
+    `;
+  }
+  
   function toggleDropdown() {
     if (!disabled) {
       dropdownOpen = !dropdownOpen;
+      if (dropdownOpen) {
+        // Calcular posição após o DOM ser atualizado
+        setTimeout(calculateDropdownPosition, 0);
+      }
+    }
+  }
+  
+  // Recalcular posição quando a janela é redimensionada ou quando há scroll
+  function handleWindowResize() {
+    if (dropdownOpen) {
+      calculateDropdownPosition();
+    }
+  }
+  
+  function handleWindowScroll() {
+    if (dropdownOpen) {
+      calculateDropdownPosition();
     }
   }
   
   // Close dropdown when clicking outside
   function handleClickOutside(event: MouseEvent) {
-    if (dropdownElement && !dropdownElement.contains(event.target as Node)) {
-      dropdownOpen = false;
+    const target = event.target as Node;
+    
+    // Não fechar se o clique foi no botão principal
+    if (dropdownElement && dropdownElement.contains(target)) {
+      return;
     }
+    
+    // Não fechar se o clique foi dentro do dropdown portal
+    if (dropdownPortalElement && dropdownPortalElement.contains(target)) {
+      return;
+    }
+    
+    dropdownOpen = false;
   }
+  
+  onMount(() => {
+    window.addEventListener('resize', handleWindowResize);
+    window.addEventListener('scroll', handleWindowScroll, true);
+    
+    return () => {
+      window.removeEventListener('resize', handleWindowResize);
+      window.removeEventListener('scroll', handleWindowScroll, true);
+    };
+  });
 </script>
 
 <svelte:window on:click={handleClickOutside} />
@@ -70,27 +152,36 @@
     {disabled}
     class="w-full justify-between rounded-sm text-left h-10 px-3 text-sm {selectedOption ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}"
     on:click={toggleDropdown}
+    bind:this={buttonElement}
   >
     <span class="truncate">{displayText}</span>
     <ChevronDownOutline class="w-4 h-4 ml-2 flex-shrink-0 {dropdownOpen ? 'rotate-180' : ''} transition-transform" />
   </Button>
-  
-  {#if dropdownOpen}
-    <div class="absolute z-[9999] w-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg max-h-60 overflow-y-auto">
-      <!-- Search input -->
-      <div class="p-2 border-b border-gray-200 dark:border-gray-600">
-        <div class="relative">
-          <SearchOutline class="absolute left-2.5 top-2.5 w-4 h-4 text-gray-400" />
-          <Input
-            type="text"
-            placeholder={searchPlaceholder}
-            class="pl-8 text-sm rounded-sm h-8"
-            value={searchTerm}
-            on:input={handleSearchInput}
-          />
-        </div>
+</div>
+
+<!-- Dropdown renderizado em nível superior usando posicionamento fixo -->
+{#if dropdownOpen}
+  <div 
+    class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg overflow-hidden"
+    style={dropdownStyle}
+    bind:this={dropdownPortalElement}
+  >
+    <!-- Search input -->
+    <div class="p-2 border-b border-gray-200 dark:border-gray-600">
+      <div class="relative">
+        <SearchOutline class="absolute left-2.5 top-2.5 w-4 h-4 text-gray-400" />
+        <Input
+          type="text"
+          placeholder={searchPlaceholder}
+          class="pl-8 text-sm rounded-sm h-8"
+          value={searchTerm}
+          on:input={handleSearchInput}
+        />
       </div>
-      
+    </div>
+    
+    <!-- Content container com scroll -->
+    <div class="overflow-y-auto" style="max-height: calc(100% - 60px);">
       <!-- Clear option -->
       {#if allowClear && value}
         <button
@@ -123,5 +214,5 @@
         </div>
       {/if}
     </div>
-  {/if}
-</div>
+  </div>
+{/if}
