@@ -147,7 +147,7 @@
     if (params.dataInicio) searchParams.set('dataInicio', params.dataInicio);
     if (params.dataFim) searchParams.set('dataFim', params.dataFim);
     
-    console.log('📋 Buscando movimentações:', `/api/relatorios/movimentacoes?${searchParams}`);
+    console.log('📋 Buscando movimentações:', `/relatorios/movimentacoes?${searchParams}`);
     
     try {
       // ✅ CORREÇÃO: Usar apiClient para compatibilidade local/GitHub Pages
