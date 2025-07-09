@@ -17,7 +17,7 @@
   } from 'flowbite-svelte-icons';
   
   import DrawerHeader from '$lib/components/common/DrawerHeader.svelte';
-  import NotaItensManager, { type NotaItem } from './NotaItensManager.svelte';
+  import NotaItensManagerSimplified, { type NotaItem } from './NotaItensManagerSimplified.svelte';
   import LoadingSpinner from '$lib/components/common/LoadingSpinner.svelte';
   import ErrorDisplay from '$lib/components/common/ErrorDisplay.svelte';
   
@@ -115,12 +115,20 @@
         unidadeNegocio: alm.unidadeNegocio?.nome
       }));
       
+      // Ordenar: almoxarifado principal primeiro, depois os outros
+      almoxarifadoOptions.sort((a, b) => {
+        if (a.isPrincipal && !b.isPrincipal) return -1;
+        if (!a.isPrincipal && b.isPrincipal) return 1;
+        return a.label.localeCompare(b.label);
+      });
+      
       almoxarifadoDestinoOptions = almoxarifadoOptions;
       
       console.log('📋 NotesDetailDrawer: Almoxarifados carregados:', {
         original: almoxarifadosResponse.length,
         options: almoxarifadoOptions.length,
-        samples: almoxarifadoOptions.slice(0, 2).map(opt => ({ value: opt.value, label: opt.label }))
+        principal: almoxarifadoOptions.find(opt => opt.isPrincipal)?.label || 'Nenhum',
+        samples: almoxarifadoOptions.slice(0, 2).map(opt => ({ value: opt.value, label: opt.label, isPrincipal: opt.isPrincipal }))
       });
 
       // Se é edição, carregar dados da nota
@@ -129,6 +137,19 @@
       } else {
         // Nova nota: configurar valores padrão
         formData.tipo = tipo;
+        
+        // Auto-selecionar almoxarifado padrão se ainda não definido
+        if (!formData.almoxarifado_id && almoxarifadoOptions.length > 0) {
+          // Tentar selecionar o principal primeiro, senão o primeiro da lista
+          const almoxarifadoPadrao = almoxarifadoOptions.find(opt => opt.isPrincipal) || almoxarifadoOptions[0];
+          formData.almoxarifado_id = almoxarifadoPadrao.value;
+          
+          console.log('🔧 Auto-selecionando almoxarifado padrão:', {
+            selecionado: almoxarifadoPadrao.label,
+            isPrincipal: almoxarifadoPadrao.isPrincipal,
+            id: almoxarifadoPadrao.value
+          });
+        }
       }
       
     } catch (error) {
@@ -136,12 +157,18 @@
       
       // Fallback para dados básicos em caso de erro
       almoxarifadoOptions = [
-        { value: '567a1885-0763-4a13-b9f6-157daa39ddc3', label: 'Almoxarifado Central SP' },
-        { value: '1a743859-33e6-4ce3-9158-025dee47922b', label: 'Almoxarifado RJ' }
+        { value: '567a1885-0763-4a13-b9f6-157daa39ddc3', label: 'Almoxarifado Central SP', isPrincipal: true },
+        { value: '1a743859-33e6-4ce3-9158-025dee47922b', label: 'Almoxarifado RJ', isPrincipal: false }
       ];
       almoxarifadoDestinoOptions = almoxarifadoOptions;
       
-      console.log('⚠️ NotesDetailDrawer: Usando fallback para almoxarifados');
+      // Auto-selecionar almoxarifado padrão mesmo no fallback
+      if (mode !== 'edit' && !formData.almoxarifado_id) {
+        formData.almoxarifado_id = almoxarifadoOptions[0].value; // Primeiro do fallback
+        formData.tipo = tipo;
+      }
+      
+      console.log('⚠️ NotesDetailDrawer: Usando fallback para almoxarifados - auto-selecionado:', almoxarifadoOptions[0].label);
     } finally {
       dataLoading = false;
     }
@@ -195,10 +222,34 @@
     itemValidationErrors = [];
   }
 
-  function validateForm(): boolean {
+  // Validação flexível para rascunho - permite campos vazios
+  function validateRascunho(): boolean {
     formErrors = {};
+    itemValidationErrors = [];
     
-    // Validações básicas
+    // Para rascunho, apenas validações críticas
+    if (formData.tipo === 'TRANSFERENCIA' && formData.almoxarifado_id && formData.almoxarifado_destino_id) {
+      if (formData.almoxarifado_id === formData.almoxarifado_destino_id) {
+        formErrors.almoxarifado_destino_id = 'Almoxarifado de destino deve ser diferente do origem';
+      }
+    }
+
+    // Validar se há pelo menos um item ou permitir salvar vazio como rascunho
+    if (itens.length === 0) {
+      // Para rascunho, apenas avisar sem impedir salvamento
+      itemValidationErrors = ['⚠️ Rascunho salvo sem itens - adicione itens antes de concluir'];
+    }
+
+    // Rascunho sempre pode ser salvo, mesmo com campos vazios
+    return Object.keys(formErrors).length === 0;
+  }
+
+  // Validação rigorosa para nota completa - todos os campos obrigatórios
+  function validateConcluida(): boolean {
+    formErrors = {};
+    itemValidationErrors = [];
+    
+    // Validações obrigatórias para nota completa
     if (!formData.almoxarifado_id) {
       formErrors.almoxarifado_id = 'Almoxarifado é obrigatório';
     }
@@ -215,10 +266,24 @@
       formErrors.data_documento = 'Data do documento é obrigatória';
     }
 
-    // Validar itens
+    // Validar descrição para nota completa
+    if (!formData.descricao || formData.descricao.trim() === '') {
+      formErrors.descricao = 'Descrição é obrigatória para nota completa';
+    }
+
+    // Validar itens obrigatoriamente
     if (itens.length === 0) {
-      itemValidationErrors = ['Pelo menos um item deve ser adicionado'];
+      itemValidationErrors = ['Pelo menos um item deve ser adicionado para concluir a nota'];
       return false;
+    }
+
+    // Validar se todos os itens têm custo (para entradas)
+    if (formData.tipo === 'ENTRADA') {
+      const itensSemCusto = itens.filter(item => !item.custo_unitario || item.custo_unitario <= 0);
+      if (itensSemCusto.length > 0) {
+        itemValidationErrors = [`${itensSemCusto.length} ${itensSemCusto.length === 1 ? 'item não possui' : 'itens não possuem'} custo unitário válido`];
+        return false;
+      }
     }
 
     return Object.keys(formErrors).length === 0;
@@ -227,16 +292,18 @@
   // ==================== SAVE HANDLERS ====================
   
   async function handleSaveRascunho(): Promise<void> {
-    if (!validateForm()) {
+    if (!validateRascunho()) {
       showValidationErrors = true;
       return;
     }
 
+    // Para rascunho, mostrar warnings mas não bloquear
+    showValidationErrors = itemValidationErrors.length > 0;
     await saveNota('rascunho');
   }
 
   async function handleSaveConcluida(): Promise<void> {
-    if (!validateForm()) {
+    if (!validateConcluida()) {
       showValidationErrors = true;
       return;
     }
@@ -454,9 +521,10 @@
             <Input
               id="data_documento"
               type="date"
+              size="md"
               bind:value={formData.data_documento}
               disabled={mode === 'view'}
-              class="rounded-sm {formErrors.data_documento ? 'border-red-500' : ''}"
+              class="rounded-sm h-10 {formErrors.data_documento ? 'border-red-500' : ''}"
             />
             {#if formErrors.data_documento}
               <p class="text-red-500 dark:text-red-400 text-sm mt-1">{formErrors.data_documento}</p>
@@ -465,7 +533,12 @@
 
           <!-- Almoxarifado Origem -->
           <div>
-            <Label for="almoxarifado_id" class="mb-2 text-gray-900 dark:text-white">Almoxarifado</Label>
+            <Label for="almoxarifado_id" class="mb-2 text-gray-900 dark:text-white">
+              Almoxarifado 
+              {#if almoxarifadoOptions.find(opt => opt.value === formData.almoxarifado_id)?.isPrincipal}
+                <span class="text-xs text-primary-600 dark:text-primary-400 font-medium">(Principal)</span>
+              {/if}
+            </Label>
             <Select
               id="almoxarifado_id"
               bind:value={formData.almoxarifado_id}
@@ -474,7 +547,9 @@
             >
               <option value="">Selecione um almoxarifado</option>
               {#each almoxarifadoOptions as option}
-                <option value={option.value}>{option.label}</option>
+                <option value={option.value}>
+                  {option.label}{option.isPrincipal ? ' (Principal)' : ''}
+                </option>
               {/each}
             </Select>
             {#if formErrors.almoxarifado_id}
@@ -506,15 +581,21 @@
 
         <!-- Descrição -->
         <div>
-          <Label for="descricao" class="mb-2 text-gray-900 dark:text-white">Descrição</Label>
+          <Label for="descricao" class="mb-2 text-gray-900 dark:text-white">
+            Descrição 
+            <span class="text-xs text-gray-500 dark:text-gray-400">(obrigatória para nota completa)</span>
+          </Label>
           <Textarea
             id="descricao"
             bind:value={formData.descricao}
             disabled={mode === 'view'}
             placeholder="Descrição da movimentação..."
             rows="3"
-            class="rounded-sm"
+            class="rounded-sm {formErrors.descricao ? 'border-red-500' : ''}"
           />
+          {#if formErrors.descricao}
+            <p class="text-red-500 dark:text-red-400 text-sm mt-1">{formErrors.descricao}</p>
+          {/if}
         </div>
 
         <!-- Observações -->
@@ -533,13 +614,10 @@
 
       <!-- Itens Manager -->
       <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Itens da Nota</h3>
-        
-        <NotaItensManager
+        <NotaItensManagerSimplified
           bind:itens
           tipo={formData.tipo}
           almoxarifadoId={formData.almoxarifado_id}
-          almoxarifadoDestinoId={formData.almoxarifado_destino_id}
           readonly={mode === 'view'}
           on:itensChanged={handleItensChange}
           on:validationError={handleItensValidationChange}
