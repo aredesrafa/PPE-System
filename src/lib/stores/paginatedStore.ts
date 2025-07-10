@@ -11,6 +11,33 @@ import { isValidCPF, isValidCNPJ } from "$lib/utils/validation";
 import { api } from "$lib/services/core/apiClient";
 
 /**
+ * Resposta padrão da API com sucesso
+ */
+export interface ApiResponse<T = any> {
+  success: boolean;
+  data: T;
+  message?: string;
+}
+
+/**
+ * Resposta de API com lista paginada
+ */
+export interface ApiListResponse<T = any> {
+  success: boolean;
+  data: {
+    contratadas?: T[];
+    colaboradores?: T[];
+    total?: number;
+  } | T[];
+  pagination?: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}
+
+/**
  * Resposta paginada esperada do backend
  */
 export interface PaginatedResponse<T> {
@@ -515,18 +542,18 @@ export function createAdvancedPaginatedStore<T>(
         console.log("🌐 Fetching contratadas from:", `/api${endpoint}`);
 
         // ✅ CORREÇÃO: Usar apiClient para compatibilidade local/GitHub Pages
-        const result = await api.get(endpoint);
+        const result = await api.get(endpoint) as ApiListResponse<T>;
         console.log("📦 Contratadas response:", result);
         console.log("📦 Data array:", result.data);
-        console.log("📦 Data length:", result.data?.length);
+        console.log("📦 Data length:", Array.isArray(result.data) ? result.data.length : (result.data as any)?.contratadas?.length);
 
         if (!result.success) {
           throw new Error(result.message || "Erro na resposta da API");
         }
 
         // Backend retorna: { success: true, data: { contratadas: [...], total: 4 } }
-        const contratadas = result.data.contratadas || result.data;
-        const total = result.data.total || result.data.length;
+        const contratadas = Array.isArray(result.data) ? result.data : (result.data as any).contratadas || [];
+        const total = Array.isArray(result.data) ? result.data.length : (result.data as any).total || 0;
 
         // Adicionar campo 'ativo' padrão para contratadas que não têm
         const contratadasComStatus = contratadas.map((contratada: any) => ({
@@ -567,7 +594,7 @@ export function createAdvancedPaginatedStore<T>(
         console.log("🌐 Fetching colaboradores from:", `/api${endpoint}`);
 
         // ✅ CORREÇÃO: Usar apiClient para compatibilidade local/GitHub Pages
-        const result = await api.get(endpoint);
+        const result = await api.get(endpoint) as ApiListResponse<T>;
         console.log("📦 Colaboradores response:", result);
 
         if (!result.success) {
@@ -575,8 +602,8 @@ export function createAdvancedPaginatedStore<T>(
         }
 
         // Backend pode retornar: { success: true, data: { colaboradores: [...], total: 10 } } ou { success: true, data: [...] }
-        const colaboradores = result.data.colaboradores || result.data || [];
-        const total = result.data.total || result.data.length || 0;
+        const colaboradores = Array.isArray(result.data) ? result.data : (result.data as any).colaboradores || [];
+        const total = Array.isArray(result.data) ? result.data.length : (result.data as any).total || 0;
 
         // Adicionar campo 'ativo' padrão para colaboradores que não têm
         const colaboradoresComStatus = colaboradores.map(

@@ -231,7 +231,7 @@
         <Select
           id="filtro-tipo-epi"
           value={filters.tipoEpiId || ''}
-          on:change={(e) => handleFilterInput('tipoEpiId', e.target.value)}
+          on:change={(e) => handleFilterInput('tipoEpiId', (e.target as HTMLSelectElement).value)}
           size="sm"
           class="rounded-sm"
         >
@@ -248,7 +248,7 @@
         <Select
           id="filtro-tipo-movimentacao"
           value={filters.tipoMovimentacao || ''}
-          on:change={(e) => handleFilterInput('tipoMovimentacao', e.target.value)}
+          on:change={(e) => handleFilterInput('tipoMovimentacao', (e.target as HTMLSelectElement).value)}
           size="sm"
           class="rounded-sm"
         >
@@ -264,7 +264,7 @@
         <Select
           id="filtro-usuario"
           value={filters.usuarioId || ''}
-          on:change={(e) => handleFilterInput('usuarioId', e.target.value)}
+          on:change={(e) => handleFilterInput('usuarioId', (e.target as HTMLSelectElement).value)}
           size="sm"
           class="rounded-sm"
         >

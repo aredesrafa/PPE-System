@@ -103,6 +103,9 @@ class ContratadasAdapter {
         };
       }
 
+      // Se chegou aqui, a resposta não foi bem-sucedida
+      throw new Error('Falha na resposta da API');
+
     } catch (error) {
       console.error("❌ Erro ao carregar contratadas, usando fallback mock:", error);
       

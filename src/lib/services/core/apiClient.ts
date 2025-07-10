@@ -388,7 +388,8 @@ export function createUrlWithParams(
       if (Array.isArray(value)) {
         value.forEach((v) => url.searchParams.append(key, String(v)));
       } else {
-        url.searchParams.set(key, String(value));
+        // Preservar booleans como string "true"/"false" para compatibilidade com APIs
+        url.searchParams.set(key, typeof value === 'boolean' ? value.toString() : String(value));
       }
     }
   });
@@ -434,24 +435,37 @@ export async function healthCheck(): Promise<{
 }> {
   try {
     console.log("🏥 Verificando health do backend...");
-    const response = await apiClient<any>("/health", {
-      timeout: 15000,
-      retries: 1,
+    // Health check não usa prefixo /api
+    const response = await fetch(`${API_BASE_URL.replace('/api', '')}/health`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      signal: AbortSignal.timeout(15000),
     });
 
-    console.log("✅ Backend está saudável:", response);
-    return { healthy: true, message: "Backend operacional" };
+    if (response.ok) {
+      console.log("✅ Backend está saudável");
+      return { healthy: true, message: "Backend operacional" };
+    } else {
+      throw new Error(`HTTP ${response.status}`);
+    }
   } catch (error) {
     console.warn("⚠️ Backend pode estar iniciando:", error);
 
     // Tentar endpoint alternativo
     try {
-      const docsResponse = await apiClient<any>("/docs", {
-        timeout: 20000,
-        retries: 1,
+      const docsResponse = await fetch(`${API_BASE_URL.replace('/api', '')}/api/docs`, {
+        method: 'GET',
+        signal: AbortSignal.timeout(20000),
       });
-      console.log("✅ Backend respondeu via /docs");
-      return { healthy: true, message: "Backend operacional (via docs)" };
+      
+      if (docsResponse.ok) {
+        console.log("✅ Backend respondeu via /docs");
+        return { healthy: true, message: "Backend operacional (via docs)" };
+      } else {
+        throw new Error(`HTTP ${docsResponse.status}`);
+      }
     } catch {
       return {
         healthy: false,
