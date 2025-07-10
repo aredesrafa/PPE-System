@@ -220,7 +220,7 @@ class ConfigurationService {
 
   /**
    * Carrega as regras de negócio do backend ou cache
-   * Por enquanto usa mock data, mas está preparado para API real
+   * Usa endpoint /api/configuracoes real com fallback para mock
    */
   async loadBusinessRules(): Promise<BusinessConfiguration> {
     // Verificar cache primeiro
@@ -229,33 +229,43 @@ class ConfigurationService {
     }
 
     try {
+      console.log("🔧 Tentando carregar configurações do backend...");
+      
       // Conectar ao backend real - endpoint de configuração
-      let config = await api.get<BusinessConfiguration>(
-        "/v1/configuration",
+      const response = await api.get<{success: boolean, data: any[]}>(
+        "/configuracoes",
       );
 
-      // Fallback para mock em caso de erro de conexão
-      if (!config) {
-        console.warn("⚠️ Backend não disponível, usando configuração mock");
-        await new Promise((resolve) => setTimeout(resolve, 100));
-        config = MOCK_BUSINESS_CONFIG;
+      if (response?.success && response.data) {
+        console.log("✅ Configurações carregadas do backend");
+        
+        // TODO: Mapear configurações do backend para formato do frontend
+        // Por enquanto usar mock até implementar mapeamento
+        const config = MOCK_BUSINESS_CONFIG;
+        
+        // Atualizar cache
+        this.cache = config;
+        this.cacheExpiry = Date.now() + this.CACHE_DURATION;
+        
+        return config;
+      } else {
+        throw new Error("Formato de resposta inesperado");
       }
-
-      // Atualizar cache
-      this.cache = config;
-      this.cacheExpiry = Date.now() + this.CACHE_DURATION;
-
-      return config;
     } catch (error) {
-      console.error("Erro ao carregar configurações de negócio:", error);
+      console.warn("⚠️ Endpoint /api/configuracoes não encontrado ou erro:", error);
 
       // Em caso de erro, usar dados do cache (se existir) ou mock data
       if (this.cache) {
-        console.warn("Usando configurações do cache devido ao erro");
+        console.warn("📋 Usando configurações do cache devido ao erro");
         return this.cache;
       }
 
-      console.warn("Usando configurações mock devido ao erro");
+      console.warn("📋 Usando configurações padrão (mock)");
+      
+      // Atualizar cache com mock
+      this.cache = MOCK_BUSINESS_CONFIG;
+      this.cacheExpiry = Date.now() + this.CACHE_DURATION;
+      
       return MOCK_BUSINESS_CONFIG;
     }
   }

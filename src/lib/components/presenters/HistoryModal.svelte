@@ -155,7 +155,7 @@
   $: modalSubtitle = item ? `CA ${item.tipoEPI?.numeroCA || '-'}` : '';
 </script>
 
-<Modal bind:open={showModal} size="xl" class="rounded-sm">
+<Modal open={showModal} size="xl" class="rounded-sm" outsideclose on:close={handleClose}>
   <div class="flex items-center justify-between p-5 border-b border-gray-200 dark:border-gray-600">
     <div class="flex items-center space-x-3">
       <div class="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">

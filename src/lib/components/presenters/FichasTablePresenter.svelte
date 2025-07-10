@@ -19,6 +19,25 @@
   import type { FichaEPIDTO } from '$lib/types/serviceTypes';
   import { formatarData } from '$lib/utils/dateHelpers';
 
+  // ✅ FUNÇÃO: Formatar CPF com máscara xxx.xxx.xxx-xx
+  function formatarCPF(cpf: string): string {
+    if (!cpf || cpf === 'CPF não disponível' || cpf === '') {
+      return 'CPF não disponível';
+    }
+    
+    // Remove caracteres não numéricos
+    const numeros = cpf.replace(/\D/g, '');
+    
+    // Verifica se tem 11 dígitos
+    if (numeros.length !== 11) {
+      // Se não tem 11 dígitos, retorna original ou mensagem
+      return cpf.includes('não') ? cpf : 'CPF inválido';
+    }
+    
+    // Aplica máscara xxx.xxx.xxx-xx
+    return numeros.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+  }
+
   // ==================== PROPS ====================
   
   export let items: FichaEPIDTO[] = [];
@@ -103,6 +122,7 @@
     dispatch('novaFicha');
   }
 
+
   // ==================== COMPUTED PROPERTIES ====================
 </script>
 
@@ -140,13 +160,13 @@
     <div class="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
       <!-- Filters inside table container -->
       <div class="p-4 border-b border-gray-200 dark:border-gray-700">
-        <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-4 relative">
           <!-- Search -->
           <div class="relative">
             <SearchOutline class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
             <Input
               type="text"
-              placeholder="Buscar colaborador..."
+              placeholder="Buscar por nome, CPF ou matrícula..."
               class="pl-10 rounded-sm h-10 text-sm"
               value={filters.searchTerm}
               on:input={handleSearchInput}
@@ -154,20 +174,26 @@
           </div>
           
           <!-- Empresa Filter -->
-          <SearchableDropdown
-            options={filterOptions.empresas}
-            value={filters.empresaFilter}
-            placeholder="Empresa"
-            on:change={handleEmpresaChange}
-          />
+          <div class="relative z-10">
+            <SearchableDropdown
+              options={filterOptions.empresas}
+              value={filters.empresaFilter}
+              placeholder="Empresa"
+              color="alternative"
+              on:change={handleEmpresaChange}
+            />
+          </div>
           
           <!-- Cargo Filter -->
-          <SearchableDropdown
-            options={filterOptions.cargos}
-            value={filters.cargoFilter}
-            placeholder="Cargo"
-            on:change={handleCargoChange}
-          />
+          <div class="relative z-10">
+            <SearchableDropdown
+              options={filterOptions.cargos}
+              value={filters.cargoFilter}
+              placeholder="Cargo"
+              color="alternative"
+              on:change={handleCargoChange}
+            />
+          </div>
 
           <!-- Devolução Pendente Checkbox -->
           <div class="flex items-center">
@@ -217,18 +243,23 @@
                       {ficha.colaborador.nome}
                     </span>
                     <span class="text-sm text-gray-500 dark:text-gray-400">
-                      {ficha.colaborador.cpf || 'CPF não informado'}
+                      {formatarCPF(ficha.colaborador.cpf)}
                     </span>
+                    {#if ficha.colaborador.matricula}
+                      <span class="text-xs text-gray-400 dark:text-gray-500">
+                        Matrícula: {ficha.colaborador.matricula}
+                      </span>
+                    {/if}
                   </div>
                 </TableBodyCell>
                 <TableBodyCell>
                   <div>
                     <span class="font-medium text-gray-900 dark:text-white">
-                      {ficha.colaborador.empresa}
+                      {ficha.colaborador.empresa || 'Empresa não informada'}
                     </span>
-                    {#if ficha.contratada}
+                    {#if ficha.colaborador.cargo}
                       <div class="text-sm text-gray-500 dark:text-gray-400">
-                        {ficha.contratada.nome}
+                        {ficha.colaborador.cargo}
                       </div>
                     {/if}
                   </div>
@@ -236,7 +267,7 @@
                 <TableBodyCell>
                   <div class="flex flex-wrap gap-1">
                     <Badge color="blue" class="w-fit rounded-sm">
-                      {ficha.episInfo?.totalEpisAtivos || ficha.totalEpisAtivos || 0} EPIs
+                      {ficha.episInfo?.totalEpisComColaborador || ficha.totalEpisAtivos || 0} EPIs
                     </Badge>
                     {#if (ficha.episInfo?.episExpirados || ficha.totalEpisVencidos) && (ficha.episInfo?.episExpirados > 0 || ficha.totalEpisVencidos > 0)}
                       <Badge color="red" class="w-fit rounded-sm">

@@ -1,6 +1,6 @@
 import { c as create_ssr_component, a as compute_rest_props, b as compute_slots, j as getContext, v as validate_component, d as spread, g as add_attribute, e as escape_object, f as escape_attribute_value, l as each, h as escape } from "./ssr.js";
 import { twMerge } from "tailwind-merge";
-import { L as Label } from "./Label.js";
+import { g as Label } from "./ErrorDisplay.js";
 const colorClasses = {
   primary: "text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600",
   secondary: "text-secondary-600 focus:ring-secondary-500 dark:focus:ring-secondary-600",

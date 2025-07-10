@@ -3,6 +3,7 @@ import { W as Wrapper, I as Input, t as themeStore, n as notifications } from ".
 import { d as derived, w as writable } from "../../chunks/index.js";
 import { i as is_void, F as Frame, B as Badge, a as Button } from "../../chunks/Button.js";
 import { twMerge, twJoin } from "tailwind-merge";
+import { C as CogOutline } from "../../chunks/CogOutline.js";
 import { F as FileDocOutline } from "../../chunks/FileDocOutline.js";
 import * as dom from "@floating-ui/dom";
 import { C as ChevronDownOutline } from "../../chunks/ChevronDownOutline.js";
@@ -1034,81 +1035,6 @@ const ChartOutline = create_ssr_component(($$result, $$props, $$bindings, slots)
     {}
   )}>${title.id && title.title ? `<title${add_attribute("id", title.id, 0)}>${escape(title.title)}</title>` : ``}${desc.id && desc.desc ? `<desc${add_attribute("id", desc.id, 0)}>${escape(desc.desc)}</desc>` : ``}<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"${add_attribute("stroke-width", strokeWidth, 0)} d="M4 4v15a1 1 0 0 0 1 1h15M8 16l2.5-5.5 3 3L17.273 7 20 9.667"></path></svg>`} `;
 });
-const CogOutline = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  let $$restProps = compute_rest_props($$props, ["size", "role", "color", "withEvents", "title", "strokeWidth", "desc", "ariaLabel"]);
-  const ctx = getContext("iconCtx") ?? {};
-  const sizes = {
-    xs: "w-3 h-3",
-    sm: "w-4 h-4",
-    md: "w-5 h-5",
-    lg: "w-6 h-6",
-    xl: "w-8 h-8"
-  };
-  let { size = ctx.size || "md" } = $$props;
-  let { role = ctx.role || "img" } = $$props;
-  let { color = ctx.color || "currentColor" } = $$props;
-  let { withEvents = ctx.withEvents || false } = $$props;
-  let { title = {} } = $$props;
-  let { strokeWidth = ctx.strokeWidth || "2" } = $$props;
-  let { desc = {} } = $$props;
-  let ariaDescribedby = `${title.id || ""} ${desc.id || ""}`;
-  let hasDescription = false;
-  let { ariaLabel = "cog outline" } = $$props;
-  if ($$props.size === void 0 && $$bindings.size && size !== void 0) $$bindings.size(size);
-  if ($$props.role === void 0 && $$bindings.role && role !== void 0) $$bindings.role(role);
-  if ($$props.color === void 0 && $$bindings.color && color !== void 0) $$bindings.color(color);
-  if ($$props.withEvents === void 0 && $$bindings.withEvents && withEvents !== void 0) $$bindings.withEvents(withEvents);
-  if ($$props.title === void 0 && $$bindings.title && title !== void 0) $$bindings.title(title);
-  if ($$props.strokeWidth === void 0 && $$bindings.strokeWidth && strokeWidth !== void 0) $$bindings.strokeWidth(strokeWidth);
-  if ($$props.desc === void 0 && $$bindings.desc && desc !== void 0) $$bindings.desc(desc);
-  if ($$props.ariaLabel === void 0 && $$bindings.ariaLabel && ariaLabel !== void 0) $$bindings.ariaLabel(ariaLabel);
-  {
-    if (title.id || desc.id) {
-      hasDescription = true;
-    } else {
-      hasDescription = false;
-    }
-  }
-  return `${withEvents ? `<svg${spread(
-    [
-      { xmlns: "http://www.w3.org/2000/svg" },
-      { fill: "none" },
-      { color: escape_attribute_value(color) },
-      escape_object($$restProps),
-      {
-        class: escape_attribute_value(twMerge("shrink-0", sizes[size ?? "md"], $$props.class))
-      },
-      { role: escape_attribute_value(role) },
-      {
-        "aria-label": escape_attribute_value(ariaLabel)
-      },
-      {
-        "aria-describedby": escape_attribute_value(hasDescription ? ariaDescribedby : void 0)
-      },
-      { viewBox: "0 0 24 24" }
-    ],
-    {}
-  )}>${title.id && title.title ? `<title${add_attribute("id", title.id, 0)}>${escape(title.title)}</title>` : ``}${desc.id && desc.desc ? `<desc${add_attribute("id", desc.id, 0)}>${escape(desc.desc)}</desc>` : ``}<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"${add_attribute("stroke-width", strokeWidth, 0)} d="M21 13v-2a1 1 0 0 0-1-1h-.757l-.707-1.707.535-.536a1 1 0 0 0 0-1.414l-1.414-1.414a1 1 0 0 0-1.414 0l-.536.535L14 4.757V4a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v.757l-1.707.707-.536-.535a1 1 0 0 0-1.414 0L4.929 6.343a1 1 0 0 0 0 1.414l.536.536L4.757 10H4a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h.757l.707 1.707-.535.536a1 1 0 0 0 0 1.414l1.414 1.414a1 1 0 0 0 1.414 0l.536-.535 1.707.707V20a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-.757l1.707-.708.536.536a1 1 0 0 0 1.414 0l1.414-1.414a1 1 0 0 0 0-1.414l-.535-.536.707-1.707H20a1 1 0 0 0 1-1Z"></path><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"${add_attribute("stroke-width", strokeWidth, 0)} d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"></path></svg>` : `<svg${spread(
-    [
-      { xmlns: "http://www.w3.org/2000/svg" },
-      { fill: "none" },
-      { color: escape_attribute_value(color) },
-      escape_object($$restProps),
-      {
-        class: escape_attribute_value(twMerge("shrink-0", sizes[size ?? "md"], $$props.class))
-      },
-      { role: escape_attribute_value(role) },
-      {
-        "aria-label": escape_attribute_value(ariaLabel)
-      },
-      {
-        "aria-describedby": escape_attribute_value(hasDescription ? ariaDescribedby : void 0)
-      },
-      { viewBox: "0 0 24 24" }
-    ],
-    {}
-  )}>${title.id && title.title ? `<title${add_attribute("id", title.id, 0)}>${escape(title.title)}</title>` : ``}${desc.id && desc.desc ? `<desc${add_attribute("id", desc.id, 0)}>${escape(desc.desc)}</desc>` : ``}<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"${add_attribute("stroke-width", strokeWidth, 0)} d="M21 13v-2a1 1 0 0 0-1-1h-.757l-.707-1.707.535-.536a1 1 0 0 0 0-1.414l-1.414-1.414a1 1 0 0 0-1.414 0l-.536.535L14 4.757V4a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v.757l-1.707.707-.536-.535a1 1 0 0 0-1.414 0L4.929 6.343a1 1 0 0 0 0 1.414l.536.536L4.757 10H4a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h.757l.707 1.707-.535.536a1 1 0 0 0 0 1.414l1.414 1.414a1 1 0 0 0 1.414 0l.536-.535 1.707.707V20a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-.757l1.707-.708.536.536a1 1 0 0 0 1.414 0l1.414-1.414a1 1 0 0 0 0-1.414l-.535-.536.707-1.707H20a1 1 0 0 0 1-1Z"></path><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"${add_attribute("stroke-width", strokeWidth, 0)} d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"></path></svg>`} `;
-});
 const FolderOpenOutline = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let $$restProps = compute_rest_props($$props, ["size", "role", "color", "withEvents", "title", "strokeWidth", "desc", "ariaLabel"]);
   const ctx = getContext("iconCtx") ?? {};
@@ -1562,7 +1488,7 @@ const CompanySelector = create_ssr_component(($$result, $$props, $$bindings, slo
   let badgeColor;
   let $selectedCompanyStore, $$unsubscribe_selectedCompanyStore;
   $$unsubscribe_selectedCompanyStore = subscribe(selectedCompanyStore, (value) => $selectedCompanyStore = value);
-  const headerType = "default";
+  let { headerType = "default" } = $$props;
   let searchTerm = "";
   function getButtonClasses() {
     const badge = selectedCompany.badge.toLowerCase();

@@ -1,66 +1,84 @@
-import { c as create_ssr_component, a as compute_rest_props, v as validate_component, b as compute_slots, d as spread, g as add_attribute, e as escape_object, f as escape_attribute_value, s as setContext, j as getContext, k as subscribe, l as each, h as escape } from "./ssr.js";
-import { w as writable } from "./index.js";
+import { c as create_ssr_component, a as compute_rest_props, d as spread, g as add_attribute, e as escape_object, f as escape_attribute_value, h as escape, l as each, s as setContext, j as getContext, k as subscribe, v as validate_component } from "./ssr.js";
 import { twMerge, twJoin } from "tailwind-merge";
-import { f as fade, F as Frame, C as CloseButton, b as api, a as Button } from "./Button.js";
+import { w as writable } from "./index.js";
+import { a as Button } from "./Button.js";
+import { A as Alert } from "./Alert.js";
 import { A as ArrowRightOutline, E as ExclamationCircleOutline } from "./ExclamationCircleOutline.js";
-const TransitionFrame = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  let $$restProps = compute_rest_props($$props, ["transition", "params", "open"]);
-  let { transition = fade } = $$props;
-  let { params = {} } = $$props;
-  let { open = true } = $$props;
-  function close(ev) {
-    if (ev?.stopPropagation) ev.stopPropagation();
-    open = false;
-  }
-  if ($$props.transition === void 0 && $$bindings.transition && transition !== void 0) $$bindings.transition(transition);
-  if ($$props.params === void 0 && $$bindings.params && params !== void 0) $$bindings.params(params);
-  if ($$props.open === void 0 && $$bindings.open && open !== void 0) $$bindings.open(open);
-  let $$settled;
-  let $$rendered;
-  let previous_head = $$result.head;
-  do {
-    $$settled = true;
-    $$result.head = previous_head;
-    $$rendered = `${validate_component(Frame, "Frame").$$render(
-      $$result,
-      Object.assign({}, { transition }, { params }, $$restProps, { open }),
-      {
-        open: ($$value) => {
-          open = $$value;
-          $$settled = false;
-        }
-      },
-      {
-        default: () => {
-          return `${slots.default ? slots.default({ close }) : ``}`;
-        }
-      }
-    )} `;
-  } while (!$$settled);
-  return $$rendered;
-});
-const Alert = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  let $$restProps = compute_rest_props($$props, ["dismissable", "defaultClass"]);
-  let $$slots = compute_slots(slots);
-  let { dismissable = false } = $$props;
-  let { defaultClass = "p-4 gap-3 text-sm" } = $$props;
-  let divClass;
-  if ($$props.dismissable === void 0 && $$bindings.dismissable && dismissable !== void 0) $$bindings.dismissable(dismissable);
+const Label = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let labelClass;
+  let $$restProps = compute_rest_props($$props, ["color", "defaultClass", "show"]);
+  let { color = "gray" } = $$props;
+  let { defaultClass = "text-sm rtl:text-right font-medium block" } = $$props;
+  let { show = true } = $$props;
+  let node;
+  const colorClasses = {
+    gray: "text-gray-900 dark:text-gray-300",
+    green: "text-green-700 dark:text-green-500",
+    red: "text-red-700 dark:text-red-500",
+    disabled: "text-gray-400 dark:text-gray-500 grayscale contrast-50"
+  };
+  if ($$props.color === void 0 && $$bindings.color && color !== void 0) $$bindings.color(color);
   if ($$props.defaultClass === void 0 && $$bindings.defaultClass && defaultClass !== void 0) $$bindings.defaultClass(defaultClass);
-  divClass = twMerge(defaultClass, ($$slots.icon || dismissable) && "flex items-center", $$props.class);
-  return `${validate_component(TransitionFrame, "TransitionFrame").$$render($$result, Object.assign({}, { dismissable }, { color: "primary" }, { role: "alert" }, { rounded: true }, $$restProps, { class: divClass }), {}, {
-    default: ({ close }) => {
-      return `${$$slots.icon ? `${slots.icon ? slots.icon({}) : ``}` : ``} ${$$slots.icon || dismissable ? `<div>${slots.default ? slots.default({}) : ``}</div>` : `${slots.default ? slots.default({}) : ``}`} ${dismissable ? `${slots["close-button"] ? slots["close-button"]({ close }) : ` ${validate_component(CloseButton, "CloseButton").$$render(
-        $$result,
-        {
-          class: "ms-auto -me-1.5 -my-1.5 dark:hover:bg-gray-700",
-          color: $$restProps.color
-        },
-        {},
-        {}
-      )} `}` : ``}`;
+  if ($$props.show === void 0 && $$bindings.show && show !== void 0) $$bindings.show(show);
+  {
+    {
+      color = color;
     }
-  })} `;
+  }
+  labelClass = twMerge(defaultClass, colorClasses[color], $$props.class);
+  return `${show ? `<label${spread(
+    [
+      escape_object($$restProps),
+      {
+        class: escape_attribute_value(labelClass)
+      }
+    ],
+    {}
+  )}${add_attribute("this", node, 0)}>${slots.default ? slots.default({}) : ``}</label>` : `${slots.default ? slots.default({}) : ``}`} `;
+});
+const common = "block w-full";
+const Select = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let $$restProps = compute_rest_props($$props, [
+    "items",
+    "value",
+    "placeholder",
+    "underline",
+    "size",
+    "defaultClass",
+    "underlineClass"
+  ]);
+  let { items = [] } = $$props;
+  let { value = "" } = $$props;
+  let { placeholder = "Choose option ..." } = $$props;
+  let { underline = false } = $$props;
+  let { size = "md" } = $$props;
+  let { defaultClass = "text-gray-900 disabled:text-gray-400 bg-gray-50 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:disabled:text-gray-500 dark:focus:ring-primary-500 dark:focus:border-primary-500" } = $$props;
+  let { underlineClass = "text-gray-500 disabled:text-gray-400 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-400 dark:disabled:text-gray-500 dark:border-gray-700 focus:outline-hidden focus:ring-0 focus:border-gray-200 peer" } = $$props;
+  const sizes = {
+    sm: "text-sm p-2",
+    md: "text-sm p-2.5",
+    lg: "text-base py-3 px-4"
+  };
+  let selectClass;
+  if ($$props.items === void 0 && $$bindings.items && items !== void 0) $$bindings.items(items);
+  if ($$props.value === void 0 && $$bindings.value && value !== void 0) $$bindings.value(value);
+  if ($$props.placeholder === void 0 && $$bindings.placeholder && placeholder !== void 0) $$bindings.placeholder(placeholder);
+  if ($$props.underline === void 0 && $$bindings.underline && underline !== void 0) $$bindings.underline(underline);
+  if ($$props.size === void 0 && $$bindings.size && size !== void 0) $$bindings.size(size);
+  if ($$props.defaultClass === void 0 && $$bindings.defaultClass && defaultClass !== void 0) $$bindings.defaultClass(defaultClass);
+  if ($$props.underlineClass === void 0 && $$bindings.underlineClass && underlineClass !== void 0) $$bindings.underlineClass(underlineClass);
+  selectClass = twMerge(common, underline ? underlineClass : defaultClass, sizes[size], underline && "px-0!", $$props.class);
+  return `<select${spread(
+    [
+      escape_object($$restProps),
+      {
+        class: escape_attribute_value(selectClass)
+      }
+    ],
+    {}
+  )}>${placeholder ? `<option disabled ${(value === void 0 ? true : void 0) ? "selected" : ""} value="">${escape(placeholder)}</option>` : ``}${items && items.length > 0 ? `${each(items, ({ value: itemValue, name, disabled }) => {
+    return `<option ${disabled ? "disabled" : ""}${add_attribute("value", itemValue, 0)} ${(itemValue === value ? true : void 0) ? "selected" : ""}>${escape(name)}</option>`;
+  })}` : `${slots.default ? slots.default({}) : ``}`}</select> `;
 });
 const Spinner = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let $$restProps = compute_rest_props($$props, ["color", "bg", "customColor", "size", "currentFill", "currentColor"]);
@@ -471,47 +489,81 @@ const RefreshOutline = create_ssr_component(($$result, $$props, $$bindings, slot
     {}
   )}>${title.id && title.title ? `<title${add_attribute("id", title.id, 0)}>${escape(title.title)}</title>` : ``}${desc.id && desc.desc ? `<desc${add_attribute("id", desc.id, 0)}>${escape(desc.desc)}</desc>` : ``}<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"${add_attribute("stroke-width", strokeWidth, 0)} d="M17.651 7.65a7.131 7.131 0 0 0-12.68 3.15M18.001 4v4h-4m-7.652 8.35a7.13 7.13 0 0 0 12.68-3.15M6 20v-4h4"></path></svg>`} `;
 });
-function removeNonNumeric(str) {
-  return str.replace(/\D/g, "");
-}
-function isValidCPF(cpf) {
-  const numbers = removeNonNumeric(cpf);
-  if (numbers.length !== 11) return false;
-  if (/^(\d)\1{10}$/.test(numbers)) return false;
-  let sum = 0;
-  for (let i = 0; i < 9; i++) {
-    sum += parseInt(numbers[i]) * (10 - i);
+const TrashBinOutline = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let $$restProps = compute_rest_props($$props, ["size", "role", "color", "withEvents", "title", "strokeWidth", "desc", "ariaLabel"]);
+  const ctx = getContext("iconCtx") ?? {};
+  const sizes = {
+    xs: "w-3 h-3",
+    sm: "w-4 h-4",
+    md: "w-5 h-5",
+    lg: "w-6 h-6",
+    xl: "w-8 h-8"
+  };
+  let { size = ctx.size || "md" } = $$props;
+  let { role = ctx.role || "img" } = $$props;
+  let { color = ctx.color || "currentColor" } = $$props;
+  let { withEvents = ctx.withEvents || false } = $$props;
+  let { title = {} } = $$props;
+  let { strokeWidth = ctx.strokeWidth || "2" } = $$props;
+  let { desc = {} } = $$props;
+  let ariaDescribedby = `${title.id || ""} ${desc.id || ""}`;
+  let hasDescription = false;
+  let { ariaLabel = "trash bin outline" } = $$props;
+  if ($$props.size === void 0 && $$bindings.size && size !== void 0) $$bindings.size(size);
+  if ($$props.role === void 0 && $$bindings.role && role !== void 0) $$bindings.role(role);
+  if ($$props.color === void 0 && $$bindings.color && color !== void 0) $$bindings.color(color);
+  if ($$props.withEvents === void 0 && $$bindings.withEvents && withEvents !== void 0) $$bindings.withEvents(withEvents);
+  if ($$props.title === void 0 && $$bindings.title && title !== void 0) $$bindings.title(title);
+  if ($$props.strokeWidth === void 0 && $$bindings.strokeWidth && strokeWidth !== void 0) $$bindings.strokeWidth(strokeWidth);
+  if ($$props.desc === void 0 && $$bindings.desc && desc !== void 0) $$bindings.desc(desc);
+  if ($$props.ariaLabel === void 0 && $$bindings.ariaLabel && ariaLabel !== void 0) $$bindings.ariaLabel(ariaLabel);
+  {
+    if (title.id || desc.id) {
+      hasDescription = true;
+    } else {
+      hasDescription = false;
+    }
   }
-  let digit1 = sum * 10 % 11;
-  if (digit1 === 10) digit1 = 0;
-  sum = 0;
-  for (let i = 0; i < 10; i++) {
-    sum += parseInt(numbers[i]) * (11 - i);
-  }
-  let digit2 = sum * 10 % 11;
-  if (digit2 === 10) digit2 = 0;
-  return digit1 === parseInt(numbers[9]) && digit2 === parseInt(numbers[10]);
-}
-function isValidCNPJ(cnpj) {
-  const numbers = removeNonNumeric(cnpj);
-  if (numbers.length !== 14) return false;
-  if (/^(\d)\1{13}$/.test(numbers)) return false;
-  const weights1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
-  let sum = 0;
-  for (let i = 0; i < 12; i++) {
-    sum += parseInt(numbers[i]) * weights1[i];
-  }
-  let digit1 = sum % 11;
-  digit1 = digit1 < 2 ? 0 : 11 - digit1;
-  const weights2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
-  sum = 0;
-  for (let i = 0; i < 13; i++) {
-    sum += parseInt(numbers[i]) * weights2[i];
-  }
-  let digit2 = sum % 11;
-  digit2 = digit2 < 2 ? 0 : 11 - digit2;
-  return digit1 === parseInt(numbers[12]) && digit2 === parseInt(numbers[13]);
-}
+  return `${withEvents ? `<svg${spread(
+    [
+      { xmlns: "http://www.w3.org/2000/svg" },
+      { fill: "none" },
+      { color: escape_attribute_value(color) },
+      escape_object($$restProps),
+      {
+        class: escape_attribute_value(twMerge("shrink-0", sizes[size ?? "md"], $$props.class))
+      },
+      { role: escape_attribute_value(role) },
+      {
+        "aria-label": escape_attribute_value(ariaLabel)
+      },
+      {
+        "aria-describedby": escape_attribute_value(hasDescription ? ariaDescribedby : void 0)
+      },
+      { viewBox: "0 0 24 24" }
+    ],
+    {}
+  )}>${title.id && title.title ? `<title${add_attribute("id", title.id, 0)}>${escape(title.title)}</title>` : ``}${desc.id && desc.desc ? `<desc${add_attribute("id", desc.id, 0)}>${escape(desc.desc)}</desc>` : ``}<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"${add_attribute("stroke-width", strokeWidth, 0)} d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"></path></svg>` : `<svg${spread(
+    [
+      { xmlns: "http://www.w3.org/2000/svg" },
+      { fill: "none" },
+      { color: escape_attribute_value(color) },
+      escape_object($$restProps),
+      {
+        class: escape_attribute_value(twMerge("shrink-0", sizes[size ?? "md"], $$props.class))
+      },
+      { role: escape_attribute_value(role) },
+      {
+        "aria-label": escape_attribute_value(ariaLabel)
+      },
+      {
+        "aria-describedby": escape_attribute_value(hasDescription ? ariaDescribedby : void 0)
+      },
+      { viewBox: "0 0 24 24" }
+    ],
+    {}
+  )}>${title.id && title.title ? `<title${add_attribute("id", title.id, 0)}>${escape(title.title)}</title>` : ``}${desc.id && desc.desc ? `<desc${add_attribute("id", desc.id, 0)}>${escape(desc.desc)}</desc>` : ``}<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"${add_attribute("stroke-width", strokeWidth, 0)} d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"></path></svg>`} `;
+});
 function createPaginatedStore(fetchFunction, options = {}) {
   const {
     initialPageSize = 20,
@@ -716,481 +768,6 @@ function createPaginatedStore(fetchFunction, options = {}) {
     getCurrentParams
   };
 }
-function createAdvancedPaginatedStore(config = {}) {
-  const {
-    defaultPageSize = 10,
-    debounceDelay = 300,
-    cacheTimeout = 5 * 60 * 1e3
-  } = config;
-  function getFallbackContratadas(params) {
-    const mockData = [
-      {
-        id: "1",
-        nome: "Empresa ABC Ltda",
-        cnpj: "12345678000190",
-        cnpjFormatado: "12.345.678/0001-90",
-        createdAt: "2024-01-15T10:00:00Z"
-      },
-      {
-        id: "2",
-        nome: "TechSolutions Corp",
-        cnpj: "98765432000198",
-        cnpjFormatado: "98.765.432/0001-98",
-        createdAt: "2024-01-20T14:30:00Z"
-      }
-    ];
-    let filteredData = [...mockData];
-    if (params.search) {
-      const searchTerm = params.search.toLowerCase();
-      filteredData = filteredData.filter(
-        (item) => item.nome?.toLowerCase().includes(searchTerm) || item.cnpj?.includes(searchTerm)
-      );
-    }
-    const page = params.page || 1;
-    const pageSize = params.limit || defaultPageSize;
-    const startIndex = (page - 1) * pageSize;
-    const endIndex = startIndex + pageSize;
-    const paginatedData = filteredData.slice(startIndex, endIndex);
-    return {
-      data: paginatedData,
-      total: filteredData.length,
-      page,
-      pageSize,
-      totalPages: Math.ceil(filteredData.length / pageSize)
-    };
-  }
-  async function fetchFunction(params) {
-    if (config.baseEndpoint === "/contratadas") {
-      try {
-        const queryParams = new URLSearchParams();
-        if (params.page) queryParams.append("page", params.page.toString());
-        if (params.limit) queryParams.append("limit", params.limit.toString());
-        if (params.search) queryParams.append("nome", params.search);
-        if (params.ativo !== void 0 && params.ativo !== "") {
-          queryParams.append("ativa", String(params.ativo));
-        }
-        const endpoint = `/contratadas?${queryParams.toString()}`;
-        console.log("🌐 Fetching contratadas from:", `/api${endpoint}`);
-        const result = await api.get(endpoint);
-        console.log("📦 Contratadas response:", result);
-        console.log("📦 Data array:", result.data);
-        console.log("📦 Data length:", result.data?.length);
-        if (!result.success) {
-          throw new Error(result.message || "Erro na resposta da API");
-        }
-        const contratadas = result.data.contratadas || result.data;
-        const total = result.data.total || result.data.length;
-        const contratadasComStatus = contratadas.map((contratada) => ({
-          ...contratada,
-          ativo: contratada.ativo !== void 0 ? contratada.ativo : true
-        }));
-        return {
-          data: contratadasComStatus,
-          total,
-          page: params.page || 1,
-          pageSize: params.limit || 10,
-          totalPages: Math.ceil(total / (params.limit || 10))
-        };
-      } catch (error) {
-        console.error("❌ Erro ao buscar contratadas:", error);
-        return getFallbackContratadas(params);
-      }
-    } else if (config.baseEndpoint === "/colaboradores") {
-      try {
-        const queryParams = new URLSearchParams();
-        if (params.page) queryParams.append("page", params.page.toString());
-        if (params.limit) queryParams.append("limit", params.limit.toString());
-        if (params.search) queryParams.append("nome", params.search);
-        if (params.contratadaId)
-          queryParams.append("contratadaId", params.contratadaId);
-        if (params.ativo !== void 0 && params.ativo !== "") {
-          queryParams.append("ativo", String(params.ativo));
-        }
-        const endpoint = `/colaboradores?${queryParams.toString()}`;
-        console.log("🌐 Fetching colaboradores from:", `/api${endpoint}`);
-        const result = await api.get(endpoint);
-        console.log("📦 Colaboradores response:", result);
-        if (!result.success) {
-          throw new Error(result.message || "Erro na resposta da API");
-        }
-        const colaboradores = result.data.colaboradores || result.data || [];
-        const total = result.data.total || result.data.length || 0;
-        const colaboradoresComStatus = colaboradores.map(
-          (colaborador) => ({
-            ...colaborador,
-            ativo: colaborador.ativo !== void 0 ? colaborador.ativo : true
-          })
-        );
-        return {
-          data: colaboradoresComStatus,
-          total,
-          page: params.page || 1,
-          pageSize: params.limit || 10,
-          totalPages: Math.ceil(total / (params.limit || 10))
-        };
-      } catch (error) {
-        console.error("❌ Erro ao buscar colaboradores:", error);
-        await new Promise((resolve) => setTimeout(resolve, 300));
-        const mockData = [
-          {
-            id: "1",
-            nome: "João Silva Santos",
-            cpf: "12345678901",
-            email: "joao.silva@abc.com.br",
-            cargo: "Operador de Máquinas",
-            contratada: {
-              id: "751c35a3-09dd-42bc-bc96-58ca036525fd",
-              nome: "Beta Serviços e Construções S.A."
-            },
-            contratadaId: "751c35a3-09dd-42bc-bc96-58ca036525fd",
-            dataAdmissao: "2023-01-15",
-            ativo: true,
-            temFichaAtiva: true,
-            createdAt: "2023-01-15T10:00:00Z"
-          },
-          {
-            id: "2",
-            nome: "Maria Santos Oliveira",
-            cpf: "98765432109",
-            email: "maria.santos@techsolutions.com",
-            cargo: "Técnica de Segurança",
-            contratada: {
-              id: "70e382b6-7cdb-41f6-acc8-80dfc4110861",
-              nome: "Claude Test Company LTDA"
-            },
-            contratadaId: "70e382b6-7cdb-41f6-acc8-80dfc4110861",
-            dataAdmissao: "2023-03-10",
-            ativo: true,
-            temFichaAtiva: true,
-            createdAt: "2023-03-10T10:00:00Z"
-          },
-          {
-            id: "3",
-            nome: "Carlos Pereira Lima",
-            cpf: "11122233344",
-            email: "carlos.pereira@gamma.com.br",
-            cargo: "Engenheiro",
-            contratada: {
-              id: "fbbcd5fc-2bd8-4a38-a54b-46d90cb696b8",
-              nome: "Gamma Engenharia e Consultoria"
-            },
-            contratadaId: "fbbcd5fc-2bd8-4a38-a54b-46d90cb696b8",
-            dataAdmissao: "2023-05-20",
-            ativo: true,
-            temFichaAtiva: false,
-            createdAt: "2023-05-20T10:00:00Z"
-          }
-        ];
-        let filteredData = [...mockData];
-        if (params.search) {
-          const searchTerm = params.search.toLowerCase();
-          filteredData = filteredData.filter(
-            (item) => item.nome?.toLowerCase().includes(searchTerm) || item.cpf?.includes(searchTerm) || item.email?.toLowerCase().includes(searchTerm)
-          );
-        }
-        if (params.contratadaId) {
-          filteredData = filteredData.filter(
-            (item) => item.contratadaId === params.contratadaId
-          );
-        }
-        const page = params.page || 1;
-        const pageSize = params.limit || defaultPageSize;
-        const startIndex = (page - 1) * pageSize;
-        const endIndex = startIndex + pageSize;
-        const paginatedData = filteredData.slice(startIndex, endIndex);
-        return {
-          data: paginatedData,
-          total: filteredData.length,
-          page,
-          pageSize,
-          totalPages: Math.ceil(filteredData.length / pageSize)
-        };
-      }
-    } else {
-      await new Promise((resolve) => setTimeout(resolve, 300));
-      const mockData = [
-        {
-          id: "1",
-          nome: "Item Mock 1",
-          createdAt: "2023-01-15T10:00:00Z"
-        },
-        {
-          id: "2",
-          nome: "Item Mock 2",
-          createdAt: "2023-03-10T10:00:00Z"
-        }
-      ];
-      return {
-        data: mockData,
-        total: mockData.length,
-        page: params.page || 1,
-        pageSize: params.limit || defaultPageSize,
-        totalPages: Math.ceil(
-          mockData.length / (params.limit || defaultPageSize)
-        )
-      };
-    }
-  }
-  const baseStore = createPaginatedStore(fetchFunction, {
-    initialPageSize: defaultPageSize,
-    enableCache: true,
-    debounceDelay
-  });
-  let currentFilters = {};
-  function addItem(item) {
-    console.log("➕ Adicionando item:", item);
-  }
-  function updateItem(id, updates) {
-    console.log("✏️ Atualizando item:", id, updates);
-  }
-  function removeItem(id) {
-    console.log("🗑️ Removendo item:", id);
-  }
-  async function prefetchNext() {
-    if (baseStore.hasNext()) {
-      console.log("📄 Pré-carregando próxima página...");
-      await baseStore.nextPage();
-    }
-  }
-  async function loadData() {
-    await baseStore.fetchPage();
-  }
-  async function setPage(page) {
-    await baseStore.goToPage(page);
-  }
-  async function setFilter(key, value) {
-    currentFilters[key] = value;
-    await baseStore.setFilters(currentFilters);
-  }
-  async function clearFilters() {
-    currentFilters = {};
-    await baseStore.setFilters({});
-  }
-  async function refresh() {
-    await baseStore.reload();
-  }
-  async function setPageSize(size) {
-    await baseStore.fetchPage({ limit: size, page: 1 });
-  }
-  async function create(data) {
-    if (config.baseEndpoint === "/contratadas") {
-      try {
-        console.log("🆕 Criando contratada:", data);
-        const result = await api.post("/contratadas", data);
-        console.log("✅ Contratada criada:", result);
-        if (!result.success) {
-          throw new Error(result.message || "Erro ao criar contratada");
-        }
-        await refresh();
-        return result.data;
-      } catch (error) {
-        console.error("❌ Erro ao criar contratada:", error);
-        throw error;
-      }
-    } else if (config.baseEndpoint === "/colaboradores") {
-      try {
-        console.log("🆕 Criando colaborador:", data);
-        const colaboradorData = data;
-        if (colaboradorData.cpf && !isValidCPF(colaboradorData.cpf)) {
-          throw new Error("CPF inválido. Verifique o formato e os dígitos verificadores.");
-        }
-        if (!colaboradorData.contratadaId) {
-          throw new Error("Contratada é obrigatória. Selecione uma contratada válida.");
-        }
-        const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-        if (!uuidRegex.test(colaboradorData.contratadaId)) {
-          throw new Error("ID da contratada inválido. Selecione uma contratada válida da lista.");
-        }
-        const payload = {
-          ...colaboradorData,
-          cpf: colaboradorData.cpf ? colaboradorData.cpf.replace(/\D/g, "") : void 0
-        };
-        const result = await api.post("/colaboradores", payload);
-        console.log("✅ Colaborador criado:", result);
-        if (!result.success) {
-          throw new Error(result.message || "Erro ao criar colaborador");
-        }
-        await refresh();
-        return result.data;
-      } catch (error) {
-        console.error("❌ Erro ao criar colaborador:", error);
-        throw error;
-      }
-    } else {
-      throw new Error("Método create não implementado para este endpoint");
-    }
-  }
-  async function update(id, data) {
-    if (config.baseEndpoint === "/contratadas") {
-      try {
-        console.log("✏️ Atualizando contratada:", id, data);
-        const result = await api.put(`/contratadas/${id}`, data);
-        console.log("✅ Contratada atualizada:", result);
-        if (!result.success) {
-          throw new Error(result.message || "Erro ao atualizar contratada");
-        }
-        await refresh();
-        return result.data;
-      } catch (error) {
-        console.error("❌ Erro ao atualizar contratada:", error);
-        throw error;
-      }
-    } else if (config.baseEndpoint === "/colaboradores") {
-      try {
-        console.log("✏️ Atualizando colaborador:", id, data);
-        const result = await api.put(`/colaboradores/${id}`, data);
-        console.log("✅ Colaborador atualizado:", result);
-        if (!result.success) {
-          throw new Error(result.message || "Erro ao atualizar colaborador");
-        }
-        await refresh();
-        return result.data;
-      } catch (error) {
-        console.error("❌ Erro ao atualizar colaborador:", error);
-        throw error;
-      }
-    } else {
-      throw new Error("Método update não implementado para este endpoint");
-    }
-  }
-  async function deleteItem(id) {
-    if (config.baseEndpoint === "/contratadas") {
-      try {
-        console.log("🗑️ Excluindo contratada:", id);
-        const result = await api.delete(`/contratadas/${id}`);
-        console.log("✅ Contratada excluída:", result);
-        if (!result.success) {
-          throw new Error(result.message || "Erro ao excluir contratada");
-        }
-        await refresh();
-        return true;
-      } catch (error) {
-        console.error("❌ Erro ao excluir contratada:", error);
-        throw error;
-      }
-    } else if (config.baseEndpoint === "/colaboradores") {
-      try {
-        console.log("🗑️ Excluindo colaborador:", id);
-        const result = await api.delete(`/colaboradores/${id}`);
-        console.log("✅ Colaborador excluído:", result);
-        if (!result.success) {
-          throw new Error(result.message || "Erro ao excluir colaborador");
-        }
-        await refresh();
-        return true;
-      } catch (error) {
-        console.error("❌ Erro ao excluir colaborador:", error);
-        throw error;
-      }
-    } else {
-      throw new Error("Método delete não implementado para este endpoint");
-    }
-  }
-  async function loadContratadas() {
-    try {
-      console.log("🏢 Carregando contratadas do backend...");
-      const { contratadasAdapter } = await import("./contratadasAdapter.js");
-      const response = await contratadasAdapter.getContratadas({
-        page: 1,
-        limit: 100
-        // Carregar todas as contratadas para filtro
-      });
-      console.log("✅ Contratadas carregadas:", response.data?.length || 0);
-      return response.data || [];
-    } catch (error) {
-      console.warn("⚠️ Erro ao carregar contratadas, usando fallback:", error);
-      return [
-        {
-          id: "751c35a3-09dd-42bc-bc96-58ca036525fd",
-          nome: "Beta Serviços e Construções S.A."
-        },
-        {
-          id: "70e382b6-7cdb-41f6-acc8-80dfc4110861",
-          nome: "Claude Test Company LTDA"
-        },
-        {
-          id: "610921f5-2579-4f2a-9a9c-8544f95fdbad",
-          nome: "Empresa Contratada Alpha LTDA"
-        },
-        {
-          id: "fbbcd5fc-2bd8-4a38-a54b-46d90cb696b8",
-          nome: "Gamma Engenharia e Consultoria"
-        }
-      ];
-    }
-  }
-  let filterOptions = {
-    contratadas: []
-  };
-  if (config.filterEndpoints?.contratadas) {
-    loadContratadas().then((contratadas) => {
-      filterOptions.contratadas = contratadas;
-      derivedState = {
-        ...derivedState,
-        filterOptions: { ...filterOptions }
-      };
-      console.log("🔄 FilterOptions atualizadas:", filterOptions);
-    });
-  }
-  let derivedState = {
-    data: [],
-    pagination: {
-      currentPage: 1,
-      itemsPerPage: defaultPageSize,
-      totalItems: 0,
-      totalPages: 0
-    },
-    filters: currentFilters,
-    filterOptions
-  };
-  baseStore.subscribe((state) => {
-    derivedState = {
-      data: state.items,
-      pagination: {
-        currentPage: state.page,
-        itemsPerPage: state.pageSize,
-        totalItems: state.total,
-        totalPages: state.totalPages
-      },
-      filters: currentFilters,
-      filterOptions
-    };
-    console.log("🔄 Store state updated:", {
-      itemsLength: state.items?.length || 0,
-      total: state.total,
-      loading: state.loading,
-      error: state.error
-    });
-  });
-  return {
-    ...baseStore,
-    get data() {
-      return derivedState.data;
-    },
-    get pagination() {
-      return derivedState.pagination;
-    },
-    get filters() {
-      return derivedState.filters;
-    },
-    get filterOptions() {
-      return derivedState.filterOptions;
-    },
-    addItem,
-    updateItem,
-    removeItem,
-    prefetchNext,
-    loadData,
-    setPage,
-    setFilter,
-    clearFilters,
-    refresh,
-    setPageSize,
-    create,
-    update,
-    delete: deleteItem
-  };
-}
 const LOADING_TEXTS = {
   default: "Carregando...",
   processing: "Processando...",
@@ -1267,17 +844,17 @@ const ErrorDisplay = create_ssr_component(($$result, $$props, $$bindings, slots)
   )}</div></div>`;
 });
 export {
-  Alert as A,
   ErrorDisplay as E,
   LoadingSpinner as L,
   RefreshOutline as R,
+  Select as S,
   Table as T,
   TableHead as a,
   TableHeadCell as b,
   TableBody as c,
   TableBodyRow as d,
   TableBodyCell as e,
-  createPaginatedStore as f,
-  createAdvancedPaginatedStore as g,
-  isValidCNPJ as i
+  TrashBinOutline as f,
+  Label as g,
+  createPaginatedStore as h
 };

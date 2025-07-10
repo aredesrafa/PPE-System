@@ -3,6 +3,9 @@
 		"src/routes/+layout.ts",
 		"src/routes/+layout.ts"
 	],
+	"/admin": [
+		"src/routes/+layout.ts"
+	],
 	"/catalogo": [
 		"src/routes/+layout.ts"
 	],
@@ -10,6 +13,7 @@
 		"src/routes/+layout.ts"
 	],
 	"/estoque": [
+		"src/routes/estoque/+page.ts",
 		"src/routes/+layout.ts"
 	],
 	"/fichas": [

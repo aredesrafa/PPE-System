@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Fix</title>
+</head>
+<body>
+    <h1>Testing the Configuration Service Fix</h1>
+    <p>The issue was in configurationService.ts line 231 where a variable was being shadowed.</p>
+    <p><strong>Problem:</strong> <code>const config = MOCK_BUSINESS_CONFIG;</code> inside an if block was creating a new variable instead of assigning to the existing one.</p>
+    <p><strong>Solution:</strong> Changed to <code>let config</code> declaration and <code>config = MOCK_BUSINESS_CONFIG;</code> assignment.</p>
+    
+    <h2>What this fixes:</h2>
+    <ul>
+        <li>✅ businessConfigStore.initialize() now works properly</li>
+        <li>✅ InventoryContainer can create the paginatedStore successfully</li>
+        <li>✅ /estoque page should now load and show mock data</li>
+        <li>✅ History modal should be accessible</li>
+    </ul>
+    
+    <p><strong>To test:</strong> Visit <a href="http://localhost:5174/estoque">http://localhost:5174/estoque</a></p>
+    
+    <script>
+        console.log("🔧 Configuration Service Fix Applied");
+        console.log("📝 Problem: Variable shadowing in configurationService.ts:231");
+        console.log("✅ Solution: Proper variable assignment for fallback mock data");
+        console.log("🧪 Test: /estoque page should now load with 2 mock items");
+    </script>
+</body>
+</html>

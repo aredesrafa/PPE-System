@@ -4,6 +4,7 @@ import { a as Button, B as Badge } from "../../chunks/Button.js";
 import { C as Card } from "../../chunks/Card.js";
 import { twMerge } from "tailwind-merge";
 import { E as ExclamationCircleOutline, A as ArrowRightOutline } from "../../chunks/ExclamationCircleOutline.js";
+import { C as CheckCircleOutline } from "../../chunks/CheckCircleOutline.js";
 import { F as FileDocOutline } from "../../chunks/FileDocOutline.js";
 import { b as base } from "../../chunks/paths.js";
 const ArchiveOutline = create_ssr_component(($$result, $$props, $$bindings, slots) => {
@@ -81,81 +82,6 @@ const ArchiveOutline = create_ssr_component(($$result, $$props, $$bindings, slot
     {}
   )}>${title.id && title.title ? `<title${add_attribute("id", title.id, 0)}>${escape(title.title)}</title>` : ``}${desc.id && desc.desc ? `<desc${add_attribute("id", desc.id, 0)}>${escape(desc.desc)}</desc>` : ``}<path stroke="currentColor" stroke-linejoin="round"${add_attribute("stroke-width", strokeWidth, 0)} d="M10 12v1h4v-1m4 7H6a1 1 0 0 1-1-1V9h14v9a1 1 0 0 1-1 1ZM4 5h16a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"></path></svg>`} `;
 });
-const CheckCircleOutline = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  let $$restProps = compute_rest_props($$props, ["size", "role", "color", "withEvents", "title", "strokeWidth", "desc", "ariaLabel"]);
-  const ctx = getContext("iconCtx") ?? {};
-  const sizes = {
-    xs: "w-3 h-3",
-    sm: "w-4 h-4",
-    md: "w-5 h-5",
-    lg: "w-6 h-6",
-    xl: "w-8 h-8"
-  };
-  let { size = ctx.size || "md" } = $$props;
-  let { role = ctx.role || "img" } = $$props;
-  let { color = ctx.color || "currentColor" } = $$props;
-  let { withEvents = ctx.withEvents || false } = $$props;
-  let { title = {} } = $$props;
-  let { strokeWidth = ctx.strokeWidth || "2" } = $$props;
-  let { desc = {} } = $$props;
-  let ariaDescribedby = `${title.id || ""} ${desc.id || ""}`;
-  let hasDescription = false;
-  let { ariaLabel = "check circle outline" } = $$props;
-  if ($$props.size === void 0 && $$bindings.size && size !== void 0) $$bindings.size(size);
-  if ($$props.role === void 0 && $$bindings.role && role !== void 0) $$bindings.role(role);
-  if ($$props.color === void 0 && $$bindings.color && color !== void 0) $$bindings.color(color);
-  if ($$props.withEvents === void 0 && $$bindings.withEvents && withEvents !== void 0) $$bindings.withEvents(withEvents);
-  if ($$props.title === void 0 && $$bindings.title && title !== void 0) $$bindings.title(title);
-  if ($$props.strokeWidth === void 0 && $$bindings.strokeWidth && strokeWidth !== void 0) $$bindings.strokeWidth(strokeWidth);
-  if ($$props.desc === void 0 && $$bindings.desc && desc !== void 0) $$bindings.desc(desc);
-  if ($$props.ariaLabel === void 0 && $$bindings.ariaLabel && ariaLabel !== void 0) $$bindings.ariaLabel(ariaLabel);
-  {
-    if (title.id || desc.id) {
-      hasDescription = true;
-    } else {
-      hasDescription = false;
-    }
-  }
-  return `${withEvents ? `<svg${spread(
-    [
-      { xmlns: "http://www.w3.org/2000/svg" },
-      { fill: "none" },
-      { color: escape_attribute_value(color) },
-      escape_object($$restProps),
-      {
-        class: escape_attribute_value(twMerge("shrink-0", sizes[size ?? "md"], $$props.class))
-      },
-      { role: escape_attribute_value(role) },
-      {
-        "aria-label": escape_attribute_value(ariaLabel)
-      },
-      {
-        "aria-describedby": escape_attribute_value(hasDescription ? ariaDescribedby : void 0)
-      },
-      { viewBox: "0 0 24 24" }
-    ],
-    {}
-  )}>${title.id && title.title ? `<title${add_attribute("id", title.id, 0)}>${escape(title.title)}</title>` : ``}${desc.id && desc.desc ? `<desc${add_attribute("id", desc.id, 0)}>${escape(desc.desc)}</desc>` : ``}<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"${add_attribute("stroke-width", strokeWidth, 0)} d="M8.5 11.5 11 14l4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"></path></svg>` : `<svg${spread(
-    [
-      { xmlns: "http://www.w3.org/2000/svg" },
-      { fill: "none" },
-      { color: escape_attribute_value(color) },
-      escape_object($$restProps),
-      {
-        class: escape_attribute_value(twMerge("shrink-0", sizes[size ?? "md"], $$props.class))
-      },
-      { role: escape_attribute_value(role) },
-      {
-        "aria-label": escape_attribute_value(ariaLabel)
-      },
-      {
-        "aria-describedby": escape_attribute_value(hasDescription ? ariaDescribedby : void 0)
-      },
-      { viewBox: "0 0 24 24" }
-    ],
-    {}
-  )}>${title.id && title.title ? `<title${add_attribute("id", title.id, 0)}>${escape(title.title)}</title>` : ``}${desc.id && desc.desc ? `<desc${add_attribute("id", desc.id, 0)}>${escape(desc.desc)}</desc>` : ``}<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"${add_attribute("stroke-width", strokeWidth, 0)} d="M8.5 11.5 11 14l4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"></path></svg>`} `;
-});
 function getActivityColor(type) {
   switch (type) {
     case "entrega":
@@ -192,8 +118,8 @@ function getActivityBgClass(type) {
 const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let $loading, $$unsubscribe_loading;
   let $activitiesStore, $$unsubscribe_activitiesStore;
-  let $quickStatsStore, $$unsubscribe_quickStatsStore;
   let $dashboardData, $$unsubscribe_dashboardData;
+  let $quickStatsStore, $$unsubscribe_quickStatsStore;
   const dashboardData = writable(null);
   $$unsubscribe_dashboardData = subscribe(dashboardData, (value) => $dashboardData = value);
   const loading = writable(true);
@@ -227,31 +153,47 @@ const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   }
   $$unsubscribe_loading();
   $$unsubscribe_activitiesStore();
-  $$unsubscribe_quickStatsStore();
   $$unsubscribe_dashboardData();
+  $$unsubscribe_quickStatsStore();
   return `${$$result.head += `<!-- HEAD_svelte-s5dteg_START -->${$$result.title = `<title>Dashboard - DataLife EPI</title>`, ""}<!-- HEAD_svelte-s5dteg_END -->`, ""} <div class="space-y-6"> <div class="flex items-center justify-between" data-svelte-h="svelte-13se1wv"><div><h1 class="text-2xl font-bold text-gray-900 dark:text-white">Dashboard</h1> <p class="text-sm text-gray-600 dark:text-gray-400">Visão geral do sistema de gerenciamento de EPIs</p></div></div>  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">${$loading ? `${each(Array(4), (_, i) => {
-    return `${validate_component(Card, "Card").$$render($$result, { size: "sm", class: "rounded-sm" }, {}, {
-      default: () => {
-        return `<div class="flex items-center justify-between animate-pulse" data-svelte-h="svelte-bgl0bx"><div class="space-y-2"><div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-24"></div> <div class="h-8 bg-gray-200 dark:bg-gray-700 rounded w-16"></div> <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-20"></div></div> <div class="p-3 bg-gray-200 dark:bg-gray-700 rounded-lg"><div class="w-6 h-6 bg-gray-300 dark:bg-gray-600 rounded"></div> </div></div> `;
+    return `${validate_component(Card, "Card").$$render(
+      $$result,
+      {
+        size: "sm",
+        class: "rounded-sm shadow-none"
+      },
+      {},
+      {
+        default: () => {
+          return `<div class="flex items-center justify-between animate-pulse" data-svelte-h="svelte-bgl0bx"><div class="space-y-2"><div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-24"></div> <div class="h-8 bg-gray-200 dark:bg-gray-700 rounded w-16"></div> <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-20"></div></div> <div class="p-3 bg-gray-200 dark:bg-gray-700 rounded-lg"><div class="w-6 h-6 bg-gray-300 dark:bg-gray-600 rounded"></div> </div></div> `;
+        }
       }
-    })}`;
+    )}`;
   })}` : `${each(metrics, (metric) => {
-    return `${validate_component(Card, "Card").$$render($$result, { size: "sm", class: "rounded-sm" }, {}, {
-      default: () => {
-        return `<div class="flex items-center justify-between"><div><p class="text-sm font-medium text-gray-600 dark:text-gray-400">${escape(metric.title)}</p> <p class="text-2xl font-bold text-gray-900 dark:text-white">${escape(metric.value)}</p> <div class="flex items-center mt-2"><span class="${"text-xs " + escape(
-          metric.changeType === "positive" ? "text-green-600" : "text-red-600",
-          true
-        )}">${escape(metric.change)}</span> <span class="text-xs text-gray-500 dark:text-gray-400 ml-1" data-svelte-h="svelte-9uf3xt">vs. mês anterior</span> </div></div> <div class="${"p-3 rounded-lg " + escape(
-          metric.color === "blue" ? "bg-blue-100 dark:bg-blue-900" : metric.color === "green" ? "bg-green-100 dark:bg-green-900" : metric.color === "yellow" ? "bg-yellow-100 dark:bg-yellow-900" : "bg-red-100 dark:bg-red-900",
-          true
-        )}">${validate_component(metric.icon || missing_component, "svelte:component").$$render($$result, { class: "w-6 h-6" }, {}, {})} </div></div> `;
+    return `${validate_component(Card, "Card").$$render(
+      $$result,
+      {
+        size: "sm",
+        class: "rounded-sm shadow-none"
+      },
+      {},
+      {
+        default: () => {
+          return `<div class="flex items-center justify-between"><div><p class="text-sm font-medium text-gray-600 dark:text-gray-400">${escape(metric.title)}</p> <p class="text-2xl font-bold text-gray-900 dark:text-white">${escape(metric.value)}</p> <div class="flex items-center mt-2"><span class="${"text-xs " + escape(
+            metric.changeType === "positive" ? "text-green-600" : "text-red-600",
+            true
+          )}">${escape(metric.change)}</span> <span class="text-xs text-gray-500 dark:text-gray-400 ml-1" data-svelte-h="svelte-9uf3xt">vs. mês anterior</span> </div></div> <div class="${"p-3 rounded-lg " + escape(
+            metric.color === "blue" ? "bg-blue-100 dark:bg-blue-900" : metric.color === "green" ? "bg-green-100 dark:bg-green-900" : metric.color === "yellow" ? "bg-yellow-100 dark:bg-yellow-900" : "bg-red-100 dark:bg-red-900",
+            true
+          )}">${validate_component(metric.icon || missing_component, "svelte:component").$$render($$result, { class: "w-6 h-6" }, {}, {})} </div></div> `;
+        }
       }
-    })}`;
-  })}`}</div>  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6"> <div class="lg:col-span-2">${validate_component(Card, "Card").$$render(
+    )}`;
+  })}`}</div>  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6"> <div class="lg:col-span-2 space-y-6">${validate_component(Card, "Card").$$render(
     $$result,
     {
       size: "sm",
-      class: "rounded-sm w-full max-w-none"
+      class: "rounded-sm w-full max-w-none shadow-none"
     },
     {},
     {
@@ -275,49 +217,65 @@ const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
         })}</div>`;
       }
     }
-  )}</div>  <div class="space-y-6"> ${validate_component(Card, "Card").$$render($$result, { size: "sm", class: "rounded-sm" }, {}, {
-    default: () => {
-      return `<h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4" data-svelte-h="svelte-ppurac">Estatísticas Rápidas</h3> <div class="space-y-3"><div class="flex items-center justify-between"><span class="text-sm text-gray-600 dark:text-gray-400" data-svelte-h="svelte-8sutok">Total de Colaboradores</span> <span class="text-sm font-semibold text-gray-900 dark:text-white">${escape($quickStatsStore.totalColaboradores)}</span></div> <div class="flex items-center justify-between"><span class="text-sm text-gray-600 dark:text-gray-400" data-svelte-h="svelte-1jiovvy">Fichas Vencidas</span> ${validate_component(Badge, "Badge").$$render($$result, { color: "red", class: "w-fit rounded-sm" }, {}, {
-        default: () => {
-          return `${escape($quickStatsStore.fichasVencidas)}`;
-        }
-      })}</div> <div class="flex items-center justify-between"><span class="text-sm text-gray-600 dark:text-gray-400" data-svelte-h="svelte-7onrs3">Estoque Total</span> <span class="text-sm font-semibold text-gray-900 dark:text-white">${escape($quickStatsStore.estoqueTotal.toLocaleString("pt-BR"))}</span></div> <div class="flex items-center justify-between"><span class="text-sm text-gray-600 dark:text-gray-400" data-svelte-h="svelte-1l7hlno">Entregas Hoje</span> ${validate_component(Badge, "Badge").$$render(
-        $$result,
-        {
-          color: "green",
-          class: "w-fit rounded-sm"
-        },
-        {},
-        {
-          default: () => {
-            return `${escape($quickStatsStore.entregasHoje)}`;
-          }
-        }
-      )}</div></div>`;
+  )}  ${$dashboardData && $dashboardData.contratadaStats && $dashboardData.contratadaStats.topContratadas.length > 0 ? `${validate_component(Card, "Card").$$render(
+    $$result,
+    {
+      size: "sm",
+      class: "rounded-sm w-full max-w-none shadow-none"
+    },
+    {},
+    {
+      default: () => {
+        return `<h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4" data-svelte-h="svelte-10d2baa">EPIs ativos por Contratada</h3> <div class="space-y-3">${each($dashboardData.contratadaStats.topContratadas, (item) => {
+          return `<div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"><div class="flex-1 min-w-0"><p class="text-sm font-medium text-gray-900 dark:text-white truncate">${escape(item.contratada.nome)}</p> <p class="text-xs text-gray-500 dark:text-gray-400">${escape(item.contratada.cnpjFormatado)}</p></div> <div class="text-right ml-4">${validate_component(Badge, "Badge").$$render(
+            $$result,
+            {
+              color: "green",
+              class: "w-fit rounded-sm mb-1"
+            },
+            {},
+            {
+              default: () => {
+                return `${escape(item.totalEpisAtivos)} EPIs`;
+              }
+            }
+          )} <p class="text-xs text-gray-600 dark:text-gray-400">${escape(item.totalColaboradores)} Colab.</p></div> </div>`;
+        })}</div>`;
+      }
     }
-  })}  ${$dashboardData && $dashboardData.contratadaStats && $dashboardData.contratadaStats.topContratadas.length > 0 ? `${validate_component(Card, "Card").$$render($$result, { size: "sm", class: "rounded-sm" }, {}, {
-    default: () => {
-      return `<h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4" data-svelte-h="svelte-1cc6x26">Top Contratadas (EPIs Ativos)</h3> <div class="space-y-3">${each($dashboardData.contratadaStats.topContratadas, (item) => {
-        return `<div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"><div class="flex-1 min-w-0"><p class="text-sm font-medium text-gray-900 dark:text-white truncate">${escape(item.contratada.nome)}</p> <p class="text-xs text-gray-500 dark:text-gray-400">${escape(item.contratada.cnpjFormatado)}</p></div> <div class="text-right ml-4">${validate_component(Badge, "Badge").$$render(
+  )}` : ``}</div>  <div class="space-y-6"> ${validate_component(Card, "Card").$$render(
+    $$result,
+    {
+      size: "sm",
+      class: "rounded-sm shadow-none"
+    },
+    {},
+    {
+      default: () => {
+        return `<h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4" data-svelte-h="svelte-ppurac">Estatísticas Rápidas</h3> <div class="space-y-3"><div class="flex items-center justify-between"><span class="text-sm text-gray-600 dark:text-gray-400" data-svelte-h="svelte-8sutok">Total de Colaboradores</span> <span class="text-sm font-semibold text-gray-900 dark:text-white">${escape($quickStatsStore.totalColaboradores)}</span></div> <div class="flex items-center justify-between"><span class="text-sm text-gray-600 dark:text-gray-400" data-svelte-h="svelte-1jiovvy">Fichas Vencidas</span> ${validate_component(Badge, "Badge").$$render($$result, { color: "red", class: "w-fit rounded-sm" }, {}, {
+          default: () => {
+            return `${escape($quickStatsStore.fichasVencidas)}`;
+          }
+        })}</div> <div class="flex items-center justify-between"><span class="text-sm text-gray-600 dark:text-gray-400" data-svelte-h="svelte-7onrs3">Estoque Total</span> <span class="text-sm font-semibold text-gray-900 dark:text-white">${escape($quickStatsStore.estoqueTotal.toLocaleString("pt-BR"))}</span></div> <div class="flex items-center justify-between"><span class="text-sm text-gray-600 dark:text-gray-400" data-svelte-h="svelte-1l7hlno">Entregas Hoje</span> ${validate_component(Badge, "Badge").$$render(
           $$result,
           {
             color: "green",
-            class: "w-fit rounded-sm mb-1"
+            class: "w-fit rounded-sm"
           },
           {},
           {
             default: () => {
-              return `${escape(item.totalEpisAtivos)} EPIs`;
+              return `${escape($quickStatsStore.entregasHoje)}`;
             }
           }
-        )} <p class="text-xs text-gray-600 dark:text-gray-400">${escape(item.totalColaboradores)} Colab.</p></div> </div>`;
-      })}</div>`;
+        )}</div></div>`;
+      }
     }
-  })}` : ``}  ${validate_component(Card, "Card").$$render(
+  )}  ${validate_component(Card, "Card").$$render(
     $$result,
     {
       size: "sm",
-      class: "rounded-sm border-l-4 border-l-yellow-500"
+      class: "rounded-sm border-l-4 border-l-yellow-500 shadow-none"
     },
     {},
     {

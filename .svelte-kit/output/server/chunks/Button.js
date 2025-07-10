@@ -1,4 +1,4 @@
-import { p as identity, c as create_ssr_component, a as compute_rest_props, s as setContext, i as createEventDispatcher, d as spread, g as add_attribute, f as escape_attribute_value, e as escape_object, j as getContext, h as escape, v as validate_component } from "./ssr.js";
+import { u as identity, c as create_ssr_component, a as compute_rest_props, s as setContext, i as createEventDispatcher, d as spread, g as add_attribute, f as escape_attribute_value, e as escape_object, j as getContext, h as escape, v as validate_component } from "./ssr.js";
 import { twMerge } from "tailwind-merge";
 const void_element_names = /^(?:area|base|br|col|command|embed|hr|img|input|keygen|link|meta|param|source|track|wbr)$/;
 function is_void(name) {
@@ -146,7 +146,7 @@ function createUrlWithParams(baseUrl, params) {
       if (Array.isArray(value)) {
         value.forEach((v) => url.searchParams.append(key, String(v)));
       } else {
-        url.searchParams.set(key, String(value));
+        url.searchParams.set(key, typeof value === "boolean" ? value.toString() : String(value));
       }
     }
   });

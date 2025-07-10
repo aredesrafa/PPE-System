@@ -1,95 +1,18 @@
-import { c as create_ssr_component, a as compute_rest_props, j as getContext, d as spread, g as add_attribute, h as escape, f as escape_attribute_value, e as escape_object, i as createEventDispatcher, v as validate_component, l as each, m as missing_component, k as subscribe, o as onDestroy } from "../../../chunks/ssr.js";
-import { c as createUrlWithParams, b as api, B as Badge, a as Button } from "../../../chunks/Button.js";
-import { A as Alert, L as LoadingSpinner, E as ErrorDisplay, R as RefreshOutline, T as Table, a as TableHead, b as TableHeadCell, c as TableBody, d as TableBodyRow, e as TableBodyCell, f as createPaginatedStore } from "../../../chunks/ErrorDisplay.js";
+import { c as create_ssr_component, a as compute_rest_props, j as getContext, d as spread, g as add_attribute, h as escape, f as escape_attribute_value, e as escape_object, i as createEventDispatcher, v as validate_component, m as missing_component, l as each, k as subscribe, o as onDestroy } from "../../../chunks/ssr.js";
+import { c as createUrlWithParams, b as api, a as Button, B as Badge } from "../../../chunks/Button.js";
+import { L as LoadingSpinner, E as ErrorDisplay, R as RefreshOutline, T as Table, a as TableHead, b as TableHeadCell, c as TableBody, d as TableBodyRow, e as TableBodyCell, f as TrashBinOutline, S as Select, g as Label, h as createPaginatedStore } from "../../../chunks/ErrorDisplay.js";
 import { I as Input } from "../../../chunks/modalStore.js";
 import { C as Card } from "../../../chunks/Card.js";
+import { C as CheckOutline } from "../../../chunks/CheckOutline.js";
 import { twMerge } from "tailwind-merge";
-import { E as EyeOutline } from "../../../chunks/EyeOutline.js";
+import { S as SearchOutline, a as SearchableDropdown, E as EyeOutline, D as Drawer, b as DrawerHeader, T as Textarea } from "../../../chunks/DrawerHeader.js";
 import { F as FileDocOutline } from "../../../chunks/FileDocOutline.js";
-import { D as Drawer, a as DrawerHeader, T as Textarea, P as PenOutline } from "../../../chunks/DrawerHeader.js";
-import { P as PlusOutline } from "../../../chunks/PlusOutline.js";
-import { T as TrashBinOutline, S as Select } from "../../../chunks/TrashBinOutline.js";
-import { R as Radio, C as Checkbox } from "../../../chunks/Checkbox.js";
-import { S as SearchOutline, a as SearchableDropdown } from "../../../chunks/DrawerHeader.svelte_svelte_type_style_lang.js";
+import { P as PenOutline } from "../../../chunks/PenOutline.js";
+import { P as PlusOutline } from "../../../chunks/Icon.js";
+import { C as Checkbox, R as Radio } from "../../../chunks/Checkbox.js";
 import { f as formatarData } from "../../../chunks/dateHelpers.js";
-import { L as Label } from "../../../chunks/Label.js";
-/* empty css                                                              */
+import { A as Alert } from "../../../chunks/Alert.js";
 import { E as ExclamationCircleOutline } from "../../../chunks/ExclamationCircleOutline.js";
-const CheckOutline = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  let $$restProps = compute_rest_props($$props, ["size", "role", "color", "withEvents", "title", "strokeWidth", "desc", "ariaLabel"]);
-  const ctx = getContext("iconCtx") ?? {};
-  const sizes = {
-    xs: "w-3 h-3",
-    sm: "w-4 h-4",
-    md: "w-5 h-5",
-    lg: "w-6 h-6",
-    xl: "w-8 h-8"
-  };
-  let { size = ctx.size || "md" } = $$props;
-  let { role = ctx.role || "img" } = $$props;
-  let { color = ctx.color || "currentColor" } = $$props;
-  let { withEvents = ctx.withEvents || false } = $$props;
-  let { title = {} } = $$props;
-  let { strokeWidth = ctx.strokeWidth || "2" } = $$props;
-  let { desc = {} } = $$props;
-  let ariaDescribedby = `${title.id || ""} ${desc.id || ""}`;
-  let hasDescription = false;
-  let { ariaLabel = "check outline" } = $$props;
-  if ($$props.size === void 0 && $$bindings.size && size !== void 0) $$bindings.size(size);
-  if ($$props.role === void 0 && $$bindings.role && role !== void 0) $$bindings.role(role);
-  if ($$props.color === void 0 && $$bindings.color && color !== void 0) $$bindings.color(color);
-  if ($$props.withEvents === void 0 && $$bindings.withEvents && withEvents !== void 0) $$bindings.withEvents(withEvents);
-  if ($$props.title === void 0 && $$bindings.title && title !== void 0) $$bindings.title(title);
-  if ($$props.strokeWidth === void 0 && $$bindings.strokeWidth && strokeWidth !== void 0) $$bindings.strokeWidth(strokeWidth);
-  if ($$props.desc === void 0 && $$bindings.desc && desc !== void 0) $$bindings.desc(desc);
-  if ($$props.ariaLabel === void 0 && $$bindings.ariaLabel && ariaLabel !== void 0) $$bindings.ariaLabel(ariaLabel);
-  {
-    if (title.id || desc.id) {
-      hasDescription = true;
-    } else {
-      hasDescription = false;
-    }
-  }
-  return `${withEvents ? `<svg${spread(
-    [
-      { xmlns: "http://www.w3.org/2000/svg" },
-      { fill: "none" },
-      { color: escape_attribute_value(color) },
-      escape_object($$restProps),
-      {
-        class: escape_attribute_value(twMerge("shrink-0", sizes[size ?? "md"], $$props.class))
-      },
-      { role: escape_attribute_value(role) },
-      {
-        "aria-label": escape_attribute_value(ariaLabel)
-      },
-      {
-        "aria-describedby": escape_attribute_value(hasDescription ? ariaDescribedby : void 0)
-      },
-      { viewBox: "0 0 24 24" }
-    ],
-    {}
-  )}>${title.id && title.title ? `<title${add_attribute("id", title.id, 0)}>${escape(title.title)}</title>` : ``}${desc.id && desc.desc ? `<desc${add_attribute("id", desc.id, 0)}>${escape(desc.desc)}</desc>` : ``}<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"${add_attribute("stroke-width", strokeWidth, 0)} d="M5 11.917 9.724 16.5 19 7.5"></path></svg>` : `<svg${spread(
-    [
-      { xmlns: "http://www.w3.org/2000/svg" },
-      { fill: "none" },
-      { color: escape_attribute_value(color) },
-      escape_object($$restProps),
-      {
-        class: escape_attribute_value(twMerge("shrink-0", sizes[size ?? "md"], $$props.class))
-      },
-      { role: escape_attribute_value(role) },
-      {
-        "aria-label": escape_attribute_value(ariaLabel)
-      },
-      {
-        "aria-describedby": escape_attribute_value(hasDescription ? ariaDescribedby : void 0)
-      },
-      { viewBox: "0 0 24 24" }
-    ],
-    {}
-  )}>${title.id && title.title ? `<title${add_attribute("id", title.id, 0)}>${escape(title.title)}</title>` : ``}${desc.id && desc.desc ? `<desc${add_attribute("id", desc.id, 0)}>${escape(desc.desc)}</desc>` : ``}<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"${add_attribute("stroke-width", strokeWidth, 0)} d="M5 11.917 9.724 16.5 19 7.5"></path></svg>`} `;
-});
 const CloseOutline = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let $$restProps = compute_rest_props($$props, ["size", "role", "color", "withEvents", "title", "strokeWidth", "desc", "ariaLabel"]);
   const ctx = getContext("iconCtx") ?? {};
@@ -656,257 +579,527 @@ class NotasMovimentacaoAdapter {
   }
 }
 const notasMovimentacaoAdapter = new NotasMovimentacaoAdapter();
-class AlmoxarifadosAdapter {
-  baseEndpoint = "/estoque/almoxarifados";
-  /**
-   * Lista todos os almoxarifados disponíveis
-   *
-   * Como o endpoint direto de almoxarifados não existe,
-   * extraímos os dados dos itens de estoque
-   */
-  async listarAlmoxarifados() {
-    console.log("🏪 AlmoxarifadosAdapter: Listando almoxarifados via estoque");
-    try {
-      try {
-        console.log("🔍 Tentando endpoint direto:", this.baseEndpoint);
-        const response = await api.get(this.baseEndpoint, {
-          timeout: 15e3,
-          retries: 1
-        });
-        console.log("📦 Resposta recebida:", response);
-        let items = [];
-        if (response.success && response.data) {
-          items = Array.isArray(response.data) ? response.data : [];
-        } else if (Array.isArray(response)) {
-          items = response;
-        } else {
-          console.warn("⚠️ Estrutura de resposta inesperada:", response);
-          items = [];
-        }
-        console.log("🔍 Almoxarifados recebidos do backend:", items.map((a) => ({ id: a.id, nome: a.nome })));
-        console.log(
-          "✅ Almoxarifados listados via endpoint direto:",
-          items.length
-        );
-        if (items.length === 0) {
-          console.warn("⚠️ Nenhum almoxarifado retornado, usando fallback");
-          return this.getFallbackAlmoxarifados();
-        }
-        return items;
-      } catch (directError) {
-        console.log(
-          "⚠️ Endpoint direto não disponível, extraindo de estoque..."
-        );
-        const estoqueResponse = await api.get("/estoque/itens?limit=100");
-        const almoxarifadosMap = /* @__PURE__ */ new Map();
-        estoqueResponse.data.items.forEach((item) => {
-          const alm = item.almoxarifado;
-          if (alm && !almoxarifadosMap.has(alm.id)) {
-            almoxarifadosMap.set(alm.id, {
-              id: alm.id,
-              nome: alm.nome,
-              unidadeNegocioId: alm.unidadeNegocioId,
-              // ✅ CORREÇÃO: camelCase
-              isPrincipal: alm.nome.toLowerCase().includes("central"),
-              // ✅ CORREÇÃO: camelCase
-              createdAt: (/* @__PURE__ */ new Date()).toISOString(),
-              // ✅ CORREÇÃO: camelCase
-              unidadeNegocio: {
-                id: alm.unidadeNegocio.id,
-                nome: alm.unidadeNegocio.nome,
-                codigo: alm.unidadeNegocio.codigo
-              }
-            });
-          }
-        });
-        const items = Array.from(almoxarifadosMap.values());
-        console.log("✅ Almoxarifados extraídos do estoque:", items.length);
-        return items;
+const TableContainer = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let startItem;
+  let endItem;
+  let { loading = false } = $$props;
+  let { error = null } = $$props;
+  let { isEmpty = false } = $$props;
+  let { emptyIcon = null } = $$props;
+  let { emptyTitle = "Nenhum item encontrado" } = $$props;
+  let { emptyMessage = "Não há dados para exibir" } = $$props;
+  let { emptyActionLabel = "" } = $$props;
+  let { showPagination = false } = $$props;
+  let { currentPage = 1 } = $$props;
+  let { totalPages = 1 } = $$props;
+  let { pageSize = 20 } = $$props;
+  let { total = 0 } = $$props;
+  createEventDispatcher();
+  if ($$props.loading === void 0 && $$bindings.loading && loading !== void 0) $$bindings.loading(loading);
+  if ($$props.error === void 0 && $$bindings.error && error !== void 0) $$bindings.error(error);
+  if ($$props.isEmpty === void 0 && $$bindings.isEmpty && isEmpty !== void 0) $$bindings.isEmpty(isEmpty);
+  if ($$props.emptyIcon === void 0 && $$bindings.emptyIcon && emptyIcon !== void 0) $$bindings.emptyIcon(emptyIcon);
+  if ($$props.emptyTitle === void 0 && $$bindings.emptyTitle && emptyTitle !== void 0) $$bindings.emptyTitle(emptyTitle);
+  if ($$props.emptyMessage === void 0 && $$bindings.emptyMessage && emptyMessage !== void 0) $$bindings.emptyMessage(emptyMessage);
+  if ($$props.emptyActionLabel === void 0 && $$bindings.emptyActionLabel && emptyActionLabel !== void 0) $$bindings.emptyActionLabel(emptyActionLabel);
+  if ($$props.showPagination === void 0 && $$bindings.showPagination && showPagination !== void 0) $$bindings.showPagination(showPagination);
+  if ($$props.currentPage === void 0 && $$bindings.currentPage && currentPage !== void 0) $$bindings.currentPage(currentPage);
+  if ($$props.totalPages === void 0 && $$bindings.totalPages && totalPages !== void 0) $$bindings.totalPages(totalPages);
+  if ($$props.pageSize === void 0 && $$bindings.pageSize && pageSize !== void 0) $$bindings.pageSize(pageSize);
+  if ($$props.total === void 0 && $$bindings.total && total !== void 0) $$bindings.total(total);
+  startItem = (currentPage - 1) * pageSize + 1;
+  endItem = Math.min(currentPage * pageSize, total);
+  return `   <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">${loading ? ` <div class="p-8">${validate_component(LoadingSpinner, "LoadingSpinner").$$render($$result, {}, {}, {})}</div>` : `${error ? ` <div class="p-8">${validate_component(ErrorDisplay, "ErrorDisplay").$$render($$result, { message: error }, {}, {})}</div>` : `${isEmpty ? ` <div class="p-16 text-center">${emptyIcon ? `<div class="w-16 h-16 mx-auto mb-4 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center">${validate_component(emptyIcon || missing_component, "svelte:component").$$render($$result, { class: "w-8 h-8 text-gray-400" }, {}, {})}</div>` : ``} <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">${escape(emptyTitle)}</h3> <p class="text-gray-500 dark:text-gray-400 max-w-sm mx-auto mb-6">${escape(emptyMessage)}</p> ${emptyActionLabel ? `${validate_component(Button, "Button").$$render(
+    $$result,
+    {
+      size: "sm",
+      color: "primary",
+      class: "rounded-sm"
+    },
+    {},
+    {
+      default: () => {
+        return `${escape(emptyActionLabel)}`;
       }
-    } catch (error) {
-      console.error("❌ Erro ao listar almoxarifados:", error);
-      if (error.name === "AbortError" || error.message?.includes("timeout")) {
-        console.warn("⚠️ Backend indisponível, usando dados de fallback");
-        return this.getFallbackAlmoxarifados();
+    }
+  )}` : ``}</div>` : ` ${slots.filters ? slots.filters({}) : ``}  <div class="overflow-x-auto">${slots.default ? slots.default({}) : ``}</div>  ${showPagination && totalPages > 1 ? `<div class="flex items-center justify-between px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700"><div class="text-sm text-gray-600 dark:text-gray-400">Mostrando ${escape(startItem)} a ${escape(endItem)} de ${escape(total)} resultados</div> <div class="flex gap-2">${validate_component(Button, "Button").$$render(
+    $$result,
+    {
+      size: "sm",
+      color: "alternative",
+      class: "rounded-sm",
+      disabled: currentPage === 1
+    },
+    {},
+    {
+      default: () => {
+        return `Anterior`;
       }
-      throw new Error("Não foi possível carregar os almoxarifados");
     }
-  }
-  /**
-   * Lista almoxarifados com paginação (se necessário)
-   */
-  async listarAlmoxarifadosPaginados(params) {
-    console.log(
-      "🏪 AlmoxarifadosAdapter: Listando almoxarifados com paginação",
-      params
-    );
-    try {
-      const queryParams = new URLSearchParams();
-      if (params?.page) queryParams.append("page", params.page.toString());
-      if (params?.limit) queryParams.append("limit", params.limit.toString());
-      if (params?.search) queryParams.append("search", params.search);
-      const url = `${this.baseEndpoint}?${queryParams.toString()}`;
-      const response = await api.get(url);
-      console.log(
-        "✅ Almoxarifados paginados listados:",
-        response.data.pagination
-      );
-      return {
-        data: response.data.items,
-        total: response.data.pagination.total,
-        page: response.data.pagination.page,
-        pageSize: response.data.pagination.limit,
-        totalPages: response.data.pagination.totalPages
-      };
-    } catch (error) {
-      console.error("❌ Erro ao listar almoxarifados paginados:", error);
-      throw new Error("Não foi possível carregar os almoxarifados");
+  )} ${validate_component(Button, "Button").$$render(
+    $$result,
+    {
+      size: "sm",
+      color: "alternative",
+      class: "rounded-sm",
+      disabled: currentPage === totalPages
+    },
+    {},
+    {
+      default: () => {
+        return `Próximo`;
+      }
     }
-  }
-  /**
-   * Obtém um almoxarifado específico por ID
-   */
-  async obterAlmoxarifado(id) {
-    console.log("🔍 AlmoxarifadosAdapter: Buscando almoxarifado", id);
-    try {
-      const response = await api.get(`${this.baseEndpoint}/${id}`);
-      console.log("✅ Almoxarifado encontrado:", response.data.nome);
-      return response.data;
-    } catch (error) {
-      console.error("❌ Erro ao buscar almoxarifado:", error);
-      throw new Error("Não foi possível encontrar o almoxarifado");
-    }
-  }
-  /**
-   * Converte almoxarifados em opções para componentes Select
-   */
-  async obterOpcoesSelect() {
-    console.log("🔧 AlmoxarifadosAdapter: Carregando opções para select");
-    try {
-      const almoxarifados = await this.listarAlmoxarifados();
-      const opcoes = almoxarifados.map((alm) => ({
-        value: alm.id,
-        label: alm.nome,
-        isPrincipal: alm.isPrincipal,
-        // ✅ CORREÇÃO: camelCase
-        unidadeNegocio: alm.unidadeNegocio?.nome
-        // ✅ CORREÇÃO: camelCase
-      }));
-      opcoes.sort((a, b) => {
-        if (a.isPrincipal && !b.isPrincipal) return -1;
-        if (!a.isPrincipal && b.isPrincipal) return 1;
-        return a.label.localeCompare(b.label);
-      });
-      console.log("✅ Opções de select criadas:", opcoes.length);
-      return opcoes;
-    } catch (error) {
-      console.error("❌ Erro ao criar opções de select:", error);
-      return [];
-    }
-  }
-  /**
-   * Cache para otimizar performance em chamadas frequentes
-   */
-  selectOptionsCache = null;
-  /**
-   * Obtém opções para select com cache (TTL 5 minutos)
-   */
-  async obterOpcoesSelectComCache() {
-    const TTL = 5 * 60 * 1e3;
-    const now = Date.now();
-    if (this.selectOptionsCache && now - this.selectOptionsCache.timestamp < TTL) {
-      console.log("💾 AlmoxarifadosAdapter: Usando cache para opções select");
-      return this.selectOptionsCache.data;
-    }
-    const freshData = await this.obterOpcoesSelect();
-    this.selectOptionsCache = {
-      data: freshData,
-      timestamp: now
-    };
-    return freshData;
-  }
-  /**
-   * Limpa o cache (útil quando dados são modificados)
-   */
-  limparCache() {
-    this.selectOptionsCache = null;
-    console.log("🗑️ AlmoxarifadosAdapter: Cache limpo");
-  }
-  /**
-   * Alias para compatibilidade com service index
-   */
-  clearCache() {
-    this.limparCache();
-  }
-  /**
-   * Valida se um almoxarifado existe
-   */
-  async validarExistencia(id) {
-    try {
-      await this.obterAlmoxarifado(id);
-      return true;
-    } catch {
-      return false;
-    }
-  }
-  /**
-   * Obtém almoxarifados principais (is_principal = true)
-   */
-  async obterAlmoxarifadosPrincipais() {
-    console.log("🏆 AlmoxarifadosAdapter: Buscando almoxarifados principais");
-    try {
-      const todos = await this.listarAlmoxarifados();
-      const principais = todos.filter((alm) => alm.isPrincipal);
-      console.log(
-        "✅ Almoxarifados principais encontrados:",
-        principais.length
-      );
-      return principais;
-    } catch (error) {
-      console.error("❌ Erro ao buscar almoxarifados principais:", error);
-      throw new Error("Não foi possível carregar os almoxarifados principais");
-    }
-  }
-  /**
-   * Dados de fallback quando backend está indisponível
-   * Baseados na estrutura real do backend
-   */
-  getFallbackAlmoxarifados() {
-    return [
+  )}</div></div>` : ``}`}`}`}</div>`;
+});
+const TableFilters = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let { searchValue = "" } = $$props;
+  let { searchPlaceholder = "Buscar..." } = $$props;
+  let { filters = [] } = $$props;
+  let { checkboxFilters = [] } = $$props;
+  let { resultCount = 0 } = $$props;
+  let { totalCount = 0 } = $$props;
+  let { resultLabel = "resultados" } = $$props;
+  let { showClearButton = false } = $$props;
+  createEventDispatcher();
+  if ($$props.searchValue === void 0 && $$bindings.searchValue && searchValue !== void 0) $$bindings.searchValue(searchValue);
+  if ($$props.searchPlaceholder === void 0 && $$bindings.searchPlaceholder && searchPlaceholder !== void 0) $$bindings.searchPlaceholder(searchPlaceholder);
+  if ($$props.filters === void 0 && $$bindings.filters && filters !== void 0) $$bindings.filters(filters);
+  if ($$props.checkboxFilters === void 0 && $$bindings.checkboxFilters && checkboxFilters !== void 0) $$bindings.checkboxFilters(checkboxFilters);
+  if ($$props.resultCount === void 0 && $$bindings.resultCount && resultCount !== void 0) $$bindings.resultCount(resultCount);
+  if ($$props.totalCount === void 0 && $$bindings.totalCount && totalCount !== void 0) $$bindings.totalCount(totalCount);
+  if ($$props.resultLabel === void 0 && $$bindings.resultLabel && resultLabel !== void 0) $$bindings.resultLabel(resultLabel);
+  if ($$props.showClearButton === void 0 && $$bindings.showClearButton && showClearButton !== void 0) $$bindings.showClearButton(showClearButton);
+  return `   <div class="p-4 border-b border-gray-200 dark:border-gray-700"><div class="flex items-center gap-4 flex-wrap"> <div class="relative flex-1 max-w-md">${validate_component(SearchOutline, "SearchOutline").$$render(
+    $$result,
+    {
+      class: "absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500"
+    },
+    {},
+    {}
+  )} ${validate_component(Input, "Input").$$render(
+    $$result,
+    {
+      type: "text",
+      placeholder: searchPlaceholder,
+      class: "pl-10 rounded-sm h-10 text-sm",
+      value: searchValue
+    },
+    {},
+    {}
+  )}</div>  ${each(filters, (filter) => {
+    return `${validate_component(SearchableDropdown, "SearchableDropdown").$$render(
+      $$result,
       {
-        id: "567a1885-0763-4a13-b9f6-157daa39ddc3",
-        nome: "Almoxarifado Central SP",
-        unidadeNegocioId: "d42d0657-4671-4026-ae34-61b74806ad9d",
-        // ✅ CORREÇÃO: camelCase
-        isPrincipal: true,
-        // ✅ CORREÇÃO: camelCase
-        createdAt: (/* @__PURE__ */ new Date()).toISOString(),
-        // ✅ CORREÇÃO: camelCase
-        unidadeNegocio: {
-          id: "d42d0657-4671-4026-ae34-61b74806ad9d",
-          nome: "Matriz São Paulo",
-          codigo: "SP001"
-        }
+        options: filter.options,
+        value: filter.value,
+        placeholder: filter.placeholder,
+        class: "min-w-[140px]"
       },
+      {},
+      {}
+    )}`;
+  })}  ${each(checkboxFilters, (checkboxFilter) => {
+    return `<div class="flex items-center">${validate_component(Checkbox, "Checkbox").$$render(
+      $$result,
       {
-        id: "fallback-2",
-        nome: "Almoxarifado Obra (Demo)",
-        unidadeNegocioId: "unidade-2",
-        // ✅ CORREÇÃO: camelCase
-        isPrincipal: false,
-        // ✅ CORREÇÃO: camelCase
-        createdAt: (/* @__PURE__ */ new Date()).toISOString(),
-        // ✅ CORREÇÃO: camelCase
-        unidadeNegocio: {
-          id: "unidade-2",
-          nome: "Obra A",
-          codigo: "OA01"
+        checked: checkboxFilter.checked,
+        class: "text-sm"
+      },
+      {},
+      {
+        default: () => {
+          return `${escape(checkboxFilter.label)} `;
         }
       }
-    ];
-  }
+    )} </div>`;
+  })}  ${showClearButton ? `<button type="button" class="p-2 rounded-sm hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors" title="Limpar filtros">${validate_component(RefreshOutline, "RefreshOutline").$$render(
+    $$result,
+    {
+      class: "w-4 h-4 text-gray-600 dark:text-gray-400"
+    },
+    {},
+    {}
+  )}</button>` : ``}</div>  <div class="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700"><div class="text-sm text-gray-600 dark:text-gray-400">${escape(resultCount)} de ${escape(totalCount)} ${escape(resultLabel)} encontrado${escape(resultCount !== 1 ? "s" : "")}</div></div></div>`;
+});
+function getTipoNotaLabel(tipo) {
+  const labels = {
+    ENTRADA: "Entrada",
+    TRANSFERENCIA: "Transferência",
+    DESCARTE: "Descarte",
+    ENTRADA_AJUSTE: "Entrada (Ajuste)",
+    SAIDA_AJUSTE: "Saída (Ajuste)"
+  };
+  return labels[tipo] || tipo;
 }
-const almoxarifadosAdapter = new AlmoxarifadosAdapter();
+function getStatusNotaLabel(status) {
+  const labels = {
+    RASCUNHO: "Rascunho",
+    CONCLUIDA: "Concluída",
+    CANCELADA: "Cancelada"
+  };
+  return labels[status] || status;
+}
+function getTipoNotaBadgeColor(tipo) {
+  const colors = {
+    ENTRADA: "green",
+    TRANSFERENCIA: "blue",
+    DESCARTE: "red",
+    ENTRADA_AJUSTE: "yellow",
+    SAIDA_AJUSTE: "dark"
+  };
+  return colors[tipo] || "gray";
+}
+function getStatusNotaBadgeColor(status) {
+  const colors = {
+    RASCUNHO: "yellow",
+    CONCLUIDA: "green",
+    CANCELADA: "red"
+  };
+  return colors[status] || "dark";
+}
+function getAvailableActions(nota) {
+  const actions = ["view"];
+  switch (nota.status) {
+    case "RASCUNHO":
+      actions.push("edit", "delete", "conclude");
+      break;
+    case "CONCLUIDA":
+      actions.push("cancel");
+      break;
+  }
+  return actions;
+}
+function getActionTooltip(action, nota) {
+  const actionLabels = {
+    "view": "Visualizar detalhes da nota",
+    "edit": "Editar nota (rascunho)",
+    "delete": "Excluir nota (rascunho)",
+    "conclude": `Concluir nota e processar ${nota.total_itens || nota.itens?.length || 0} ${(nota.total_itens || nota.itens?.length || 0) === 1 ? "item" : "itens"}`,
+    "cancel": "Cancelar nota (reversível)"
+  };
+  return actionLabels[action] || action;
+}
+const NotesTablePresenter = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let filterConfig;
+  let dateFilters;
+  let { items = [] } = $$props;
+  let { loading = false } = $$props;
+  let { error = null } = $$props;
+  let { pagination } = $$props;
+  let { filters } = $$props;
+  let { filterOptions } = $$props;
+  createEventDispatcher();
+  const tabs = [
+    { label: "Concluídas", count: 0 },
+    { label: "Rascunhos", count: 0 },
+    { label: "Canceladas", count: 0 }
+  ];
+  if ($$props.items === void 0 && $$bindings.items && items !== void 0) $$bindings.items(items);
+  if ($$props.loading === void 0 && $$bindings.loading && loading !== void 0) $$bindings.loading(loading);
+  if ($$props.error === void 0 && $$bindings.error && error !== void 0) $$bindings.error(error);
+  if ($$props.pagination === void 0 && $$bindings.pagination && pagination !== void 0) $$bindings.pagination(pagination);
+  if ($$props.filters === void 0 && $$bindings.filters && filters !== void 0) $$bindings.filters(filters);
+  if ($$props.filterOptions === void 0 && $$bindings.filterOptions && filterOptions !== void 0) $$bindings.filterOptions(filterOptions);
+  {
+    if (items && items.length > 0) {
+      console.log("🔍 NotesTablePresenter: Dados recebidos", {
+        quantidade: items.length,
+        primeiraNota: {
+          id: items[0]?.id,
+          numero: items[0]?.numero,
+          responsavel_nome: items[0]?.responsavel_nome,
+          almoxarifado_nome: items[0]?.almoxarifado_nome,
+          total_itens: items[0]?.total_itens,
+          valor_total: items[0]?.valor_total,
+          status: items[0]?.status,
+          tipo: items[0]?.tipo,
+          data_documento: items[0]?.data_documento
+        }
+      });
+    }
+  }
+  filterConfig = [
+    {
+      key: "tipo",
+      value: filters.tipoFilter,
+      options: [{ value: "todas", label: "Todos os Tipos" }, ...filterOptions.tipos],
+      placeholder: "Tipo"
+    },
+    {
+      key: "responsavel",
+      value: filters.responsavelFilter,
+      options: filterOptions.responsaveis,
+      placeholder: "Responsável"
+    },
+    {
+      key: "almoxarifado",
+      value: filters.almoxarifadoFilter,
+      options: filterOptions.almoxarifados,
+      placeholder: "Almoxarifado"
+    }
+  ].filter(Boolean);
+  dateFilters = [
+    {
+      key: "dataInicio",
+      type: "date",
+      value: filters.dataInicioFilter,
+      placeholder: "Data início"
+    },
+    {
+      key: "dataFim",
+      type: "date",
+      value: filters.dataFimFilter,
+      placeholder: "Data fim"
+    }
+  ];
+  return `  ${$$result.head += `<!-- HEAD_svelte-17563br_START -->${$$result.title = `<title>Notas de Movimentação - DataLife EPI</title>`, ""}<!-- HEAD_svelte-17563br_END -->`, ""} <div class="space-y-6"> <div class="flex items-center justify-between"><div data-svelte-h="svelte-1yas3jv"><h1 class="text-xl font-medium text-gray-900 dark:text-white">Notas de Movimentação</h1> <p class="text-sm text-gray-600 dark:text-gray-400">Gerencie notas de entrada, transferência e descarte de EPIs</p></div> <div class="flex space-x-2">${validate_component(Button, "Button").$$render(
+    $$result,
+    {
+      size: "sm",
+      color: "primary",
+      class: "rounded-sm"
+    },
+    {},
+    {
+      default: () => {
+        return `${validate_component(PlusOutline, "PlusOutline").$$render($$result, { class: "w-4 h-4 mr-2" }, {}, {})}
+        Nova Movimentação`;
+      }
+    }
+  )}</div></div>  <div class="border-b border-gray-200 dark:border-gray-700"><nav class="flex space-x-4 px-4" aria-label="Tabs">${each(tabs, (tab, index) => {
+    return `<button class="${"whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm focus:outline-none transition-colors duration-200 -mb-px " + escape(
+      filters.activeTab === index ? "border-primary-500 text-primary-600 dark:text-primary-400" : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600",
+      true
+    )}"><span class="flex items-center space-x-2"><span>${escape(tab.label)}</span> ${filters.activeTab === index && pagination.total > 0 ? `${validate_component(Badge, "Badge").$$render(
+      $$result,
+      {
+        color: "gray",
+        class: "rounded-sm text-xs"
+      },
+      {},
+      {
+        default: () => {
+          return `${escape(pagination.total)}`;
+        }
+      }
+    )}` : ``}</span> </button>`;
+  })}</nav></div>  ${loading ? `${validate_component(LoadingSpinner, "LoadingSpinner").$$render($$result, {}, {}, {})}` : `${error ? `${validate_component(Card, "Card").$$render($$result, { size: "sm", class: "rounded-sm" }, {}, {
+    default: () => {
+      return `<div class="text-center py-8"><div class="w-16 h-16 mx-auto mb-4 bg-red-100 dark:bg-red-800 rounded-full flex items-center justify-center">${validate_component(CloseOutline, "CloseOutline").$$render(
+        $$result,
+        {
+          class: "w-8 h-8 text-red-600 dark:text-red-400"
+        },
+        {},
+        {}
+      )}</div> <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2" data-svelte-h="svelte-aprdtf">Erro ao carregar dados</h3> <p class="text-red-600 dark:text-red-400 mb-4">${escape(error)}</p> ${validate_component(Button, "Button").$$render(
+        $$result,
+        {
+          size: "sm",
+          color: "red",
+          class: "rounded-sm"
+        },
+        {},
+        {
+          default: () => {
+            return `${validate_component(RefreshOutline, "RefreshOutline").$$render($$result, { class: "w-4 h-4 mr-2" }, {}, {})}
+          Tentar novamente`;
+          }
+        }
+      )}</div>`;
+    }
+  })}` : `${items.length > 0 ? ` ${validate_component(TableContainer, "TableContainer").$$render(
+    $$result,
+    {
+      loading,
+      error,
+      isEmpty: items.length === 0
+    },
+    {},
+    {
+      filters: () => {
+        return `${validate_component(TableFilters, "TableFilters").$$render(
+          $$result,
+          {
+            slot: "filters",
+            searchValue: filters.searchTerm,
+            filters: filterConfig,
+            dateFilters,
+            resultCount: items.length,
+            totalCount: pagination.total,
+            hasActiveFilters: filters.hasActiveFilters
+          },
+          {},
+          {}
+        )}`;
+      },
+      default: () => {
+        return ` <div class="min-w-[1200px] overflow-x-auto">${validate_component(Table, "Table").$$render($$result, { hoverable: true }, {}, {
+          default: () => {
+            return `${validate_component(TableHead, "TableHead").$$render($$result, {}, {}, {
+              default: () => {
+                return `${validate_component(TableHeadCell, "TableHeadCell").$$render($$result, {}, {}, {
+                  default: () => {
+                    return `Número/Tipo`;
+                  }
+                })} ${validate_component(TableHeadCell, "TableHeadCell").$$render($$result, {}, {}, {
+                  default: () => {
+                    return `Data`;
+                  }
+                })} ${validate_component(TableHeadCell, "TableHeadCell").$$render($$result, {}, {}, {
+                  default: () => {
+                    return `Responsável`;
+                  }
+                })} ${validate_component(TableHeadCell, "TableHeadCell").$$render($$result, {}, {}, {
+                  default: () => {
+                    return `Almoxarifado`;
+                  }
+                })} ${validate_component(TableHeadCell, "TableHeadCell").$$render($$result, {}, {}, {
+                  default: () => {
+                    return `Status`;
+                  }
+                })} ${validate_component(TableHeadCell, "TableHeadCell").$$render($$result, {}, {}, {
+                  default: () => {
+                    return `Qtd. Itens`;
+                  }
+                })} ${validate_component(TableHeadCell, "TableHeadCell").$$render($$result, {}, {}, {
+                  default: () => {
+                    return `Valor Total`;
+                  }
+                })} ${validate_component(TableHeadCell, "TableHeadCell").$$render($$result, {}, {}, {
+                  default: () => {
+                    return `Ações`;
+                  }
+                })}`;
+              }
+            })} ${validate_component(TableBody, "TableBody").$$render($$result, {}, {}, {
+              default: () => {
+                return `${each(items, (nota) => {
+                  return `${validate_component(TableBodyRow, "TableBodyRow").$$render(
+                    $$result,
+                    {
+                      class: "hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer"
+                    },
+                    {},
+                    {
+                      default: () => {
+                        return `${validate_component(TableBodyCell, "TableBodyCell").$$render($$result, {}, {}, {
+                          default: () => {
+                            return `<div class="flex flex-col"><span class="font-medium text-gray-900 dark:text-white">${escape(nota.numero || `#${nota.id.slice(0, 8)}`)}</span> <span class="text-sm text-gray-500 dark:text-gray-400">${escape(getTipoNotaLabel(nota.tipo))} </span></div> `;
+                          }
+                        })} ${validate_component(TableBodyCell, "TableBodyCell").$$render($$result, {}, {}, {
+                          default: () => {
+                            return `<span class="text-sm">${escape(formatarData(nota.data_documento))}</span> `;
+                          }
+                        })} ${validate_component(TableBodyCell, "TableBodyCell").$$render($$result, {}, {}, {
+                          default: () => {
+                            return `<span class="text-sm">${escape(nota.responsavel_nome || "N/A")}</span> `;
+                          }
+                        })} ${validate_component(TableBodyCell, "TableBodyCell").$$render($$result, {}, {}, {
+                          default: () => {
+                            return `<div class="flex flex-col"><span class="text-sm">${escape(nota.almoxarifado_nome || "N/A")}</span> ${nota.almoxarifado_destino_nome && nota.tipo === "TRANSFERENCIA" ? `<span class="text-xs text-gray-500 dark:text-gray-400">→ ${escape(nota.almoxarifado_destino_nome)}</span>` : ``}</div> `;
+                          }
+                        })} ${validate_component(TableBodyCell, "TableBodyCell").$$render($$result, {}, {}, {
+                          default: () => {
+                            return `${validate_component(Badge, "Badge").$$render(
+                              $$result,
+                              {
+                                color: getStatusNotaBadgeColor(nota.status),
+                                class: "w-fit rounded-sm"
+                              },
+                              {},
+                              {
+                                default: () => {
+                                  return `${escape(getStatusNotaLabel(nota.status))} `;
+                                }
+                              }
+                            )} `;
+                          }
+                        })} ${validate_component(TableBodyCell, "TableBodyCell").$$render($$result, {}, {}, {
+                          default: () => {
+                            return `<div class="flex items-center space-x-2">${validate_component(FileDocOutline, "FileDocOutline").$$render(
+                              $$result,
+                              {
+                                class: "w-4 h-4 text-gray-400 dark:text-gray-500"
+                              },
+                              {},
+                              {}
+                            )} <span class="text-sm font-medium">${escape(nota.total_itens || nota.itens?.length || 0)}</span> <span class="text-xs text-gray-500 dark:text-gray-400">${escape((nota.total_itens || nota.itens?.length || 0) === 1 ? "item" : "itens")} </span></div> `;
+                          }
+                        })} ${validate_component(TableBodyCell, "TableBodyCell").$$render($$result, {}, {}, {
+                          default: () => {
+                            return `${nota.valor_total && nota.valor_total > 0 ? `<div class="flex flex-col"><span class="text-sm font-medium text-green-600 dark:text-green-400">R$ ${escape(nota.valor_total.toLocaleString("pt-BR", {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2
+                            }))}</span> <span class="text-xs text-gray-500 dark:text-gray-400">Médio: R$ ${escape((nota.valor_total / (nota.total_itens || nota.itens?.length || 1)).toLocaleString("pt-BR", {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2
+                            }))}</span> </div>` : `<span class="text-sm text-gray-400 dark:text-gray-500" data-svelte-h="svelte-1iua6vw">—</span>`} `;
+                          }
+                        })} ${validate_component(TableBodyCell, "TableBodyCell").$$render($$result, {}, {}, {
+                          default: () => {
+                            return `<div class="flex space-x-1">${each(getAvailableActions(nota), (action) => {
+                              return `${action === "view" ? `<button class="p-2 rounded-sm text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:focus:ring-gray-700 transition-colors"${add_attribute("title", getActionTooltip("view", nota), 0)}>${validate_component(EyeOutline, "EyeOutline").$$render($$result, { class: "w-4 h-4" }, {}, {})} </button>` : `${action === "edit" ? `<button class="p-2 rounded-sm text-blue-500 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-700 transition-colors"${add_attribute("title", getActionTooltip("edit", nota), 0)}>${validate_component(PenOutline, "PenOutline").$$render($$result, { class: "w-4 h-4" }, {}, {})} </button>` : `${action === "delete" ? `<button class="p-2 rounded-sm text-red-500 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-200 dark:focus:ring-red-700 transition-colors"${add_attribute("title", getActionTooltip("delete", nota), 0)}>${validate_component(TrashBinOutline, "TrashBinOutline").$$render($$result, { class: "w-4 h-4" }, {}, {})} </button>` : `${action === "conclude" ? `<button class="p-2 rounded-sm text-green-500 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-200 dark:focus:ring-green-700 transition-colors"${add_attribute("title", getActionTooltip("conclude", nota), 0)}>${validate_component(CheckOutline, "CheckOutline").$$render($$result, { class: "w-4 h-4" }, {}, {})} </button>` : `${action === "cancel" ? `<button class="p-2 rounded-sm text-orange-500 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-200 dark:focus:ring-orange-700 transition-colors"${add_attribute("title", getActionTooltip("cancel", nota), 0)}>${validate_component(CloseOutline, "CloseOutline").$$render($$result, { class: "w-4 h-4" }, {}, {})} </button>` : ``}`}`}`}`}`;
+                            })}</div> `;
+                          }
+                        })} `;
+                      }
+                    }
+                  )}`;
+                })}`;
+              }
+            })}`;
+          }
+        })}</div>  ${pagination.totalPages > 1 ? `<div class="flex items-center justify-between px-6 py-4 border-t border-gray-200 dark:border-gray-700"><div class="text-sm text-gray-500 dark:text-gray-400">Mostrando ${escape(Math.min((pagination.currentPage - 1) * pagination.pageSize + 1, pagination.total))} a ${escape(Math.min(pagination.currentPage * pagination.pageSize, pagination.total))} de ${escape(pagination.total)} resultados</div> <div class="flex space-x-2">${validate_component(Button, "Button").$$render(
+          $$result,
+          {
+            color: "alternative",
+            class: "rounded-sm",
+            disabled: !pagination.hasPrev
+          },
+          {},
+          {
+            default: () => {
+              return `Anterior`;
+            }
+          }
+        )} <span class="flex items-center px-3 text-sm text-gray-500 dark:text-gray-400">Página ${escape(pagination.currentPage)} de ${escape(pagination.totalPages)}</span> ${validate_component(Button, "Button").$$render(
+          $$result,
+          {
+            color: "alternative",
+            class: "rounded-sm",
+            disabled: !pagination.hasNext
+          },
+          {},
+          {
+            default: () => {
+              return `Próximo`;
+            }
+          }
+        )}</div></div>` : ``}`;
+      }
+    }
+  )}` : ` ${validate_component(Card, "Card").$$render($$result, { size: "sm", class: "rounded-sm" }, {}, {
+    default: () => {
+      return `<div class="text-center py-12"><div class="w-16 h-16 mx-auto mb-4 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center">${validate_component(FileDocOutline, "FileDocOutline").$$render($$result, { class: "w-8 h-8 text-gray-400" }, {}, {})}</div> <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2" data-svelte-h="svelte-1a1xvm">Nenhuma nota encontrada</h3> <p class="text-gray-500 dark:text-gray-400 mb-6">${escape(filters.hasActiveFilters ? "Tente ajustar os filtros ou termo de busca" : "Comece criando uma nova nota de movimentação")}</p> ${validate_component(Button, "Button").$$render(
+        $$result,
+        {
+          size: "sm",
+          color: "primary",
+          class: "rounded-sm"
+        },
+        {},
+        {
+          default: () => {
+            return `${validate_component(PlusOutline, "PlusOutline").$$render($$result, { class: "w-4 h-4 mr-2" }, {}, {})}
+          Nova Movimentação`;
+          }
+        }
+      )}</div>`;
+    }
+  })}`}`}`}</div>`;
+});
 class TiposEpiAdapter {
   baseEndpoint = "/tipos-epi";
   /**
@@ -1713,42 +1906,257 @@ const NotaItensManagerSimplified = create_ssr_component(($$result, $$props, $$bi
     0
   ).toFixed(2))}</span></span>` : ``}</div></div></div>` : ``}`}`}</div>`;
 });
-function getTipoNotaLabel(tipo) {
-  const labels = {
-    ENTRADA: "Entrada",
-    TRANSFERENCIA: "Transferência",
-    DESCARTE: "Descarte",
-    ENTRADA_AJUSTE: "Entrada (Ajuste)",
-    SAIDA_AJUSTE: "Saída (Ajuste)"
-  };
-  return labels[tipo] || tipo;
+class AlmoxarifadosAdapter {
+  baseEndpoint = "/estoque/almoxarifados";
+  /**
+   * Lista todos os almoxarifados disponíveis
+   *
+   * Como o endpoint direto de almoxarifados não existe,
+   * extraímos os dados dos itens de estoque
+   */
+  async listarAlmoxarifados() {
+    console.log("🏪 AlmoxarifadosAdapter: Listando almoxarifados via estoque");
+    try {
+      try {
+        console.log("🔍 Tentando endpoint direto:", this.baseEndpoint);
+        const response = await api.get(this.baseEndpoint, {
+          timeout: 15e3,
+          retries: 1
+        });
+        console.log("📦 Resposta recebida:", response);
+        let items = [];
+        if (response.success && response.data) {
+          items = Array.isArray(response.data) ? response.data : [];
+        } else if (Array.isArray(response)) {
+          items = response;
+        } else {
+          console.warn("⚠️ Estrutura de resposta inesperada:", response);
+          items = [];
+        }
+        console.log("🔍 Almoxarifados recebidos do backend:", items.map((a) => ({ id: a.id, nome: a.nome })));
+        console.log(
+          "✅ Almoxarifados listados via endpoint direto:",
+          items.length
+        );
+        if (items.length === 0) {
+          console.warn("⚠️ Nenhum almoxarifado retornado, usando fallback");
+          return this.getFallbackAlmoxarifados();
+        }
+        return items;
+      } catch (directError) {
+        console.log(
+          "⚠️ Endpoint direto não disponível, extraindo de estoque..."
+        );
+        const estoqueResponse = await api.get("/estoque/itens?limit=100");
+        const almoxarifadosMap = /* @__PURE__ */ new Map();
+        estoqueResponse.data.items.forEach((item) => {
+          const alm = item.almoxarifado;
+          if (alm && !almoxarifadosMap.has(alm.id)) {
+            almoxarifadosMap.set(alm.id, {
+              id: alm.id,
+              nome: alm.nome,
+              unidadeNegocioId: alm.unidadeNegocioId,
+              // ✅ CORREÇÃO: camelCase
+              isPrincipal: alm.nome.toLowerCase().includes("central"),
+              // ✅ CORREÇÃO: camelCase
+              createdAt: (/* @__PURE__ */ new Date()).toISOString(),
+              // ✅ CORREÇÃO: camelCase
+              unidadeNegocio: {
+                id: alm.unidadeNegocio.id,
+                nome: alm.unidadeNegocio.nome,
+                codigo: alm.unidadeNegocio.codigo
+              }
+            });
+          }
+        });
+        const items = Array.from(almoxarifadosMap.values());
+        console.log("✅ Almoxarifados extraídos do estoque:", items.length);
+        return items;
+      }
+    } catch (error) {
+      console.error("❌ Erro ao listar almoxarifados:", error);
+      if (error.name === "AbortError" || error.message?.includes("timeout")) {
+        console.warn("⚠️ Backend indisponível, usando dados de fallback");
+        return this.getFallbackAlmoxarifados();
+      }
+      throw new Error("Não foi possível carregar os almoxarifados");
+    }
+  }
+  /**
+   * Lista almoxarifados com paginação (se necessário)
+   */
+  async listarAlmoxarifadosPaginados(params) {
+    console.log(
+      "🏪 AlmoxarifadosAdapter: Listando almoxarifados com paginação",
+      params
+    );
+    try {
+      const queryParams = new URLSearchParams();
+      if (params?.page) queryParams.append("page", params.page.toString());
+      if (params?.limit) queryParams.append("limit", params.limit.toString());
+      if (params?.search) queryParams.append("search", params.search);
+      const url = `${this.baseEndpoint}?${queryParams.toString()}`;
+      const response = await api.get(url);
+      console.log(
+        "✅ Almoxarifados paginados listados:",
+        response.data.pagination
+      );
+      return {
+        data: response.data.items,
+        total: response.data.pagination.total,
+        page: response.data.pagination.page,
+        pageSize: response.data.pagination.limit,
+        totalPages: response.data.pagination.totalPages
+      };
+    } catch (error) {
+      console.error("❌ Erro ao listar almoxarifados paginados:", error);
+      throw new Error("Não foi possível carregar os almoxarifados");
+    }
+  }
+  /**
+   * Obtém um almoxarifado específico por ID
+   */
+  async obterAlmoxarifado(id) {
+    console.log("🔍 AlmoxarifadosAdapter: Buscando almoxarifado", id);
+    try {
+      const response = await api.get(`${this.baseEndpoint}/${id}`);
+      console.log("✅ Almoxarifado encontrado:", response.data.nome);
+      return response.data;
+    } catch (error) {
+      console.error("❌ Erro ao buscar almoxarifado:", error);
+      throw new Error("Não foi possível encontrar o almoxarifado");
+    }
+  }
+  /**
+   * Converte almoxarifados em opções para componentes Select
+   */
+  async obterOpcoesSelect() {
+    console.log("🔧 AlmoxarifadosAdapter: Carregando opções para select");
+    try {
+      const almoxarifados = await this.listarAlmoxarifados();
+      const opcoes = almoxarifados.map((alm) => ({
+        value: alm.id,
+        label: alm.nome,
+        isPrincipal: alm.isPrincipal,
+        // ✅ CORREÇÃO: camelCase
+        unidadeNegocio: alm.unidadeNegocio?.nome
+        // ✅ CORREÇÃO: camelCase
+      }));
+      opcoes.sort((a, b) => {
+        if (a.isPrincipal && !b.isPrincipal) return -1;
+        if (!a.isPrincipal && b.isPrincipal) return 1;
+        return a.label.localeCompare(b.label);
+      });
+      console.log("✅ Opções de select criadas:", opcoes.length);
+      return opcoes;
+    } catch (error) {
+      console.error("❌ Erro ao criar opções de select:", error);
+      return [];
+    }
+  }
+  /**
+   * Cache para otimizar performance em chamadas frequentes
+   */
+  selectOptionsCache = null;
+  /**
+   * Obtém opções para select com cache (TTL 5 minutos)
+   */
+  async obterOpcoesSelectComCache() {
+    const TTL = 5 * 60 * 1e3;
+    const now = Date.now();
+    if (this.selectOptionsCache && now - this.selectOptionsCache.timestamp < TTL) {
+      console.log("💾 AlmoxarifadosAdapter: Usando cache para opções select");
+      return this.selectOptionsCache.data;
+    }
+    const freshData = await this.obterOpcoesSelect();
+    this.selectOptionsCache = {
+      data: freshData,
+      timestamp: now
+    };
+    return freshData;
+  }
+  /**
+   * Limpa o cache (útil quando dados são modificados)
+   */
+  limparCache() {
+    this.selectOptionsCache = null;
+    console.log("🗑️ AlmoxarifadosAdapter: Cache limpo");
+  }
+  /**
+   * Alias para compatibilidade com service index
+   */
+  clearCache() {
+    this.limparCache();
+  }
+  /**
+   * Valida se um almoxarifado existe
+   */
+  async validarExistencia(id) {
+    try {
+      await this.obterAlmoxarifado(id);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+  /**
+   * Obtém almoxarifados principais (is_principal = true)
+   */
+  async obterAlmoxarifadosPrincipais() {
+    console.log("🏆 AlmoxarifadosAdapter: Buscando almoxarifados principais");
+    try {
+      const todos = await this.listarAlmoxarifados();
+      const principais = todos.filter((alm) => alm.isPrincipal);
+      console.log(
+        "✅ Almoxarifados principais encontrados:",
+        principais.length
+      );
+      return principais;
+    } catch (error) {
+      console.error("❌ Erro ao buscar almoxarifados principais:", error);
+      throw new Error("Não foi possível carregar os almoxarifados principais");
+    }
+  }
+  /**
+   * Dados de fallback quando backend está indisponível
+   * Baseados na estrutura real do backend
+   */
+  getFallbackAlmoxarifados() {
+    return [
+      {
+        id: "567a1885-0763-4a13-b9f6-157daa39ddc3",
+        nome: "Almoxarifado Central SP",
+        unidadeNegocioId: "d42d0657-4671-4026-ae34-61b74806ad9d",
+        // ✅ CORREÇÃO: camelCase
+        isPrincipal: true,
+        // ✅ CORREÇÃO: camelCase
+        createdAt: (/* @__PURE__ */ new Date()).toISOString(),
+        // ✅ CORREÇÃO: camelCase
+        unidadeNegocio: {
+          id: "d42d0657-4671-4026-ae34-61b74806ad9d",
+          nome: "Matriz São Paulo",
+          codigo: "SP001"
+        }
+      },
+      {
+        id: "fallback-2",
+        nome: "Almoxarifado Obra (Demo)",
+        unidadeNegocioId: "unidade-2",
+        // ✅ CORREÇÃO: camelCase
+        isPrincipal: false,
+        // ✅ CORREÇÃO: camelCase
+        createdAt: (/* @__PURE__ */ new Date()).toISOString(),
+        // ✅ CORREÇÃO: camelCase
+        unidadeNegocio: {
+          id: "unidade-2",
+          nome: "Obra A",
+          codigo: "OA01"
+        }
+      }
+    ];
+  }
 }
-function getStatusNotaLabel(status) {
-  const labels = {
-    RASCUNHO: "Rascunho",
-    CONCLUIDA: "Concluída",
-    CANCELADA: "Cancelada"
-  };
-  return labels[status] || status;
-}
-function getTipoNotaBadgeColor(tipo) {
-  const colors = {
-    ENTRADA: "green",
-    TRANSFERENCIA: "blue",
-    DESCARTE: "red",
-    ENTRADA_AJUSTE: "yellow",
-    SAIDA_AJUSTE: "dark"
-  };
-  return colors[tipo] || "gray";
-}
-function getStatusNotaBadgeColor(status) {
-  const colors = {
-    RASCUNHO: "yellow",
-    CONCLUIDA: "green",
-    CANCELADA: "red"
-  };
-  return colors[status] || "dark";
-}
+const almoxarifadosAdapter = new AlmoxarifadosAdapter();
 const css = {
   code: '.drawer-notas{top:64px !important;height:calc(100vh - 64px) !important;max-width:940px !important;z-index:50 !important}[role="presentation"].fixed.top-0.start-0.z-50.w-full.h-full{top:64px !important;height:calc(100vh - 64px) !important}',
   map: `{"version":3,"file":"NotesDetailDrawer.svelte","sources":["NotesDetailDrawer.svelte"],"sourcesContent":["<!--\\n  Notes Detail Drawer - Drawer para visualizar/criar/editar notas\\n  \\n  Baseado na arquitetura do FichaDetailPresenter com o padrão estabelecido.\\n  Substitui o modal anterior por um drawer consistente com o resto da aplicação.\\n-->\\n\\n<script lang=\\"ts\\">import { createEventDispatcher, onMount } from \\"svelte\\";\\nimport { Drawer, Badge, Button, Input, Textarea, Label, Radio, Select, Alert } from \\"flowbite-svelte\\";\\nimport {\\n  CheckOutline,\\n  FloppyDiskOutline,\\n  FileDocOutline,\\n  PlusOutline,\\n  ArrowRightOutline\\n} from \\"flowbite-svelte-icons\\";\\nimport DrawerHeader from \\"$lib/components/common/DrawerHeader.svelte\\";\\nimport NotaItensManagerSimplified, {} from \\"./NotaItensManagerSimplified.svelte\\";\\nimport LoadingSpinner from \\"$lib/components/common/LoadingSpinner.svelte\\";\\nimport ErrorDisplay from \\"$lib/components/common/ErrorDisplay.svelte\\";\\nimport { almoxarifadosAdapter } from \\"$lib/services/entity/almoxarifadosAdapter\\";\\nimport { notasMovimentacaoAdapter } from \\"$lib/services/process/notasMovimentacaoAdapter\\";\\nimport { getTipoNotaLabel, getTipoNotaBadgeColor } from \\"$lib/utils/notasHelpers\\";\\nexport let open = false;\\nexport let mode = \\"create\\";\\nexport let tipo = \\"ENTRADA\\";\\nexport let nota = null;\\nexport const loading = false;\\nconst dispatch = createEventDispatcher();\\nlet hidden = !open;\\nlet lastOpen = open;\\n$: if (open !== lastOpen) {\\n  hidden = !open;\\n  lastOpen = open;\\n}\\nlet formData = {\\n  tipo_nota: \\"ENTRADA\\",\\n  almoxarifado_origem_id: \\"\\",\\n  almoxarifado_destino_id: \\"\\",\\n  observacoes: \\"\\",\\n  data_documento: (/* @__PURE__ */ new Date()).toISOString().split(\\"T\\")[0],\\n  itens: []\\n};\\nlet itens = [];\\nlet itemValidationErrors = [];\\nlet formErrors = {};\\nlet showValidationErrors = false;\\nlet almoxarifadoOptions = [];\\nlet almoxarifadoDestinoOptions = [];\\nlet saveLoading = false;\\nlet dataLoading = false;\\nonMount(async () => {\\n  await loadFormData();\\n});\\n$: if (open) {\\n  if (mode === \\"create\\") {\\n    resetForm();\\n  }\\n  loadFormData();\\n}\\nasync function loadFormData() {\\n  dataLoading = true;\\n  try {\\n    const almoxarifadosResponse = await almoxarifadosAdapter.listarAlmoxarifados();\\n    almoxarifadoOptions = almoxarifadosResponse.map((alm) => ({\\n      value: alm.id,\\n      label: alm.nome,\\n      isPrincipal: alm.isPrincipal,\\n      unidadeNegocio: alm.unidadeNegocio?.nome\\n    }));\\n    almoxarifadoOptions.sort((a, b) => {\\n      if (a.isPrincipal && !b.isPrincipal) return -1;\\n      if (!a.isPrincipal && b.isPrincipal) return 1;\\n      return a.label.localeCompare(b.label);\\n    });\\n    almoxarifadoDestinoOptions = almoxarifadoOptions;\\n    console.log(\\"\\\\u{1F4CB} NotesDetailDrawer: Almoxarifados carregados:\\", {\\n      original: almoxarifadosResponse.length,\\n      options: almoxarifadoOptions.length,\\n      principal: almoxarifadoOptions.find((opt) => opt.isPrincipal)?.label || \\"Nenhum\\",\\n      samples: almoxarifadoOptions.slice(0, 2).map((opt) => ({ value: opt.value, label: opt.label, isPrincipal: opt.isPrincipal }))\\n    });\\n    if ((mode === \\"edit\\" || mode === \\"view\\") && nota) {\\n      await loadNotaData();\\n    } else {\\n      formData.tipo_nota = tipo;\\n      if (almoxarifadoOptions.length > 0) {\\n        const almoxarifadoPadrao = almoxarifadoOptions.find((opt) => opt.isPrincipal) || almoxarifadoOptions[0];\\n        if (formData.tipo_nota === \\"ENTRADA\\") {\\n          if (!formData.almoxarifado_destino_id) {\\n            formData.almoxarifado_destino_id = almoxarifadoPadrao.value;\\n          }\\n        } else if (formData.tipo_nota === \\"TRANSFERENCIA\\") {\\n          if (!formData.almoxarifado_origem_id) {\\n            formData.almoxarifado_origem_id = almoxarifadoPadrao.value;\\n          }\\n        } else if (formData.tipo_nota === \\"DESCARTE\\") {\\n          if (!formData.almoxarifado_origem_id) {\\n            formData.almoxarifado_origem_id = almoxarifadoPadrao.value;\\n          }\\n        }\\n      }\\n    }\\n  } catch (error) {\\n    console.error(\\"Erro ao carregar dados do formul\\\\xE1rio:\\", error);\\n    almoxarifadoOptions = [\\n      { value: \\"567a1885-0763-4a13-b9f6-157daa39ddc3\\", label: \\"Almoxarifado Central SP\\", isPrincipal: true },\\n      { value: \\"1a743859-33e6-4ce3-9158-025dee47922b\\", label: \\"Almoxarifado RJ\\", isPrincipal: false }\\n    ];\\n    almoxarifadoDestinoOptions = almoxarifadoOptions;\\n    if (mode !== \\"edit\\") {\\n      formData.tipo_nota = tipo;\\n      const almoxarifadoPadrao = almoxarifadoOptions[0];\\n      if (tipo === \\"ENTRADA\\" && !formData.almoxarifado_destino_id) {\\n        formData.almoxarifado_destino_id = almoxarifadoPadrao.value;\\n      } else if (tipo === \\"TRANSFERENCIA\\" && !formData.almoxarifado_origem_id) {\\n        formData.almoxarifado_origem_id = almoxarifadoPadrao.value;\\n      } else if (tipo === \\"DESCARTE\\" && !formData.almoxarifado_origem_id) {\\n        formData.almoxarifado_origem_id = almoxarifadoPadrao.value;\\n      }\\n    }\\n  } finally {\\n    dataLoading = false;\\n  }\\n}\\nasync function loadNotaData() {\\n  if (!nota) return;\\n  try {\\n    formData = {\\n      tipo_nota: nota.tipo || nota.tipo_nota,\\n      almoxarifado_origem_id: nota.almoxarifado_id || nota.almoxarifadoOrigemId || \\"\\",\\n      almoxarifado_destino_id: nota.almoxarifado_destino_id || nota.almoxarifadoDestinoId || \\"\\",\\n      observacoes: nota.observacoes || \\"\\",\\n      data_documento: nota.data_documento?.split(\\"T\\")[0] || (/* @__PURE__ */ new Date()).toISOString().split(\\"T\\")[0],\\n      itens: []\\n    };\\n    const itemsArray = nota.itens || nota._itens || [];\\n    console.log(\\"\\\\u{1F50D} Items do backend para processar:\\", itemsArray);\\n    if (itemsArray && itemsArray.length > 0) {\\n      const { tiposEpiAdapter } = await import(\\"$lib/services/entity/tiposEpiAdapter\\");\\n      const { estoqueItensAdapter } = await import(\\"$lib/services/entity/estoqueItensAdapter\\");\\n      const enrichedItens = await Promise.all(\\n        itemsArray.map(async (item) => {\\n          console.log(\\"\\\\u{1F50D} Processando item:\\", item);\\n          const baseItem = {\\n            temp_id: \`existing_\${item.id}\`,\\n            tipo_epi_id: item.tipoEpiId || item.tipo_epi_id,\\n            estoque_item_id: item.estoque_item_id,\\n            quantidade: item.quantidade,\\n            custo_unitario: item.custo_unitario || 0,\\n            equipamento_nome: \\"Equipamento n\\\\xE3o identificado\\",\\n            categoria: \\"\\",\\n            numero_ca: \\"N\\\\xE3o informado\\"\\n          };\\n          try {\\n            if (item.tipoEpiId || item.tipo_epi_id) {\\n              const tipoEpiId = item.tipoEpiId || item.tipo_epi_id;\\n              console.log(\\"\\\\u{1F50D} Buscando dados do tipo EPI:\\", tipoEpiId);\\n              const tiposEpiOptions = await tiposEpiAdapter.obterOpcoesSelectComCache({\\n                apenasAtivos: false\\n                // Incluir inativos para visualização\\n              });\\n              const tipoEpi = tiposEpiOptions.find((opt) => opt.value === tipoEpiId);\\n              if (tipoEpi) {\\n                baseItem.equipamento_nome = tipoEpi.label;\\n                baseItem.categoria = tipoEpi.categoria || \\"\\";\\n                baseItem.numero_ca = tipoEpi.numeroCA || \\"N\\\\xE3o informado\\";\\n                console.log(\\"\\\\u2705 Dados do tipo EPI encontrados:\\", tipoEpi.label);\\n              } else {\\n                console.warn(\\"\\\\u26A0\\\\uFE0F Tipo EPI n\\\\xE3o encontrado para ID:\\", tipoEpiId);\\n              }\\n            }\\n            if (item.estoque_item_id && formData.almoxarifado_origem_id) {\\n              const estoqueOptions = await estoqueItensAdapter.obterItensDisponiveisComCache(\\n                formData.almoxarifado_origem_id\\n              );\\n              const estoqueItem = estoqueOptions.find((opt) => opt.value === item.estoque_item_id);\\n              if (estoqueItem) {\\n                baseItem.equipamento_nome = estoqueItem.label;\\n                baseItem.categoria = estoqueItem.categoria || \\"\\";\\n                baseItem.numero_ca = estoqueItem.numeroCA || \\"N\\\\xE3o informado\\";\\n                console.log(\\"\\\\u2705 Dados do estoque encontrados:\\", estoqueItem.label);\\n              }\\n            }\\n          } catch (enrichError) {\\n            console.error(\\"\\\\u274C Erro ao enriquecer item:\\", enrichError);\\n          }\\n          return baseItem;\\n        })\\n      );\\n      itens = enrichedItens;\\n      console.log(\\"\\\\u2705 Itens enriquecidos processados:\\", itens.length);\\n    }\\n  } catch (error) {\\n    console.error(\\"Erro ao carregar dados da nota:\\", error);\\n  }\\n}\\nfunction resetForm() {\\n  const newFormData = {\\n    tipo_nota: tipo,\\n    almoxarifado_origem_id: \\"\\",\\n    almoxarifado_destino_id: \\"\\",\\n    observacoes: \\"\\",\\n    data_documento: (/* @__PURE__ */ new Date()).toISOString().split(\\"T\\")[0],\\n    itens: []\\n  };\\n  formData = newFormData;\\n  itens = [];\\n  formErrors = {};\\n  showValidationErrors = false;\\n  itemValidationErrors = [];\\n}\\nfunction validateRascunho() {\\n  formErrors = {};\\n  itemValidationErrors = [];\\n  if (formData.tipo_nota === \\"TRANSFERENCIA\\" && formData.almoxarifado_origem_id && formData.almoxarifado_destino_id) {\\n    if (formData.almoxarifado_origem_id === formData.almoxarifado_destino_id) {\\n      formErrors.almoxarifado_destino_id = \\"Almoxarifado de destino deve ser diferente do origem\\";\\n    }\\n  }\\n  if (itens.length === 0) {\\n    itemValidationErrors = [\\"\\\\u26A0\\\\uFE0F Rascunho salvo sem itens - adicione itens antes de concluir\\"];\\n  }\\n  return Object.keys(formErrors).length === 0;\\n}\\nfunction validateConcluida() {\\n  formErrors = {};\\n  itemValidationErrors = [];\\n  if (formData.tipo_nota === \\"ENTRADA\\") {\\n    if (!formData.almoxarifado_destino_id) {\\n      formErrors.almoxarifado_destino_id = \\"Almoxarifado de destino \\\\xE9 obrigat\\\\xF3rio para entrada\\";\\n    }\\n  } else if (formData.tipo_nota === \\"TRANSFERENCIA\\") {\\n    if (!formData.almoxarifado_origem_id) {\\n      formErrors.almoxarifado_origem_id = \\"Almoxarifado de origem \\\\xE9 obrigat\\\\xF3rio para transfer\\\\xEAncia\\";\\n    }\\n    if (!formData.almoxarifado_destino_id) {\\n      formErrors.almoxarifado_destino_id = \\"Almoxarifado de destino \\\\xE9 obrigat\\\\xF3rio para transfer\\\\xEAncia\\";\\n    }\\n    if (formData.almoxarifado_origem_id === formData.almoxarifado_destino_id) {\\n      formErrors.almoxarifado_destino_id = \\"Almoxarifado de destino deve ser diferente do origem\\";\\n    }\\n  } else if (formData.tipo_nota === \\"DESCARTE\\") {\\n    if (!formData.almoxarifado_origem_id) {\\n      formErrors.almoxarifado_origem_id = \\"Almoxarifado de origem \\\\xE9 obrigat\\\\xF3rio para descarte\\";\\n    }\\n  }\\n  if (!formData.data_documento) {\\n    formErrors.data_documento = \\"Data do documento \\\\xE9 obrigat\\\\xF3ria\\";\\n  }\\n  if (itens.length === 0) {\\n    itemValidationErrors = [\\"Pelo menos um item deve ser adicionado para concluir a nota\\"];\\n    return false;\\n  }\\n  if (formData.tipo_nota === \\"ENTRADA\\") {\\n    const itensSemCusto = itens.filter((item) => !item.custo_unitario || item.custo_unitario <= 0);\\n    if (itensSemCusto.length > 0) {\\n      itemValidationErrors = [\`\${itensSemCusto.length} \${itensSemCusto.length === 1 ? \\"item n\\\\xE3o possui\\" : \\"itens n\\\\xE3o possuem\\"} custo unit\\\\xE1rio v\\\\xE1lido\`];\\n      return false;\\n    }\\n  }\\n  return Object.keys(formErrors).length === 0;\\n}\\nasync function handleSaveRascunho() {\\n  if (!validateRascunho()) {\\n    showValidationErrors = true;\\n    return;\\n  }\\n  showValidationErrors = itemValidationErrors.length > 0;\\n  await saveNota(\\"rascunho\\");\\n}\\nasync function handleSaveConcluida() {\\n  if (!validateConcluida()) {\\n    showValidationErrors = true;\\n    return;\\n  }\\n  await saveNota(\\"concluida\\");\\n}\\nasync function saveNota(modo) {\\n  saveLoading = true;\\n  try {\\n    const notaData = {\\n      tipo_nota: formData.tipo_nota,\\n      data_documento: formData.data_documento\\n    };\\n    if (formData.observacoes && formData.observacoes.trim() !== \\"\\") {\\n      notaData.observacoes = formData.observacoes.trim();\\n    }\\n    if (formData.tipo_nota === \\"ENTRADA\\") {\\n      if (formData.almoxarifado_destino_id) {\\n        notaData.almoxarifado_destino_id = formData.almoxarifado_destino_id;\\n      }\\n    } else if (formData.tipo_nota === \\"TRANSFERENCIA\\") {\\n      if (formData.almoxarifado_origem_id) {\\n        notaData.almoxarifado_origem_id = formData.almoxarifado_origem_id;\\n      }\\n      if (formData.almoxarifado_destino_id) {\\n        notaData.almoxarifado_destino_id = formData.almoxarifado_destino_id;\\n      }\\n    } else if (formData.tipo_nota === \\"DESCARTE\\") {\\n      if (formData.almoxarifado_origem_id) {\\n        notaData.almoxarifado_origem_id = formData.almoxarifado_origem_id;\\n      }\\n    }\\n    let notaId;\\n    if (mode === \\"create\\") {\\n      const response = await notasMovimentacaoAdapter.criarNota(notaData);\\n      console.log(\\"\\\\u{1F4DD} Resposta da cria\\\\xE7\\\\xE3o da nota:\\", response);\\n      notaId = response?.data?.id || response?.id || response?.data?.uuid || response?.uuid;\\n      if (!notaId) {\\n        console.error(\\"\\\\u274C N\\\\xE3o foi poss\\\\xEDvel extrair o ID da nota criada:\\", response);\\n        throw new Error(\\"Erro: ID da nota n\\\\xE3o encontrado na resposta do servidor\\");\\n      }\\n      console.log(\\"\\\\u2705 Nota criada com ID:\\", notaId);\\n      if (itens.length > 0) {\\n        for (const item of itens) {\\n          const itemData = {\\n            tipo_epi_id: item.tipo_epi_id,\\n            estoque_item_id: item.estoque_item_id,\\n            quantidade: item.quantidade,\\n            custo_unitario: item.custo_unitario\\n          };\\n          await notasMovimentacaoAdapter.adicionarItem(notaId, itemData);\\n        }\\n      }\\n      if (modo === \\"concluida\\") {\\n        await notasMovimentacaoAdapter.concluirNota(notaId);\\n      }\\n    } else {\\n      if (!nota?.id) {\\n        throw new Error(\\"ID da nota n\\\\xE3o encontrado\\");\\n      }\\n      await notasMovimentacaoAdapter.atualizarNota(nota.id, {\\n        data_documento: notaData.data_documento,\\n        observacoes: notaData.observacoes\\n      });\\n      notaId = nota.id;\\n    }\\n    dispatch(\\"salvar\\", { notaId, modo });\\n  } catch (error) {\\n    console.error(\\"Erro ao salvar nota:\\", error);\\n    throw error;\\n  } finally {\\n    saveLoading = false;\\n  }\\n}\\nfunction handleClose() {\\n  dispatch(\\"close\\");\\n}\\nfunction handleCancel() {\\n  dispatch(\\"cancelar\\");\\n}\\nfunction handleItensChange(event) {\\n  itens = event.detail;\\n  formData.itens = itens;\\n  if (itens.length > 0) {\\n    itemValidationErrors = [];\\n  }\\n}\\nfunction handleItensValidationChange(event) {\\n  if (event.detail) {\\n    itemValidationErrors = [event.detail];\\n  } else {\\n    itemValidationErrors = [];\\n  }\\n}\\n$: drawerTitle = mode === \\"create\\" ? \`Nova Nota - \${getTipoNotaLabel(formData.tipo_nota)}\` : mode === \\"edit\\" ? \`Editar Nota - \${getTipoNotaLabel(formData.tipo_nota)}\` : \`Visualizar Nota - \${getTipoNotaLabel(formData.tipo_nota)}\`;\\n$: totalItens = itens.length;\\n$: valorTotal = itens.reduce((total, item) => {\\n  const custo = typeof item.custo_unitario === \\"number\\" ? item.custo_unitario : 0;\\n  return total + item.quantidade * custo;\\n}, 0);\\n$: canSave = !saveLoading && !dataLoading && mode !== \\"view\\";\\n$: primaryAction = mode === \\"view\\" ? null : {\\n  text: \\"Concluir\\",\\n  icon: \\"CheckOutline\\",\\n  disabled: !canSave\\n};\\n$: secondaryAction = mode === \\"view\\" ? null : {\\n  text: \\"Salvar Rascunho\\",\\n  icon: \\"FloppyDiskOutline\\",\\n  disabled: !canSave\\n};\\n$: statusText = mode === \\"create\\" ? \\"NOVA\\" : mode === \\"edit\\" ? \\"EDITANDO\\" : nota?.status || \\"VISUALIZANDO\\";\\n$: additionalInfo = [\\n  \`\${totalItens} \${totalItens === 1 ? \\"item\\" : \\"itens\\"}\`,\\n  valorTotal > 0 ? \`R$ \${valorTotal.toFixed(2)}\` : \\"Sem valor\\"\\n];\\n$: almoxarifadoDestinoFiltrado = almoxarifadoDestinoOptions.filter(\\n  (alm) => alm.value !== formData.almoxarifado_origem_id\\n);\\n<\/script>\\n\\n<style>\\n  :global(.drawer-notas) {\\n    top: 64px !important; /* Altura do header */\\n    height: calc(100vh - 64px) !important;\\n    max-width: 940px !important;\\n    z-index: 50 !important;\\n  }\\n  \\n  /* Ajustar backdrop para não cobrir header - seletor mais específico */\\n  :global([role=\\"presentation\\"].fixed.top-0.start-0.z-50.w-full.h-full) {\\n    top: 64px !important; /* Começar abaixo do header */\\n    height: calc(100vh - 64px) !important;\\n  }\\n</style>\\n\\n<Drawer \\n  bind:hidden \\n  placement=\\"right\\" \\n  width=\\"w-full max-w-[940px]\\"\\n  backdrop={true}\\n  activateClickOutside={true}\\n  bgOpacity=\\"bg-black/50\\"\\n  position=\\"fixed\\"\\n  id=\\"notas-detail-drawer\\"\\n  class=\\"drawer-notas\\"\\n>\\n  <!-- Header -->\\n  <DrawerHeader\\n    title={drawerTitle}\\n    objectType=\\"NOTA DE MOVIMENTAÇÃO\\"\\n    iconName=\\"FileDocOutline\\"\\n    status={statusText}\\n    statusType=\\"movimento\\"\\n    {additionalInfo}\\n    {primaryAction}\\n    {secondaryAction}\\n    on:close={handleClose}\\n    on:primaryAction={handleSaveConcluida}\\n    on:secondaryAction={handleSaveRascunho}\\n  />\\n\\n  {#if dataLoading}\\n    <div class=\\"flex justify-center items-center py-12\\">\\n      <LoadingSpinner />\\n    </div>\\n  {:else}\\n    <!-- Validation Errors -->\\n    {#if showValidationErrors && (Object.keys(formErrors).length > 0 || itemValidationErrors.length > 0)}\\n      <div class=\\"p-6 pb-0\\">\\n        <Alert color=\\"red\\" class=\\"rounded-sm\\">\\n          <span class=\\"font-medium\\">Erros de validação:</span>\\n          <ul class=\\"mt-2 list-disc list-inside\\">\\n            {#each Object.values(formErrors) as error}\\n              <li>{error}</li>\\n            {/each}\\n            {#each itemValidationErrors as error}\\n              <li>{error}</li>\\n            {/each}\\n          </ul>\\n        </Alert>\\n      </div>\\n    {/if}\\n\\n    <!-- Content Container -->\\n    <div class=\\"p-6 space-y-6\\">\\n\\n      {#if mode === 'view'}\\n        <!-- VIEW MODE: Interface de leitura limpa -->\\n        \\n        <!-- Dados Básicos da Nota -->\\n        <div class=\\"space-y-4\\">\\n          <h3 class=\\"text-lg font-semibold text-gray-900 dark:text-white\\">Informações da Nota</h3>\\n          \\n          <div class=\\"bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4\\">\\n            <div class=\\"grid grid-cols-1 md:grid-cols-2 gap-6\\">\\n              <!-- Tipo de Nota -->\\n              <div>\\n                <dt class=\\"text-sm font-medium text-gray-500 dark:text-gray-400\\">Tipo de Nota</dt>\\n                <dd class=\\"mt-1 text-sm text-gray-900 dark:text-white\\">\\n                  <Badge \\n                    color={getTipoNotaBadgeColor(formData.tipo_nota)} \\n                    class=\\"w-fit rounded-sm font-medium\\"\\n                  >\\n                    {getTipoNotaLabel(formData.tipo_nota)}\\n                  </Badge>\\n                </dd>\\n              </div>\\n\\n              <!-- Data do Documento -->\\n              <div>\\n                <dt class=\\"text-sm font-medium text-gray-500 dark:text-gray-400\\">Data do Documento</dt>\\n                <dd class=\\"mt-1 text-sm text-gray-900 dark:text-white\\">\\n                  {new Date(formData.data_documento).toLocaleDateString('pt-BR')}\\n                </dd>\\n              </div>\\n\\n              <!-- Almoxarifado de Origem -->\\n              {#if formData.almoxarifado_origem_id}\\n                <div>\\n                  <dt class=\\"text-sm font-medium text-gray-500 dark:text-gray-400\\">Almoxarifado de Origem</dt>\\n                  <dd class=\\"mt-1 text-sm text-gray-900 dark:text-white\\">\\n                    {almoxarifadoOptions.find(opt => opt.value === formData.almoxarifado_origem_id)?.label || 'Não identificado'}\\n                    {#if almoxarifadoOptions.find(opt => opt.value === formData.almoxarifado_origem_id)?.isPrincipal}\\n                      <span class=\\"text-xs text-primary-600 dark:text-primary-400 font-medium ml-1\\">(Principal)</span>\\n                    {/if}\\n                  </dd>\\n                </div>\\n              {/if}\\n\\n              <!-- Almoxarifado de Destino -->\\n              {#if formData.almoxarifado_destino_id}\\n                <div>\\n                  <dt class=\\"text-sm font-medium text-gray-500 dark:text-gray-400\\">Almoxarifado de Destino</dt>\\n                  <dd class=\\"mt-1 text-sm text-gray-900 dark:text-white\\">\\n                    {almoxarifadoOptions.find(opt => opt.value === formData.almoxarifado_destino_id)?.label || 'Não identificado'}\\n                    {#if almoxarifadoOptions.find(opt => opt.value === formData.almoxarifado_destino_id)?.isPrincipal}\\n                      <span class=\\"text-xs text-primary-600 dark:text-primary-400 font-medium ml-1\\">(Principal)</span>\\n                    {/if}\\n                  </dd>\\n                </div>\\n              {/if}\\n\\n              <!-- Observações -->\\n              {#if formData.observacoes}\\n                <div class=\\"md:col-span-2\\">\\n                  <dt class=\\"text-sm font-medium text-gray-500 dark:text-gray-400\\">Observações</dt>\\n                  <dd class=\\"mt-1 text-sm text-gray-900 dark:text-white\\">\\n                    {formData.observacoes}\\n                  </dd>\\n                </div>\\n              {/if}\\n            </div>\\n          </div>\\n        </div>\\n\\n        <!-- Itens da Nota -->\\n        <div class=\\"space-y-4\\">\\n          <h3 class=\\"text-lg font-semibold text-gray-900 dark:text-white\\">\\n            Itens da Nota\\n            {#if totalItens > 0}\\n              <Badge color=\\"gray\\" class=\\"ml-2 rounded-sm\\">{totalItens}</Badge>\\n            {/if}\\n          </h3>\\n          \\n          {#if itens.length === 0}\\n            <!-- Estado vazio para visualização -->\\n            <div class=\\"bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 text-center\\">\\n              <div class=\\"w-12 h-12 mx-auto mb-4 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center\\">\\n                <FileDocOutline class=\\"w-6 h-6 text-gray-400\\" />\\n              </div>\\n              <h4 class=\\"text-sm font-medium text-gray-900 dark:text-white mb-1\\">Nenhum item encontrado</h4>\\n              <p class=\\"text-xs text-gray-500 dark:text-gray-400\\">Esta nota não possui itens registrados</p>\\n            </div>\\n          {:else}\\n            <!-- Lista de itens para visualização -->\\n            <div class=\\"space-y-3\\">\\n              {#each itens as item, index}\\n                <div class=\\"bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4\\">\\n                  <div class=\\"flex items-start justify-between\\">\\n                    <div class=\\"flex-1\\">\\n                      <div class=\\"flex items-center gap-3 mb-2\\">\\n                        <span class=\\"text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 py-1 rounded\\">\\n                          Item {index + 1}\\n                        </span>\\n                        <h4 class=\\"font-medium text-gray-900 dark:text-white\\">\\n                          {item.equipamento_nome || 'Equipamento não identificado'}\\n                        </h4>\\n                      </div>\\n                      \\n                      <div class=\\"grid grid-cols-1 md:grid-cols-3 gap-4 text-sm\\">\\n                        <div>\\n                          <dt class=\\"text-gray-500 dark:text-gray-400\\">Categoria</dt>\\n                          <dd class=\\"text-gray-900 dark:text-white\\">\\n                            {item.categoria || 'Não informado'}\\n                          </dd>\\n                        </div>\\n                        <div>\\n                          <dt class=\\"text-gray-500 dark:text-gray-400\\">Número CA</dt>\\n                          <dd class=\\"text-gray-900 dark:text-white\\">\\n                            {item.numero_ca || 'Não informado'}\\n                          </dd>\\n                        </div>\\n                        <div>\\n                          <dt class=\\"text-gray-500 dark:text-gray-400\\">Quantidade</dt>\\n                          <dd class=\\"text-gray-900 dark:text-white font-medium\\">\\n                            {item.quantidade}\\n                          </dd>\\n                        </div>\\n                        {#if formData.tipo_nota === 'ENTRADA' && item.custo_unitario}\\n                          <div>\\n                            <dt class=\\"text-gray-500 dark:text-gray-400\\">Custo Unitário</dt>\\n                            <dd class=\\"text-gray-900 dark:text-white\\">\\n                              R$ {item.custo_unitario.toFixed(2)}\\n                            </dd>\\n                          </div>\\n                          <div>\\n                            <dt class=\\"text-gray-500 dark:text-gray-400\\">Valor Total</dt>\\n                            <dd class=\\"text-green-600 dark:text-green-400 font-medium\\">\\n                              R$ {(item.quantidade * item.custo_unitario).toFixed(2)}\\n                            </dd>\\n                          </div>\\n                        {/if}\\n                      </div>\\n                    </div>\\n                  </div>\\n                </div>\\n              {/each}\\n            </div>\\n          {/if}\\n        </div>\\n\\n        <!-- Resumo Total -->\\n        {#if totalItens > 0}\\n          <div class=\\"bg-primary-50 dark:bg-primary-900/20 rounded-lg border border-primary-200 dark:border-primary-800 p-4\\">\\n            <div class=\\"flex items-center justify-between\\">\\n              <div class=\\"flex items-center gap-6\\">\\n                <div class=\\"text-center\\">\\n                  <div class=\\"text-2xl font-bold text-primary-600 dark:text-primary-400\\">\\n                    {totalItens}\\n                  </div>\\n                  <div class=\\"text-xs text-primary-600 dark:text-primary-400 font-medium\\">\\n                    {totalItens === 1 ? 'Item' : 'Itens'}\\n                  </div>\\n                </div>\\n                {#if valorTotal > 0}\\n                  <div class=\\"text-center\\">\\n                    <div class=\\"text-2xl font-bold text-green-600 dark:text-green-400\\">\\n                      R$ {valorTotal.toFixed(2)}\\n                    </div>\\n                    <div class=\\"text-xs text-green-600 dark:text-green-400 font-medium\\">\\n                      Valor Total\\n                    </div>\\n                  </div>\\n                {/if}\\n              </div>\\n            </div>\\n          </div>\\n        {/if}\\n\\n      {:else}\\n        <!-- EDIT/CREATE MODE: Interface de formulário -->\\n        \\n        <!-- Dados Básicos -->\\n        <div class=\\"space-y-4\\">\\n          <h3 class=\\"text-lg font-semibold text-gray-900 dark:text-white\\">Dados da Nota</h3>\\n          \\n          <div class=\\"grid grid-cols-1 md:grid-cols-2 gap-4\\">\\n            <!-- Tipo -->\\n            <div>\\n              <Label for=\\"tipo_nota\\" class=\\"mb-2 text-gray-900 dark:text-white\\">Tipo de Nota</Label>\\n              <Select\\n                id=\\"tipo_nota\\"\\n                bind:value={formData.tipo_nota}\\n                disabled={mode === 'view'}\\n                class=\\"rounded-sm {formErrors.tipo_nota ? 'border-red-500' : ''}\\"\\n              >\\n                <option value=\\"ENTRADA\\">Entrada</option>\\n                <option value=\\"TRANSFERENCIA\\">Transferência</option>\\n                <option value=\\"DESCARTE\\">Descarte</option>\\n              </Select>\\n              {#if formErrors.tipo_nota}\\n                <p class=\\"text-red-500 dark:text-red-400 text-sm mt-1\\">{formErrors.tipo_nota}</p>\\n              {/if}\\n            </div>\\n\\n            <!-- Data do Documento -->\\n            <div>\\n              <Label for=\\"data_documento\\" class=\\"mb-2 text-gray-900 dark:text-white\\">Data do Documento</Label>\\n              <Input\\n                id=\\"data_documento\\"\\n                type=\\"date\\"\\n                size=\\"md\\"\\n                bind:value={formData.data_documento}\\n                disabled={mode === 'view'}\\n                class=\\"rounded-sm h-10 text-sm {formErrors.data_documento ? 'border-red-500' : ''}\\"\\n              />\\n              {#if formErrors.data_documento}\\n                <p class=\\"text-red-500 dark:text-red-400 text-sm mt-1\\">{formErrors.data_documento}</p>\\n              {/if}\\n            </div>\\n\\n            <!-- Almoxarifado - baseado no tipo de nota -->\\n            {#if formData.tipo_nota === 'ENTRADA'}\\n              <!-- Para ENTRADA: Radio buttons para almoxarifado de destino -->\\n              <div>\\n                <Label class=\\"mb-3 text-gray-900 dark:text-white\\">\\n                  Almoxarifado de Destino\\n                </Label>\\n                <div class=\\"space-y-2\\">\\n                  {#each almoxarifadoOptions as option}\\n                    <div class=\\"flex items-center\\">\\n                      <Radio\\n                        name=\\"almoxarifado_destino_id\\"\\n                        value={option.value}\\n                        bind:group={formData.almoxarifado_destino_id}\\n                        disabled={mode === 'view'}\\n                        class=\\"text-primary-600 focus:ring-primary-500\\"\\n                      />\\n                      <Label class=\\"ml-2 text-sm text-gray-900 dark:text-white\\">\\n                        {option.label}\\n                        {#if option.isPrincipal}\\n                          <span class=\\"text-xs text-primary-600 dark:text-primary-400 font-medium ml-1\\">(Principal)</span>\\n                        {/if}\\n                      </Label>\\n                    </div>\\n                  {/each}\\n                </div>\\n                {#if formErrors.almoxarifado_destino_id}\\n                  <p class=\\"text-red-500 dark:text-red-400 text-sm mt-2\\">{formErrors.almoxarifado_destino_id}</p>\\n                {/if}\\n              </div>\\n            {:else}\\n              <!-- Para TRANSFERENCIA e DESCARTE: Radio buttons para almoxarifado de origem -->\\n              <div>\\n                <Label class=\\"mb-3 text-gray-900 dark:text-white\\">\\n                  Almoxarifado de Origem\\n                </Label>\\n                <div class=\\"space-y-2\\">\\n                  {#each almoxarifadoOptions as option}\\n                    <div class=\\"flex items-center\\">\\n                      <Radio\\n                        name=\\"almoxarifado_origem_id\\"\\n                        value={option.value}\\n                        bind:group={formData.almoxarifado_origem_id}\\n                        disabled={mode === 'view'}\\n                        class=\\"text-primary-600 focus:ring-primary-500\\"\\n                      />\\n                      <Label class=\\"ml-2 text-sm text-gray-900 dark:text-white\\">\\n                        {option.label}\\n                        {#if option.isPrincipal}\\n                          <span class=\\"text-xs text-primary-600 dark:text-primary-400 font-medium ml-1\\">(Principal)</span>\\n                        {/if}\\n                      </Label>\\n                    </div>\\n                  {/each}\\n                </div>\\n                {#if formErrors.almoxarifado_origem_id}\\n                  <p class=\\"text-red-500 dark:text-red-400 text-sm mt-2\\">{formErrors.almoxarifado_origem_id}</p>\\n                {/if}\\n              </div>\\n            {/if}\\n\\n            <!-- Almoxarifado Destino (apenas para transferência) -->\\n            {#if formData.tipo_nota === 'TRANSFERENCIA'}\\n              <div>\\n                <Label class=\\"mb-3 text-gray-900 dark:text-white\\">Almoxarifado de Destino</Label>\\n                <div class=\\"space-y-2\\">\\n                  {#each almoxarifadoDestinoFiltrado as option}\\n                    <div class=\\"flex items-center\\">\\n                      <Radio\\n                        name=\\"almoxarifado_destino_id\\"\\n                        value={option.value}\\n                        bind:group={formData.almoxarifado_destino_id}\\n                        disabled={mode === 'view'}\\n                        class=\\"text-primary-600 focus:ring-primary-500\\"\\n                      />\\n                      <Label class=\\"ml-2 text-sm text-gray-900 dark:text-white\\">\\n                        {option.label}\\n                        {#if option.isPrincipal}\\n                          <span class=\\"text-xs text-primary-600 dark:text-primary-400 font-medium ml-1\\">(Principal)</span>\\n                        {/if}\\n                      </Label>\\n                    </div>\\n                  {/each}\\n                </div>\\n                {#if formErrors.almoxarifado_destino_id}\\n                  <p class=\\"text-red-500 dark:text-red-400 text-sm mt-2\\">{formErrors.almoxarifado_destino_id}</p>\\n                {/if}\\n              </div>\\n            {/if}\\n          </div>\\n\\n          <!-- Observações (campo único, não obrigatório) -->\\n          <div>\\n            <Label for=\\"observacoes\\" class=\\"mb-2 text-gray-900 dark:text-white\\">\\n              Observações \\n              <span class=\\"text-xs text-gray-500 dark:text-gray-400\\">(opcional)</span>\\n            </Label>\\n            <Textarea\\n              id=\\"observacoes\\"\\n              bind:value={formData.observacoes}\\n              disabled={mode === 'view'}\\n              placeholder=\\"Observações sobre a movimentação...\\"\\n              rows=\\"3\\"\\n              class=\\"rounded-sm {formErrors.observacoes ? 'border-red-500' : ''}\\"\\n            />\\n            {#if formErrors.observacoes}\\n              <p class=\\"text-red-500 dark:text-red-400 text-sm mt-1\\">{formErrors.observacoes}</p>\\n            {/if}\\n          </div>\\n        </div>\\n\\n        <!-- Itens Manager -->\\n        <div class=\\"border-t border-gray-200 dark:border-gray-700 pt-6\\">\\n          <NotaItensManagerSimplified\\n            bind:itens\\n            tipo={formData.tipo_nota}\\n            almoxarifadoId={formData.tipo_nota === 'ENTRADA' ? formData.almoxarifado_destino_id : formData.almoxarifado_origem_id}\\n            readonly={mode === 'view'}\\n            on:itensChanged={handleItensChange}\\n            on:validationError={handleItensValidationChange}\\n          />\\n        </div>\\n\\n        <!-- Resumo -->\\n        {#if totalItens > 0}\\n          <div class=\\"bg-gray-50 dark:bg-gray-800 rounded-lg p-4\\">\\n            <h4 class=\\"font-medium text-gray-900 dark:text-white mb-2\\">Resumo</h4>\\n            <div class=\\"grid grid-cols-2 gap-4 text-sm\\">\\n              <div>\\n                <span class=\\"text-gray-600 dark:text-gray-400\\">Total de itens:</span>\\n                <span class=\\"font-medium ml-2\\">{totalItens}</span>\\n              </div>\\n              <div>\\n                <span class=\\"text-gray-600 dark:text-gray-400\\">Valor total:</span>\\n                <span class=\\"font-medium ml-2 text-green-600 dark:text-green-400\\">\\n                  R$ {valorTotal.toFixed(2)}\\n                </span>\\n              </div>\\n            </div>\\n          </div>\\n        {/if}\\n      {/if}\\n    </div>\\n  {/if}\\n</Drawer>"],"names":[],"mappings":"AA0YU,aAAe,CACrB,GAAG,CAAE,IAAI,CAAC,UAAU,CACpB,MAAM,CAAE,KAAK,KAAK,CAAC,CAAC,CAAC,IAAI,CAAC,CAAC,UAAU,CACrC,SAAS,CAAE,KAAK,CAAC,UAAU,CAC3B,OAAO,CAAE,EAAE,CAAC,UACd,CAGQ,4DAA8D,CACpE,GAAG,CAAE,IAAI,CAAC,UAAU,CACpB,MAAM,CAAE,KAAK,KAAK,CAAC,CAAC,CAAC,IAAI,CAAC,CAAC,UAC7B"}`
@@ -2288,491 +2696,6 @@ const NotesDetailDrawer = create_ssr_component(($$result, $$props, $$bindings, s
     )}`;
   } while (!$$settled);
   return $$rendered;
-});
-const TableContainer = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  let startItem;
-  let endItem;
-  let { loading = false } = $$props;
-  let { error = null } = $$props;
-  let { isEmpty = false } = $$props;
-  let { emptyIcon = null } = $$props;
-  let { emptyTitle = "Nenhum item encontrado" } = $$props;
-  let { emptyMessage = "Não há dados para exibir" } = $$props;
-  let { emptyActionLabel = "" } = $$props;
-  let { showPagination = false } = $$props;
-  let { currentPage = 1 } = $$props;
-  let { totalPages = 1 } = $$props;
-  let { pageSize = 20 } = $$props;
-  let { total = 0 } = $$props;
-  createEventDispatcher();
-  if ($$props.loading === void 0 && $$bindings.loading && loading !== void 0) $$bindings.loading(loading);
-  if ($$props.error === void 0 && $$bindings.error && error !== void 0) $$bindings.error(error);
-  if ($$props.isEmpty === void 0 && $$bindings.isEmpty && isEmpty !== void 0) $$bindings.isEmpty(isEmpty);
-  if ($$props.emptyIcon === void 0 && $$bindings.emptyIcon && emptyIcon !== void 0) $$bindings.emptyIcon(emptyIcon);
-  if ($$props.emptyTitle === void 0 && $$bindings.emptyTitle && emptyTitle !== void 0) $$bindings.emptyTitle(emptyTitle);
-  if ($$props.emptyMessage === void 0 && $$bindings.emptyMessage && emptyMessage !== void 0) $$bindings.emptyMessage(emptyMessage);
-  if ($$props.emptyActionLabel === void 0 && $$bindings.emptyActionLabel && emptyActionLabel !== void 0) $$bindings.emptyActionLabel(emptyActionLabel);
-  if ($$props.showPagination === void 0 && $$bindings.showPagination && showPagination !== void 0) $$bindings.showPagination(showPagination);
-  if ($$props.currentPage === void 0 && $$bindings.currentPage && currentPage !== void 0) $$bindings.currentPage(currentPage);
-  if ($$props.totalPages === void 0 && $$bindings.totalPages && totalPages !== void 0) $$bindings.totalPages(totalPages);
-  if ($$props.pageSize === void 0 && $$bindings.pageSize && pageSize !== void 0) $$bindings.pageSize(pageSize);
-  if ($$props.total === void 0 && $$bindings.total && total !== void 0) $$bindings.total(total);
-  startItem = (currentPage - 1) * pageSize + 1;
-  endItem = Math.min(currentPage * pageSize, total);
-  return `   <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">${loading ? ` <div class="p-8">${validate_component(LoadingSpinner, "LoadingSpinner").$$render($$result, {}, {}, {})}</div>` : `${error ? ` <div class="p-8">${validate_component(ErrorDisplay, "ErrorDisplay").$$render($$result, { message: error }, {}, {})}</div>` : `${isEmpty ? ` <div class="p-16 text-center">${emptyIcon ? `<div class="w-16 h-16 mx-auto mb-4 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center">${validate_component(emptyIcon || missing_component, "svelte:component").$$render($$result, { class: "w-8 h-8 text-gray-400" }, {}, {})}</div>` : ``} <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">${escape(emptyTitle)}</h3> <p class="text-gray-500 dark:text-gray-400 max-w-sm mx-auto mb-6">${escape(emptyMessage)}</p> ${emptyActionLabel ? `${validate_component(Button, "Button").$$render(
-    $$result,
-    {
-      size: "sm",
-      color: "primary",
-      class: "rounded-sm"
-    },
-    {},
-    {
-      default: () => {
-        return `${escape(emptyActionLabel)}`;
-      }
-    }
-  )}` : ``}</div>` : ` ${slots.filters ? slots.filters({}) : ``}  <div class="overflow-x-auto">${slots.default ? slots.default({}) : ``}</div>  ${showPagination && totalPages > 1 ? `<div class="flex items-center justify-between px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700"><div class="text-sm text-gray-600 dark:text-gray-400">Mostrando ${escape(startItem)} a ${escape(endItem)} de ${escape(total)} resultados</div> <div class="flex gap-2">${validate_component(Button, "Button").$$render(
-    $$result,
-    {
-      size: "sm",
-      color: "alternative",
-      class: "rounded-sm",
-      disabled: currentPage === 1
-    },
-    {},
-    {
-      default: () => {
-        return `Anterior`;
-      }
-    }
-  )} ${validate_component(Button, "Button").$$render(
-    $$result,
-    {
-      size: "sm",
-      color: "alternative",
-      class: "rounded-sm",
-      disabled: currentPage === totalPages
-    },
-    {},
-    {
-      default: () => {
-        return `Próximo`;
-      }
-    }
-  )}</div></div>` : ``}`}`}`}</div>`;
-});
-const TableFilters = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  let { searchValue = "" } = $$props;
-  let { searchPlaceholder = "Buscar..." } = $$props;
-  let { filters = [] } = $$props;
-  let { checkboxFilters = [] } = $$props;
-  let { resultCount = 0 } = $$props;
-  let { totalCount = 0 } = $$props;
-  let { resultLabel = "resultados" } = $$props;
-  let { showClearButton = false } = $$props;
-  createEventDispatcher();
-  if ($$props.searchValue === void 0 && $$bindings.searchValue && searchValue !== void 0) $$bindings.searchValue(searchValue);
-  if ($$props.searchPlaceholder === void 0 && $$bindings.searchPlaceholder && searchPlaceholder !== void 0) $$bindings.searchPlaceholder(searchPlaceholder);
-  if ($$props.filters === void 0 && $$bindings.filters && filters !== void 0) $$bindings.filters(filters);
-  if ($$props.checkboxFilters === void 0 && $$bindings.checkboxFilters && checkboxFilters !== void 0) $$bindings.checkboxFilters(checkboxFilters);
-  if ($$props.resultCount === void 0 && $$bindings.resultCount && resultCount !== void 0) $$bindings.resultCount(resultCount);
-  if ($$props.totalCount === void 0 && $$bindings.totalCount && totalCount !== void 0) $$bindings.totalCount(totalCount);
-  if ($$props.resultLabel === void 0 && $$bindings.resultLabel && resultLabel !== void 0) $$bindings.resultLabel(resultLabel);
-  if ($$props.showClearButton === void 0 && $$bindings.showClearButton && showClearButton !== void 0) $$bindings.showClearButton(showClearButton);
-  return `   <div class="p-4 border-b border-gray-200 dark:border-gray-700"><div class="flex items-center gap-4 flex-wrap"> <div class="relative flex-1 max-w-md">${validate_component(SearchOutline, "SearchOutline").$$render(
-    $$result,
-    {
-      class: "absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500"
-    },
-    {},
-    {}
-  )} ${validate_component(Input, "Input").$$render(
-    $$result,
-    {
-      type: "text",
-      placeholder: searchPlaceholder,
-      class: "pl-10 rounded-sm h-10 text-sm",
-      value: searchValue
-    },
-    {},
-    {}
-  )}</div>  ${each(filters, (filter) => {
-    return `${validate_component(SearchableDropdown, "SearchableDropdown").$$render(
-      $$result,
-      {
-        options: filter.options,
-        value: filter.value,
-        placeholder: filter.placeholder,
-        class: "min-w-[140px]"
-      },
-      {},
-      {}
-    )}`;
-  })}  ${each(checkboxFilters, (checkboxFilter) => {
-    return `<div class="flex items-center">${validate_component(Checkbox, "Checkbox").$$render(
-      $$result,
-      {
-        checked: checkboxFilter.checked,
-        class: "text-sm"
-      },
-      {},
-      {
-        default: () => {
-          return `${escape(checkboxFilter.label)} `;
-        }
-      }
-    )} </div>`;
-  })}  ${showClearButton ? `<button type="button" class="p-2 rounded-sm hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors" title="Limpar filtros">${validate_component(RefreshOutline, "RefreshOutline").$$render(
-    $$result,
-    {
-      class: "w-4 h-4 text-gray-600 dark:text-gray-400"
-    },
-    {},
-    {}
-  )}</button>` : ``}</div>  <div class="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700"><div class="text-sm text-gray-600 dark:text-gray-400">${escape(resultCount)} de ${escape(totalCount)} ${escape(resultLabel)} encontrado${escape(resultCount !== 1 ? "s" : "")}</div></div></div>`;
-});
-function getAvailableActions(nota) {
-  const actions = ["view"];
-  switch (nota.status) {
-    case "RASCUNHO":
-      actions.push("edit", "delete", "conclude");
-      break;
-    case "CONCLUIDA":
-      actions.push("cancel");
-      break;
-  }
-  return actions;
-}
-function getActionTooltip(action, nota) {
-  const actionLabels = {
-    "view": "Visualizar detalhes da nota",
-    "edit": "Editar nota (rascunho)",
-    "delete": "Excluir nota (rascunho)",
-    "conclude": `Concluir nota e processar ${nota.total_itens || nota.itens?.length || 0} ${(nota.total_itens || nota.itens?.length || 0) === 1 ? "item" : "itens"}`,
-    "cancel": "Cancelar nota (reversível)"
-  };
-  return actionLabels[action] || action;
-}
-const NotesTablePresenter = create_ssr_component(($$result, $$props, $$bindings, slots) => {
-  let filterConfig;
-  let dateFilters;
-  let { items = [] } = $$props;
-  let { loading = false } = $$props;
-  let { error = null } = $$props;
-  let { pagination } = $$props;
-  let { filters } = $$props;
-  let { filterOptions } = $$props;
-  createEventDispatcher();
-  const tabs = [
-    { label: "Concluídas", count: 0 },
-    { label: "Rascunhos", count: 0 },
-    { label: "Canceladas", count: 0 }
-  ];
-  if ($$props.items === void 0 && $$bindings.items && items !== void 0) $$bindings.items(items);
-  if ($$props.loading === void 0 && $$bindings.loading && loading !== void 0) $$bindings.loading(loading);
-  if ($$props.error === void 0 && $$bindings.error && error !== void 0) $$bindings.error(error);
-  if ($$props.pagination === void 0 && $$bindings.pagination && pagination !== void 0) $$bindings.pagination(pagination);
-  if ($$props.filters === void 0 && $$bindings.filters && filters !== void 0) $$bindings.filters(filters);
-  if ($$props.filterOptions === void 0 && $$bindings.filterOptions && filterOptions !== void 0) $$bindings.filterOptions(filterOptions);
-  {
-    if (items && items.length > 0) {
-      console.log("🔍 NotesTablePresenter: Dados recebidos", {
-        quantidade: items.length,
-        primeiraNota: {
-          id: items[0]?.id,
-          numero: items[0]?.numero,
-          responsavel_nome: items[0]?.responsavel_nome,
-          almoxarifado_nome: items[0]?.almoxarifado_nome,
-          total_itens: items[0]?.total_itens,
-          valor_total: items[0]?.valor_total,
-          status: items[0]?.status,
-          tipo: items[0]?.tipo,
-          data_documento: items[0]?.data_documento
-        }
-      });
-    }
-  }
-  filterConfig = [
-    {
-      key: "tipo",
-      value: filters.tipoFilter,
-      options: [{ value: "todas", label: "Todos os Tipos" }, ...filterOptions.tipos],
-      placeholder: "Tipo"
-    },
-    {
-      key: "responsavel",
-      value: filters.responsavelFilter,
-      options: filterOptions.responsaveis,
-      placeholder: "Responsável"
-    },
-    {
-      key: "almoxarifado",
-      value: filters.almoxarifadoFilter,
-      options: filterOptions.almoxarifados,
-      placeholder: "Almoxarifado"
-    }
-  ].filter(Boolean);
-  dateFilters = [
-    {
-      key: "dataInicio",
-      type: "date",
-      value: filters.dataInicioFilter,
-      placeholder: "Data início"
-    },
-    {
-      key: "dataFim",
-      type: "date",
-      value: filters.dataFimFilter,
-      placeholder: "Data fim"
-    }
-  ];
-  return `  ${$$result.head += `<!-- HEAD_svelte-17563br_START -->${$$result.title = `<title>Notas de Movimentação - DataLife EPI</title>`, ""}<!-- HEAD_svelte-17563br_END -->`, ""} <div class="space-y-6"> <div class="flex items-center justify-between"><div data-svelte-h="svelte-1yas3jv"><h1 class="text-xl font-medium text-gray-900 dark:text-white">Notas de Movimentação</h1> <p class="text-sm text-gray-600 dark:text-gray-400">Gerencie notas de entrada, transferência e descarte de EPIs</p></div> <div class="flex space-x-2">${validate_component(Button, "Button").$$render(
-    $$result,
-    {
-      size: "sm",
-      color: "primary",
-      class: "rounded-sm"
-    },
-    {},
-    {
-      default: () => {
-        return `${validate_component(PlusOutline, "PlusOutline").$$render($$result, { class: "w-4 h-4 mr-2" }, {}, {})}
-        Nova Movimentação`;
-      }
-    }
-  )}</div></div>  <div class="border-b border-gray-200 dark:border-gray-700"><nav class="flex space-x-4 px-4" aria-label="Tabs">${each(tabs, (tab, index) => {
-    return `<button class="${"whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm focus:outline-none transition-colors duration-200 -mb-px " + escape(
-      filters.activeTab === index ? "border-primary-500 text-primary-600 dark:text-primary-400" : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600",
-      true
-    )}"><span class="flex items-center space-x-2"><span>${escape(tab.label)}</span> ${filters.activeTab === index && pagination.total > 0 ? `${validate_component(Badge, "Badge").$$render(
-      $$result,
-      {
-        color: "gray",
-        class: "rounded-sm text-xs"
-      },
-      {},
-      {
-        default: () => {
-          return `${escape(pagination.total)}`;
-        }
-      }
-    )}` : ``}</span> </button>`;
-  })}</nav></div>  ${loading ? `${validate_component(LoadingSpinner, "LoadingSpinner").$$render($$result, {}, {}, {})}` : `${error ? `${validate_component(Card, "Card").$$render($$result, { size: "sm", class: "rounded-sm" }, {}, {
-    default: () => {
-      return `<div class="text-center py-8"><div class="w-16 h-16 mx-auto mb-4 bg-red-100 dark:bg-red-800 rounded-full flex items-center justify-center">${validate_component(CloseOutline, "CloseOutline").$$render(
-        $$result,
-        {
-          class: "w-8 h-8 text-red-600 dark:text-red-400"
-        },
-        {},
-        {}
-      )}</div> <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2" data-svelte-h="svelte-aprdtf">Erro ao carregar dados</h3> <p class="text-red-600 dark:text-red-400 mb-4">${escape(error)}</p> ${validate_component(Button, "Button").$$render(
-        $$result,
-        {
-          size: "sm",
-          color: "red",
-          class: "rounded-sm"
-        },
-        {},
-        {
-          default: () => {
-            return `${validate_component(RefreshOutline, "RefreshOutline").$$render($$result, { class: "w-4 h-4 mr-2" }, {}, {})}
-          Tentar novamente`;
-          }
-        }
-      )}</div>`;
-    }
-  })}` : `${items.length > 0 ? ` ${validate_component(TableContainer, "TableContainer").$$render(
-    $$result,
-    {
-      loading,
-      error,
-      isEmpty: items.length === 0
-    },
-    {},
-    {
-      filters: () => {
-        return `${validate_component(TableFilters, "TableFilters").$$render(
-          $$result,
-          {
-            slot: "filters",
-            searchValue: filters.searchTerm,
-            filters: filterConfig,
-            dateFilters,
-            resultCount: items.length,
-            totalCount: pagination.total,
-            hasActiveFilters: filters.hasActiveFilters
-          },
-          {},
-          {}
-        )}`;
-      },
-      default: () => {
-        return ` <div class="min-w-[1200px] overflow-x-auto">${validate_component(Table, "Table").$$render($$result, { hoverable: true }, {}, {
-          default: () => {
-            return `${validate_component(TableHead, "TableHead").$$render($$result, {}, {}, {
-              default: () => {
-                return `${validate_component(TableHeadCell, "TableHeadCell").$$render($$result, {}, {}, {
-                  default: () => {
-                    return `Número/Tipo`;
-                  }
-                })} ${validate_component(TableHeadCell, "TableHeadCell").$$render($$result, {}, {}, {
-                  default: () => {
-                    return `Data`;
-                  }
-                })} ${validate_component(TableHeadCell, "TableHeadCell").$$render($$result, {}, {}, {
-                  default: () => {
-                    return `Responsável`;
-                  }
-                })} ${validate_component(TableHeadCell, "TableHeadCell").$$render($$result, {}, {}, {
-                  default: () => {
-                    return `Almoxarifado`;
-                  }
-                })} ${validate_component(TableHeadCell, "TableHeadCell").$$render($$result, {}, {}, {
-                  default: () => {
-                    return `Status`;
-                  }
-                })} ${validate_component(TableHeadCell, "TableHeadCell").$$render($$result, {}, {}, {
-                  default: () => {
-                    return `Qtd. Itens`;
-                  }
-                })} ${validate_component(TableHeadCell, "TableHeadCell").$$render($$result, {}, {}, {
-                  default: () => {
-                    return `Valor Total`;
-                  }
-                })} ${validate_component(TableHeadCell, "TableHeadCell").$$render($$result, {}, {}, {
-                  default: () => {
-                    return `Ações`;
-                  }
-                })}`;
-              }
-            })} ${validate_component(TableBody, "TableBody").$$render($$result, {}, {}, {
-              default: () => {
-                return `${each(items, (nota) => {
-                  return `${validate_component(TableBodyRow, "TableBodyRow").$$render(
-                    $$result,
-                    {
-                      class: "hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer"
-                    },
-                    {},
-                    {
-                      default: () => {
-                        return `${validate_component(TableBodyCell, "TableBodyCell").$$render($$result, {}, {}, {
-                          default: () => {
-                            return `<div class="flex flex-col"><span class="font-medium text-gray-900 dark:text-white">${escape(nota.numero || `#${nota.id.slice(0, 8)}`)}</span> <span class="text-sm text-gray-500 dark:text-gray-400">${escape(getTipoNotaLabel(nota.tipo))} </span></div> `;
-                          }
-                        })} ${validate_component(TableBodyCell, "TableBodyCell").$$render($$result, {}, {}, {
-                          default: () => {
-                            return `<span class="text-sm">${escape(formatarData(nota.data_documento))}</span> `;
-                          }
-                        })} ${validate_component(TableBodyCell, "TableBodyCell").$$render($$result, {}, {}, {
-                          default: () => {
-                            return `<span class="text-sm">${escape(nota.responsavel_nome || "N/A")}</span> `;
-                          }
-                        })} ${validate_component(TableBodyCell, "TableBodyCell").$$render($$result, {}, {}, {
-                          default: () => {
-                            return `<div class="flex flex-col"><span class="text-sm">${escape(nota.almoxarifado_nome || "N/A")}</span> ${nota.almoxarifado_destino_nome && nota.tipo === "TRANSFERENCIA" ? `<span class="text-xs text-gray-500 dark:text-gray-400">→ ${escape(nota.almoxarifado_destino_nome)}</span>` : ``}</div> `;
-                          }
-                        })} ${validate_component(TableBodyCell, "TableBodyCell").$$render($$result, {}, {}, {
-                          default: () => {
-                            return `${validate_component(Badge, "Badge").$$render(
-                              $$result,
-                              {
-                                color: getStatusNotaBadgeColor(nota.status),
-                                class: "w-fit rounded-sm"
-                              },
-                              {},
-                              {
-                                default: () => {
-                                  return `${escape(getStatusNotaLabel(nota.status))} `;
-                                }
-                              }
-                            )} `;
-                          }
-                        })} ${validate_component(TableBodyCell, "TableBodyCell").$$render($$result, {}, {}, {
-                          default: () => {
-                            return `<div class="flex items-center space-x-2">${validate_component(FileDocOutline, "FileDocOutline").$$render(
-                              $$result,
-                              {
-                                class: "w-4 h-4 text-gray-400 dark:text-gray-500"
-                              },
-                              {},
-                              {}
-                            )} <span class="text-sm font-medium">${escape(nota.total_itens || nota.itens?.length || 0)}</span> <span class="text-xs text-gray-500 dark:text-gray-400">${escape((nota.total_itens || nota.itens?.length || 0) === 1 ? "item" : "itens")} </span></div> `;
-                          }
-                        })} ${validate_component(TableBodyCell, "TableBodyCell").$$render($$result, {}, {}, {
-                          default: () => {
-                            return `${nota.valor_total && nota.valor_total > 0 ? `<div class="flex flex-col"><span class="text-sm font-medium text-green-600 dark:text-green-400">R$ ${escape(nota.valor_total.toLocaleString("pt-BR", {
-                              minimumFractionDigits: 2,
-                              maximumFractionDigits: 2
-                            }))}</span> <span class="text-xs text-gray-500 dark:text-gray-400">Médio: R$ ${escape((nota.valor_total / (nota.total_itens || nota.itens?.length || 1)).toLocaleString("pt-BR", {
-                              minimumFractionDigits: 2,
-                              maximumFractionDigits: 2
-                            }))}</span> </div>` : `<span class="text-sm text-gray-400 dark:text-gray-500" data-svelte-h="svelte-1iua6vw">—</span>`} `;
-                          }
-                        })} ${validate_component(TableBodyCell, "TableBodyCell").$$render($$result, {}, {}, {
-                          default: () => {
-                            return `<div class="flex space-x-1">${each(getAvailableActions(nota), (action) => {
-                              return `${action === "view" ? `<button class="p-2 rounded-sm text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:focus:ring-gray-700 transition-colors"${add_attribute("title", getActionTooltip("view", nota), 0)}>${validate_component(EyeOutline, "EyeOutline").$$render($$result, { class: "w-4 h-4" }, {}, {})} </button>` : `${action === "edit" ? `<button class="p-2 rounded-sm text-blue-500 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-700 transition-colors"${add_attribute("title", getActionTooltip("edit", nota), 0)}>${validate_component(PenOutline, "PenOutline").$$render($$result, { class: "w-4 h-4" }, {}, {})} </button>` : `${action === "delete" ? `<button class="p-2 rounded-sm text-red-500 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-200 dark:focus:ring-red-700 transition-colors"${add_attribute("title", getActionTooltip("delete", nota), 0)}>${validate_component(TrashBinOutline, "TrashBinOutline").$$render($$result, { class: "w-4 h-4" }, {}, {})} </button>` : `${action === "conclude" ? `<button class="p-2 rounded-sm text-green-500 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-200 dark:focus:ring-green-700 transition-colors"${add_attribute("title", getActionTooltip("conclude", nota), 0)}>${validate_component(CheckOutline, "CheckOutline").$$render($$result, { class: "w-4 h-4" }, {}, {})} </button>` : `${action === "cancel" ? `<button class="p-2 rounded-sm text-orange-500 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-200 dark:focus:ring-orange-700 transition-colors"${add_attribute("title", getActionTooltip("cancel", nota), 0)}>${validate_component(CloseOutline, "CloseOutline").$$render($$result, { class: "w-4 h-4" }, {}, {})} </button>` : ``}`}`}`}`}`;
-                            })}</div> `;
-                          }
-                        })} `;
-                      }
-                    }
-                  )}`;
-                })}`;
-              }
-            })}`;
-          }
-        })}</div>  ${pagination.totalPages > 1 ? `<div class="flex items-center justify-between px-6 py-4 border-t border-gray-200 dark:border-gray-700"><div class="text-sm text-gray-500 dark:text-gray-400">Mostrando ${escape(Math.min((pagination.currentPage - 1) * pagination.pageSize + 1, pagination.total))} a ${escape(Math.min(pagination.currentPage * pagination.pageSize, pagination.total))} de ${escape(pagination.total)} resultados</div> <div class="flex space-x-2">${validate_component(Button, "Button").$$render(
-          $$result,
-          {
-            color: "alternative",
-            class: "rounded-sm",
-            disabled: !pagination.hasPrev
-          },
-          {},
-          {
-            default: () => {
-              return `Anterior`;
-            }
-          }
-        )} <span class="flex items-center px-3 text-sm text-gray-500 dark:text-gray-400">Página ${escape(pagination.currentPage)} de ${escape(pagination.totalPages)}</span> ${validate_component(Button, "Button").$$render(
-          $$result,
-          {
-            color: "alternative",
-            class: "rounded-sm",
-            disabled: !pagination.hasNext
-          },
-          {},
-          {
-            default: () => {
-              return `Próximo`;
-            }
-          }
-        )}</div></div>` : ``}`;
-      }
-    }
-  )}` : ` ${validate_component(Card, "Card").$$render($$result, { size: "sm", class: "rounded-sm" }, {}, {
-    default: () => {
-      return `<div class="text-center py-12"><div class="w-16 h-16 mx-auto mb-4 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center">${validate_component(FileDocOutline, "FileDocOutline").$$render($$result, { class: "w-8 h-8 text-gray-400" }, {}, {})}</div> <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2" data-svelte-h="svelte-1a1xvm">Nenhuma nota encontrada</h3> <p class="text-gray-500 dark:text-gray-400 mb-6">${escape(filters.hasActiveFilters ? "Tente ajustar os filtros ou termo de busca" : "Comece criando uma nova nota de movimentação")}</p> ${validate_component(Button, "Button").$$render(
-        $$result,
-        {
-          size: "sm",
-          color: "primary",
-          class: "rounded-sm"
-        },
-        {},
-        {
-          default: () => {
-            return `${validate_component(PlusOutline, "PlusOutline").$$render($$result, { class: "w-4 h-4 mr-2" }, {}, {})}
-          Nova Movimentação`;
-          }
-        }
-      )}</div>`;
-    }
-  })}`}`}`}</div>`;
 });
 const BackendStatusIndicator = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let { visible = false } = $$props;

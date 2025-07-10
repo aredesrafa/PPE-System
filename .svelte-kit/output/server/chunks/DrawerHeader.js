@@ -1,9 +1,9 @@
 import { c as create_ssr_component, a as compute_rest_props, g as add_attribute, d as spread, f as escape_attribute_value, e as escape_object, b as compute_slots, j as getContext, v as validate_component, h as escape, i as createEventDispatcher, l as each } from "./ssr.js";
 import { twMerge } from "tailwind-merge";
 import { W as Wrapper } from "./modalStore.js";
-import { B as Badge, a as Button } from "./Button.js";
+import { a as Button, B as Badge } from "./Button.js";
+import { C as ChevronDownOutline } from "./ChevronDownOutline.js";
 import { I as Icon } from "./Icon.js";
-import "./DrawerHeader.svelte_svelte_type_style_lang.js";
 const Drawer = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let $$restProps = compute_rest_props($$props, [
     "activateClickOutside",
@@ -145,7 +145,7 @@ const Textarea = create_ssr_component(($$result, $$props, $$bindings, slots) => 
     }
   })} `;
 });
-const PenOutline = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+const EyeOutline = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let $$restProps = compute_rest_props($$props, ["size", "role", "color", "withEvents", "title", "strokeWidth", "desc", "ariaLabel"]);
   const ctx = getContext("iconCtx") ?? {};
   const sizes = {
@@ -164,7 +164,7 @@ const PenOutline = create_ssr_component(($$result, $$props, $$bindings, slots) =
   let { desc = {} } = $$props;
   let ariaDescribedby = `${title.id || ""} ${desc.id || ""}`;
   let hasDescription = false;
-  let { ariaLabel = "pen outline" } = $$props;
+  let { ariaLabel = "eye outline" } = $$props;
   if ($$props.size === void 0 && $$bindings.size && size !== void 0) $$bindings.size(size);
   if ($$props.role === void 0 && $$bindings.role && role !== void 0) $$bindings.role(role);
   if ($$props.color === void 0 && $$bindings.color && color !== void 0) $$bindings.color(color);
@@ -199,7 +199,7 @@ const PenOutline = create_ssr_component(($$result, $$props, $$bindings, slots) =
       { viewBox: "0 0 24 24" }
     ],
     {}
-  )}>${title.id && title.title ? `<title${add_attribute("id", title.id, 0)}>${escape(title.title)}</title>` : ``}${desc.id && desc.desc ? `<desc${add_attribute("id", desc.id, 0)}>${escape(desc.desc)}</desc>` : ``}<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"${add_attribute("stroke-width", strokeWidth, 0)} d="M10.779 17.779 4.36 19.918 6.5 13.5m4.279 4.279 8.364-8.643a3.027 3.027 0 0 0-2.14-5.165 3.03 3.03 0 0 0-2.14.886L6.5 13.5m4.279 4.279L6.499 13.5m2.14 2.14 6.213-6.504M12.75 7.04 17 11.28"></path></svg>` : `<svg${spread(
+  )}>${title.id && title.title ? `<title${add_attribute("id", title.id, 0)}>${escape(title.title)}</title>` : ``}${desc.id && desc.desc ? `<desc${add_attribute("id", desc.id, 0)}>${escape(desc.desc)}</desc>` : ``}<path stroke="currentColor"${add_attribute("stroke-width", strokeWidth, 0)} d="M21 12c0 1.2-4.03 6-9 6s-9-4.8-9-6c0-1.2 4.03-6 9-6s9 4.8 9 6Z"></path><path stroke="currentColor"${add_attribute("stroke-width", strokeWidth, 0)} d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"></path></svg>` : `<svg${spread(
     [
       { xmlns: "http://www.w3.org/2000/svg" },
       { fill: "none" },
@@ -218,7 +218,146 @@ const PenOutline = create_ssr_component(($$result, $$props, $$bindings, slots) =
       { viewBox: "0 0 24 24" }
     ],
     {}
-  )}>${title.id && title.title ? `<title${add_attribute("id", title.id, 0)}>${escape(title.title)}</title>` : ``}${desc.id && desc.desc ? `<desc${add_attribute("id", desc.id, 0)}>${escape(desc.desc)}</desc>` : ``}<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"${add_attribute("stroke-width", strokeWidth, 0)} d="M10.779 17.779 4.36 19.918 6.5 13.5m4.279 4.279 8.364-8.643a3.027 3.027 0 0 0-2.14-5.165 3.03 3.03 0 0 0-2.14.886L6.5 13.5m4.279 4.279L6.499 13.5m2.14 2.14 6.213-6.504M12.75 7.04 17 11.28"></path></svg>`} `;
+  )}>${title.id && title.title ? `<title${add_attribute("id", title.id, 0)}>${escape(title.title)}</title>` : ``}${desc.id && desc.desc ? `<desc${add_attribute("id", desc.id, 0)}>${escape(desc.desc)}</desc>` : ``}<path stroke="currentColor"${add_attribute("stroke-width", strokeWidth, 0)} d="M21 12c0 1.2-4.03 6-9 6s-9-4.8-9-6c0-1.2 4.03-6 9-6s9 4.8 9 6Z"></path><path stroke="currentColor"${add_attribute("stroke-width", strokeWidth, 0)} d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"></path></svg>`} `;
+});
+const SearchOutline = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let $$restProps = compute_rest_props($$props, ["size", "role", "color", "withEvents", "title", "strokeWidth", "desc", "ariaLabel"]);
+  const ctx = getContext("iconCtx") ?? {};
+  const sizes = {
+    xs: "w-3 h-3",
+    sm: "w-4 h-4",
+    md: "w-5 h-5",
+    lg: "w-6 h-6",
+    xl: "w-8 h-8"
+  };
+  let { size = ctx.size || "md" } = $$props;
+  let { role = ctx.role || "img" } = $$props;
+  let { color = ctx.color || "currentColor" } = $$props;
+  let { withEvents = ctx.withEvents || false } = $$props;
+  let { title = {} } = $$props;
+  let { strokeWidth = ctx.strokeWidth || "2" } = $$props;
+  let { desc = {} } = $$props;
+  let ariaDescribedby = `${title.id || ""} ${desc.id || ""}`;
+  let hasDescription = false;
+  let { ariaLabel = "search outline" } = $$props;
+  if ($$props.size === void 0 && $$bindings.size && size !== void 0) $$bindings.size(size);
+  if ($$props.role === void 0 && $$bindings.role && role !== void 0) $$bindings.role(role);
+  if ($$props.color === void 0 && $$bindings.color && color !== void 0) $$bindings.color(color);
+  if ($$props.withEvents === void 0 && $$bindings.withEvents && withEvents !== void 0) $$bindings.withEvents(withEvents);
+  if ($$props.title === void 0 && $$bindings.title && title !== void 0) $$bindings.title(title);
+  if ($$props.strokeWidth === void 0 && $$bindings.strokeWidth && strokeWidth !== void 0) $$bindings.strokeWidth(strokeWidth);
+  if ($$props.desc === void 0 && $$bindings.desc && desc !== void 0) $$bindings.desc(desc);
+  if ($$props.ariaLabel === void 0 && $$bindings.ariaLabel && ariaLabel !== void 0) $$bindings.ariaLabel(ariaLabel);
+  {
+    if (title.id || desc.id) {
+      hasDescription = true;
+    } else {
+      hasDescription = false;
+    }
+  }
+  return `${withEvents ? `<svg${spread(
+    [
+      { xmlns: "http://www.w3.org/2000/svg" },
+      { fill: "none" },
+      { color: escape_attribute_value(color) },
+      escape_object($$restProps),
+      {
+        class: escape_attribute_value(twMerge("shrink-0", sizes[size ?? "md"], $$props.class))
+      },
+      { role: escape_attribute_value(role) },
+      {
+        "aria-label": escape_attribute_value(ariaLabel)
+      },
+      {
+        "aria-describedby": escape_attribute_value(hasDescription ? ariaDescribedby : void 0)
+      },
+      { viewBox: "0 0 24 24" }
+    ],
+    {}
+  )}>${title.id && title.title ? `<title${add_attribute("id", title.id, 0)}>${escape(title.title)}</title>` : ``}${desc.id && desc.desc ? `<desc${add_attribute("id", desc.id, 0)}>${escape(desc.desc)}</desc>` : ``}<path stroke="currentColor" stroke-linecap="round"${add_attribute("stroke-width", strokeWidth, 0)} d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"></path></svg>` : `<svg${spread(
+    [
+      { xmlns: "http://www.w3.org/2000/svg" },
+      { fill: "none" },
+      { color: escape_attribute_value(color) },
+      escape_object($$restProps),
+      {
+        class: escape_attribute_value(twMerge("shrink-0", sizes[size ?? "md"], $$props.class))
+      },
+      { role: escape_attribute_value(role) },
+      {
+        "aria-label": escape_attribute_value(ariaLabel)
+      },
+      {
+        "aria-describedby": escape_attribute_value(hasDescription ? ariaDescribedby : void 0)
+      },
+      { viewBox: "0 0 24 24" }
+    ],
+    {}
+  )}>${title.id && title.title ? `<title${add_attribute("id", title.id, 0)}>${escape(title.title)}</title>` : ``}${desc.id && desc.desc ? `<desc${add_attribute("id", desc.id, 0)}>${escape(desc.desc)}</desc>` : ``}<path stroke="currentColor" stroke-linecap="round"${add_attribute("stroke-width", strokeWidth, 0)} d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"></path></svg>`} `;
+});
+const SearchableDropdown = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let selectedOption;
+  let displayText;
+  let { options = [] } = $$props;
+  let { value = "" } = $$props;
+  let { placeholder = "Selecione uma opção" } = $$props;
+  let { searchPlaceholder = "Buscar..." } = $$props;
+  let { disabled = false } = $$props;
+  let { color = "alternative" } = $$props;
+  let { noOptionsText = "Nenhuma opção encontrada" } = $$props;
+  let { allowClear = false } = $$props;
+  let { clearText = "Limpar seleção" } = $$props;
+  createEventDispatcher();
+  let searchTerm = "";
+  let dropdownElement;
+  let buttonElement;
+  if ($$props.options === void 0 && $$bindings.options && options !== void 0) $$bindings.options(options);
+  if ($$props.value === void 0 && $$bindings.value && value !== void 0) $$bindings.value(value);
+  if ($$props.placeholder === void 0 && $$bindings.placeholder && placeholder !== void 0) $$bindings.placeholder(placeholder);
+  if ($$props.searchPlaceholder === void 0 && $$bindings.searchPlaceholder && searchPlaceholder !== void 0) $$bindings.searchPlaceholder(searchPlaceholder);
+  if ($$props.disabled === void 0 && $$bindings.disabled && disabled !== void 0) $$bindings.disabled(disabled);
+  if ($$props.color === void 0 && $$bindings.color && color !== void 0) $$bindings.color(color);
+  if ($$props.noOptionsText === void 0 && $$bindings.noOptionsText && noOptionsText !== void 0) $$bindings.noOptionsText(noOptionsText);
+  if ($$props.allowClear === void 0 && $$bindings.allowClear && allowClear !== void 0) $$bindings.allowClear(allowClear);
+  if ($$props.clearText === void 0 && $$bindings.clearText && clearText !== void 0) $$bindings.clearText(clearText);
+  let $$settled;
+  let $$rendered;
+  let previous_head = $$result.head;
+  do {
+    $$settled = true;
+    $$result.head = previous_head;
+    options.filter((option) => option.label.toLowerCase().includes(searchTerm.toLowerCase()));
+    selectedOption = options.find((option) => option.value === value);
+    displayText = selectedOption?.label || placeholder;
+    $$rendered = ` <div class="relative"${add_attribute("this", dropdownElement, 0)}>${validate_component(Button, "Button").$$render(
+      $$result,
+      {
+        color,
+        disabled,
+        class: "w-full justify-between rounded-sm text-left h-10 px-3 text-sm " + (selectedOption ? "text-gray-900 dark:text-white" : "text-gray-500 dark:text-gray-400"),
+        this: buttonElement
+      },
+      {
+        this: ($$value) => {
+          buttonElement = $$value;
+          $$settled = false;
+        }
+      },
+      {
+        default: () => {
+          return `<span class="truncate">${escape(displayText)}</span> ${validate_component(ChevronDownOutline, "ChevronDownOutline").$$render(
+            $$result,
+            {
+              class: "w-4 h-4 ml-2 flex-shrink-0  transition-transform"
+            },
+            {},
+            {}
+          )}`;
+        }
+      }
+    )}</div>  ${``}`;
+  } while (!$$settled);
+  return $$rendered;
 });
 const grayColors = {
   500: "#535d72"
@@ -518,8 +657,10 @@ const DrawerHeader = create_ssr_component(($$result, $$props, $$bindings, slots)
 });
 export {
   Drawer as D,
-  PenOutline as P,
-  StatusBadge as S,
+  EyeOutline as E,
+  SearchOutline as S,
   Textarea as T,
-  DrawerHeader as a
+  SearchableDropdown as a,
+  DrawerHeader as b,
+  StatusBadge as c
 };

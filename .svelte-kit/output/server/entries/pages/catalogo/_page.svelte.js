@@ -1,14 +1,11 @@
 import { c as create_ssr_component, i as createEventDispatcher, v as validate_component, h as escape, l as each, k as subscribe, o as onDestroy } from "../../../chunks/ssr.js";
 import { c as createUrlWithParams, b as api, a as Button, B as Badge } from "../../../chunks/Button.js";
-import { L as LoadingSpinner, E as ErrorDisplay, R as RefreshOutline, T as Table, a as TableHead, b as TableHeadCell, c as TableBody, d as TableBodyRow, e as TableBodyCell, f as createPaginatedStore } from "../../../chunks/ErrorDisplay.js";
+import { L as LoadingSpinner, E as ErrorDisplay, R as RefreshOutline, T as Table, a as TableHead, b as TableHeadCell, c as TableBody, d as TableBodyRow, e as TableBodyCell, f as TrashBinOutline, g as Label, S as Select, h as createPaginatedStore } from "../../../chunks/ErrorDisplay.js";
 import { I as Input } from "../../../chunks/modalStore.js";
 import { C as Card } from "../../../chunks/Card.js";
-import { E as EyeOutline } from "../../../chunks/EyeOutline.js";
-import { P as PenOutline, D as Drawer, a as DrawerHeader, S as StatusBadge, T as Textarea } from "../../../chunks/DrawerHeader.js";
-import { P as PlusOutline } from "../../../chunks/PlusOutline.js";
-import { S as SearchOutline, a as SearchableDropdown } from "../../../chunks/DrawerHeader.svelte_svelte_type_style_lang.js";
-import { T as TrashBinOutline, S as Select } from "../../../chunks/TrashBinOutline.js";
-import { L as Label } from "../../../chunks/Label.js";
+import { S as SearchOutline, a as SearchableDropdown, E as EyeOutline, D as Drawer, b as DrawerHeader, c as StatusBadge, T as Textarea } from "../../../chunks/DrawerHeader.js";
+import { P as PenOutline } from "../../../chunks/PenOutline.js";
+import { P as PlusOutline } from "../../../chunks/Icon.js";
 import { f as formatarData } from "../../../chunks/dateHelpers.js";
 class CatalogCache {
   cache = /* @__PURE__ */ new Map();

@@ -281,11 +281,11 @@ export {
   missing_component as m,
   get_store_value as n,
   onDestroy as o,
-  identity as p,
-  noop as q,
-  safe_not_equal as r,
+  noop as p,
+  safe_not_equal as q,
+  run_all as r,
   setContext as s,
-  run_all as t,
-  is_function as u,
+  is_function as t,
+  identity as u,
   validate_component as v
 };

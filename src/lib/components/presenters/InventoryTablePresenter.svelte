@@ -46,6 +46,7 @@
   export let page: number = 1;
   export let totalPages: number = 1;
   export let searchTerm: string = '';
+  export let hideStatusFilter: boolean = false; // Para ocultar filtro de status nas tabs
   export let filters: {
     status: string;
     categoria: string;
@@ -151,9 +152,9 @@
     searchInput = searchTerm;
   }
 
-  // Verificar se há filtros ativos
+  // Verificar se há filtros ativos (considerando se status filter está oculto)
   $: hasActiveFilters = searchInput || 
-    (filters.status && filters.status !== 'todos') || 
+    (!hideStatusFilter && filters.status && filters.status !== 'todos') || 
     (filters.categoria && filters.categoria !== 'todas');
 </script>
 
@@ -202,13 +203,15 @@
           </div>
           
           <!-- Filtros em linha -->
-          <SearchableDropdown
-            options={statusOptions}
-            value={filters.status || 'todos'}
-            placeholder="Status"
-            class="min-w-[140px]"
-            on:change={(e) => handleFilterChange('status', e.detail)}
-          />
+          {#if !hideStatusFilter}
+            <SearchableDropdown
+              options={statusOptions}
+              value={filters.status || 'todos'}
+              placeholder="Status"
+              class="min-w-[140px]"
+              on:change={(e) => handleFilterChange('status', e.detail)}
+            />
+          {/if}
           
           <SearchableDropdown
             options={categoriaOptions}

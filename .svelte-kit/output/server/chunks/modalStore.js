@@ -345,31 +345,35 @@ class ConfigurationService {
   // 5 minutos
   /**
    * Carrega as regras de negócio do backend ou cache
-   * Por enquanto usa mock data, mas está preparado para API real
+   * Usa endpoint /api/configuracoes real com fallback para mock
    */
   async loadBusinessRules() {
     if (this.cache && Date.now() < this.cacheExpiry) {
       return this.cache;
     }
     try {
-      let config = await api.get(
-        "/v1/configuration"
+      console.log("🔧 Tentando carregar configurações do backend...");
+      const response = await api.get(
+        "/configuracoes"
       );
-      if (!config) {
-        console.warn("⚠️ Backend não disponível, usando configuração mock");
-        await new Promise((resolve) => setTimeout(resolve, 100));
-        config = MOCK_BUSINESS_CONFIG;
+      if (response?.success && response.data) {
+        console.log("✅ Configurações carregadas do backend");
+        const config = MOCK_BUSINESS_CONFIG;
+        this.cache = config;
+        this.cacheExpiry = Date.now() + this.CACHE_DURATION;
+        return config;
+      } else {
+        throw new Error("Formato de resposta inesperado");
       }
-      this.cache = config;
-      this.cacheExpiry = Date.now() + this.CACHE_DURATION;
-      return config;
     } catch (error) {
-      console.error("Erro ao carregar configurações de negócio:", error);
+      console.warn("⚠️ Endpoint /api/configuracoes não encontrado ou erro:", error);
       if (this.cache) {
-        console.warn("Usando configurações do cache devido ao erro");
+        console.warn("📋 Usando configurações do cache devido ao erro");
         return this.cache;
       }
-      console.warn("Usando configurações mock devido ao erro");
+      console.warn("📋 Usando configurações padrão (mock)");
+      this.cache = MOCK_BUSINESS_CONFIG;
+      this.cacheExpiry = Date.now() + this.CACHE_DURATION;
       return MOCK_BUSINESS_CONFIG;
     }
   }
@@ -475,9 +479,9 @@ function configToOptions(items, addEmptyOption = true) {
   return options;
 }
 derived(tiposMovimentacaoStore, (items) => configToOptions(items));
-const categoriasEPIOptions = derived(categoriasEPIStore, (items) => configToOptions(items));
+derived(categoriasEPIStore, (items) => configToOptions(items));
 derived(statusEntregaStore, (items) => configToOptions(items));
-const statusEstoqueOptions = derived(statusEstoqueStore, (items) => configToOptions(items));
+derived(statusEstoqueStore, (items) => configToOptions(items));
 function createNotificationStore() {
   const { subscribe, update } = writable([]);
   return {
@@ -503,6 +507,12 @@ function createNotificationStore() {
   };
 }
 const notifications = createNotificationStore();
+const notify = {
+  success: (title, message, duration) => notifications.add({ type: "success", title, message, duration }),
+  error: (title, message, duration) => notifications.add({ type: "error", title, message, duration }),
+  warning: (title, message, duration) => notifications.add({ type: "warning", title, message, duration }),
+  info: (title, message, duration) => notifications.add({ type: "info", title, message, duration })
+};
 function createFiltersStore(initialFilters) {
   const filters = writable(initialFilters);
   const searchTerm = writable("");
@@ -926,8 +936,7 @@ createConfirmationStore();
 export {
   Input as I,
   Wrapper as W,
-  categoriasEPIOptions as c,
+  notify as a,
   notifications as n,
-  statusEstoqueOptions as s,
   themeStore as t
 };

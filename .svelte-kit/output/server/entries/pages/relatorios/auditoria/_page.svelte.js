@@ -1,13 +1,11 @@
 import { c as create_ssr_component, a as compute_rest_props, j as getContext, d as spread, g as add_attribute, h as escape, f as escape_attribute_value, e as escape_object, i as createEventDispatcher, v as validate_component, l as each, k as subscribe } from "../../../../chunks/ssr.js";
-import { R as RefreshOutline, L as LoadingSpinner, E as ErrorDisplay, T as Table, a as TableHead, b as TableHeadCell, c as TableBody, d as TableBodyRow, e as TableBodyCell, f as createPaginatedStore } from "../../../../chunks/ErrorDisplay.js";
+import { R as RefreshOutline, g as Label, S as Select, f as TrashBinOutline, L as LoadingSpinner, E as ErrorDisplay, T as Table, a as TableHead, b as TableHeadCell, c as TableBody, d as TableBodyRow, e as TableBodyCell, h as createPaginatedStore } from "../../../../chunks/ErrorDisplay.js";
 import { a as Button, B as Badge, b as api } from "../../../../chunks/Button.js";
 import { C as Card } from "../../../../chunks/Card.js";
-import { L as Label } from "../../../../chunks/Label.js";
 import { I as Input } from "../../../../chunks/modalStore.js";
-import { S as Select, T as TrashBinOutline } from "../../../../chunks/TrashBinOutline.js";
 import { twMerge } from "tailwind-merge";
 import { f as formatarData } from "../../../../chunks/dateHelpers.js";
-import { f as fichaQueryAdapter } from "../../../../chunks/fichaQueryAdapter.js";
+import { f as fichaQueryAdapter } from "../../../../chunks/uiMappingHelpers.js";
 const DownloadOutline = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let $$restProps = compute_rest_props($$props, ["size", "role", "color", "withEvents", "title", "strokeWidth", "desc", "ariaLabel"]);
   const ctx = getContext("iconCtx") ?? {};

@@ -37,6 +37,8 @@
   // ==================== PROPS ====================
   
   export let initialPageSize: number = 20;
+  export let key: string = 'default'; // Para identificar qual tab está ativa
+  export let statusFilter: string = ''; // Filtro de status para a tab
   export const autoRefresh: boolean = false;
   export const refreshInterval: number = 30000;
   
@@ -69,7 +71,7 @@
   // ==================== LIFECYCLE ====================
   
   onMount(async () => {
-    console.log('🚨 CONTAINER INICIADO: InventoryContainer carregando...');
+    console.log('🚨 CONTAINER INICIADO: InventoryContainer carregando...', { key, statusFilter });
     
     try {
       // Aguardar configurações de negócio
@@ -77,6 +79,14 @@
       
       // Carregar dados auxiliares
       await loadAuxiliaryData();
+      
+      // Aplicar filtro de status se fornecido
+      if (statusFilter) {
+        console.log('🔍 Aplicando filtro de status automático:', statusFilter);
+        filters = { ...filters, status: statusFilter };
+        // CRÍTICO: Aplicar filtros ao store após definir o statusFilter
+        applyFilters();
+      }
       
       // Carregar dados iniciais
       console.log('🚨 CHAMANDO loadInventoryData...');
@@ -163,16 +173,24 @@
       activeFilters.search = searchTerm.trim();
     }
     
-    // Adicionar filtros apenas se diferentes dos valores padrão
-    if (filters.status && filters.status !== 'todos') {
+    // CRÍTICO: statusFilter da tab tem prioridade ABSOLUTA
+    if (statusFilter && statusFilter !== '') {
+      activeFilters.status = statusFilter;
+      console.log('🎯 FILTRO DE TAB APLICADO:', statusFilter);
+    } else if (filters.status && filters.status !== 'todos') {
       activeFilters.status = filters.status;
+      console.log('🔧 Filtro manual de status aplicado:', filters.status);
     }
     
     if (filters.categoria && filters.categoria !== 'todas') {
       activeFilters.categoria = filters.categoria;
     }
     
-    console.log('🔧 Aplicando filtros:', activeFilters);
+    console.log('🔧 Aplicando filtros finais:', activeFilters, { 
+      statusFilter, 
+      manualStatus: filters.status,
+      key: key 
+    });
     inventoryStore.setFilters(activeFilters);
   }
   
@@ -217,14 +235,34 @@
     kardexData = null;
     
     try {
-      // Verificar se o item tem os dados necessários
-      if (!selectedItemForHistory.almoxarifadoId || !selectedItemForHistory.tipoEPIId) {
-        throw new Error('Item não possui dados necessários para buscar histórico');
+      console.log('📊 DEBUG: Item selecionado para histórico:', selectedItemForHistory);
+      console.log('📊 DEBUG: Campos disponíveis:', Object.keys(selectedItemForHistory));
+      
+      // Verificar múltiplos possíveis nomes de campo para compatibilidade
+      const almoxarifadoId = selectedItemForHistory.almoxarifadoId || 
+                            selectedItemForHistory.almoxarifado?.id ||
+                            selectedItemForHistory.almoxarife_id;
+      
+      const tipoEpiId = selectedItemForHistory.tipoEPIId || 
+                       selectedItemForHistory.tipoEpiId ||
+                       selectedItemForHistory.tipo_epi_id ||
+                       selectedItemForHistory.tipoEPI?.id;
+
+      console.log('📊 DEBUG: IDs extraídos:', { almoxarifadoId, tipoEpiId });
+
+      // Verificar se conseguimos extrair os IDs necessários
+      if (!almoxarifadoId || !tipoEpiId) {
+        console.error('❌ DEBUG: IDs não encontrados:', {
+          almoxarifadoId: !!almoxarifadoId,
+          tipoEpiId: !!tipoEpiId,
+          itemCompleto: selectedItemForHistory
+        });
+        throw new Error(`Item não possui dados necessários para buscar histórico. Almoxarifado: ${!!almoxarifadoId}, TipoEPI: ${!!tipoEpiId}`);
       }
 
       const params = {
-        almoxarifadoId: selectedItemForHistory.almoxarifadoId,
-        tipoEpiId: selectedItemForHistory.tipoEPIId,
+        almoxarifadoId: almoxarifadoId,
+        tipoEpiId: tipoEpiId,
         dataInicio,
         dataFim
       };
@@ -234,6 +272,37 @@
       kardexData = await kardexAdapter.obterKardex(params);
       
       console.log(`📊 Kardex carregado: ${kardexData.movimentacoes.length} movimentações`);
+      console.log('📊 RESPOSTA COMPLETA DO KARDEX:', {
+        saldoInicial: kardexData.saldoInicial,
+        saldoFinal: kardexData.saldoFinal,
+        totalEntradas: kardexData.totalEntradas,
+        totalSaidas: kardexData.totalSaidas,
+        primeiraMovimentacao: kardexData.movimentacoes[0],
+        ultimaMovimentacao: kardexData.movimentacoes[kardexData.movimentacoes.length - 1],
+        movimentacoesCompletas: kardexData.movimentacoes
+      });
+      
+      // ANÁLISE DE INCONSISTÊNCIA: Comparar estoque atual vs kardex
+      const estoqueAtual = selectedItemForHistory.quantidade;
+      const saldoKardex = kardexData.saldoFinal;
+      if (estoqueAtual !== saldoKardex) {
+        console.warn('🚨 INCONSISTÊNCIA DETECTADA:', {
+          item: selectedItemForHistory.tipoEPI?.nomeEquipamento || 'Item não identificado',
+          numeroCA: selectedItemForHistory.tipoEPI?.numeroCA || 'CA não identificado',
+          estoqueAtualListagem: estoqueAtual,
+          saldoFinalKardex: saldoKardex,
+          diferenca: estoqueAtual - saldoKardex,
+          problemaTipo: estoqueAtual > saldoKardex ? 'READ_model_maior' : 'event_log_maior',
+          possiveisProblemas: [
+            'Desincronização Read Model vs Event Log',
+            'Ajuste manual não refletido no Event Log', 
+            'Bug na projeção/cálculo',
+            'Movimentação não processada corretamente'
+          ]
+        });
+      } else {
+        console.log('✅ Estoque consistente:', { estoqueAtual, saldoKardex });
+      }
     } catch (error) {
       console.error('❌ Erro ao carregar histórico:', error);
       historyError = error instanceof Error ? error.message : 'Erro desconhecido';
@@ -295,6 +364,7 @@
     selectedItemForHistory = null;
     kardexData = null;
     historyError = null;
+    historyLoading = false;
     console.log('❌ Modal de histórico fechado');
   }
 
@@ -427,6 +497,7 @@
     categoria: presentationData.filters.categoriaFilter
   }}
   categoriaOptions={presentationData.filterOptions.categorias}
+  hideStatusFilter={!!statusFilter}
   on:searchChange={(e) => handleSearchChange(e.detail.value)}
   on:filterChange={(e) => {
     if (e.detail.key === 'status') {

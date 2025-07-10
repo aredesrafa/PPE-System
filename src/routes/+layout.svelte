@@ -29,14 +29,14 @@
     
     // Wake up backend first (cold start handling)
     try {
-      console.log('🚀 Inicializando aplicação - verificando backend...');
+      console.log('🚀 Inicializando aplicação...');
       
-      // Import healthCheck here to avoid SSR issues
-      const { healthCheck } = await import('$lib/services/core/apiClient');
-      const health = await healthCheck();
-      console.log('🏥 Health check:', health.message);
+      // ⚠️ Health check desabilitado temporariamente para evitar warnings desnecessários
+      // const { healthCheck } = await import('$lib/services/core/apiClient');
+      // const health = await healthCheck();
+      // console.log('🏥 Health check:', health.message);
       
-      // Now load configurations
+      // Load configurations
       const realConfiguration = await initializeConfiguration();
       console.log('✅ Configurações carregadas:', realConfiguration);
     } catch (error) {

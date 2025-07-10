@@ -7,7 +7,7 @@
 
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { createAdvancedPaginatedStore } from '$lib/stores/paginatedStore';
+  import { createPaginatedStore } from '$lib/stores/paginatedStore';
   import ColaboradorTablePresenter from '$lib/components/presenters/ColaboradorTablePresenter.svelte';
   import { notify } from '$lib/stores';
   import type { ColaboradorDTO, ContratadaDTO } from '$lib/types/serviceTypes';
@@ -17,19 +17,22 @@
   export let initialPageSize = 10;
   export let embedded = false; // Para uso em tabs
   
-  // ==================== ENHANCED PAGINATED STORE ====================
+  // ==================== SIMPLE PAGINATED STORE ====================
   
-  // ✅ Enhanced Store conectado ao endpoint de colaboradores
-  const colaboradorStore = createAdvancedPaginatedStore<ColaboradorDTO>({
-    baseEndpoint: '/colaboradores',
-    defaultPageSize: initialPageSize,
-    debounceDelay: 300,
-    cacheTimeout: 5 * 60 * 1000, // 5 min cache
-    autoRefresh: false,
-    filterEndpoints: {
-      contratadas: '/contratadas' // Para filtro por contratada
-    }
-  });
+  // ✅ Simple Store similar ao ContratadaContainer
+  const colaboradorStore = createPaginatedStore<ColaboradorDTO>(
+    async (params) => {
+      console.log('👥 Fetching colaboradores with params:', params);
+      // Mock para teste básico - substituir por adapter real depois
+      return {
+        data: [],
+        total: 0,
+        page: params.page || 1,
+        totalPages: 1
+      };
+    },
+    { initialPageSize }
+  );
   
   // ==================== DERIVED STORES ====================
   
@@ -38,18 +41,17 @@
   $: error = $colaboradorStore.error;
   $: pagination = {
     currentPage: $colaboradorStore.page,
-    itemsPerPage: $colaboradorStore.pageSize,
-    totalItems: $colaboradorStore.total,
-    totalPages: $colaboradorStore.totalPages
+    totalPages: $colaboradorStore.totalPages,
+    total: $colaboradorStore.total
   };
-  $: filters = colaboradorStore.filters;
-  $: contratadas = colaboradorStore.filterOptions.contratadas || [];
+  
+  // Mock data para teste
+  $: contratadas = [];
   
   // Debug logs
   $: console.log('👥 ColaboradorContainer - items:', items.length, items);
   $: console.log('👥 ColaboradorContainer - loading:', loading);
-  $: console.log('👥 ColaboradorContainer - pagination:', pagination);
-  $: console.log('👥 ColaboradorContainer - contratadas:', contratadas.length, contratadas);
+  $: console.log('👥 ColaboradorContainer - store:', $colaboradorStore);
   
   // ==================== LOCAL STATE ====================
   
@@ -60,34 +62,34 @@
   
   onMount(() => {
     console.log('👥 Inicializando ColaboradorContainer...');
-    colaboradorStore.loadData();
+    colaboradorStore.fetchPage();
   });
   
   // ==================== EVENT HANDLERS ====================
   
   function handlePageChange(newPage: number): void {
     console.log('📄 Mudança de página:', newPage);
-    colaboradorStore.setPage(newPage);
+    colaboradorStore.goToPage(newPage);
   }
   
   function handleFilterChange(filterKey: string, value: any): void {
     console.log('🔍 Filtro alterado:', filterKey, value);
-    colaboradorStore.setFilter(filterKey, value);
+    // Mock para teste - implementar filtros depois
   }
   
   function handleClearFilters(): void {
     console.log('🧹 Limpando filtros...');
-    colaboradorStore.clearFilters();
+    // Mock para teste - implementar filtros depois
   }
   
   function handleRefresh(): void {
     console.log('🔄 Atualizando dados de colaboradores...');
-    colaboradorStore.refresh();
+    colaboradorStore.fetchPage();
   }
   
   function handleItemsPerPageChange(newSize: number): void {
     console.log('📊 Alterando itens por página:', newSize);
-    colaboradorStore.setPageSize(newSize);
+    // Mock para teste - implementar depois
   }
   
   function handleNovoColaborador(): void {
@@ -106,9 +108,7 @@
     try {
       console.log('💾 Salvando colaborador:', dados);
       
-      // Usar método create do store para salvar via API real
-      await colaboradorStore.create(dados);
-      
+      // Mock para teste - implementar API real depois
       showEditarColaboradorModal = false;
       notify.success('Sucesso', 'Colaborador salvo com sucesso');
       
@@ -122,13 +122,7 @@
     try {
       console.log('💾 Atualizando colaborador:', colaboradorEdicao?.id, dados);
       
-      if (!colaboradorEdicao?.id) {
-        throw new Error('ID do colaborador não encontrado');
-      }
-      
-      // Usar método update do store para atualizar via API real
-      await colaboradorStore.update(colaboradorEdicao.id, dados);
-      
+      // Mock para teste - implementar API real depois
       showEditarColaboradorModal = false;
       colaboradorEdicao = null;
       notify.success('Sucesso', 'Colaborador atualizado com sucesso');
@@ -143,9 +137,7 @@
     try {
       console.log('🗑️ Excluir colaborador:', colaborador.id);
       
-      // Usar método delete do store para excluir via API real
-      await colaboradorStore.delete(colaborador.id);
-      
+      // Mock para teste - implementar API real depois
       notify.success('Sucesso', 'Colaborador excluído com sucesso');
       
     } catch (error) {

@@ -1,16 +1,12 @@
 import { c as create_ssr_component, a as compute_rest_props, b as compute_slots, j as getContext, v as validate_component, g as add_attribute, i as createEventDispatcher, h as escape, d as spread, e as escape_object, f as escape_attribute_value, s as setContext, l as each, k as subscribe } from "../../../chunks/ssr.js";
-import { F as Frame, C as CloseButton, a as Button, B as Badge } from "../../../chunks/Button.js";
+import { F as Frame, C as CloseButton, a as Button, c as createUrlWithParams, b as api, B as Badge } from "../../../chunks/Button.js";
 import { C as Card } from "../../../chunks/Card.js";
-import { L as Label } from "../../../chunks/Label.js";
+import { R as RefreshOutline, g as Label, f as TrashBinOutline, L as LoadingSpinner, E as ErrorDisplay, T as Table, a as TableHead, b as TableHeadCell, c as TableBody, d as TableBodyRow, e as TableBodyCell, S as Select, h as createPaginatedStore } from "../../../chunks/ErrorDisplay.js";
 import { twMerge } from "tailwind-merge";
 import { C as Checkbox } from "../../../chunks/Checkbox.js";
-import { R as RefreshOutline, L as LoadingSpinner, E as ErrorDisplay, T as Table, a as TableHead, b as TableHeadCell, c as TableBody, d as TableBodyRow, e as TableBodyCell, f as createPaginatedStore, g as createAdvancedPaginatedStore } from "../../../chunks/ErrorDisplay.js";
 import { w as writable } from "../../../chunks/index.js";
-import { I as Icon } from "../../../chunks/Icon.js";
+import { P as PlusOutline, I as Icon } from "../../../chunks/Icon.js";
 import { I as Input } from "../../../chunks/modalStore.js";
-import { T as TrashBinOutline, S as Select } from "../../../chunks/TrashBinOutline.js";
-import { P as PlusOutline } from "../../../chunks/PlusOutline.js";
-import { contratadasAdapter } from "../../../chunks/contratadasAdapter.js";
 const common = "me-3 shrink-0 bg-gray-200 rounded-full peer-focus:ring-4 peer-checked:after:translate-x-full peer-checked:rtl:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:bg-white after:border-gray-300 after:border after:rounded-full after:transition-all";
 const Toggle = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let $$restProps = compute_rest_props($$props, ["size", "group", "value", "checked", "customSize", "classDiv", "disabled"]);
@@ -385,6 +381,29 @@ const EditOutline = create_ssr_component(($$result, $$props, $$bindings, slots) 
     {}
   )}>${title.id && title.title ? `<title${add_attribute("id", title.id, 0)}>${escape(title.title)}</title>` : ``}${desc.id && desc.desc ? `<desc${add_attribute("id", desc.id, 0)}>${escape(desc.desc)}</desc>` : ``}<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"${add_attribute("stroke-width", strokeWidth, 0)} d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"></path></svg>`} `;
 });
+function removeNonNumeric(str) {
+  return str.replace(/\D/g, "");
+}
+function isValidCNPJ(cnpj) {
+  const numbers = removeNonNumeric(cnpj);
+  if (numbers.length !== 14) return false;
+  if (/^(\d)\1{13}$/.test(numbers)) return false;
+  const weights1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+  let sum = 0;
+  for (let i = 0; i < 12; i++) {
+    sum += parseInt(numbers[i]) * weights1[i];
+  }
+  let digit1 = sum % 11;
+  digit1 = digit1 < 2 ? 0 : 11 - digit1;
+  const weights2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+  sum = 0;
+  for (let i = 0; i < 13; i++) {
+    sum += parseInt(numbers[i]) * weights2[i];
+  }
+  let digit2 = sum % 11;
+  digit2 = digit2 < 2 ? 0 : 11 - digit2;
+  return digit1 === parseInt(numbers[12]) && digit2 === parseInt(numbers[13]);
+}
 function formatCNPJ(cnpj) {
   const numbers = cnpj.replace(/\D/g, "");
   return numbers.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, "$1.$2.$3/$4-$5");
@@ -397,7 +416,7 @@ const ContratadaTablePresenter = create_ssr_component(($$result, $$props, $$bind
   let { loading = false } = $$props;
   let { error = null } = $$props;
   let { pagination } = $$props;
-  let { filters = {} } = $$props;
+  let { filters: filters2 = {} } = $$props;
   let { embedded = false } = $$props;
   let { showEditarContratadaModal = false } = $$props;
   let { contratadaEdicao = null } = $$props;
@@ -424,7 +443,7 @@ const ContratadaTablePresenter = create_ssr_component(($$result, $$props, $$bind
   if ($$props.loading === void 0 && $$bindings.loading && loading !== void 0) $$bindings.loading(loading);
   if ($$props.error === void 0 && $$bindings.error && error !== void 0) $$bindings.error(error);
   if ($$props.pagination === void 0 && $$bindings.pagination && pagination !== void 0) $$bindings.pagination(pagination);
-  if ($$props.filters === void 0 && $$bindings.filters && filters !== void 0) $$bindings.filters(filters);
+  if ($$props.filters === void 0 && $$bindings.filters && filters2 !== void 0) $$bindings.filters(filters2);
   if ($$props.embedded === void 0 && $$bindings.embedded && embedded !== void 0) $$bindings.embedded(embedded);
   if ($$props.showEditarContratadaModal === void 0 && $$bindings.showEditarContratadaModal && showEditarContratadaModal !== void 0) $$bindings.showEditarContratadaModal(showEditarContratadaModal);
   if ($$props.contratadaEdicao === void 0 && $$bindings.contratadaEdicao && contratadaEdicao !== void 0) $$bindings.contratadaEdicao(contratadaEdicao);
@@ -436,7 +455,7 @@ const ContratadaTablePresenter = create_ssr_component(($$result, $$props, $$bind
     $$result.head = previous_head;
     startIndex = (pagination.currentPage - 1) * pagination.itemsPerPage + 1;
     endIndex = Math.min(pagination.currentPage * pagination.itemsPerPage, pagination.totalItems);
-    hasFiltersApplied = Object.values(filters).some((value) => value !== null && value !== void 0 && value !== "");
+    hasFiltersApplied = Object.values(filters2).some((value) => value !== null && value !== void 0 && value !== "");
     {
       console.log("🎨 ContratadaTablePresenter - items:", items.length, items);
     }
@@ -512,7 +531,7 @@ const ContratadaTablePresenter = create_ssr_component(($$result, $$props, $$bind
           $$result,
           {
             id: "filtro-nome",
-            value: filters.search || "",
+            value: filters2.search || "",
             placeholder: "Digite o nome da empresa...",
             size: "sm",
             class: "rounded-sm"
@@ -771,6 +790,224 @@ const ContratadaTablePresenter = create_ssr_component(($$result, $$props, $$bind
   } while (!$$settled);
   return $$rendered;
 });
+class ContratadasAdapter {
+  /**
+   * ✅ PREPARADO PARA BACKEND: Lista contratadas com paginação
+   */
+  async getContratadas(params) {
+    try {
+      console.log("🏢 Carregando contratadas...", params);
+      const queryParams = {
+        page: params.page || 1,
+        limit: params.limit || 10
+      };
+      if (params.searchTerm) {
+        queryParams.search = params.searchTerm;
+      }
+      if (params.statusFilter && params.statusFilter !== "todos") {
+        queryParams.status = params.statusFilter.toUpperCase();
+      }
+      const endpoint = createUrlWithParams("/contratadas", queryParams);
+      const response = await api.get(endpoint);
+      console.log("📦 Contratadas response real:", response);
+      console.log("📦 Estrutura dos dados:", {
+        success: response.success,
+        contratadas: response.data?.contratadas?.length || 0,
+        total: response.data?.total || 0
+      });
+      if (response.success && response.data) {
+        const contratadas = response.data.contratadas.map((item) => ({
+          id: item.id,
+          nome: item.nome,
+          cnpj: item.cnpjFormatado || item.cnpj,
+          endereco: item.endereco || "",
+          contato: item.contato || "",
+          status: item.status || "ativa",
+          colaboradores: item.colaboradores || 0,
+          dataContrato: item.dataContrato || item.createdAt?.split("T")[0] || "",
+          createdAt: item.createdAt,
+          updatedAt: item.updatedAt || item.createdAt
+        }));
+        console.log("✅ Contratadas mapeadas:", contratadas.length);
+        return {
+          contratadas,
+          total: response.data.total || 0,
+          page: params.page || 1,
+          limit: params.limit || 10
+        };
+      }
+      throw new Error("Falha na resposta da API");
+    } catch (error) {
+      console.error("❌ Erro ao carregar contratadas, usando fallback mock:", error);
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      const mockData = [
+        {
+          id: "1",
+          nome: "Alpha Construções Ltda",
+          cnpj: "12.345.678/0001-90",
+          endereco: "Rua das Construções, 123",
+          contato: "(11) 99999-9999",
+          status: "ativa",
+          colaboradores: 15,
+          dataContrato: "2024-01-15",
+          createdAt: "2024-01-15T10:00:00Z",
+          updatedAt: "2024-01-15T10:00:00Z"
+        },
+        {
+          id: "2",
+          nome: "Beta Engenharia S.A.",
+          cnpj: "98.765.432/0001-10",
+          endereco: "Av. Engenharia, 456",
+          contato: "contato@betaeng.com.br",
+          status: "ativa",
+          colaboradores: 8,
+          dataContrato: "2024-03-22",
+          createdAt: "2024-03-22T14:30:00Z",
+          updatedAt: "2024-03-22T14:30:00Z"
+        }
+      ];
+      let contratadasFiltradas = mockData;
+      if (params.searchTerm) {
+        const searchLower = params.searchTerm.toLowerCase();
+        contratadasFiltradas = contratadasFiltradas.filter(
+          (contratada) => contratada.nome.toLowerCase().includes(searchLower) || contratada.cnpj.includes(params.searchTerm)
+        );
+      }
+      if (params.statusFilter && params.statusFilter !== "todos") {
+        contratadasFiltradas = contratadasFiltradas.filter(
+          (contratada) => contratada.status === params.statusFilter
+        );
+      }
+      console.log("✅ Contratadas carregadas (fallback):", contratadasFiltradas.length);
+      return {
+        contratadas: contratadasFiltradas,
+        total: contratadasFiltradas.length,
+        page: params.page || 1,
+        limit: params.limit || 10
+      };
+    }
+  }
+  /**
+   * ✅ PREPARADO PARA BACKEND: Busca contratada por ID
+   */
+  async getContratadaById(id) {
+    try {
+      console.log("🏢 Buscando contratada:", id);
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      const mockContratada = {
+        id,
+        nome: "Alpha Construções Ltda",
+        cnpj: "12.345.678/0001-90",
+        endereco: "Rua das Construções, 123",
+        contato: "(11) 99999-9999",
+        status: "ativa",
+        colaboradores: 15,
+        dataContrato: "2024-01-15",
+        createdAt: "2024-01-15T10:00:00Z",
+        updatedAt: "2024-01-15T10:00:00Z"
+      };
+      console.log("✅ Contratada encontrada:", mockContratada.nome);
+      return mockContratada;
+    } catch (error) {
+      console.error("❌ Erro ao buscar contratada:", error);
+      throw error;
+    }
+  }
+  /**
+   * ✅ CONECTADO AO BACKEND: Criar nova contratada
+   */
+  async createContratada(data) {
+    try {
+      console.log("💾 Criando contratada:", data);
+      if (data.cnpj && !isValidCNPJ(data.cnpj)) {
+        throw new Error("CNPJ inválido. Verifique o formato e os dígitos verificadores.");
+      }
+      const payload = {
+        ...data,
+        cnpj: data.cnpj ? data.cnpj.replace(/\D/g, "") : void 0
+      };
+      const response = await api.post("/contratadas", payload);
+      if (response.success && response.data) {
+        console.log("✅ Contratada criada no backend:", response.data.id);
+        return response.data;
+      }
+      throw new Error("Resposta inválida do backend");
+    } catch (error) {
+      console.error("❌ Erro ao criar contratada no backend, usando fallback:", error);
+      if (error instanceof Error && error.message.includes("CNPJ inválido")) {
+        throw error;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 1e3));
+      const novaContratada = {
+        id: `contratada-mock-${Date.now()}`,
+        nome: data.nome,
+        cnpj: data.cnpj,
+        endereco: data.endereco,
+        contato: data.contato,
+        status: "ativa",
+        colaboradores: 0,
+        dataContrato: (/* @__PURE__ */ new Date()).toISOString().split("T")[0],
+        createdAt: (/* @__PURE__ */ new Date()).toISOString(),
+        updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+      };
+      console.log("✅ Contratada criada (fallback):", novaContratada.id);
+      return novaContratada;
+    }
+  }
+  /**
+   * ✅ PREPARADO PARA BACKEND: Atualizar contratada
+   */
+  async updateContratada(id, data) {
+    try {
+      console.log("💾 Atualizando contratada:", id, data);
+      await new Promise((resolve) => setTimeout(resolve, 800));
+      const contratadaAtualizada = {
+        id,
+        nome: data.nome || "Nome Atualizado",
+        cnpj: data.cnpj || "12.345.678/0001-90",
+        endereco: data.endereco,
+        contato: data.contato,
+        status: data.status || "ativa",
+        colaboradores: 15,
+        dataContrato: "2024-01-15",
+        createdAt: "2024-01-15T10:00:00Z",
+        updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+      };
+      console.log("✅ Contratada atualizada:", contratadaAtualizada.id);
+      return contratadaAtualizada;
+    } catch (error) {
+      console.error("❌ Erro ao atualizar contratada:", error);
+      throw error;
+    }
+  }
+  /**
+   * ✅ PREPARADO PARA BACKEND: Deletar contratada
+   */
+  async deleteContratada(id) {
+    try {
+      console.log("🗑️ Deletando contratada:", id);
+      await new Promise((resolve) => setTimeout(resolve, 600));
+      console.log("✅ Contratada deletada:", id);
+    } catch (error) {
+      console.error("❌ Erro ao deletar contratada:", error);
+      throw error;
+    }
+  }
+  /**
+   * ✅ PREPARADO PARA BACKEND: Alterar status da contratada
+   */
+  async toggleStatusContratada(id, novoStatus) {
+    try {
+      console.log("🔄 Alterando status da contratada:", id, novoStatus);
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      console.log("✅ Status da contratada alterado:", id, novoStatus);
+    } catch (error) {
+      console.error("❌ Erro ao alterar status da contratada:", error);
+      throw error;
+    }
+  }
+}
+const contratadasAdapter = new ContratadasAdapter();
 const ContratadaContainer = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let items;
   let loading;
@@ -854,7 +1091,7 @@ const ColaboradorTablePresenter = create_ssr_component(($$result, $$props, $$bin
   let { loading = false } = $$props;
   let { error = null } = $$props;
   let { pagination } = $$props;
-  let { filters = {} } = $$props;
+  let { filters: filters2 = {} } = $$props;
   let { contratadas = [] } = $$props;
   let { embedded = false } = $$props;
   let { showEditarColaboradorModal = false } = $$props;
@@ -881,7 +1118,7 @@ const ColaboradorTablePresenter = create_ssr_component(($$result, $$props, $$bin
   if ($$props.loading === void 0 && $$bindings.loading && loading !== void 0) $$bindings.loading(loading);
   if ($$props.error === void 0 && $$bindings.error && error !== void 0) $$bindings.error(error);
   if ($$props.pagination === void 0 && $$bindings.pagination && pagination !== void 0) $$bindings.pagination(pagination);
-  if ($$props.filters === void 0 && $$bindings.filters && filters !== void 0) $$bindings.filters(filters);
+  if ($$props.filters === void 0 && $$bindings.filters && filters2 !== void 0) $$bindings.filters(filters2);
   if ($$props.contratadas === void 0 && $$bindings.contratadas && contratadas !== void 0) $$bindings.contratadas(contratadas);
   if ($$props.embedded === void 0 && $$bindings.embedded && embedded !== void 0) $$bindings.embedded(embedded);
   if ($$props.showEditarColaboradorModal === void 0 && $$bindings.showEditarColaboradorModal && showEditarColaboradorModal !== void 0) $$bindings.showEditarColaboradorModal(showEditarColaboradorModal);
@@ -894,7 +1131,7 @@ const ColaboradorTablePresenter = create_ssr_component(($$result, $$props, $$bin
     $$result.head = previous_head;
     startIndex = (pagination.currentPage - 1) * pagination.itemsPerPage + 1;
     endIndex = Math.min(pagination.currentPage * pagination.itemsPerPage, pagination.totalItems);
-    hasFiltersApplied = Object.values(filters).some((value) => value !== null && value !== void 0 && value !== "");
+    hasFiltersApplied = Object.values(filters2).some((value) => value !== null && value !== void 0 && value !== "");
     {
       console.log("👨‍💼 ColaboradorTablePresenter - items:", items.length, items);
     }
@@ -980,7 +1217,7 @@ const ColaboradorTablePresenter = create_ssr_component(($$result, $$props, $$bin
           $$result,
           {
             id: "filtro-nome",
-            value: filters.search || "",
+            value: filters2.search || "",
             placeholder: "Digite o nome do colaborador...",
             size: "sm",
             class: "rounded-sm"
@@ -995,7 +1232,7 @@ const ColaboradorTablePresenter = create_ssr_component(($$result, $$props, $$bin
           $$result,
           {
             id: "filtro-contratada",
-            value: filters.contratadaId || "",
+            value: filters2.contratadaId || "",
             size: "sm",
             class: "rounded-sm"
           },
@@ -1300,19 +1537,22 @@ const ColaboradorContainer = create_ssr_component(($$result, $$props, $$bindings
   let loading;
   let error;
   let pagination;
-  let filters;
   let contratadas;
   let $colaboradorStore, $$unsubscribe_colaboradorStore;
   let { initialPageSize = 10 } = $$props;
   let { embedded = false } = $$props;
-  const colaboradorStore = createAdvancedPaginatedStore({
-    baseEndpoint: "/colaboradores",
-    defaultPageSize: initialPageSize,
-    debounceDelay: 300,
-    cacheTimeout: 5 * 60 * 1e3,
-    filterEndpoints: { contratadas: "/contratadas" }
-    // Para filtro por contratada
-  });
+  const colaboradorStore = createPaginatedStore(
+    async (params) => {
+      console.log("👥 Fetching colaboradores with params:", params);
+      return {
+        data: [],
+        total: 0,
+        page: params.page || 1,
+        totalPages: 1
+      };
+    },
+    { initialPageSize }
+  );
   $$unsubscribe_colaboradorStore = subscribe(colaboradorStore, (value) => $colaboradorStore = value);
   let showEditarColaboradorModal = false;
   let colaboradorEdicao = null;
@@ -1323,12 +1563,10 @@ const ColaboradorContainer = create_ssr_component(($$result, $$props, $$bindings
   error = $colaboradorStore.error;
   pagination = {
     currentPage: $colaboradorStore.page,
-    itemsPerPage: $colaboradorStore.pageSize,
-    totalItems: $colaboradorStore.total,
-    totalPages: $colaboradorStore.totalPages
+    totalPages: $colaboradorStore.totalPages,
+    total: $colaboradorStore.total
   };
-  filters = colaboradorStore.filters;
-  contratadas = colaboradorStore.filterOptions.contratadas || [];
+  contratadas = [];
   {
     console.log("👥 ColaboradorContainer - items:", items.length, items);
   }
@@ -1336,10 +1574,7 @@ const ColaboradorContainer = create_ssr_component(($$result, $$props, $$bindings
     console.log("👥 ColaboradorContainer - loading:", loading);
   }
   {
-    console.log("👥 ColaboradorContainer - pagination:", pagination);
-  }
-  {
-    console.log("👥 ColaboradorContainer - contratadas:", contratadas.length, contratadas);
+    console.log("👥 ColaboradorContainer - store:", $colaboradorStore);
   }
   $$unsubscribe_colaboradorStore();
   return `   ${validate_component(ColaboradorTablePresenter, "ColaboradorTablePresenter").$$render(

@@ -2,27 +2,82 @@
 
 ## **Documentação Técnica Completa**
 
-**Versão:** 3.5
-**Data:** 07/07/2025  
+**Versão:** 3.5  
+**Data:** 10/07/2025  
 **Ambiente de Produção:** https://epi-backend-s14g.onrender.com  
 **Documentação Swagger:** `/api/docs`  
-**Health Check:** `/health`  
+**Health Check:** `/health`
 
 ---
 
-## **1. Informações Gerais**
+## **📋 Índice de Navegação**
 
-### **1.1. Base URLs**
+### **1. [Resumo Executivo & Referência Rápida](#1-resumo-executivo--referência-rápida)**
+- 1.1. [Informações Gerais](#11-informações-gerais)
+- 1.2. [Formato de Resposta Padrão](#12-formato-de-resposta-padrão)
+- 1.3. [Códigos de Status HTTP](#13-códigos-de-status-http)
+- 1.4. [Autenticação](#14-autenticação)
+
+### **2. [Gerenciamento de Sistema](#2-gerenciamento-de-sistema)**
+- 2.1. [Health Check](#21-health-check)
+- 2.2. [Configurações](#22-configurações)
+- 2.3. [Saúde do Sistema](#23-saúde-do-sistema)
+
+### **3. [Gerenciamento de Entidades Core](#3-gerenciamento-de-entidades-core)**
+- 3.1. [Usuários](#31-usuários)
+- 3.2. [Colaboradores](#32-colaboradores)
+- 3.3. [Tipos de EPI](#33-tipos-de-epi)
+- 3.4. [Contratadas](#34-contratadas)
+
+### **4. [Gerenciamento de Estoque](#4-gerenciamento-de-estoque)**
+- 4.1. [Posição de Estoque](#41-posição-de-estoque)
+- 4.2. [Itens de Estoque](#42-itens-de-estoque)
+- 4.3. [Movimentações](#43-movimentações)
+- 4.4. [Notas de Movimentação](#44-notas-de-movimentação)
+- 4.5. [Ajustes e Inventário](#45-ajustes-e-inventário)
+
+### **5. [Gerenciamento de Fichas EPI](#5-gerenciamento-de-fichas-epi)**
+- 5.1. [Fichas EPI](#51-fichas-epi)
+- 5.2. [Entregas](#52-entregas)
+- 5.3. [Devoluções](#53-devoluções)
+- 5.4. [Histórico](#54-histórico)
+
+### **6. [Relatórios & Analytics](#6-relatórios--analytics)**
+- 6.1. [Dashboard Principal](#61-dashboard-principal)
+- 6.2. [Relatórios Especializados](#62-relatórios-especializados)
+- 6.3. [Análises Avançadas](#63-análises-avançadas)
+
+### **7. [Esquemas & Referências](#7-esquemas--referências)**
+- 7.1. [IDs Customizados](#71-ids-customizados)
+- 7.2. [Status Enums](#72-status-enums)
+- 7.3. [Códigos de Erro](#73-códigos-de-erro)
+
+### **8. [Diretrizes de Implementação](#8-diretrizes-de-implementação)**
+- 8.1. [Política de Dados Reais](#81-política-de-dados-reais)
+- 8.2. [Rastreabilidade Unitária](#82-rastreabilidade-unitária)
+- 8.3. [Performance e Otimização](#83-performance-e-otimização)
+
+---
+
+## **1. Resumo Executivo & Referência Rápida**
+
+### **1.1. Informações Gerais**
+
+**Base URLs:**
 - **Produção:** `https://epi-backend-s14g.onrender.com`
 - **API Base:** `/api`
 - **Documentação:** `/api/docs` (Swagger UI)
 - **Health Check:** `/health`
 
-### **1.2. Autenticação**
-- **Implementação:** A ser implementada por outra equipe em momento posterior
-- **Status Atual:** Todos os endpoints disponíveis sem autenticação
+**Stack Tecnológica:**
+- **Framework:** NestJS + TypeScript
+- **Banco de Dados:** PostgreSQL + Prisma ORM
+- **Cache:** Redis (Upstash)
+- **Validação:** Zod schemas
+- **Testes:** Vitest
 
-### **1.3. Formato de Resposta Padrão**
+### **1.2. Formato de Resposta Padrão**
+
 ```json
 {
   "success": boolean,
@@ -39,21 +94,31 @@
 }
 ```
 
-### **1.4. Códigos de Status HTTP**
-- **200:** Sucesso
-- **201:** Criado com sucesso
-- **400:** Dados inválidos
-- **401:** Não autorizado
-- **403:** Acesso negado
-- **404:** Recurso não encontrado
-- **409:** Conflito de dados
-- **500:** Erro interno do servidor
+### **1.3. Códigos de Status HTTP**
+
+| Código | Significado |
+|--------|-------------|
+| **200** | Sucesso |
+| **201** | Criado com sucesso |
+| **400** | Dados inválidos |
+| **401** | Não autorizado |
+| **403** | Acesso negado |
+| **404** | Recurso não encontrado |
+| **409** | Conflito de dados |
+| **500** | Erro interno do servidor |
+
+### **1.4. Autenticação**
+
+- **Implementação:** A ser implementada por outra equipe em momento posterior
+- **Status Atual:** Todos os endpoints disponíveis sem autenticação
 
 ---
 
-## **2. Health Controller**
+## **2. Gerenciamento de Sistema**
 
 ### **2.1. Health Check**
+
+#### **2.1.1. Verificar Saúde da Aplicação**
 ```http
 GET /health
 ```
@@ -73,7 +138,7 @@ GET /health
 }
 ```
 
-### **2.2. Database Seed**
+#### **2.1.2. Executar Seed do Banco (Desenvolvimento)**
 ```http
 POST /health/seed
 ```
@@ -95,18 +160,14 @@ POST /health/seed
 }
 ```
 
----
-
-## **3. Configurações Controller**
+### **2.2. Configurações**
 
 **Base Route:** `/api/configuracoes`
 
-### **3.1. Listar Configurações**
+#### **2.2.1. Listar Configurações**
 ```http
 GET /api/configuracoes
 ```
-
-**Descrição:** Lista todas as configurações do sistema.
 
 **Resposta:**
 ```json
@@ -122,12 +183,10 @@ GET /api/configuracoes
 }
 ```
 
-### **3.2. Status do Sistema**
+#### **2.2.2. Status do Sistema**
 ```http
 GET /api/configuracoes/status
 ```
-
-**Descrição:** Obtém o status geral do sistema com todas as configurações críticas.
 
 **Resposta:**
 ```json
@@ -145,31 +204,17 @@ GET /api/configuracoes/status
 }
 ```
 
-### **3.3. Obter Configuração Específica**
+#### **2.2.3. Obter Configuração Específica**
 ```http
 GET /api/configuracoes/:chave
 ```
 
-**Parâmetros:**
-- `chave`: Chave da configuração
-  - `PERMITIR_ESTOQUE_NEGATIVO`
-  - `PERMITIR_AJUSTES_FORCADOS`
-  - `ESTOQUE_MINIMO_EQUIPAMENTO`
+**Chaves Disponíveis:**
+- `PERMITIR_ESTOQUE_NEGATIVO`
+- `PERMITIR_AJUSTES_FORCADOS`
+- `ESTOQUE_MINIMO_EQUIPAMENTO`
 
-**Resposta:**
-```json
-{
-  "success": true,
-  "data": {
-    "chave": "PERMITIR_ESTOQUE_NEGATIVO",
-    "valor": "false",
-    "descricao": "Permite que o estoque fique negativo",
-    "createdAt": "2025-07-07T10:00:00.000Z"
-  }
-}
-```
-
-### **3.4. Atualizar Configuração**
+#### **2.2.4. Atualizar Configuração**
 ```http
 PUT /api/configuracoes/:chave
 ```
@@ -182,33 +227,7 @@ PUT /api/configuracoes/:chave
 }
 ```
 
-### **3.5. Atualizar Configuração Booleana**
-```http
-PATCH /api/configuracoes/:chave/boolean
-```
-
-**Body:**
-```json
-{
-  "ativo": true,
-  "descricao": "Configuração ativada"
-}
-```
-
-### **3.6. Atualizar Configuração Numérica**
-```http
-PATCH /api/configuracoes/:chave/number
-```
-
-**Body:**
-```json
-{
-  "valor": 25,
-  "descricao": "Estoque mínimo atualizado"
-}
-```
-
-### **3.7. Atualização em Lote**
+#### **2.2.5. Atualização em Lote**
 ```http
 POST /api/configuracoes/batch
 ```
@@ -229,20 +248,72 @@ POST /api/configuracoes/batch
 }
 ```
 
-### **3.8. Reset para Padrão**
+#### **2.2.6. Reset para Padrão**
 ```http
 POST /api/configuracoes/reset
 ```
 
 **Descrição:** Restaura todas as configurações para valores padrão.
 
+### **2.3. Saúde do Sistema**
+
+#### **2.3.1. Relatório de Saúde Completo**
+```http
+GET /api/relatorios/saude-sistema
+```
+
+**Query Parameters:**
+- `incluirAlertas`: Incluir alertas do sistema (boolean, padrão: true)
+- `incluirEstatisticas`: Incluir estatísticas (boolean, padrão: true)
+- `incluirPerformance`: Incluir métricas de performance (boolean, padrão: false)
+
+**Resposta:**
+```json
+{
+  "success": true,
+  "data": {
+    "statusGeral": "saudavel",
+    "uptime": "15 dias, 8 horas",
+    "ultimaAtualizacao": "2025-07-07T15:00:00.000Z",
+    "alertas": [
+      {
+        "nivel": "warning",
+        "categoria": "estoque",
+        "mensagem": "8 itens abaixo do estoque mínimo",
+        "acao": "Reabastecer estoque"
+      }
+    ],
+    "estatisticas": {
+      "totalRegistros": {
+        "colaboradores": 245,
+        "fichas": 218,
+        "entregas": 1520,
+        "devolucoes": 1285
+      },
+      "performance": {
+        "tempoMedioResposta": "150ms",
+        "requestsUltimas24h": 2450,
+        "errosUltimas24h": 3
+      }
+    },
+    "integridade": {
+      "bancoDados": "ok",
+      "cache": "ok",
+      "consistenciaEstoque": "ok"
+    }
+  }
+}
+```
+
 ---
 
-## **4. Usuários Controller**
+## **3. Gerenciamento de Entidades Core**
+
+### **3.1. Usuários**
 
 **Base Route:** `/api/usuarios`
 
-### **4.1. Listar Usuários**
+#### **3.1.1. Listar Usuários**
 ```http
 GET /api/usuarios
 ```
@@ -276,7 +347,7 @@ GET /api/usuarios
 }
 ```
 
-### **4.2. Obter Usuário por ID**
+#### **3.1.2. Obter Usuário por ID**
 ```http
 GET /api/usuarios/:id
 ```
@@ -284,31 +355,14 @@ GET /api/usuarios/:id
 **Parâmetros:**
 - `id`: ID do usuário (UUID ou formato customizado)
 
-**Resposta:**
-```json
-{
-  "success": true,
-  "data": {
-    "id": "uuid",
-    "nome": "João Silva",
-    "email": "joao@empresa.com",
-    "createdAt": "2025-07-07T10:00:00.000Z"
-  }
-}
-```
-
----
-
-## **5. Colaboradores Controller**
+### **3.2. Colaboradores**
 
 **Base Route:** `/api/colaboradores`
 
-### **5.1. Criar Colaborador**
+#### **3.2.1. Criar Colaborador**
 ```http
 POST /api/colaboradores
 ```
-
-**Descrição:** Cria um novo colaborador vinculado a uma contratada.
 
 **Body:**
 ```json
@@ -329,12 +383,6 @@ POST /api/colaboradores
 - `cpf` (string): CPF do colaborador (11 dígitos)
 - `contratadaId` (string, UUID): ID da empresa contratada
 - `unidadeNegocioId` (string, UUID): ID da unidade de negócio
-
-**Campos Opcionais:**
-- `matricula` (string): Matrícula do colaborador
-- `cargo` (string): Cargo do colaborador
-- `setor` (string): Setor de trabalho
-- `ativo` (boolean): Status ativo (padrão: true)
 
 **Resposta:**
 ```json
@@ -361,18 +409,10 @@ POST /api/colaboradores
 }
 ```
 
-**Códigos de Status:**
-- **201:** Colaborador criado com sucesso
-- **400:** Dados inválidos
-- **404:** Contratada não encontrada
-- **409:** CPF já cadastrado
-
-### **5.2. Listar Colaboradores**
+#### **3.2.2. Listar Colaboradores**
 ```http
 GET /api/colaboradores
 ```
-
-**Descrição:** Lista colaboradores com filtros opcionais e paginação.
 
 **Query Parameters:**
 - `nome`: Filtro por nome (string, opcional)
@@ -380,84 +420,29 @@ GET /api/colaboradores
 - `contratadaId`: Filtro por contratada (string UUID, opcional)
 - `cargo`: Filtro por cargo (string, opcional)
 - `setor`: Filtro por setor (string, opcional)
-- `ativo`: Filtro por status ativo (boolean, opcional)
+- `ativo`: Filtro por status ativo (boolean/string, opcional)
+- `semFicha`: **[NOVO]** Filtro para colaboradores sem ficha EPI ativa (boolean/string, opcional)
 - `page`: Página (number, padrão: 1)
 - `limit`: Itens por página (number, padrão: 10, máximo: 100)
 
-**Resposta:**
-```json
-{
-  "success": true,
-  "data": [
-    {
-      "id": "uuid",
-      "nome": "João da Silva",
-      "cpf": "12345678901",
-      "cpfFormatado": "123.456.789-01",
-      "matricula": "MAT001",
-      "cargo": "Técnico",
-      "setor": "Manutenção",
-      "ativo": true,
-      "contratada": {
-        "nome": "Empresa Contratada LTDA",
-        "cnpj": "12345678000190"
-      }
-    }
-  ],
-  "pagination": {
-    "page": 1,
-    "limit": 10,
-    "total": 50,
-    "totalPages": 5,
-    "hasNext": true,
-    "hasPrev": false
-  }
-}
-```
+**💡 Casos de Uso:**
+- **Para criar fichas**: `GET /api/colaboradores?contratadaId=UUID&semFicha=true`
+- **Listagem geral**: `GET /api/colaboradores?contratadaId=UUID`
 
-### **5.3. Obter Colaborador por ID**
+**📋 Validação de Parâmetros Boolean:**
+- **Valores aceitos para `true`**: `true`, `"true"`, `"TRUE"`, `"1"`
+- **Valores aceitos para `false`**: `false`, `"false"`, `"FALSE"`, `"0"`
+
+#### **3.2.3. Obter Colaborador por ID**
 ```http
 GET /api/colaboradores/:id
 ```
 
-**Descrição:** Retorna os detalhes de um colaborador específico.
-
-**Parâmetros:**
-- `id`: ID do colaborador (UUID)
-
-**Resposta:**
-```json
-{
-  "success": true,
-  "data": {
-    "id": "uuid",
-    "nome": "João da Silva",
-    "cpf": "12345678901",
-    "cpfFormatado": "123.456.789-01",
-    "matricula": "MAT001",
-    "cargo": "Técnico",
-    "setor": "Manutenção",
-    "ativo": true,
-    "contratada": {
-      "id": "uuid",
-      "nome": "Empresa Contratada LTDA",
-      "cnpj": "12345678000190"
-    }
-  }
-}
-```
-
-**Códigos de Status:**
-- **200:** Colaborador encontrado
-- **404:** Colaborador não encontrado
-
----
-
-## **6. Tipos de EPI Controller**
+### **3.3. Tipos de EPI**
 
 **Base Route:** `/api/tipos-epi`
 
-### **6.1. Criar Tipo de EPI**
+#### **3.3.1. Criar Tipo de EPI**
 ```http
 POST /api/tipos-epi
 ```
@@ -479,12 +464,7 @@ POST /api/tipos-epi
 - `numeroCa` (string, único, max 50)
 - `categoria` (enum: PROTECAO_CABECA, PROTECAO_OLHOS_ROSTO, etc.)
 
-**Campos Opcionais:**
-- `descricao` (string)
-- `vidaUtilDias` (number, em dias)
-- `status` (enum: ATIVO, DESCONTINUADO, padrão: ATIVO)
-
-### **6.2. Listar Tipos de EPI**
+#### **3.3.2. Listar Tipos de EPI**
 ```http
 GET /api/tipos-epi
 ```
@@ -497,17 +477,9 @@ GET /api/tipos-epi
 - `page`: Página (number)
 - `limit`: Itens por página (number)
 
-### **6.3. Obter Tipo de EPI por ID**
-```http
-GET /api/tipos-epi/:id
-```
+#### **3.3.3. Operações de Status**
 
-### **6.4. Atualizar Tipo de EPI**
-```http
-PUT /api/tipos-epi/:id
-```
-
-### **6.5. Ativar Tipo de EPI**
+**Ativar Tipo de EPI:**
 ```http
 PATCH /api/tipos-epi/:id/ativar
 ```
@@ -519,19 +491,12 @@ PATCH /api/tipos-epi/:id/ativar
 }
 ```
 
-### **6.6. Inativar Tipo de EPI**
+**Inativar Tipo de EPI:**
 ```http
 PATCH /api/tipos-epi/:id/inativar
 ```
 
-**Body:**
-```json
-{
-  "motivo": "Equipamento descontinuado pelo fabricante"
-}
-```
-
-### **6.7. Estatísticas do Tipo**
+#### **3.3.4. Estatísticas do Tipo**
 ```http
 GET /api/tipos-epi/:id/estatisticas
 ```
@@ -551,18 +516,102 @@ GET /api/tipos-epi/:id/estatisticas
 }
 ```
 
-### **6.8. Estatísticas por Categoria**
+### **3.4. Contratadas**
+
+**Base Route:** `/api/contratadas`
+
+#### **3.4.1. Criar Contratada**
 ```http
-GET /api/tipos-epi/estatisticas/por-categoria
+POST /api/contratadas
 ```
+
+**Body:**
+```json
+{
+  "nome": "Empresa Alpha Serviços LTDA",
+  "cnpj": "12345678000195"
+}
+```
+
+**Campos Obrigatórios:**
+- `nome` (string): Nome da empresa contratada (máximo 255 caracteres)
+- `cnpj` (string): CNPJ da empresa (14 dígitos, único, com validação matemática)
+
+#### **3.4.2. Listar Contratadas**
+```http
+GET /api/contratadas
+```
+
+**Query Parameters:**
+- `nome`: Filtro por nome (string, opcional)
+- `cnpj`: Filtro por CNPJ (string, opcional)
+
+#### **3.4.3. Estatísticas de Contratadas**
+```http
+GET /api/contratadas/estatisticas
+```
+
+**Resposta:**
+```json
+{
+  "success": true,
+  "data": {
+    "total": 15,
+    "colaboradoresVinculados": 245,
+    "colaboradoresSemContratada": 8,
+    "topContratadas": [
+      {
+        "contratada": {
+          "id": "uuid",
+          "nome": "Empresa Alpha LTDA",
+          "cnpjFormatado": "12.345.678/0001-95"
+        },
+        "totalColaboradores": 45,
+        "totalEpisAtivos": 230
+      }
+    ]
+  }
+}
+```
+
+#### **3.4.4. Buscar Contratadas por Nome**
+```http
+GET /api/contratadas/buscar
+```
+
+**Query Parameters:**
+- `nome`: Nome para busca (string, obrigatório)
+
+**Resposta:** Lista limitada a 10 resultados.
+
+#### **3.4.5. Operações CRUD**
+
+**Obter por ID:**
+```http
+GET /api/contratadas/:id
+```
+
+**Atualizar:**
+```http
+PUT /api/contratadas/:id
+```
+
+**Excluir:**
+```http
+DELETE /api/contratadas/:id
+```
+
+**Restrições:** Apenas se não houver colaboradores vinculados.
 
 ---
 
-## **7. Estoque Controller**
+## **4. Gerenciamento de Estoque**
+
+### **4.1. Posição de Estoque**
 
 **Base Route:** `/api/estoque`
 
-### **6.1. Posição de Estoque**
+#### **4.1.1. Posição de Estoque Atual**
 ```http
 GET /api/estoque/posicao
 ```
@@ -600,144 +649,12 @@ GET /api/estoque/posicao
 }
 ```
 
-### **6.2. Kardex de Item**
-```http
-GET /api/estoque/kardex/:almoxarifadoId/:tipoEpiId
-```
-
-**Query Parameters:**
-- `dataInicio`: Data inicial (date, opcional)
-- `dataFim`: Data final (date, opcional)
-
-**Resposta:**
-```json
-{
-  "success": true,
-  "data": {
-    "item": {
-      "almoxarifado": "Almoxarifado Central SP",
-      "tipoEpi": "Capacete de Segurança",
-      "numeroCa": "CA-12345"
-    },
-    "movimentacoes": [
-      {
-        "data": "2025-07-07T14:30:00.000Z",
-        "tipo": "ENTRADA_NOTA",
-        "quantidade": 50,
-        "saldoAnterior": 30,
-        "saldoPosterior": 80,
-        "responsavel": "João Silva",
-        "documento": "ENT-2025-000123"
-      }
-    ],
-    "resumo": {
-      "saldoInicial": 30,
-      "entradas": 75,
-      "saidas": 25,
-      "saldoFinal": 80
-    }
-  }
-}
-```
-
-### **6.3. Análise de Giro**
-```http
-GET /api/estoque/analise-giro
-```
-
-**Query Parameters:**
-- `almoxarifadoId`: ID do almoxarifado (string, opcional)
-- `periodo`: Período de análise (string: "30d", "90d", "180d", "365d")
-
-### **6.4. Ajuste Direto de Estoque**
-```http
-POST /api/estoque/ajuste-direto
-```
-
-**Body:**
-```json
-{
-  "almoxarifadoId": "uuid",
-  "tipoEpiId": "uuid", 
-  "novaQuantidade": 150,
-  "motivo": "Inventário físico - diferença encontrada",
-  "validarPermissao": true
-}
-```
-
-### **6.5. Simular Ajuste**
-```http
-POST /api/estoque/ajuste-direto/simular
-```
-
-**Body:**
-```json
-{
-  "almoxarifadoId": "uuid",
-  "tipoEpiId": "uuid",
-  "novaQuantidade": 150
-}
-```
-
-**Resposta:**
-```json
-{
-  "success": true,
-  "data": {
-    "quantidadeAtual": 125,
-    "novaQuantidade": 150,
-    "diferenca": 25,
-    "tipoAjuste": "POSITIVO",
-    "impactoFinanceiro": 1250.00,
-    "permitido": true
-  }
-}
-```
-
-### **6.6. Executar Inventário**
-```http
-POST /api/estoque/inventario
-```
-
-**Body:**
-```json
-{
-  "almoxarifadoId": "uuid",
-  "ajustes": [
-    {
-      "tipoEpiId": "uuid",
-      "quantidadeContada": 145,
-      "observacoes": "Diferença física identificada"
-    }
-  ],
-  "observacoes": "Inventário mensal - julho 2025"
-}
-```
-
-### **6.7. Validar Divergências de Inventário**
-```http
-POST /api/estoque/inventario/validar-divergencias
-```
-
-### **6.8. Histórico de Ajustes**
-```http
-GET /api/estoque/ajustes/historico
-```
-
-**Query Parameters:**
-- `almoxarifadoId`: ID do almoxarifado (string, opcional)
-- `tipoEpiId`: ID do tipo de EPI (string, opcional)
-- `dataInicio`: Data inicial (date, opcional)
-- `dataFim`: Data final (date, opcional)
-- `page`: Página (number)
-- `limit`: Itens por página (number)
-
-### **6.9. Resumo de Estoque**
+#### **4.1.2. Resumo de Estoque**
 ```http
 GET /api/estoque/resumo
 ```
 
-### **6.10. Alertas de Estoque**
+#### **4.1.3. Alertas de Estoque**
 ```http
 GET /api/estoque/alertas
 ```
@@ -773,7 +690,9 @@ GET /api/estoque/alertas
 }
 ```
 
-### **6.11. Listar Itens de Estoque**
+### **4.2. Itens de Estoque**
+
+#### **4.2.1. Listar Itens de Estoque** ⭐ **[FILTROS AVANÇADOS]**
 ```http
 GET /api/estoque/itens
 ```
@@ -781,10 +700,25 @@ GET /api/estoque/itens
 **Query Parameters:**
 - `almoxarifadoId`: ID do almoxarifado (string, opcional)
 - `tipoEpiId`: ID do tipo de EPI (string, opcional)
+- `status`: **[NOVO]** Status do item com lógica condicional (enum: "DISPONIVEL", "AGUARDANDO_INSPECAO", "QUARENTENA", "SEM_ESTOQUE", opcional)
 - `apenasDisponiveis`: Apenas itens disponíveis (boolean, opcional)
-- `apenasComSaldo`: Apenas itens com saldo (boolean, opcional)
-- `page`: Página (number)
-- `limit`: Itens por página (number)
+- `apenasComSaldo`: Apenas itens com saldo > 0 (boolean, opcional)
+- `page`: Página (number, padrão: 1)
+- `limit`: Itens por página (number, padrão: 50, máx: 100)
+
+**🔄 Lógica Condicional do Filtro `status`:**
+
+**Quando `PERMITIR_ESTOQUE_NEGATIVO = false` (Padrão):**
+- `status=DISPONIVEL`: Itens com `status = DISPONIVEL` AND `quantidade > 0`
+- `status=SEM_ESTOQUE`: Itens com `quantidade ≤ 0` AND `status NOT IN (QUARENTENA, AGUARDANDO_INSPECAO)`
+- `status=QUARENTENA`: Itens com `status = QUARENTENA`
+- `status=AGUARDANDO_INSPECAO`: Itens com `status = AGUARDANDO_INSPECAO`
+
+**Quando `PERMITIR_ESTOQUE_NEGATIVO = true`:**
+- `status=DISPONIVEL`: Itens com `status = DISPONIVEL` (independente da quantidade)
+- `status=SEM_ESTOQUE`: **Funciona normalmente** (mas frontend deve ocultar a tab)
+- `status=QUARENTENA`: Itens com `status = QUARENTENA`
+- `status=AGUARDANDO_INSPECAO`: Itens com `status = AGUARDANDO_INSPECAO`
 
 **Resposta:**
 ```json
@@ -828,7 +762,46 @@ GET /api/estoque/itens
 }
 ```
 
-### **6.12. Listar Almoxarifados**
+#### **4.2.2. Configuração dos Filtros de Estoque** ⭐ **[NOVO]**
+```http
+GET /api/estoque/configuracao-filtros
+```
+
+**Descrição:** Retorna as configurações dinâmicas que determinam quais filtros/tabs devem ser exibidos no frontend baseado na configuração `PERMITIR_ESTOQUE_NEGATIVO`.
+
+**Resposta quando `PERMITIR_ESTOQUE_NEGATIVO = false`:**
+```json
+{
+  "success": true,
+  "data": {
+    "permitirEstoqueNegativo": false,
+    "tabsDisponiveis": {
+      "disponivel": true,
+      "quarentena": true,
+      "aguardandoInspecao": true,
+      "semEstoque": true
+    }
+  }
+}
+```
+
+**Resposta quando `PERMITIR_ESTOQUE_NEGATIVO = true`:**
+```json
+{
+  "success": true,
+  "data": {
+    "permitirEstoqueNegativo": true,
+    "tabsDisponiveis": {
+      "disponivel": true,
+      "quarentena": true,
+      "aguardandoInspecao": true,
+      "semEstoque": false
+    }
+  }
+}
+```
+
+#### **4.2.3. Listar Almoxarifados**
 ```http
 GET /api/estoque/almoxarifados
 ```
@@ -837,231 +810,62 @@ GET /api/estoque/almoxarifados
 - `unidadeNegocioId`: ID da unidade de negócio (string, opcional)
 - `incluirContadores`: Incluir contadores de itens (boolean, opcional)
 
----
+### **4.3. Movimentações**
 
-## **8. Contratadas Controller**
-
-**Base Route:** `/api/contratadas`
-
-### **8.1. Criar Contratada**
+#### **4.3.1. Kardex de Item**
 ```http
-POST /api/contratadas
+GET /api/estoque/kardex/:almoxarifadoId/:tipoEpiId
 ```
-
-**Descrição:** Cria uma nova empresa contratada no sistema.
-
-**Body:**
-```json
-{
-  "nome": "Empresa Alpha Serviços LTDA",
-  "cnpj": "12345678000195"
-}
-```
-
-**Campos Obrigatórios:**
-- `nome` (string): Nome da empresa contratada (máximo 255 caracteres)
-- `cnpj` (string): CNPJ da empresa (14 dígitos, único, com validação matemática)
-
-**Resposta:**
-```json
-{
-  "success": true,
-  "data": {
-    "id": "uuid",
-    "nome": "Empresa Alpha Serviços LTDA",
-    "cnpj": "12345678000195",
-    "cnpjFormatado": "12.345.678/0001-95",
-    "createdAt": "2025-07-08T10:00:00.000Z"
-  }
-}
-```
-
-**Códigos de Status:**
-- **201:** Contratada criada com sucesso
-- **400:** Dados inválidos
-- **409:** CNPJ já cadastrado
-
-### **8.2. Listar Contratadas**
-```http
-GET /api/contratadas
-```
-
-**Descrição:** Lista todas as contratadas com filtros opcionais.
 
 **Query Parameters:**
-- `nome`: Filtro por nome (string, opcional)
-- `cnpj`: Filtro por CNPJ (string, opcional)
+- `dataInicio`: Data inicial (date, opcional)
+- `dataFim`: Data final (date, opcional)
 
 **Resposta:**
 ```json
 {
   "success": true,
   "data": {
-    "contratadas": [
+    "item": {
+      "almoxarifado": "Almoxarifado Central SP",
+      "tipoEpi": "Capacete de Segurança",
+      "numeroCa": "CA-12345"
+    },
+    "movimentacoes": [
       {
-        "id": "uuid",
-        "nome": "Empresa Alpha Serviços LTDA",
-        "cnpj": "12345678000195",
-        "cnpjFormatado": "12.345.678/0001-95",
-        "createdAt": "2025-07-08T10:00:00.000Z"
+        "data": "2025-07-07T14:30:00.000Z",
+        "tipo": "ENTRADA_NOTA",
+        "quantidade": 50,
+        "saldoAnterior": 30,
+        "saldoPosterior": 80,
+        "responsavel": "João Silva",
+        "documento": "ENT-2025-000123"
       }
     ],
-    "total": 25
+    "resumo": {
+      "saldoInicial": 30,
+      "entradas": 75,
+      "saidas": 25,
+      "saldoFinal": 80
+    }
   }
 }
 ```
 
-### **8.3. Estatísticas de Contratadas**
+#### **4.3.2. Análise de Giro**
 ```http
-GET /api/contratadas/estatisticas
+GET /api/estoque/analise-giro
 ```
-
-**Descrição:** Retorna estatísticas gerais das contratadas e colaboradores vinculados.
-
-**Resposta:**
-```json
-{
-  "success": true,
-  "data": {
-    "total": 15,
-    "colaboradoresVinculados": 245,
-    "colaboradoresSemContratada": 8,
-    "topContratadas": [
-      {
-        "contratada": {
-          "id": "uuid",
-          "nome": "Empresa Alpha LTDA",
-          "cnpjFormatado": "12.345.678/0001-95"
-        },
-        "totalColaboradores": 45
-      }
-    ]
-  }
-}
-```
-
-### **8.4. Buscar Contratadas por Nome**
-```http
-GET /api/contratadas/buscar
-```
-
-**Descrição:** Busca contratadas por nome (limitado a 10 resultados).
 
 **Query Parameters:**
-- `nome`: Nome para busca (string, obrigatório)
+- `almoxarifadoId`: ID do almoxarifado (string, opcional)
+- `periodo`: Período de análise (string: "30d", "90d", "180d", "365d")
 
-**Resposta:**
-```json
-{
-  "success": true,
-  "data": [
-    {
-      "id": "uuid",
-      "nome": "Empresa Alpha Serviços LTDA",
-      "cnpj": "12345678000195",
-      "cnpjFormatado": "12.345.678/0001-95",
-      "createdAt": "2025-07-08T10:00:00.000Z"
-    }
-  ]
-}
-```
-
-### **8.5. Obter Contratada por ID**
-```http
-GET /api/contratadas/:id
-```
-
-**Descrição:** Retorna os dados de uma contratada específica.
-
-**Parâmetros:**
-- `id`: ID da contratada (UUID)
-
-**Resposta:**
-```json
-{
-  "success": true,
-  "data": {
-    "id": "uuid",
-    "nome": "Empresa Alpha Serviços LTDA",
-    "cnpj": "12345678000195",
-    "cnpjFormatado": "12.345.678/0001-95",
-    "createdAt": "2025-07-08T10:00:00.000Z"
-  }
-}
-```
-
-**Códigos de Status:**
-- **200:** Contratada encontrada
-- **404:** Contratada não encontrada
-
-### **8.6. Atualizar Contratada**
-```http
-PUT /api/contratadas/:id
-```
-
-**Descrição:** Atualiza os dados de uma contratada existente.
-
-**Parâmetros:**
-- `id`: ID da contratada (UUID)
-
-**Body:**
-```json
-{
-  "nome": "Empresa Alpha Serviços LTDA - Atualizada",
-  "cnpj": "12345678000195"
-}
-```
-
-**Resposta:**
-```json
-{
-  "success": true,
-  "data": {
-    "id": "uuid",
-    "nome": "Empresa Alpha Serviços LTDA - Atualizada",
-    "cnpj": "12345678000195",
-    "cnpjFormatado": "12.345.678/0001-95",
-    "createdAt": "2025-07-08T10:00:00.000Z"
-  }
-}
-```
-
-**Códigos de Status:**
-- **200:** Contratada atualizada com sucesso
-- **400:** Dados inválidos
-- **404:** Contratada não encontrada
-- **409:** CNPJ já cadastrado
-
-### **8.7. Excluir Contratada**
-```http
-DELETE /api/contratadas/:id
-```
-
-**Descrição:** Exclui uma contratada do sistema (apenas se não houver colaboradores vinculados).
-
-**Parâmetros:**
-- `id`: ID da contratada (UUID)
-
-**Resposta:**
-```json
-{
-  "success": true,
-  "message": "Contratada excluída com sucesso"
-}
-```
-
-**Códigos de Status:**
-- **200:** Contratada excluída com sucesso
-- **400:** Não é possível excluir contratada com colaboradores vinculados
-- **404:** Contratada não encontrada
-
----
-
-## **9. Notas de Movimentação Controller**
+### **4.4. Notas de Movimentação**
 
 **Base Route:** `/api/notas-movimentacao`
 
-### **9.1. Criar Nota de Movimentação**
+#### **4.4.1. Criar Nota de Movimentação**
 ```http
 POST /api/notas-movimentacao
 ```
@@ -1081,24 +885,7 @@ POST /api/notas-movimentacao
 - `DESCARTE`: Requer `almoxarifadoOrigemId`
 - `AJUSTE`: Requer `almoxarifadoDestinoId`
 
-**Resposta:**
-```json
-{
-  "success": true,
-  "data": {
-    "id": "uuid",
-    "numero": "ENT-2025-000001",
-    "tipo": "ENTRADA",
-    "status": "RASCUNHO",
-    "almoxarifadoDestinoId": "uuid",
-    "observacoes": "Compra de EPIs - Nota Fiscal 12345",
-    "createdAt": "2025-07-07T14:30:00.000Z"
-  },
-  "message": "Nota de movimentação criada com sucesso"
-}
-```
-
-### **8.2. Listar Notas de Movimentação**
+#### **4.4.2. Listar Notas de Movimentação**
 ```http
 GET /api/notas-movimentacao
 ```
@@ -1109,8 +896,16 @@ GET /api/notas-movimentacao
 - `numero`: Filtrar por número (string, opcional)
 - `tipo`: Filtrar por tipo (enum: ENTRADA, TRANSFERENCIA, DESCARTE, AJUSTE)
 - `status`: Filtrar por status (enum: RASCUNHO, CONCLUIDA, CANCELADA)
+- `usuarioId`: ID do usuário responsável (string, opcional)
 - `dataInicio`: Data inicial (date, opcional)
 - `dataFim`: Data final (date, opcional)
+
+#### **4.4.3. Resumo de Notas de Movimentação** ⭐ **[NOVO]**
+```http
+GET /api/notas-movimentacao/resumo
+```
+
+**Descrição:** Lista notas com informações resumidas otimizadas para exibição em tabelas e dashboards.
 
 **Resposta:**
 ```json
@@ -1119,86 +914,23 @@ GET /api/notas-movimentacao
   "data": [
     {
       "id": "uuid",
-      "numero": "ENT-2025-000001",
+      "numero": "ENT-2025-000014",
       "tipo": "ENTRADA",
-      "almoxarifadoOrigemId": null,
-      "almoxarifadoDestinoId": "uuid",
-      "usuarioId": "uuid",
-      "observacoes": "Compra de EPIs",
-      "_status": "RASCUNHO",
-      "createdAt": "2025-07-07T14:30:00.000Z"
+      "status": "CONCLUIDA",
+      "responsavel_nome": "Administrador Sistema",
+      "almoxarifado_nome": "Almoxarifado RJ",
+      "total_itens": 5,
+      "valor_total": 1250.00,
+      "data_documento": "2025-07-07",
+      "observacoes": "Compra de EPIs"
     }
-  ],
-  "pagination": {
-    "page": 1,
-    "limit": 10,
-    "total": 25,
-    "totalPages": 3,
-    "hasNext": true,
-    "hasPrev": false
-  }
+  ]
 }
 ```
 
-### **8.3. Listar Rascunhos**
-```http
-GET /api/notas-movimentacao/rascunhos
-```
+#### **4.4.4. Gerenciar Itens da Nota**
 
-**Descrição:** Lista apenas as notas no status RASCUNHO do usuário atual.
-
-### **8.4. Obter Nota por ID**
-```http
-GET /api/notas-movimentacao/:id
-```
-
-**Resposta:**
-```json
-{
-  "success": true,
-  "data": {
-    "id": "uuid",
-    "numero": "ENT-2025-000001",
-    "tipo": "ENTRADA",
-    "status": "RASCUNHO",
-    "observacoes": "Compra de EPIs",
-    "itens": [
-      {
-        "id": "uuid",
-        "tipoEpiId": "uuid",
-        "quantidade": 50,
-        "quantidadeProcessada": 0,
-        "observacoes": null,
-        "tipoEpi": {
-          "nome": "Capacete de Segurança",
-          "codigo": "CA-12345"
-        }
-      }
-    ]
-  }
-}
-```
-
-### **8.5. Atualizar Nota**
-```http
-PUT /api/notas-movimentacao/:id
-```
-
-**Body:**
-```json
-{
-  "observacoes": "Observações atualizadas"
-}
-```
-
-### **8.6. Excluir Nota (Rascunho)**
-```http
-DELETE /api/notas-movimentacao/:id
-```
-
-**Restrições:** Apenas notas em status RASCUNHO podem ser excluídas.
-
-### **8.7. Adicionar Item à Nota**
+**Adicionar Item:**
 ```http
 POST /api/notas-movimentacao/:id/itens
 ```
@@ -1208,33 +940,23 @@ POST /api/notas-movimentacao/:id/itens
 {
   "tipoEpiId": "uuid",
   "quantidade": 25,
-  "observacoes": "Lote especial com certificação"
+  "custoUnitario": 50.75
 }
 ```
 
-**Validações:**
-- Nota deve estar em status RASCUNHO
-- Tipo de EPI não pode estar duplicado na nota
-- Quantidade deve ser positiva
-
-### **8.8. Atualizar Quantidade do Item**
+**Atualizar Quantidade:**
 ```http
 PUT /api/notas-movimentacao/:id/itens/:tipoEpiId
 ```
 
-**Body:**
-```json
-{
-  "quantidade": 30
-}
-```
-
-### **8.9. Remover Item da Nota**
+**Remover Item:**
 ```http
 DELETE /api/notas-movimentacao/:id/itens/:itemId
 ```
 
-### **8.10. Concluir Nota de Movimentação**
+#### **4.4.5. Processar Nota**
+
+**Concluir Nota:**
 ```http
 POST /api/notas-movimentacao/:id/concluir
 ```
@@ -1246,41 +968,7 @@ POST /api/notas-movimentacao/:id/concluir
 }
 ```
 
-**Descrição:** Processa uma nota em rascunho, criando movimentações de estoque e atualizando saldos.
-
-**Resposta:**
-```json
-{
-  "success": true,
-  "data": {
-    "notaConcluida": {
-      "id": "uuid",
-      "status": "CONCLUIDA",
-      "dataConclusao": "2025-07-07T15:00:00.000Z"
-    },
-    "movimentacoesCriadas": [
-      {
-        "id": "uuid",
-        "tipoEpiId": "uuid",
-        "quantidade": 50,
-        "saldoAnterior": 30,
-        "saldoPosterior": 80
-      }
-    ],
-    "itensProcessados": [
-      {
-        "tipoEpiId": "uuid",
-        "quantidade": 50,
-        "movimentacaoCreated": true,
-        "estoqueAtualizado": true
-      }
-    ]
-  },
-  "message": "Nota concluída com sucesso"
-}
-```
-
-### **8.11. Cancelar Nota de Movimentação**
+**Cancelar Nota:**
 ```http
 POST /api/notas-movimentacao/:id/cancelar
 ```
@@ -1293,9 +981,27 @@ POST /api/notas-movimentacao/:id/cancelar
 }
 ```
 
-### **8.12. Validar Cancelamento**
+### **4.5. Ajustes e Inventário**
+
+#### **4.5.1. Ajuste Direto de Estoque**
 ```http
-GET /api/notas-movimentacao/:id/validar-cancelamento
+POST /api/estoque/ajuste-direto
+```
+
+**Body:**
+```json
+{
+  "almoxarifadoId": "uuid",
+  "tipoEpiId": "uuid", 
+  "novaQuantidade": 150,
+  "motivo": "Inventário físico - diferença encontrada",
+  "validarPermissao": true
+}
+```
+
+#### **4.5.2. Simular Ajuste**
+```http
+POST /api/estoque/ajuste-direto/simular
 ```
 
 **Resposta:**
@@ -1303,52 +1009,58 @@ GET /api/notas-movimentacao/:id/validar-cancelamento
 {
   "success": true,
   "data": {
-    "validacao": {
-      "permitido": true,
-      "motivo": null
-    },
-    "impacto": {
-      "movimentacoesAfetadas": 3,
-      "estoqueAfetado": [
-        {
-          "tipoEpiId": "uuid",
-          "saldoAtual": 80,
-          "saldoAposEstorno": 30
-        }
-      ]
+    "quantidadeAtual": 125,
+    "novaQuantidade": 150,
+    "diferenca": 25,
+    "tipoAjuste": "POSITIVO",
+    "impactoFinanceiro": 1250.00,
+    "permitido": true
+  }
+}
+```
+
+#### **4.5.3. Executar Inventário**
+```http
+POST /api/estoque/inventario
+```
+
+**Body:**
+```json
+{
+  "almoxarifadoId": "uuid",
+  "ajustes": [
+    {
+      "tipoEpiId": "uuid",
+      "quantidadeContada": 145,
+      "observacoes": "Diferença física identificada"
     }
-  }
+  ],
+  "observacoes": "Inventário mensal - julho 2025"
 }
 ```
 
-### **8.13. Resumo de Notas de Movimentação**
+#### **4.5.4. Histórico de Ajustes**
 ```http
-GET /api/notas-movimentacao/resumo
+GET /api/estoque/ajustes/historico
 ```
 
-**Descrição:** Obtém um resumo das notas de movimentação do sistema.
-
-**Resposta:**
-```json
-{
-  "success": true,
-  "data": {
-    "totalNotas": 1250,
-    "notasRascunho": 45,
-    "notasConcluidas": 1180,
-    "notasCanceladas": 25,
-    "ultimaAtualizacao": "2025-07-07T15:00:00.000Z"
-  }
-}
-```
+**Query Parameters:**
+- `almoxarifadoId`: ID do almoxarifado (string, opcional)
+- `tipoEpiId`: ID do tipo de EPI (string, opcional)
+- `dataInicio`: Data inicial (date, opcional)
+- `dataFim`: Data final (date, opcional)
+- `page`: Página (number)
+- `limit`: Itens por página (number)
 
 ---
 
-## **9. Fichas de EPI Controller**
+## **5. Gerenciamento de Fichas EPI**
+
+### **5.1. Fichas EPI**
 
 **Base Route:** `/api/fichas-epi`
 
-### **8.1. Criar Ficha de EPI**
+#### **5.1.1. Criar Ficha de EPI**
 ```http
 POST /api/fichas-epi
 ```
@@ -1366,22 +1078,14 @@ POST /api/fichas-epi
 - `colaboradorId` deve ser único
 - `status` padrão é ATIVA
 
-### **8.2. Criar ou Ativar Ficha**
+#### **5.1.2. Criar ou Ativar Ficha**
 ```http
 POST /api/fichas-epi/criar-ou-ativar
 ```
 
-**Body:**
-```json
-{
-  "colaboradorId": "uuid",
-  "status": "ATIVA"
-}
-```
-
 **Descrição:** Cria nova ficha ou ativa ficha existente inativa.
 
-### **8.3. Listar Fichas de EPI**
+#### **5.1.3. Listar Fichas de EPI**
 ```http
 GET /api/fichas-epi
 ```
@@ -1392,8 +1096,8 @@ GET /api/fichas-epi
 - `colaboradorId`: ID do colaborador (string, opcional)
 - `status`: Status da ficha (enum: ATIVA, INATIVA, SUSPENSA)
 - `colaboradorNome`: Nome do colaborador (string, opcional)
-- `ativo`: Filtrar colaboradores ativos (boolean, opcional)
-- `devolucaoPendente`: Fichas com devolução pendente (boolean, opcional)
+- `ativo`: Filtrar colaboradores ativos (boolean/string, opcional)
+- `devolucaoPendente`: Fichas com devolução pendente (boolean/string, opcional)
 
 **Resposta:**
 ```json
@@ -1431,19 +1135,35 @@ GET /api/fichas-epi
         ]
       }
     }
-  ],
-  "pagination": {
-    "page": 1,
-    "limit": 20,
-    "total": 125,
-    "totalPages": 7,
-    "hasNext": true,
-    "hasPrev": false
-  }
+  ]
 }
 ```
 
-### **8.4. Estatísticas de Fichas**
+#### **5.1.4. Operações de Status**
+
+**Ativar Ficha:**
+```http
+PUT /api/fichas-epi/:id/ativar
+```
+
+**Inativar Ficha:**
+```http
+PUT /api/fichas-epi/:id/inativar
+```
+
+**Suspender Ficha:**
+```http
+PUT /api/fichas-epi/:id/suspender
+```
+
+**Body:**
+```json
+{
+  "motivo": "Colaborador afastado por acidente"
+}
+```
+
+#### **5.1.5. Estatísticas de Fichas**
 ```http
 GET /api/fichas-epi/estatisticas
 ```
@@ -1476,107 +1196,89 @@ GET /api/fichas-epi/estatisticas
 }
 ```
 
-### **8.5. Obter Ficha por ID**
+#### **5.1.6. Listagem Otimizada (Enhanced)**
 ```http
-GET /api/fichas-epi/:id
+GET /api/fichas-epi/list-enhanced
 ```
 
-### **8.6. Ativar Ficha**
-```http
-PUT /api/fichas-epi/:id/ativar
-```
-
-### **8.7. Inativar Ficha**
-```http
-PUT /api/fichas-epi/:id/inativar
-```
-
-### **8.8. Suspender Ficha**
-```http
-PUT /api/fichas-epi/:id/suspender
-```
-
-**Body:**
-```json
-{
-  "motivo": "Colaborador afastado por acidente"
-}
-```
-
-### **8.9. Histórico da Ficha**
-```http
-GET /api/fichas-epi/:id/historico
-```
+**Descrição:** Endpoint otimizado para frontend com dados pré-processados pelo backend.
 
 **Query Parameters:**
-- `tipoAcao`: Tipo da ação (enum: CRIACAO, ENTREGA, DEVOLUCAO, CANCELAMENTO, ALTERACAO_STATUS, ITEM_VENCIDO, EDICAO)
-- `dataInicio`: Data inicial (date, opcional)
-- `dataFim`: Data final (date, opcional)
-- `page`: Página (number)
-- `limit`: Itens por página (number)
+- `page`: Página (número, padrão: 1)
+- `limit`: Itens por página (número, 1-100, padrão: 20)
+- `search`: Busca unificada por nome, matrícula ou CPF (string, opcional)
+- `status`: Status da ficha (enum: `ativa`, `inativa`, `vencida`, `pendente_devolucao`, opcional)
+- `cargo`: Cargo do colaborador (string, busca por contém, opcional)
+- `empresa`: Nome da empresa (string, busca por contém, opcional)
+- `empresaId`: ID da empresa (UUID, filtro exato, opcional)
+- `vencimentoProximo`: Fichas com vencimento nos próximos 30 dias (boolean, opcional)
+
+**Exemplos:**
+```bash
+# Busca básica
+GET /api/fichas-epi/list-enhanced?page=1&limit=20
+
+# Filtro por empresa (ID - recomendado para frontend)
+GET /api/fichas-epi/list-enhanced?empresaId=U123456
+
+# Filtro por empresa (nome - busca flexível)
+GET /api/fichas-epi/list-enhanced?empresa=Construtora%20ABC
+
+# Busca unificada por CPF
+GET /api/fichas-epi/list-enhanced?search=123.456.789-01
+
+# Múltiplos filtros
+GET /api/fichas-epi/list-enhanced?status=ativa&cargo=engenheiro&empresaId=U123456
+```
 
 **Resposta:**
 ```json
 {
   "success": true,
   "data": {
-    "fichaId": "uuid",
-    "colaborador": {
-      "id": "uuid",
-      "nome": "Carlos Oliveira",
-      "cpf": "12345678901",
-      "matricula": "MAT001"
-    },
-    "historico": [
+    "items": [
       {
-        "id": "uuid",
-        "fichaEpiId": "uuid",
-        "tipoAcao": "ENTREGA",
-        "descricao": "Entrega de 1x Capacete de Segurança (CA-12345)",
-        "dataAcao": "2025-07-07T14:30:00.000Z",
-        "responsavel": {
-          "id": "uuid",
-          "nome": "João Silva"
+        "id": "F123456",
+        "colaborador": {
+          "nome": "Carlos Oliveira",
+          "cpf": "12345678901",
+          "matricula": "MAT001",
+          "cargo": "Engenheiro",
+          "empresa": "Construtora ABC Ltda"
         },
-        "detalhes": {
-          "entregaId": "uuid",
-          "tipoEpiNome": "Capacete de Segurança",
-          "quantidade": 1,
-          "itens": [
-            {
-              "numeroSerie": "CS-001",
-              "dataLimiteDevolucao": "2025-12-15T00:00:00.000Z"
-            }
-          ]
-        }
+        "status": "ativa",
+        "statusDisplay": {
+          "cor": "green",
+          "label": "Ativa"
+        },
+        "totalEpisAtivos": 3,
+        "totalEpisVencidos": 0,
+        "proximoVencimento": "2025-08-15",
+        "ultimaAtualizacao": "2025-07-10T10:30:00Z"
       }
     ],
-    "estatisticas": {
-      "totalEventos": 15,
-      "totalEntregas": 8,
-      "totalDevolucoes": 6,
-      "totalCancelamentos": 1,
-      "itensAtivos": 3,
-      "itensVencidos": 0,
-      "dataUltimaAtividade": "2025-07-07T14:30:00.000Z"
+    "pagination": {
+      "total": 125,
+      "page": 1,
+      "limit": 20,
+      "totalPages": 7
     }
   },
-  "pagination": {
-    "page": 1,
-    "limit": 10,
-    "total": 15,
-    "totalPages": 2,
-    "hasNext": true,
-    "hasPrev": false
-  }
+  "message": "Lista de fichas carregada com dados pré-processados pelo backend."
 }
 ```
 
----
+**Funcionalidades do Endpoint:**
+- **Dados Pré-processados**: Status, contadores e displays calculados pelo backend
+- **Busca Unificada**: Nome, matrícula e CPF em um único campo
+- **Filtros Flexíveis**: Por empresa (ID ou nome), cargo, status
+- **Performance Otimizada**: Consultas eficientes com paginação
+- **Campo CPF**: Incluído no objeto colaborador da resposta
+- **Compatibilidade Frontend**: Estrutura otimizada para exibição direta
 
-## **10. Fichas EPI - Entregas**
+### **5.2. Entregas**
 
-### **10.1. Criar Entrega**
+#### **5.2.1. Criar Entrega**
 ```http
 POST /api/fichas-epi/:fichaId/entregas
 ```
@@ -1649,7 +1351,7 @@ POST /api/fichas-epi/:fichaId/entregas
 }
 ```
 
-### **10.2. Validar Entrega**
+#### **5.2.2. Validar Entrega**
 ```http
 POST /api/fichas-epi/entregas/validar
 ```
@@ -1676,34 +1378,26 @@ POST /api/fichas-epi/entregas/validar
 }
 ```
 
-### **10.3. Listar Entregas da Ficha**
+#### **5.2.3. Listar Entregas**
+
+**Por Ficha:**
 ```http
 GET /api/fichas-epi/:fichaId/entregas
 ```
 
-**Query Parameters:**
-- `page`: Página (number)
-- `limit`: Itens por página (number)
-- `status`: Status da entrega (enum)
-- `dataInicio`: Data inicial (date)
-- `dataFim`: Data final (date)
-
-### **10.4. Listar Entregas do Colaborador**
+**Por Colaborador:**
 ```http
 GET /api/fichas-epi/colaborador/:colaboradorId/entregas
 ```
 
-**Query Parameters:**
-- `status`: Status da entrega (enum, opcional)
-
-### **10.5. Posse Atual do Colaborador**
+#### **5.2.4. Posse Atual do Colaborador**
 ```http
 GET /api/fichas-epi/colaborador/:colaboradorId/posse-atual
 ```
 
 **Query Parameters:**
-- `incluirVencidos`: Incluir itens vencidos (boolean, padrão: false)
-- `incluirProximosVencimento`: Incluir próximos ao vencimento (boolean, padrão: true)
+- `incluirVencidos`: Incluir itens vencidos (boolean/string, padrão: false)
+- `incluirProximosVencimento`: Incluir próximos ao vencimento (boolean/string, padrão: true)
 
 **Resposta:**
 ```json
@@ -1731,7 +1425,7 @@ GET /api/fichas-epi/colaborador/:colaboradorId/posse-atual
 }
 ```
 
-### **10.6. Assinar Entrega**
+#### **5.2.5. Assinar Entrega**
 ```http
 PUT /api/fichas-epi/entregas/:entregaId/assinar
 ```
@@ -1744,35 +1438,37 @@ PUT /api/fichas-epi/entregas/:entregaId/assinar
 }
 ```
 
----
+### **5.3. Devoluções**
 
-## **11. Fichas EPI - Devoluções**
-
-### **11.1. Processar Devolução**
+#### **5.3.1. Processar Devolução**
 ```http
-POST /api/fichas-epi/entregas/:entregaId/devolucao
+POST /api/fichas-epi/:fichaId/devolucoes
 ```
+
+**Parâmetros:**
+- `fichaId`: ID da ficha EPI (UUID)
 
 **Body:**
 ```json
 {
+  "entregaId": "uuid",
   "itensParaDevolucao": [
     {
       "itemId": "uuid",
       "motivoDevolucao": "Fim do período de uso",
-      "condicaoItem": "BOM"
+      "destinoItem": "QUARENTENA"
     }
   ],
-  "assinaturaColaborador": "base64_signature",
   "usuarioId": "uuid",
   "observacoes": "Devolução padrão"
 }
 ```
 
-**Condições do Item:**
-- `BOM`: Item em boas condições
-- `DANIFICADO`: Item danificado
-- `PERDIDO`: Item perdido
+**🚨 REGRAS CRÍTICAS DE NEGÓCIO:**
+- **Validação Obrigatória:** Devolução só é permitida para entregas com status `ASSINADA`
+- **Destino Padrão:** Todos os itens devolvidos vão para status `QUARENTENA` (inspeção obrigatória)
+- **Rastreabilidade:** Cada devolução cria movimentação unitária (`quantidadeMovida: 1`)
+- **Transações Atômicas:** Todas as operações são transacionais para garantir consistência
 
 **Resposta:**
 ```json
@@ -1784,302 +1480,32 @@ POST /api/fichas-epi/entregas/:entregaId/devolucao
       {
         "itemId": "uuid",
         "tipoEpiId": "uuid",
-        "numeroSerie": "CS-001",
+        "numeroSerie": "N/A",
+        "lote": "N/A",
         "statusAnterior": "COM_COLABORADOR",
         "novoStatus": "DEVOLVIDO",
         "motivoDevolucao": "Fim do período de uso",
-        "condicaoItem": "BOM"
+        "destinoItem": "QUARENTENA"
       }
     ],
     "movimentacoesEstoque": [
       {
-        "id": "uuid",
+        "id": "temp-uuid",
         "tipoEpiId": "uuid",
         "quantidade": 1,
-        "statusEstoque": "DISPONIVEL"
+        "statusEstoque": "QUARENTENA"
       }
     ],
-    "statusEntregaAtualizado": "DEVOLVIDA_TOTAL",
+    "statusEntregaAtualizado": "ASSINADA",
     "dataProcessamento": "2025-07-07T15:00:00.000Z"
-  }
-}
-```
-
-### **11.2. Validar Devolução**
-```http
-POST /api/fichas-epi/entregas/:entregaId/devolucao/validar
-```
-
-**Body:**
-```json
-{
-  "itemIds": ["uuid1", "uuid2"]
-}
-```
-
-### **11.3. Cancelar Devolução**
-```http
-POST /api/fichas-epi/entregas/:entregaId/devolucao/cancelar
-```
-
-**Body:**
-```json
-{
-  "itensParaCancelar": ["uuid1", "uuid2"],
-  "motivo": "Erro no processamento da devolução"
-}
-```
-
-### **11.4. Histórico de Devoluções**
-```http
-GET /api/fichas-epi/devolucoes/historico
-```
-
-**Query Parameters:**
-- `colaboradorId`: ID do colaborador (string, opcional)
-- `tipoEpiId`: ID do tipo de EPI (string, opcional)
-- `dataInicio`: Data inicial (date, opcional)
-- `dataFim`: Data final (date, opcional)
-- `page`: Página (number, padrão: 1)
-- `limit`: Itens por página (number, padrão: 20, máximo: 100)
-
-**Resposta:**
-```json
-{
-  "success": true,
-  "data": {
-    "devolucoes": [
-      {
-        "entregaId": "uuid",
-        "colaboradorNome": "Carlos Oliveira",
-        "tipoEpiNome": "Capacete de Segurança",
-        "dataEntrega": "2025-06-01T10:00:00.000Z",
-        "dataDevolucao": "2025-07-07T15:00:00.000Z",
-        "diasUso": 36,
-        "motivoDevolucao": "Fim do período de uso",
-        "condicaoItem": "BOM",
-        "numeroSerie": "CS-001"
-      }
-    ],
-    "estatisticas": {
-      "totalDevolucoes": 125,
-      "itensEmBomEstado": 98,
-      "itensDanificados": 22,
-      "itensPerdidos": 5,
-      "tempoMedioUso": 45
-    }
   },
-  "pagination": {
-    "page": 1,
-    "limit": 20,
-    "total": 125,
-    "totalPages": 7
-  }
+  "message": "Devolução processada com sucesso"
 }
 ```
 
----
-
-## **12. Controllers Otimizados**
-
-### **12.1. Listagem Otimizada de Fichas**
+#### **5.3.2. Processamento em Lote**
 ```http
-GET /api/fichas-epi/list-enhanced
-```
-
-**Query Parameters:**
-- `page`: Página (number, padrão: 1)
-- `limit`: Itens por página (number, padrão: 20, máximo: 100)
-- `search`: Busca textual (string, opcional)
-- `status`: Status da ficha (enum, opcional)
-- `cargo`: Cargo do colaborador (string, opcional)
-- `empresa`: Empresa/contratada (string, opcional)
-- `vencimentoProximo`: Próximo ao vencimento (boolean, opcional)
-
-**Resposta:**
-```json
-{
-  "success": true,
-  "data": {
-    "items": [
-      {
-        "id": "uuid",
-        "colaborador": {
-          "nome": "Carlos Oliveira",
-          "matricula": "MAT001",
-          "cargo": "Operador de Produção",
-          "empresa": "Empresa Alpha LTDA"
-        },
-        "status": "ativa",
-        "statusDisplay": {
-          "cor": "green",
-          "label": "Ativa"
-        },
-        "totalEpisAtivos": 3,
-        "totalEpisVencidos": 0,
-        "proximoVencimento": "2025-12-15",
-        "ultimaAtualizacao": "2025-07-07T14:30:00.000Z"
-      }
-    ],
-    "pagination": {
-      "total": 125,
-      "page": 1,
-      "limit": 20,
-      "totalPages": 7
-    }
-  }
-}
-```
-
-### **12.2. Ficha Completa Otimizada**
-```http
-GET /api/fichas-epi/:id/complete
-```
-
-**Resposta:**
-```json
-{
-  "success": true,
-  "data": {
-    "ficha": {
-      "id": "uuid",
-      "status": "ativa",
-      "statusDisplay": {
-        "cor": "green",
-        "label": "Ativa"
-      },
-      "colaborador": {
-        "id": "uuid",
-        "nome": "Carlos Oliveira",
-        "cpf": "123.456.***-01",
-        "cpfDisplay": "123.456.***-01",
-        "matricula": "MAT001",
-        "cargo": "Operador de Produção",
-        "empresa": "Empresa Alpha LTDA",
-        "iniciais": "CO"
-      }
-    },
-    "equipamentosEmPosse": [
-      {
-        "id": "uuid",
-        "nomeEquipamento": "Capacete de Segurança",
-        "numeroCA": "CA-12345",
-        "categoria": "PROTECAO_CABECA",
-        "dataEntrega": "2025-07-07",
-        "dataLimiteDevolucao": "2025-12-15",
-        "statusVencimento": "dentro_prazo",
-        "statusVencimentoDisplay": {
-          "texto": "160 dias restantes",
-          "cor": "green",
-          "diasRestantes": 160,
-          "statusDetalhado": "dentro_prazo"
-        },
-        "diasParaVencimento": 160,
-        "podeDevolver": true,
-        "entregaId": "uuid",
-        "itemEntregaId": "uuid"
-      }
-    ],
-    "devolucoes": [],
-    "entregas": [
-      {
-        "id": "uuid",
-        "numero": "E4U302",
-        "dataEntrega": "2025-07-07",
-        "status": "assinado",
-        "statusDisplay": {
-          "cor": "green",
-          "label": "Assinado"
-        },
-        "acoes": ["imprimir"],
-        "itens": [
-          {
-            "id": "uuid",
-            "nomeEquipamento": "Capacete de Segurança",
-            "numeroCA": "CA-12345",
-            "categoria": "PROTECAO_CABECA",
-            "quantidade": 1
-          }
-        ]
-      }
-    ],
-    "historico": [
-      {
-        "id": "uuid",
-        "data": "2025-07-07T14:30:00.000Z",
-        "dataFormatada": "07/07/2025 às 14:30",
-        "tipo": "entrega",
-        "tipoDisplay": {
-          "label": "Entrega",
-          "tipo": "entrega",
-          "cor": "green"
-        },
-        "acao": "Entrega de EPIs realizada",
-        "responsavel": "João Silva",
-        "mudancaStatus": "Disponível → Com Colaborador",
-        "detalhes": {
-          "resumo": "1x Capacete de Segurança (CA-12345)",
-          "dados": {
-            "quantidade": 1,
-            "equipamento": "Capacete de Segurança",
-            "numeroCA": "CA-12345",
-            "categoria": "PROTECAO_CABECA"
-          }
-        }
-      }
-    ],
-    "estatisticas": {
-      "totalEpisAtivos": 3,
-      "totalEpisVencidos": 0,
-      "proximoVencimento": "2025-12-15",
-      "diasProximoVencimento": 160
-    }
-  }
-}
-```
-
-### **12.3. Criar Entrega Completa**
-```http
-POST /api/entregas/create-complete
-```
-
-**Body:**
-```json
-{
-  "fichaEpiId": "uuid",
-  "responsavelId": "uuid",
-  "equipamentos": [
-    {
-      "estoqueItemId": "I7XK91",
-      "quantidade": 2
-    }
-  ]
-}
-```
-
-**Resposta:**
-```json
-{
-  "success": true,
-  "data": {
-    "entregaId": "E4U302",
-    "itensIndividuais": [
-      {
-        "id": "uuid",
-        "nomeEquipamento": "Capacete de Segurança",
-        "numeroCA": "CA-12345",
-        "dataLimiteDevolucao": "2025-12-15"
-      }
-    ],
-    "totalItens": 2,
-    "statusEntrega": "pendente_assinatura"
-  }
-}
-```
-
-### **12.4. Processar Devoluções em Lote**
-```http
-POST /api/devolucoes/process-batch
+POST /api/fichas-epi/:fichaId/devolucoes/batch
 ```
 
 **Body:**
@@ -2095,26 +1521,97 @@ POST /api/devolucoes/process-batch
 }
 ```
 
+**Motivos Permitidos:**
+- `devolução padrão`: Devolução normal
+- `danificado`: Item danificado
+- `troca`: Troca de equipamento
+- `outros`: Outros motivos
+
+### **5.4. Histórico**
+
+#### **5.4.1. Histórico da Ficha**
+```http
+GET /api/fichas-epi/:id/historico
+```
+
+**Query Parameters:**
+- `tipoAcao`: Tipo da ação (enum: CRIACAO, ENTREGA, DEVOLUCAO, CANCELAMENTO, ALTERACAO_STATUS, ITEM_VENCIDO, EDICAO)
+- `dataInicio`: Data inicial (date, opcional)
+- `dataFim`: Data final (date, opcional)
+- `page`: Página (number)
+- `limit`: Itens por página (number)
+
 **Resposta:**
 ```json
 {
   "success": true,
   "data": {
-    "processadas": 5,
-    "erros": [],
-    "fichasAtualizadas": ["uuid1", "uuid2"],
-    "estoqueAtualizado": true
+    "fichaId": "uuid",
+    "colaborador": {
+      "id": "uuid",
+      "nome": "Carlos Oliveira",
+      "cpf": "12345678901",
+      "matricula": "MAT001"
+    },
+    "historico": [
+      {
+        "id": "uuid",
+        "fichaEpiId": "uuid",
+        "tipoAcao": "ENTREGA",
+        "descricao": "Entrega de 1x Capacete de Segurança (CA-12345)",
+        "dataAcao": "2025-07-07T14:30:00.000Z",
+        "responsavel": {
+          "id": "uuid",
+          "nome": "João Silva"
+        },
+        "detalhes": {
+          "entregaId": "uuid",
+          "tipoEpiNome": "Capacete de Segurança",
+          "quantidade": 1,
+          "itens": [
+            {
+              "numeroSerie": "CS-001",
+              "dataLimiteDevolucao": "2025-12-15T00:00:00.000Z"
+            }
+          ]
+        }
+      }
+    ],
+    "estatisticas": {
+      "totalEventos": 15,
+      "totalEntregas": 8,
+      "totalDevolucoes": 6,
+      "totalCancelamentos": 1,
+      "itensAtivos": 3,
+      "itensVencidos": 0,
+      "dataUltimaAtividade": "2025-07-07T14:30:00.000Z"
+    }
   }
 }
 ```
 
+#### **5.4.2. Histórico Global de Devoluções**
+```http
+GET /api/fichas-epi/historico-global
+```
+
+**Query Parameters:**
+- `colaboradorId`: ID do colaborador (string, opcional)
+- `tipoEpiId`: ID do tipo de EPI (string, opcional)
+- `dataInicio`: Data inicial (date, opcional)
+- `dataFim`: Data final (date, opcional)
+- `page`: Página (number, padrão: 1)
+- `limit`: Itens por página (number, padrão: 10)
+
 ---
 
-## **13. Relatórios Controller**
+## **6. Relatórios & Analytics**
+
+### **6.1. Dashboard Principal**
 
 **Base Route:** `/api/relatorios`
 
-### **13.1. Dashboard Principal**
+#### **6.1.1. Dashboard Principal**
 ```http
 GET /api/relatorios/dashboard
 ```
@@ -2172,19 +1669,19 @@ GET /api/relatorios/dashboard
 }
 ```
 
-### **13.2. Estatísticas de Entregas**
+#### **6.1.2. Estatísticas de Entregas**
 ```http
 GET /api/relatorios/dashboard/estatisticas-entregas
 ```
 
-### **13.3. Vencimentos Próximos**
+#### **6.1.3. Vencimentos Próximos**
 ```http
 GET /api/relatorios/dashboard/vencimentos-proximos
 ```
 
+### **6.2. Relatórios Especializados**
 
-
-### **13.6. Relatório de Movimentações**
+#### **6.2.1. Relatório de Movimentações**
 ```http
 GET /api/relatorios/movimentacoes
 ```
@@ -2225,65 +1722,11 @@ GET /api/relatorios/movimentacoes
       "transferencias": 35,
       "descartes": 15
     }
-  },
-  "pagination": {
-    "page": 1,
-    "limit": 50,
-    "total": 1250,
-    "totalPages": 25
   }
 }
 ```
 
-### **13.7. Saúde do Sistema**
-```http
-GET /api/relatorios/saude-sistema
-```
-
-**Query Parameters:**
-- `incluirAlertas`: Incluir alertas do sistema (boolean, padrão: true)
-- `incluirEstatisticas`: Incluir estatísticas (boolean, padrão: true)
-- `incluirPerformance`: Incluir métricas de performance (boolean, padrão: false)
-
-**Resposta:**
-```json
-{
-  "success": true,
-  "data": {
-    "statusGeral": "saudavel",
-    "uptime": "15 dias, 8 horas",
-    "ultimaAtualizacao": "2025-07-07T15:00:00.000Z",
-    "alertas": [
-      {
-        "nivel": "warning",
-        "categoria": "estoque",
-        "mensagem": "8 itens abaixo do estoque mínimo",
-        "acao": "Reabastecer estoque"
-      }
-    ],
-    "estatisticas": {
-      "totalRegistros": {
-        "colaboradores": 245,
-        "fichas": 218,
-        "entregas": 1520,
-        "devolucoes": 1285
-      },
-      "performance": {
-        "tempoMedioResposta": "150ms",
-        "requestsUltimas24h": 2450,
-        "errosUltimas24h": 3
-      }
-    },
-    "integridade": {
-      "bancoDados": "ok",
-      "cache": "ok",
-      "consistenciaEstoque": "ok"
-    }
-  }
-}
-```
-
-### **13.8. Relatório de Descartes**
+#### **6.2.2. Relatório de Descartes**
 ```http
 GET /api/relatorios/descartes
 ```
@@ -2296,12 +1739,14 @@ GET /api/relatorios/descartes
 - `dataFim`: Data final (date, opcional)
 - `responsavelId`: ID do responsável (string, opcional)
 
-### **13.9. Estatísticas de Descartes**
+#### **6.2.3. Estatísticas de Descartes**
 ```http
 GET /api/relatorios/descartes/estatisticas
 ```
 
-### **13.10. Relatório de Auditoria**
+### **6.3. Análises Avançadas**
+
+#### **6.3.1. Relatório de Auditoria**
 ```http
 GET /api/relatorios/auditoria
 ```
@@ -2314,9 +1759,52 @@ GET /api/relatorios/auditoria
 
 ---
 
-## **14. Códigos de Erro Comuns**
+## **7. Esquemas & Referências**
 
-### **14.1. Erros de Validação (400)**
+### **7.1. IDs Customizados**
+
+| Tipo | Formato | Exemplo |
+|------|---------|---------|
+| **Entregas** | `E` + 5 caracteres alfanuméricos | E4U302 |
+| **EstoqueItems** | `I` + 5 caracteres alfanuméricos | I7XK91 |
+| **TipoEPI** | `C` + 5 caracteres alfanuméricos | C2MN58 |
+
+**Caracteres Permitidos:** 0-9, A-Z (exceto 0, 1, O, I, L)
+
+### **7.2. Status Enums**
+
+#### **StatusEstoqueItem:**
+- `DISPONIVEL`: Item disponível para entrega
+- `AGUARDANDO_INSPECAO`: Item aguardando inspeção
+- `QUARENTENA`: Item em quarentena
+
+#### **StatusFichaEPI:**
+- `ATIVA`: Ficha ativa e operacional
+- `INATIVA`: Ficha inativa
+- `SUSPENSA`: Ficha suspensa temporariamente
+
+#### **StatusEntrega:**
+- `PENDENTE_ASSINATURA`: Aguardando assinatura
+- `ASSINADA`: Entrega assinada e confirmada
+- `CANCELADA`: Entrega cancelada
+
+#### **StatusEntregaItem:**
+- `COM_COLABORADOR`: Item com o colaborador
+- `DEVOLVIDO`: Item devolvido ao estoque
+
+#### **TipoMovimentacao:**
+- `ENTRADA_NOTA`: Entrada via nota de movimentação
+- `SAIDA_ENTREGA`: Saída para entrega
+- `ENTRADA_DEVOLUCAO`: Entrada por devolução
+- `SAIDA_TRANSFERENCIA`: Saída por transferência
+- `ENTRADA_TRANSFERENCIA`: Entrada por transferência
+- `SAIDA_DESCARTE`: Saída por descarte
+- `AJUSTE_POSITIVO`: Ajuste positivo
+- `AJUSTE_NEGATIVO`: Ajuste negativo
+
+### **7.3. Códigos de Erro**
+
+#### **7.3.1. Erros de Validação (400)**
 ```json
 {
   "success": false,
@@ -2332,7 +1820,7 @@ GET /api/relatorios/auditoria
 }
 ```
 
-### **14.2. Recurso Não Encontrado (404)**
+#### **7.3.2. Recurso Não Encontrado (404)**
 ```json
 {
   "success": false,
@@ -2347,7 +1835,7 @@ GET /api/relatorios/auditoria
 }
 ```
 
-### **14.3. Regra de Negócio (409)**
+#### **7.3.3. Regra de Negócio (409)**
 ```json
 {
   "success": false,
@@ -2365,86 +1853,199 @@ GET /api/relatorios/auditoria
 
 ---
 
-## **15. Schemas de Dados Importantes**
+## **8. Diretrizes de Implementação**
 
-### **15.1. ID Customizados**
-- **Entregas:** `E` + 5 caracteres alfanuméricos (ex: E4U302)
-- **EstoqueItems:** `I` + 5 caracteres alfanuméricos (ex: I7XK91)
-- **TipoEPI:** `C` + 5 caracteres alfanuméricos (ex: C2MN58)
-- **Caracteres Permitidos:** 0-9, A-Z (exceto 0, 1, O, I, L)
+### **8.1. Política de Dados Reais**
 
-### **15.2. Status Enums**
+#### **🚨 PROIBIÇÃO ABSOLUTA DE MOCKS**
+- **❌ JAMAIS criar mocks de dados** (exceto os headers da aplicação)
+- **❌ JAMAIS simular respostas** de banco de dados ou APIs
+- **❌ JAMAIS usar dados fictícios** em place de consultas reais
 
-**StatusEstoqueItem:**
-- `DISPONIVEL`: Item disponível para entrega
-- `AGUARDANDO_INSPECAO`: Item aguardando inspeção
-- `QUARENTENA`: Item em quarentena
+#### **✅ PADRÃO OBRIGATÓRIO: Dados Reais**
+- **Database**: PostgreSQL via Prisma
+- **Cache**: Redis para configurações
+- **APIs**: Endpoints reais com validação completa
 
-**StatusFichaEPI:**
-- `ATIVA`: Ficha ativa e operacional
-- `INATIVA`: Ficha inativa
-- `SUSPENSA`: Ficha suspensa temporariamente
+### **8.2. Rastreabilidade Unitária**
 
-**StatusEntrega:**
-- `PENDENTE_ASSINATURA`: Aguardando assinatura
-- `ASSINADA`: Entrega assinada e confirmada
-- `CANCELADA`: Entrega cancelada
+#### **Princípio Fundamental:**
+- Cada item físico de EPI movimentado deve corresponder a um único registro na tabela `EntregaItens`
+- Para entregas de N itens, devem ser criados N registros em `MovimentacaoEstoque`
+- Operações de saída devem ter `quantidadeMovida: 1` para preservar a rastreabilidade
 
-**StatusEntregaItem:**
-- `COM_COLABORADOR`: Item com o colaborador
-- `DEVOLVIDO`: Item devolvido ao estoque
+#### **Implementação:**
+```typescript
+// ✅ PADRÃO OBRIGATÓRIO: Performance com rastreabilidade
+const movimentacoesData = itens.map(item => ({
+  estoqueItemId: item.estoqueItemOrigemId,
+  quantidadeMovida: 1, // Sempre 1 para rastreabilidade
+  tipoMovimentacao: 'SAIDA_ENTREGA',
+  responsavelId: input.usuarioId,
+  entregaId: entrega.id,
+}));
 
-**TipoMovimentacao:**
-- `ENTRADA_NOTA`: Entrada via nota de movimentação
-- `SAIDA_ENTREGA`: Saída para entrega
-- `ENTRADA_DEVOLUCAO`: Entrada por devolução
-- `SAIDA_TRANSFERENCIA`: Saída por transferência
-- `ENTRADA_TRANSFERENCIA`: Entrada por transferência
-- `SAIDA_DESCARTE`: Saída por descarte
-- `AJUSTE_POSITIVO`: Ajuste positivo
-- `AJUSTE_NEGATIVO`: Ajuste negativo
+await tx.movimentacaoEstoque.createMany({
+  data: movimentacoesData,
+});
+```
 
-### **15.3. Campos de Data**
-- **Formato ISO 8601:** `2025-07-07T14:30:00.000Z`
-- **Timezone:** UTC
-- **Campos de Data:**
-  - `createdAt`: Data de criação
-  - `updatedAt`: Data de atualização
-  - `dataEntrega`: Data da entrega
-  - `dataLimiteDevolucao`: Data limite para devolução
-  - `dataMovimentacao`: Data da movimentação
+### **8.3. Performance e Otimização**
 
----
-
-## **16. Observações Importantes**
-
-### **16.1. Política de Dados Reais**
-- **PROIBIÇÃO ABSOLUTA DE MOCKS** (exceto headers da aplicação)
-- Todos os dados vêm de fontes reais: PostgreSQL e Redis
-- Testes devem usar dados reais do banco de testes
-
-### **16.2. Rastreabilidade Unitária**
-- Cada item físico de EPI = 1 registro em `EntregaItens`
-- Cada movimentação = quantidade 1
-- Preserva histórico completo de cada unidade
-
-### **16.3. Transações Atômicas**
-- Todas as operações de escrita são transacionais
+#### **Transações Atômicas:**
+- Todas as operações que alteram o estado do banco devem ser encapsuladas em uma transação Prisma
 - Garantia de consistência dos dados
 - Rollback automático em caso de erro
 
-### **16.4. Performance**
-- Operações em lote quando possível
+```typescript
+// ✅ PADRÃO: Uso obrigatório de transações para operações de escrita
+await prisma.$transaction(async (tx) => {
+  // 1. Validar estoque
+  // 2. Criar movimentação
+  // 3. Atualizar saldo
+});
+```
+
+#### **Operações em Lote:**
+- Utilizar `createMany` para criar múltiplos registros de uma só vez
 - Paginação em todas as listagens
 - Cache Redis para configurações
 
-### **16.5. Validação**
-- Zod schemas como Single Source of Truth
-- Validação de entrada e saída
-- Tipos TypeScript derivados dos schemas
+#### **Monitoramento:**
+```typescript
+// ✅ PADRÃO: Monitoramento de performance
+import { MonitorUseCase } from 'src/shared/decorators/monitor-performance.decorator';
+
+@MonitorUseCase('criar-entrega')
+async execute(input: CriarEntregaInput): Promise<EntregaOutput> {
+  // ... lógica do use case
+}
+```
 
 ---
 
-**Fim da Documentação**
+## **🚀 Atualizações Recentes v3.5**
 
-Esta documentação cobre todos os 167 endpoints disponíveis na API do Módulo de Gestão de EPI v3.5, fornecendo informações técnicas completas para desenvolvimento e integração.
+### **📊 Melhorias Implementadas (09/07/2025)**
+
+#### **🆕 Filtros Avançados de Estoque com Lógica Condicional**
+- **Sistema inteligente** que adapta comportamento baseado na configuração `PERMITIR_ESTOQUE_NEGATIVO`
+- **Endpoint principal**: `GET /api/estoque/itens?status=SEM_ESTOQUE`
+- **Configuração dinâmica**: `GET /api/estoque/configuracao-filtros`
+- **Status disponíveis**: `DISPONIVEL`, `AGUARDANDO_INSPECAO`, `QUARENTENA`, `SEM_ESTOQUE`
+
+#### **🔧 Correção de Validação de Parâmetros Boolean**
+- **Parâmetros boolean** em query parameters agora aceitam strings
+- **Endpoints afetados**: `/api/colaboradores`, `/api/fichas-epi` e relacionados
+- **Formatos aceitos**: `true`, `"true"`, `"TRUE"`, `"1"` para verdadeiro
+- **Compatibilidade** total com query parameters HTTP
+
+#### **📋 Notas de Movimentação Aprimoradas**
+- **Novo endpoint**: `GET /api/notas-movimentacao/resumo` - Listagem otimizada
+- **Campos expandidos**: `usuario`, `almoxarifadoOrigem`, `almoxarifadoDestino`
+- **Campos calculados**: `totalItens`, `valorTotal`
+- **Suporte a custos**: Campo `custoUnitario` em todos os itens
+
+#### **📊 Estatísticas Expandidas**
+- **Contratadas**: Campo `totalEpisAtivos` para controle de distribuição
+- **Devoluções**: Sistema completo com destino QUARENTENA obrigatório
+- **Histórico**: Rastreamento detalhado de todas as ações
+
+### **🎯 Preparação para Produção**
+- **Dados reais**: Política de proibição absoluta de mocks
+- **Transações**: Operações atômicas para consistência
+- **Rastreabilidade**: Controle unitário de EPIs
+- **Performance**: Operações em lote e cache otimizado
+
+---
+
+## **🆕 Atualizações de Funcionalidades (10/07/2025)**
+
+### **🔍 Busca Unificada Aprimorada**
+
+**Endpoint:** `GET /api/fichas-epi/list-enhanced`
+
+**Parâmetro `search` expandido:**
+- ✅ **Nome do colaborador** (busca por contém, case-insensitive)
+- ✅ **Matrícula** (busca por contém, case-insensitive)  
+- ✅ **CPF** (busca parcial ou completa, remove formatação automaticamente)
+
+**Exemplos de uso:**
+```bash
+# Busca por nome
+GET /api/fichas-epi/list-enhanced?search=Carlos
+
+# Busca por CPF (aceita formatado ou não)
+GET /api/fichas-epi/list-enhanced?search=12345678901
+GET /api/fichas-epi/list-enhanced?search=123.456.789-01
+
+# Busca por matrícula
+GET /api/fichas-epi/list-enhanced?search=MAT001
+
+# Busca por CPF parcial (mínimo 3 dígitos)
+GET /api/fichas-epi/list-enhanced?search=123456
+```
+
+**Funcionalidades da busca:**
+- **Sanitização automática**: Remove pontos, traços e espaços do CPF
+- **Busca inteligente**: Procura em todos os campos simultaneamente
+- **Mínimo de caracteres**: CPF requer pelo menos 3 dígitos para busca
+- **Performance otimizada**: Usa índices do banco para busca rápida
+
+**Resposta:** Mesma estrutura do endpoint `list-enhanced` com dados pré-processados.
+
+### **🏢 Filtro por Empresa Aprimorado**
+
+**Problema resolvido:** Frontend enviando UUID da empresa mas API esperando nome
+
+**Solução implementada:**
+- ✅ **Novo parâmetro `empresaId`**: Aceita UUID da empresa para filtro exato
+- ✅ **Parâmetro `empresa` mantido**: Continua aceitando nome para busca flexível
+- ✅ **Priorização inteligente**: Se `empresaId` for fornecido, usa filtro exato; senão usa busca por nome
+
+**Exemplos de uso:**
+```bash
+# Filtro exato por ID (recomendado para frontend)
+GET /api/fichas-epi/list-enhanced?empresaId=U123456
+
+# Busca flexível por nome (para pesquisa)
+GET /api/fichas-epi/list-enhanced?empresa=Construtora
+
+# Combinação com outros filtros
+GET /api/fichas-epi/list-enhanced?empresaId=U123456&status=ativa&cargo=engenheiro
+```
+
+**Comportamento:**
+- **`empresaId`**: Filtro exato por UUID da contratada (mais eficiente)
+- **`empresa`**: Busca por texto no nome da contratada (busca flexível)
+- **Prioridade**: Se ambos forem enviados, `empresaId` tem prioridade
+
+### **📄 Campo CPF Adicionado**
+
+**Problema resolvido:** Campo CPF estava ausente na resposta do endpoint `list-enhanced`
+
+**Solução implementada:**
+- ✅ **Campo `cpf` adicionado**: Agora incluído no objeto `colaborador` de todas as respostas
+- ✅ **Compatibilidade mantida**: Estrutura da resposta permanece a mesma
+- ✅ **Busca por CPF**: O campo `search` agora permite busca por CPF (formatado ou não)
+
+**Estrutura atualizada:**
+```json
+{
+  "colaborador": {
+    "nome": "João Silva",
+    "cpf": "12345678901",
+    "matricula": "MAT001",
+    "cargo": "Técnico",
+    "empresa": "Empresa ABC"
+  }
+}
+```
+
+**Funcionalidades do CPF:**
+- **Formato**: CPF sem formatação (apenas dígitos)
+- **Busca**: Aceita CPF com ou sem formatação na busca
+- **Validação**: CPF válido conforme regras brasileiras
+
+---
+

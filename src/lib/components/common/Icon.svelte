@@ -33,7 +33,9 @@
     'ChevronUpOutline': 'ChevronUpOutline',
     'ArrowRightOutline': 'ArrowRightOutline',
     'ArrowLeftOutline': 'ArrowLeftOutline',
-    'InfoCircleOutline': 'InfoCircleOutline'
+    'InfoCircleOutline': 'InfoCircleOutline',
+    'CubeOutline': 'ClockOutline', // Use ClockOutline as simple fallback
+    'TableCellsOutline': 'FileDocumentOutline' // Use FileDocumentOutline as table fallback
   };
 
   onMount(async () => {

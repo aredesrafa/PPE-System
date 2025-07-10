@@ -11,6 +11,8 @@
 
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte';
+  import { page } from '$app/stores';
+  import { goto } from '$app/navigation';
   // 🚀 MIGRADO: Usar novo adapter de consultas
   import { fichaQueryAdapter } from '$lib/services/process';
   import { createPaginatedStore } from '$lib/stores/paginatedStore';
@@ -25,23 +27,24 @@
   // ==================== PROPS ====================
   
   export let initialPageSize: number = 10;
-  export const autoRefresh: boolean = false;
-  export const refreshInterval: number = 30000;
+  export let autoRefresh: boolean = false;
+  export let refreshInterval: number = 30000;
 
   // ==================== ENHANCED STORE ====================
   
-  // 🚀 MIGRADO: Store paginado usando método transitório do novo adapter
+  // 🚀 ATUALIZADO: Store paginado usando novo método getFichasList com busca unificada
   const fichasStore = createPaginatedStore(
-    (params) => fichaQueryAdapter.getFichasWithColaboradores({
+    (params) => fichaQueryAdapter.getFichasList({
       page: params.page || 1,
       limit: params.limit || initialPageSize,
-      searchTerm: params.search || undefined,
-      empresaFilter: params.empresa !== 'todas' ? params.empresa : undefined,
-      cargoFilter: params.cargo !== 'todos' ? params.cargo : undefined,
-      statusFilter: params.status !== 'todos' ? params.status : undefined,
-      devolucaoPendente: !!params.devolucaoPendente
+      search: params.search || undefined, // 🆕 BUSCA UNIFICADA: CPF, nome, matrícula
+      // ✅ CORREÇÃO: Usar nomes corretos dos parâmetros conforme container envia
+      empresaFilter: params.empresaFilter !== 'todas' ? params.empresaFilter : undefined, // Container envia 'empresaFilter'
+      cargo: params.cargo !== 'todos' ? params.cargo : undefined,
+      status: params.status !== 'todos' ? params.status : undefined,
+      devolucaoPendente: !!params.devolucaoPendente // ✅ CORREÇÃO: Usar nome correto
     }).then(response => ({
-      data: response.fichas,
+      data: response.items,
       total: response.total,
       page: response.page || params.page || 1,
       pageSize: response.pageSize || params.limit || initialPageSize,
@@ -62,6 +65,15 @@
   let loadingColaboradores = false;
   let submittingNovaFicha = false;
 
+  // ✅ NOVO: Estado para opções de filtros dinâmicos
+  let empresaOptions: Array<{ value: string; label: string }> = [
+    { value: 'todas', label: 'Todas as Empresas' }
+  ];
+  let cargoOptions: Array<{ value: string; label: string }> = [
+    { value: 'todos', label: 'Todos os Cargos' }
+  ];
+  let loadingFilterOptions = false;
+
   // ==================== LIFECYCLE ====================
   
   onMount(async () => {
@@ -70,11 +82,42 @@
     // Aguardar configurações de negócio
     await businessConfigStore.initialize();
     
-    // Carregar dados iniciais
-    await loadFichasData();
+    // Carregar opções de filtros e dados iniciais em paralelo
+    await Promise.all([
+      loadFilterOptions(),
+      loadFichasData()
+    ]);
+    
+    // 🔗 NOVO: Verificar se há uma ficha para abrir via URL
+    checkForDirectLink();
     
     console.log('✅ FichasContainer: Inicializado com sucesso');
   });
+  
+  // 🔗 NOVO: Reagir a mudanças na URL
+  $: {
+    if ($page.url.searchParams.get('ficha')) {
+      handleDirectLink($page.url.searchParams.get('ficha'));
+    }
+  }
+  
+  // 🔗 NOVO: Verificar link direto na inicialização
+  function checkForDirectLink(): void {
+    const fichaIdFromUrl = $page.url.searchParams.get('ficha');
+    if (fichaIdFromUrl) {
+      console.log('🔗 Link direto detectado para ficha:', fichaIdFromUrl);
+      handleDirectLink(fichaIdFromUrl);
+    }
+  }
+  
+  // 🔗 NOVO: Processar link direto
+  function handleDirectLink(fichaId: string | null): void {
+    if (fichaId && fichaId !== selectedFichaId) {
+      console.log('🔗 Abrindo ficha via link direto:', fichaId);
+      selectedFichaId = fichaId;
+      showDetail = true;
+    }
+  }
   
   // ==================== DATA LOADING ====================
   
@@ -85,6 +128,78 @@
     } catch (error) {
       console.error('❌ Erro ao carregar fichas:', error);
       notify.error('Erro ao carregar fichas', 'Não foi possível carregar os dados das fichas');
+    }
+  }
+
+  // ✅ NOVO: Carregar opções de filtros dinamicamente
+  async function loadFilterOptions(): Promise<void> {
+    try {
+      loadingFilterOptions = true;
+      console.log('🔄 Carregando opções de filtros...');
+
+      // Carregar empresas únicas das contratadas
+      const empresasResponse = await api.get('/contratadas');
+      if (empresasResponse.success && empresasResponse.data) {
+        const contratadasArray = empresasResponse.data.contratadas || empresasResponse.data;
+        if (Array.isArray(contratadasArray)) {
+          empresaOptions = [
+            { value: 'todas', label: 'Todas as Empresas' },
+            ...contratadasArray.map((empresa: any) => ({
+              value: empresa.id,
+              label: empresa.nome
+            }))
+          ];
+          console.log('✅ Opções de empresa carregadas:', {
+            total: empresaOptions.length,
+            exemplos: empresaOptions.slice(0, 3).map(emp => ({ 
+              id: emp.value, 
+              nome: emp.label 
+            }))
+          });
+        }
+      }
+
+      // ✅ DINÂMICO: Carregar cargos únicos do endpoint de colaboradores
+      try {
+        const colaboradoresResponse = await api.get('/colaboradores?limit=100');
+        if (colaboradoresResponse.success && colaboradoresResponse.data) {
+          const colaboradores = Array.isArray(colaboradoresResponse.data) 
+            ? colaboradoresResponse.data 
+            : colaboradoresResponse.data.items || [];
+          
+          // Extrair cargos únicos
+          const cargosUnicos = [...new Set(
+            colaboradores
+              .map((colab: any) => colab.cargo)
+              .filter((cargo: string) => cargo && cargo.trim())
+          )].sort();
+          
+          cargoOptions = [
+            { value: 'todos', label: 'Todos os Cargos' },
+            ...cargosUnicos.map((cargo: string) => ({
+              value: cargo, // ✅ CORREÇÃO: Usar o valor original do cargo
+              label: cargo
+            }))
+          ];
+          console.log('✅ Opções de cargo carregadas dinamicamente:', cargoOptions.length);
+        }
+      } catch (error) {
+        console.warn('⚠️ Erro ao carregar cargos, usando fallback:', error);
+        // Fallback para cargos comuns
+        cargoOptions = [
+          { value: 'todos', label: 'Todos os Cargos' },
+          { value: 'operador', label: 'Operador' },
+          { value: 'tecnico', label: 'Técnico' },
+          { value: 'supervisor', label: 'Supervisor' },
+          { value: 'gerente', label: 'Gerente' },
+        ];
+      }
+      
+    } catch (error) {
+      console.error('❌ Erro ao carregar opções de filtros:', error);
+      // Manter opções padrão em caso de erro
+    } finally {
+      loadingFilterOptions = false;
     }
   }
   
@@ -120,9 +235,17 @@
   }
 
   function handleClearFilters(): void {
+    console.log('🧹 Limpando todos os filtros...');
+    
+    // ✅ CORREÇÃO: Limpar PRIMEIRO os valores locais
     searchTerm = '';
     filters = { empresa: 'todas', cargo: 'todos', devolucaoPendente: false };
-    applyFilters();
+    
+    // ✅ CORREÇÃO: Resetar store completamente e recarregar dados limpos
+    fichasStore.reset(); // Reset completo (página 1, filtros limpos, cache limpo)
+    fichasStore.fetchPage(); // Recarregar dados sem filtros
+    
+    console.log('✅ Filtros limpos, store resetado e dados recarregados');
   }
 
   /**
@@ -136,21 +259,28 @@
       activeFilters.search = searchTerm.trim();
     }
     
-    // Adicionar filtros apenas se diferentes dos valores padrão
+    // ✅ CORREÇÃO: Usar nomes corretos dos parâmetros conforme adapter
     if (filters.empresa && filters.empresa !== 'todas') {
-      activeFilters.empresa = filters.empresa;
+      activeFilters.empresaFilter = filters.empresa; // Adapter processa 'empresaFilter' → 'empresaId'
     }
     
     if (filters.cargo && filters.cargo !== 'todos') {
-      activeFilters.cargo = filters.cargo;
+      activeFilters.cargo = filters.cargo; // Este está correto
     }
-
 
     if (filters.devolucaoPendente) {
-      activeFilters.devolucaoPendente = true;
+      activeFilters.devolucaoPendente = true; // ✅ CORREÇÃO: Adapter processa 'devolucaoPendente'
     }
     
-    console.log('🔧 Aplicando filtros de fichas:', activeFilters);
+    console.log('🔧 Aplicando filtros de fichas:', {
+      original: filters,
+      processed: activeFilters,
+      searchTerm,
+      empresa: filters.empresa,
+      cargo: filters.cargo,
+      devolucaoPendente: filters.devolucaoPendente
+    });
+    
     fichasStore.setFilters(activeFilters);
   }
   
@@ -169,12 +299,23 @@
   function handleViewDetail(fichaId: string): void {
     selectedFichaId = fichaId;
     showDetail = true;
+    
+    // 🔗 NOVO: Atualizar URL com o ID da ficha
+    const url = new URL($page.url);
+    url.searchParams.set('ficha', fichaId);
+    goto(url.toString(), { replaceState: true, noScroll: true });
+    
     console.log('👀 Abrindo detalhes da ficha:', fichaId);
   }
 
   function handleCloseDetail(): void {
     showDetail = false;
     selectedFichaId = null;
+    
+    // 🔗 NOVO: Remover parâmetro da URL
+    const url = new URL($page.url);
+    url.searchParams.delete('ficha');
+    goto(url.toString(), { replaceState: true, noScroll: true });
   }
 
   function handleFichaUpdated(): void {
@@ -241,10 +382,21 @@
   async function loadColaboradores(contratadaId: string): Promise<void> {
     try {
       loadingColaboradores = true;
-      console.log('🔄 Carregando colaboradores para contratada:', contratadaId);
+      console.log('🔄 Carregando colaboradores SEM FICHA para contratada:', contratadaId);
       
-      // ✅ CORREÇÃO: Usar apiClient para compatibilidade local/GitHub Pages
-      const result = await api.get(`/colaboradores?contratadaId=${contratadaId}&limit=100`);
+      // ✅ BACKEND CORRIGIDO: Agora aceita semFicha=true como string corretamente
+      // Usar apenas colaboradores que não possuem ficha EPI ativa
+      
+      const urlParams = new URLSearchParams();
+      urlParams.set('contratadaId', contratadaId);
+      urlParams.set('semFicha', 'true'); // ✅ CORRIGIDO: Backend agora aceita string
+      urlParams.set('limit', '100');
+      
+      const url = `/colaboradores?${urlParams.toString()}`;
+      console.log('🔗 URL (com semFicha=true):', url);
+      
+      const result = await api.get(url);
+      console.log('📋 FILTRADO: Mostrará APENAS colaboradores sem ficha EPI');
       
       console.log('📦 Raw API response for colaboradores:', result);
       console.log('📦 result.data structure:', result.data);
@@ -253,7 +405,7 @@
         // ✅ CORREÇÃO: Backend retorna { success: true, data: [...], pagination: {...} }
         const colaboradoresArray = result.data;
         
-        console.log('📋 Colaboradores encontrados:', colaboradoresArray.length);
+        console.log('📋 Colaboradores sem ficha encontrados:', colaboradoresArray.length);
         
         if (Array.isArray(colaboradoresArray)) {
           colaboradores = colaboradoresArray.map((colaborador: any) => ({
@@ -266,7 +418,7 @@
             setor: colaborador.setor || '-'
           }));
           
-          console.log('✅ Colaboradores carregados da API:', colaboradores.length);
+          console.log('✅ Colaboradores sem ficha carregados da API:', colaboradores.length);
         } else {
           throw new Error('Dados de colaboradores não são um array');
         }
@@ -274,36 +426,36 @@
         throw new Error('Resposta inválida da API de colaboradores');
       }
     } catch (error) {
-      console.error('❌ Erro ao carregar colaboradores:', error);
+      console.error('❌ Erro ao carregar colaboradores sem ficha:', error);
       const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
-      notify.error('Erro ao carregar colaboradores', `Não foi possível carregar a lista de profissionais: ${errorMessage}`);
+      notify.error('Erro ao carregar colaboradores', `Não foi possível carregar a lista de profissionais sem ficha: ${errorMessage}`);
       
       // Fallback para dados mock em caso de erro - usar dados genéricos para qualquer contratada
       colaboradores = [
         { 
           value: `mock-colab-001-${contratadaId}`, 
-          label: 'Carlos Oliveira (Mock)', 
+          label: 'Carlos Oliveira (Mock - Sem Ficha)', 
           empresa: contratadaId,
           cpf: '123.456.789-01',
           cargo: 'Operador'
         },
         { 
           value: `mock-colab-002-${contratadaId}`, 
-          label: 'Ana Santos (Mock)', 
+          label: 'Ana Santos (Mock - Sem Ficha)', 
           empresa: contratadaId,
           cpf: '987.654.321-02',
           cargo: 'Técnica'
         },
         { 
           value: `mock-colab-003-${contratadaId}`, 
-          label: 'João Silva (Mock)', 
+          label: 'João Silva (Mock - Sem Ficha)', 
           empresa: contratadaId,
           cpf: '456.789.123-03',
           cargo: 'Supervisor'
         }
       ];
       
-      console.log('⚠️ Usando dados mock para colaboradores:', colaboradores.length);
+      console.log('⚠️ Usando dados mock para colaboradores sem ficha:', colaboradores.length);
     } finally {
       loadingColaboradores = false;
     }
@@ -356,6 +508,18 @@
         );
         
         console.log('✅ Nova ficha criada com sucesso:', result.data);
+        
+        // 🔗 NOVO: Abrir a ficha recém-criada automaticamente
+        if (result.data && result.data.id) {
+          console.log('🎯 Abrindo ficha recém-criada:', result.data.id);
+          selectedFichaId = result.data.id;
+          showDetail = true;
+          
+          // 🔗 Atualizar URL com o ID da nova ficha
+          const url = new URL($page.url);
+          url.searchParams.set('ficha', result.data.id);
+          goto(url.toString(), { replaceState: true, noScroll: true });
+        }
       } else {
         throw new Error(result.message || 'Erro ao criar ficha');
       }
@@ -380,17 +544,6 @@
   }
   
   // ==================== COMPUTED PROPERTIES ====================
-  
-  // Opções de filtros (hardcoded por enquanto, podem ser carregadas dinamicamente depois)
-  $: empresaOptions = [
-    { value: 'todas', label: 'Todas as Empresas' }
-    // TODO: Carregar dinamicamente do backend
-  ];
-
-  $: cargoOptions = [
-    { value: 'todos', label: 'Todos os Cargos' }
-    // TODO: Carregar dinamicamente do backend
-  ];
 
 
   // Verificar se há filtros ativos

@@ -25,6 +25,7 @@ export { entityManagementAdapter } from "./entity/entityManagementAdapter";
 // Inventory Adapters - Separação CQRS
 export { inventoryQueryAdapter } from "./inventory/inventoryQueryAdapter";
 export { inventoryCommandAdapter } from "./inventory/inventoryCommandAdapter";
+export { estoqueConfigAdapter } from "./inventory/estoqueConfigAdapter";
 
 // Process Lifecycle Adapter - Para workflows complexos
 export { processLifecycleAdapter } from "./process/processLifecycleAdapter";

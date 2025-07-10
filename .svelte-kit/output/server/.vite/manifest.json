@@ -9,6 +9,14 @@
       "_paths.js"
     ]
   },
+  "_Alert.js": {
+    "file": "chunks/Alert.js",
+    "name": "Alert",
+    "imports": [
+      "_ssr.js",
+      "_Button.js"
+    ]
+  },
   "_Button.js": {
     "file": "chunks/Button.js",
     "name": "Button",
@@ -24,17 +32,38 @@
       "_Button.js"
     ]
   },
+  "_CheckCircleOutline.js": {
+    "file": "chunks/CheckCircleOutline.js",
+    "name": "CheckCircleOutline",
+    "imports": [
+      "_ssr.js"
+    ]
+  },
+  "_CheckOutline.js": {
+    "file": "chunks/CheckOutline.js",
+    "name": "CheckOutline",
+    "imports": [
+      "_ssr.js"
+    ]
+  },
   "_Checkbox.js": {
     "file": "chunks/Checkbox.js",
     "name": "Checkbox",
     "imports": [
       "_ssr.js",
-      "_Label.js"
+      "_ErrorDisplay.js"
     ]
   },
   "_ChevronDownOutline.js": {
     "file": "chunks/ChevronDownOutline.js",
     "name": "ChevronDownOutline",
+    "imports": [
+      "_ssr.js"
+    ]
+  },
+  "_CogOutline.js": {
+    "file": "chunks/CogOutline.js",
+    "name": "CogOutline",
     "imports": [
       "_ssr.js"
     ]
@@ -46,17 +75,8 @@
       "_ssr.js",
       "_modalStore.js",
       "_Button.js",
-      "_Icon.js",
-      "_DrawerHeader.svelte_svelte_type_style_lang.js"
-    ]
-  },
-  "_DrawerHeader.svelte_svelte_type_style_lang.js": {
-    "file": "chunks/DrawerHeader.svelte_svelte_type_style_lang.js",
-    "name": "DrawerHeader.svelte_svelte_type_style_lang",
-    "imports": [
-      "_ssr.js",
-      "_Button.js",
-      "_ChevronDownOutline.js"
+      "_ChevronDownOutline.js",
+      "_Icon.js"
     ],
     "css": [
       "_app/immutable/assets/DrawerHeader.fHypqqV4.css"
@@ -69,22 +89,13 @@
       "_ssr.js",
       "_index.js",
       "_Button.js",
+      "_Alert.js",
       "_ExclamationCircleOutline.js"
-    ],
-    "dynamicImports": [
-      "src/lib/services/entity/contratadasAdapter.ts"
     ]
   },
   "_ExclamationCircleOutline.js": {
     "file": "chunks/ExclamationCircleOutline.js",
     "name": "ExclamationCircleOutline",
-    "imports": [
-      "_ssr.js"
-    ]
-  },
-  "_EyeOutline.js": {
-    "file": "chunks/EyeOutline.js",
-    "name": "EyeOutline",
     "imports": [
       "_ssr.js"
     ]
@@ -103,27 +114,9 @@
       "_ssr.js"
     ]
   },
-  "_Label.js": {
-    "file": "chunks/Label.js",
-    "name": "Label",
-    "imports": [
-      "_ssr.js"
-    ]
-  },
-  "_NotesDetailDrawer.svelte_svelte_type_style_lang.js": {
-    "file": "_app/immutable/assets/NotesDetailDrawer.DxyQ9dYa.css",
-    "src": "_NotesDetailDrawer.svelte_svelte_type_style_lang.js"
-  },
-  "_PlusOutline.js": {
-    "file": "chunks/PlusOutline.js",
-    "name": "PlusOutline",
-    "imports": [
-      "_ssr.js"
-    ]
-  },
-  "_TrashBinOutline.js": {
-    "file": "chunks/TrashBinOutline.js",
-    "name": "TrashBinOutline",
+  "_PenOutline.js": {
+    "file": "chunks/PenOutline.js",
+    "name": "PenOutline",
     "imports": [
       "_ssr.js"
     ]
@@ -143,13 +136,6 @@
   "_exports.js": {
     "file": "chunks/exports.js",
     "name": "exports"
-  },
-  "_fichaQueryAdapter.js": {
-    "file": "chunks/fichaQueryAdapter.js",
-    "name": "fichaQueryAdapter",
-    "imports": [
-      "_Button.js"
-    ]
   },
   "_index.js": {
     "file": "chunks/index.js",
@@ -196,6 +182,13 @@
       "_client.js"
     ]
   },
+  "_uiMappingHelpers.js": {
+    "file": "chunks/uiMappingHelpers.js",
+    "name": "uiMappingHelpers",
+    "imports": [
+      "_Button.js"
+    ]
+  },
   "node_modules/@sveltejs/kit/src/runtime/components/svelte-4/error.svelte": {
     "file": "entries/fallbacks/error.svelte.js",
     "name": "entries/fallbacks/error.svelte",
@@ -218,16 +211,6 @@
       "_internal.js"
     ]
   },
-  "src/lib/services/entity/contratadasAdapter.ts": {
-    "file": "chunks/contratadasAdapter.js",
-    "name": "contratadasAdapter",
-    "src": "src/lib/services/entity/contratadasAdapter.ts",
-    "isDynamicEntry": true,
-    "imports": [
-      "_Button.js",
-      "_ErrorDisplay.js"
-    ]
-  },
   "src/routes/+layout.svelte": {
     "file": "entries/pages/_layout.svelte.js",
     "name": "entries/pages/_layout.svelte",
@@ -238,13 +221,14 @@
       "_modalStore.js",
       "_index.js",
       "_Button.js",
+      "_CogOutline.js",
       "_FileDocOutline.js",
       "_ChevronDownOutline.js",
       "_paths.js",
       "_stores.js"
     ],
     "css": [
-      "_app/immutable/assets/_layout.-zx2Uecp.css"
+      "_app/immutable/assets/_layout.CIWCNJ43.css"
     ]
   },
   "src/routes/+layout.ts": {
@@ -264,8 +248,23 @@
       "_Button.js",
       "_Card.js",
       "_ExclamationCircleOutline.js",
+      "_CheckCircleOutline.js",
       "_FileDocOutline.js",
       "_paths.js"
+    ]
+  },
+  "src/routes/admin/+page.svelte": {
+    "file": "entries/pages/admin/_page.svelte.js",
+    "name": "entries/pages/admin/_page.svelte",
+    "src": "src/routes/admin/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_ssr.js",
+      "_Alert.js",
+      "_Button.js",
+      "_Card.js",
+      "_CheckCircleOutline.js",
+      "_CogOutline.js"
     ]
   },
   "src/routes/catalogo/+page.svelte": {
@@ -279,12 +278,9 @@
       "_ErrorDisplay.js",
       "_modalStore.js",
       "_Card.js",
-      "_EyeOutline.js",
       "_DrawerHeader.js",
-      "_PlusOutline.js",
-      "_DrawerHeader.svelte_svelte_type_style_lang.js",
-      "_TrashBinOutline.js",
-      "_Label.js",
+      "_PenOutline.js",
+      "_Icon.js",
       "_dateHelpers.js"
     ],
     "css": [
@@ -300,15 +296,11 @@
       "_ssr.js",
       "_Button.js",
       "_Card.js",
-      "_Label.js",
-      "_Checkbox.js",
       "_ErrorDisplay.js",
+      "_Checkbox.js",
       "_index.js",
       "_Icon.js",
-      "_modalStore.js",
-      "_TrashBinOutline.js",
-      "_PlusOutline.js",
-      "src/lib/services/entity/contratadasAdapter.ts"
+      "_modalStore.js"
     ]
   },
   "src/routes/estoque/+page.svelte": {
@@ -317,16 +309,14 @@
     "src": "src/routes/estoque/+page.svelte",
     "isEntry": true,
     "imports": [
-      "_ssr.js",
-      "_Button.js",
-      "_modalStore.js",
-      "_ErrorDisplay.js",
-      "_PlusOutline.js",
-      "_DrawerHeader.svelte_svelte_type_style_lang.js"
-    ],
-    "css": [
-      "_app/immutable/assets/NotesDetailDrawer.DxyQ9dYa.css"
+      "_ssr.js"
     ]
+  },
+  "src/routes/estoque/+page.ts": {
+    "file": "entries/pages/estoque/_page.ts.js",
+    "name": "entries/pages/estoque/_page.ts",
+    "src": "src/routes/estoque/+page.ts",
+    "isEntry": true
   },
   "src/routes/fichas/+page.svelte": {
     "file": "entries/pages/fichas/_page.svelte.js",
@@ -335,15 +325,21 @@
     "isEntry": true,
     "imports": [
       "_ssr.js",
-      "_fichaQueryAdapter.js",
+      "_stores.js",
+      "_client.js",
+      "_uiMappingHelpers.js",
       "_Button.js",
       "_ErrorDisplay.js",
       "_modalStore.js",
       "_Card.js",
       "_Checkbox.js",
-      "_EyeOutline.js",
-      "_PlusOutline.js",
-      "_DrawerHeader.svelte_svelte_type_style_lang.js"
+      "_DrawerHeader.js",
+      "_Icon.js",
+      "_index.js",
+      "_ExclamationCircleOutline.js",
+      "_CheckOutline.js",
+      "_CheckCircleOutline.js",
+      "_dateHelpers.js"
     ],
     "css": [
       "_app/immutable/assets/_page.Cn3ragfE.css"
@@ -360,19 +356,18 @@
       "_ErrorDisplay.js",
       "_modalStore.js",
       "_Card.js",
-      "_EyeOutline.js",
-      "_FileDocOutline.js",
+      "_CheckOutline.js",
       "_DrawerHeader.js",
-      "_PlusOutline.js",
-      "_TrashBinOutline.js",
+      "_FileDocOutline.js",
+      "_PenOutline.js",
+      "_Icon.js",
       "_Checkbox.js",
-      "_DrawerHeader.svelte_svelte_type_style_lang.js",
       "_dateHelpers.js",
-      "_Label.js",
+      "_Alert.js",
       "_ExclamationCircleOutline.js"
     ],
     "css": [
-      "_app/immutable/assets/NotesDetailDrawer.DxyQ9dYa.css"
+      "_app/immutable/assets/_page.DxyQ9dYa.css"
     ]
   },
   "src/routes/relatorios/+page.svelte": {
@@ -395,11 +390,9 @@
       "_ErrorDisplay.js",
       "_Button.js",
       "_Card.js",
-      "_Label.js",
       "_modalStore.js",
-      "_TrashBinOutline.js",
       "_dateHelpers.js",
-      "_fichaQueryAdapter.js"
+      "_uiMappingHelpers.js"
     ]
   }
 }

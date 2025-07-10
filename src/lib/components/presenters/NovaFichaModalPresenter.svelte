@@ -134,14 +134,14 @@
         <SearchableDropdown
           options={colaboradoresFiltrados}
           value={selectedColaborador}
-          placeholder={selectedContratada ? "Selecione um colaborador..." : "Primeiro selecione uma contratada"}
+          placeholder={selectedContratada ? "Selecione um colaborador sem ficha..." : "Primeiro selecione uma contratada"}
           on:change={handleColaboradorChange}
           disabled={submitting || !selectedContratada}
         />
         
         {#if colaboradoresFiltrados.length === 0 && selectedContratada}
           <p class="text-sm text-gray-500 mt-1">
-            Nenhum colaborador encontrado para esta contratada
+            Todos os colaboradores desta contratada já possuem ficha EPI
           </p>
         {/if}
       {/if}

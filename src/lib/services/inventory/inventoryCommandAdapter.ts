@@ -71,10 +71,14 @@ class InventoryCommandAdapter {
 
       const mappedItems = items.map((item: any) => ({
         ...item,
+        // Garantir que os IDs necessários para kardex estejam presentes
+        almoxarifadoId: item.almoxarifadoId || item.almoxarifado?.id,
+        tipoEPIId: item.tipoEPIId || item.tipoEpiId || item.tipoEpi?.id,
         // Mapear tipoEpi -> tipoEPI para compatibilidade frontend
         tipoEPI: item.tipoEpi
           ? {
               ...item.tipoEpi,
+              id: item.tipoEpi.id,
               numeroCA: item.tipoEpi.numeroCa || item.tipoEpi.numeroCA, // Mapear numeroCa -> numeroCA
               nomeEquipamento:
                 item.tipoEpi.nomeEquipamento || item.tipoEpi.nome, // Compatibilidade
@@ -83,8 +87,11 @@ class InventoryCommandAdapter {
           : undefined,
         // Mapear status para lowercase para compatibilidade com frontend
         status: (item.status || "DISPONIVEL").toLowerCase(),
-        // Manter dados do almoxarifado
-        almoxarifado: item.almoxarifado,
+        // Manter dados do almoxarifado com ID garantido
+        almoxarifado: item.almoxarifado ? {
+          ...item.almoxarifado,
+          id: item.almoxarifado.id
+        } : undefined,
       }));
 
       // Mapear paginação - o backend pode usar diferentes estruturas

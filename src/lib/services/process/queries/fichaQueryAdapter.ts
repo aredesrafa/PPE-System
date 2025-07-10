@@ -1,8 +1,26 @@
 /**
- * Ficha Query Adapter - Queries Otimizadas com Dados Pré-processados
+ * Ficha Query Adapter - Queries com API Oficial
  *
- * Responsabilidade: Buscar dados de fichas com processamento backend,
- * eliminando a necessidade de múltiplas chamadas e transformações no frontend.
+ * Responsabilidade: Buscar dados de fichas usando endpoints oficiais da API v3.5
+ * 
+ * 🆕 ATUALIZADO (10/07/2025): Integração com Endpoint Enhanced
+ * - ✅ USAR ENDPOINT ENHANCED: /api/fichas-epi/list-enhanced (conforme documentação linha 1886)
+ * - ✅ Busca unificada: nome, matrícula, CPF via parâmetro 'search'
+ * - ✅ Filtros por empresa e cargo suportados pela API
+ * - ✅ Transformação de dados para compatibilidade frontend
+ * - ✅ Mapeamento correto de campos (contratada.nome → colaborador.empresa)
+ * 
+ * Endpoint principal: GET /api/fichas-epi/list-enhanced
+ * 
+ * Parâmetros suportados:
+ * - search: string (busca unificada por nome, CPF, matrícula)
+ * - empresaId: string (filtro exato por UUID da empresa - recomendado)
+ * - empresa: string (filtro por nome da empresa - busca flexível)
+ * - cargo: string (filtro por cargo)
+ * - status: string (filtro por status da ficha)
+ * - devolucaoPendente: boolean (filtro por devolução pendente)
+ * - page: number (paginação)
+ * - limit: number (itens por página)
  */
 
 import { api } from "../../core/apiClient";
@@ -122,26 +140,51 @@ export interface FichaCompleteResponse {
 export interface FichaListParams {
   page?: number;
   limit?: number;
+  // 🆕 BUSCA UNIFICADA: Busca por nome, CPF ou matrícula
   search?: string;
   status?: string;
   cargo?: string;
   empresa?: string;
   vencimentoProximo?: boolean;
+  // Campos específicos para compatibilidade
+  searchTerm?: string; // alias para search
+  empresaFilter?: string; // alias para empresa
+  cargoFilter?: string; // alias para cargo
+  statusFilter?: string; // alias para status
+  devolucaoPendente?: boolean; // alias para vencimentoProximo
 }
 
 export interface FichaListItem {
   id: string;
   colaborador: {
     nome: string;
+    cpf: string; // ✅ ADICIONADO: CPF do colaborador
     matricula: string;
     cargo: string;
     empresa: string;
   };
+  contratada?: {
+    id: string;
+    nome: string;
+  };
   status: "ativa" | "inativa" | "vencida" | "pendente_devolucao";
-  totalEpisAtivos: number;
-  totalEpisVencidos: number;
-  proximoVencimento: string;
-  ultimaAtualizacao: string;
+  // ✅ COMPATIBILIDADE: Suporte para ambos os formatos de resposta
+  totalEpisAtivos?: number;
+  totalEpisVencidos?: number;
+  episInfo?: {
+    totalEpisComColaborador: number;
+    episExpirados: number;
+    proximaDataVencimento: string;
+    diasAteProximoVencimento: number;
+    tiposEpisAtivos: Array<{
+      tipoEpiId: string;
+      tipoEpiNome: string;
+      quantidade: number;
+    }>;
+  };
+  proximoVencimento?: string;
+  ultimaAtualizacao?: string;
+  devolucaoPendente?: boolean;
 }
 
 export interface PaginatedResponse<T> {
@@ -183,7 +226,7 @@ class FichaQueryAdapter {
       console.log("🔍 DEBUG Colaborador ID para devoluções:", colaboradorId);
 
       const [entregas, devolucoes] = await Promise.all([
-        api.get(`/fichas-epi/${fichaId}/entregas`),
+        api.get(`/fichas-epi/${fichaId}/entregas`) as Promise<{ data?: any[] }>,
         // Tentar múltiplas formas de buscar devoluções
         this.buscarDevolucoes(fichaId, colaboradorId),
       ]);
@@ -197,7 +240,7 @@ class FichaQueryAdapter {
       });
 
       // 🚀 CRIAR LOOKUP: Buscar EPIs disponíveis para fazer cross-reference (MOVER PARA ESCOPO GLOBAL)
-      let epiLookup = {};
+      let epiLookup: Record<string, any> = {};
       try {
         const episDisponiveis = await this.getEPIsDisponiveis();
         episDisponiveis.forEach((epi) => {
@@ -220,7 +263,8 @@ class FichaQueryAdapter {
 
       // Corrigir dados de entregas se estiverem vazios no /complete
       if (entregas && entregas.data && Array.isArray(entregas.data)) {
-        fichaBase.data.entregas = entregas.data.map((entrega) => {
+        if (fichaBase.data) {
+          fichaBase.data.entregas = entregas.data.map((entrega) => {
           console.log("🔍 DEBUG Entrega individual:", {
             id: entrega.id,
             status: entrega.status,
@@ -250,7 +294,7 @@ class FichaQueryAdapter {
                 ? ["imprimir"] // Se já está assinada, só pode imprimir
                 : ["assinar", "cancelar"], // Se não está assinada, pode assinar ou cancelar
             itens:
-              entrega.itens?.map((item) => {
+              entrega.itens?.map((item: any) => {
                 console.log(
                   "🔍 DEBUG Item raw:",
                   JSON.stringify(item, null, 2),
@@ -300,6 +344,7 @@ class FichaQueryAdapter {
               }) || [],
           };
         });
+        }
       }
 
       // 🚀 CARREGAR DEVOLUÇÕES: Usar apenas endpoint oficial
@@ -490,25 +535,212 @@ class FichaQueryAdapter {
   }
 
   /**
-   * Listar fichas com dados pré-calculados
+   * ✅ CORRIGIDO: Listar fichas usando API documentada oficial
+   * Usa endpoint /api/fichas-epi conforme documentação API v3.5
    */
   async getFichasList(
     params: FichaListParams,
   ): Promise<PaginatedResponse<FichaListItem>> {
-    console.log("📋 FichaQueryAdapter: Listando fichas com filtros:", params);
+    console.log("📋 FichaQueryAdapter: Listando fichas com API documentada:", params);
 
     try {
+      // ✅ USAR ENDPOINT OFICIAL: /api/fichas-epi (conforme documentação)
+      const queryParams = new URLSearchParams();
+      
+      // Parâmetros de paginação
+      if (params.page) queryParams.set('page', params.page.toString());
+      if (params.limit) queryParams.set('limit', params.limit.toString());
+      
+      // ✅ BUSCA UNIFICADA: Usar parâmetro 'search' do endpoint enhanced
+      if (params.search && params.search.trim()) {
+        queryParams.set('search', params.search.trim());
+        console.log("🔍 Aplicando busca unificada:", params.search.trim());
+      }
+      
+      // ✅ FILTROS CONFORME API DOCUMENTADA (apenas parâmetros oficiais)
+      if (params.status && params.status !== 'todos') {
+        queryParams.set('status', params.status.toUpperCase()); // API usa ATIVA, INATIVA
+        console.log("🔧 Filtro status aplicado:", params.status.toUpperCase());
+      }
+      
+      // ✅ FILTROS EMPRESA E CARGO: Usar parâmetros corretos conforme backend corrigido
+      if (params.empresa && params.empresa !== 'todas') {
+        // Usar parâmetro empresa para busca por nome (flexível)
+        queryParams.set('empresa', params.empresa);
+        console.log("🔧 Filtro empresa aplicado (por nome):", params.empresa);
+      }
+      
+      if (params.cargo && params.cargo !== 'todos') {
+        queryParams.set('cargo', params.cargo);
+        console.log("🔧 Filtro cargo aplicado:", params.cargo);
+      }
+      
+      // ✅ BACKEND CORRIGIDO: empresaId agora funciona corretamente
+      if (params.empresaFilter && params.empresaFilter !== 'todas') {
+        // Usar empresaId (UUID) - mais eficiente e agora funciona corretamente
+        queryParams.set('empresaId', params.empresaFilter);
+        console.log("🔧 Filtro empresa aplicado (empresaId):", params.empresaFilter);
+      }
+      
+      // ✅ DEVOLUÇÃO PENDENTE: Conforme documentação
+      if (params.vencimentoProximo || params.devolucaoPendente) {
+        queryParams.set('devolucaoPendente', 'true');
+        console.log("🔧 Filtro devolução pendente aplicado");
+      }
+      
+      // ✅ COMPATIBILIDADE com aliases legados
+      if (params.searchTerm && params.searchTerm.trim()) {
+        queryParams.set('search', params.searchTerm.trim());
+        console.log("🔧 Busca unificada (alias) aplicada:", params.searchTerm.trim());
+      }
+
+      // ✅ USAR ENDPOINT ENHANCED CONFORME DOCUMENTAÇÃO (Linha 1886)
+      const endpoint = `/fichas-epi/list-enhanced${queryParams.toString() ? '?' + queryParams.toString() : ''}`;
+      console.log("🌐 Endpoint enhanced documentado:", endpoint);
+      console.log("🔧 Parâmetros enviados:", Object.fromEntries(queryParams.entries()));
+      console.log("🔍 Debug filtros originais:", {
+        search: params.search,
+        empresa: params.empresa,
+        cargo: params.cargo,
+        empresaFilter: params.empresaFilter
+      });
+
       const response = await api.get<{
         success: boolean;
-        data: PaginatedResponse<FichaListItem>;
-      }>("/fichas-epi/list-enhanced", { params });
+        data: any[]; // Estrutura da API documentada
+        pagination?: {
+          page: number;
+          limit: number;
+          total: number;
+          totalPages: number;
+          hasNext: boolean;
+          hasPrev: boolean;
+        };
+      }>(endpoint);
 
-      console.log(
-        "✅ Lista de fichas carregada:",
-        response.data.items.length,
-        "itens",
-      );
-      return response.data;
+      console.log("📥 Resposta bruta do backend:", {
+        success: response.success,
+        dataType: Array.isArray(response.data) ? 'array' : typeof response.data,
+        dataLength: Array.isArray(response.data) ? response.data.length : 'N/A',
+        hasPagination: !!response.pagination,
+        endpointUsado: endpoint
+      });
+      
+      // ✅ DEBUG ESPECÍFICO: Verificar se filtro por empresa funciona
+      if (params.empresa && params.empresa !== 'todas' && Array.isArray(response.data)) {
+        console.log("🔍 DEBUG FILTRO EMPRESA:", {
+          empresaFiltrada: params.empresa,
+          totalItensRetornados: response.data.length,
+          primeirosItens: response.data.slice(0, 2).map(item => ({
+            id: item.id,
+            colaboradorNome: item.colaborador?.nome,
+            contratadaId: item.contratada?.id,
+            contratadaNome: item.contratada?.nome
+          }))
+        });
+      }
+
+      // Processar resposta do endpoint atualizado
+      let items: FichaListItem[] = [];
+      let pagination = {
+        page: params.page || 1,
+        limit: params.limit || 10,
+        total: 0,
+        totalPages: 1
+      };
+
+      if (response.success) {
+        let rawItems: any[] = [];
+        
+        if (Array.isArray(response.data)) {
+          // Dados diretos no array
+          rawItems = response.data;
+          pagination.total = rawItems.length;
+          pagination.totalPages = Math.ceil(pagination.total / pagination.limit);
+        } else if (response.data && typeof response.data === 'object') {
+          // Verificar se é formato paginado
+          if ('items' in response.data) {
+            rawItems = response.data.items || [];
+            if ('pagination' in response.data) {
+              pagination = { ...pagination, ...response.data.pagination };
+            }
+          } else {
+            console.warn("⚠️ Formato de resposta inesperado:", response.data);
+            rawItems = [];
+          }
+        }
+
+        // Se temos pagination na resposta, usar ela
+        if (response.pagination) {
+          pagination = { ...pagination, ...response.pagination };
+        }
+
+        // ✅ TRANSFORMAÇÃO DE DADOS: Mapear estrutura API → Frontend
+        // 🔍 DEBUG: Verificar estrutura do primeiro item
+        if (rawItems.length > 0) {
+          console.log("🔍 DEBUG Estrutura completa do primeiro item:", JSON.stringify(rawItems[0], null, 2));
+        }
+        
+        items = rawItems.map((item: any) => {
+          console.log("🔧 Transformando item da API:", {
+            id: item.id,
+            colaboradorNome: item.colaborador?.nome,
+            colaboradorCPF: item.colaborador?.cpf,
+            colaboradorCPFFormatado: item.colaborador?.cpfFormatado,
+            contratadaNome: item.contratada?.nome,
+            colaboradorEmpresa: item.colaborador?.empresa,
+            colaboradorCargo: item.colaborador?.cargo
+          });
+
+          return {
+            id: item.id,
+            colaborador: {
+              nome: item.colaborador?.nome || 'Nome não informado',
+              // ✅ BACKEND ATUALIZADO: Campo CPF adicionado (preparado para quando estiver disponível)
+              cpf: item.colaborador?.cpf || item.colaborador?.cpfFormatado || 'CPF não disponível',
+              matricula: item.colaborador?.matricula || '',
+              cargo: item.colaborador?.cargo || '',
+              // ✅ CORREÇÃO CRÍTICA: Mapear contratada.nome → colaborador.empresa
+              empresa: item.contratada?.nome || item.colaborador?.empresa || 'Empresa não informada'
+            },
+            contratada: item.contratada ? {
+              id: item.contratada.id,
+              nome: item.contratada.nome
+            } : undefined,
+            status: (item.status || 'ativa').toLowerCase() as "ativa" | "inativa" | "vencida" | "pendente_devolucao",
+            // Manter compatibilidade com ambos os formatos
+            totalEpisAtivos: item.totalEpisAtivos || item.episInfo?.totalEpisComColaborador || 0,
+            totalEpisVencidos: item.totalEpisVencidos || item.episInfo?.episExpirados || 0,
+            episInfo: item.episInfo,
+            proximoVencimento: item.proximoVencimento,
+            ultimaAtualizacao: item.ultimaAtualizacao,
+            devolucaoPendente: item.devolucaoPendente || false
+          } as FichaListItem;
+        });
+
+        console.log("✅ Dados transformados para frontend:", {
+          originalCount: rawItems.length,
+          transformedCount: items.length,
+          firstItemStructure: items[0] ? {
+            colaboradorNome: items[0].colaborador.nome,
+            colaboradorEmpresa: items[0].colaborador.empresa,
+            colaboradorCargo: items[0].colaborador.cargo,
+            hasContratada: !!items[0].contratada
+          } : null
+        });
+      }
+
+      console.log("✅ Lista de fichas processada:", {
+        totalItens: items.length,
+        paginaAtual: pagination.page,
+        totalPaginas: pagination.totalPages,
+        totalRegistros: pagination.total
+      });
+
+      return {
+        items,
+        pagination
+      };
     } catch (error) {
       console.error("❌ Erro ao listar fichas:", error);
       throw error;
@@ -858,38 +1090,61 @@ class FichaQueryAdapter {
 
   /**
    * Método transitório para compatibilidade com FichasContainer
+   * 🆕 ATUALIZADO: Suporte à busca unificada (CPF, nome, matrícula)
    */
   async getFichasWithColaboradores(params: any): Promise<any> {
     console.log(
-      "📋 FichaQueryAdapter: Método transitório - getFichasWithColaboradores",
+      "📋 FichaQueryAdapter: Método transitório com busca unificada - getFichasWithColaboradores",
+      params
     );
 
-    // Converter parâmetros do formato antigo para o novo
+    // Converter parâmetros do formato antigo para o novo com suporte à busca unificada
     const newParams: FichaListParams = {
       page: params.page,
       limit: params.limit,
-      search: params.searchTerm,
-      empresa: params.empresaFilter,
-      cargo: params.cargoFilter,
-      status: params.statusFilter,
-      vencimentoProximo: params.devolucaoPendente,
+      // 🆕 BUSCA UNIFICADA: Usar searchTerm ou search
+      search: params.searchTerm || params.search,
+      empresa: params.empresaFilter || params.empresa,
+      cargo: params.cargoFilter || params.cargo,
+      status: params.statusFilter || params.status,
+      vencimentoProximo: params.devolucaoPendente || params.vencimentoProximo,
     };
+
+    console.log("🔍 Parâmetros convertidos para busca unificada:", {
+      search: newParams.search,
+      empresa: newParams.empresa,
+      cargo: newParams.cargo,
+      status: newParams.status,
+      page: newParams.page,
+      limit: newParams.limit
+    });
 
     try {
       const response = await this.getFichasList(newParams);
 
-      // Converter resposta para formato antigo
-      return {
+      // Converter resposta para formato antigo esperado pelo FichasContainer
+      const result = {
         fichas: response.items,
         total: response.pagination.total,
         page: response.pagination.page,
         pageSize: response.pagination.limit,
+        totalPages: response.pagination.totalPages
       };
+
+      console.log("✅ Resposta convertida para formato antigo:", {
+        totalFichas: result.fichas.length,
+        total: result.total,
+        page: result.page,
+        totalPages: result.totalPages
+      });
+
+      return result;
     } catch (error) {
       console.error("❌ Erro no método transitório:", error);
       throw error;
     }
   }
+
 }
 
 // ==================== EXPORT ====================
