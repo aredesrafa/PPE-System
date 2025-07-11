@@ -17,7 +17,8 @@
   } from 'flowbite-svelte-icons';
   
   import DrawerHeader from '$lib/components/common/DrawerHeader.svelte';
-  import NotaItensManagerSimplified, { type NotaItem } from './NotaItensManagerSimplified.svelte';
+  import NotaItensManagerSimplified from './NotaItensManagerSimplified.svelte';
+  import type { NotaItem } from './NotaItensManagerSimplified.svelte';
   import LoadingSpinner from '$lib/components/common/LoadingSpinner.svelte';
   import ErrorDisplay from '$lib/components/common/ErrorDisplay.svelte';
   

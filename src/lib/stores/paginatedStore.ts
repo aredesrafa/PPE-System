@@ -194,6 +194,9 @@ export function createPaginatedStore<T>(
     }
 
     const response = await fetchFunction(params);
+    console.log("🔍 fetchWithCache received response:", response);
+    console.log("🔍 fetchWithCache response.data:", response.data);
+    console.log("🔍 fetchWithCache response.data isArray:", Array.isArray(response.data));
 
     if (enableCache) {
       const cacheKey = getCacheKey(params);
@@ -218,12 +221,15 @@ export function createPaginatedStore<T>(
     try {
       const response = await fetchWithCache(currentParams);
       console.log("🏪 PaginatedStore received response:", {
-        dataLength: response.data?.length || 0,
+        dataLength: Array.isArray(response.data) ? response.data.length : 0,
         total: response.total,
         page: response.page,
         pageSize: response.pageSize,
         totalPages: response.totalPages,
       });
+      console.log("🔍 PaginatedStore DEBUG response.data:", response.data);
+      console.log("🔍 PaginatedStore DEBUG response.data isArray:", Array.isArray(response.data));
+      console.log("🔍 PaginatedStore DEBUG response.data length:", response.data?.length);
 
       const newState = {
         items: response.data,

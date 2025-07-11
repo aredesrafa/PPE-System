@@ -27,6 +27,11 @@
  */
 declare module '$env/static/private' {
 	export const GOOGLE_API_KEY: string;
+	export const VITE_API_BASE_URL: string;
+	export const VITE_BACKEND_BASE_URL: string;
+	export const VITE_ENVIRONMENT: string;
+	export const VITE_DEBUG_API: string;
+	export const VITE_ENABLE_LOGGING: string;
 	export const NVM_INC: string;
 	export const CLAUDE_CODE_ENTRYPOINT: string;
 	export const TERM_PROGRAM: string;
@@ -92,6 +97,7 @@ declare module '$env/static/private' {
 	export const CLAUDECODE: string;
 	export const npm_node_execpath: string;
 	export const npm_config_prefix: string;
+	export const NODE_ENV: string;
 }
 
 /**
@@ -124,6 +130,11 @@ declare module '$env/static/public' {
 declare module '$env/dynamic/private' {
 	export const env: {
 		GOOGLE_API_KEY: string;
+		VITE_API_BASE_URL: string;
+		VITE_BACKEND_BASE_URL: string;
+		VITE_ENVIRONMENT: string;
+		VITE_DEBUG_API: string;
+		VITE_ENABLE_LOGGING: string;
 		NVM_INC: string;
 		CLAUDE_CODE_ENTRYPOINT: string;
 		TERM_PROGRAM: string;
@@ -189,6 +200,7 @@ declare module '$env/dynamic/private' {
 		CLAUDECODE: string;
 		npm_node_execpath: string;
 		npm_config_prefix: string;
+		NODE_ENV: string;
 		[key: `PUBLIC_${string}`]: undefined;
 		[key: `${string}`]: string | undefined;
 	}

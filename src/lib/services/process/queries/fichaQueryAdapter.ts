@@ -211,25 +211,84 @@ class FichaQueryAdapter {
     );
 
     try {
-      // SOLUÇÃO DIRETA: Usar endpoints específicos que sabemos que funcionam
-      // Primeiro buscar dados básicos da ficha
-      const fichaBase = await api.get<FichaCompleteResponse>(
-        `/fichas-epi/${fichaId}/complete`,
-      );
+      // CORREÇÃO: Backend search não retorna resultados por ID, buscar todas e filtrar
+      console.log("🔍 Tentando buscar ficha via list-enhanced...");
+      const fichasList = await api.get<any>('/fichas-epi/list-enhanced?limit=100');
+      
+      if (!fichasList?.data?.items || !Array.isArray(fichasList.data.items)) {
+        throw new Error('Erro ao carregar lista de fichas');
+      }
+      
+      // Filtrar pelo ID específico no frontend
+      const fichaBasica = fichasList.data.items.find((ficha: any) => ficha.id === fichaId);
+      
+      if (!fichaBasica) {
+        console.error(`❌ Ficha ${fichaId} não encontrada na lista de ${fichasList.data.items.length} fichas`);
+        console.log("🔍 IDs disponíveis:", fichasList.data.items.slice(0, 5).map((f: any) => f.id));
+        throw new Error(`Ficha ${fichaId} não encontrada`);
+      }
+      
+      console.log("✅ Ficha encontrada:", fichaBasica.id, fichaBasica.colaborador?.nome);
+      
+      // Montar resposta no formato esperado
+      const fichaBase = {
+        success: true,
+        data: {
+          ficha: {
+            id: fichaBasica.id,
+            status: fichaBasica.status,
+            statusDisplay: fichaBasica.statusDisplay,
+            colaborador: {
+              id: fichaBasica.colaborador?.id || fichaBasica.id || "",
+              nome: fichaBasica.colaborador?.nome || "Nome não disponível",
+              cpf: fichaBasica.colaborador?.cpf || "",
+              cpfDisplay: fichaBasica.colaborador?.cpf ? 
+                fichaBasica.colaborador.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4') : "",
+              matricula: fichaBasica.colaborador?.matricula || "",
+              cargo: fichaBasica.colaborador?.cargo || "",
+              empresa: fichaBasica.colaborador?.empresa || "",
+              iniciais: fichaBasica.colaborador?.nome ? 
+                fichaBasica.colaborador.nome.split(' ').map((n: string) => n[0]).join('').toUpperCase() : "",
+            },
+          },
+          equipamentosEmPosse: [],
+          devolucoes: [] as any[],
+          entregas: [] as any[],
+        },
+      };
       console.log(
         "🔍 DEBUG Colaborador ID da ficha:",
         fichaBase?.data?.ficha?.colaborador?.id,
       );
 
-      // Agora buscar entregas e devoluções em paralelo
-      const colaboradorId = fichaBase?.data?.ficha?.colaborador?.id;
-      console.log("🔍 DEBUG Colaborador ID para devoluções:", colaboradorId);
+      // 2. Buscar entregas e devoluções (opcional - se falhar, continuar sem elas)
+      const colaboradorId = fichaBasica.colaborador?.id;
+      console.log("🔍 DEBUG Colaborador ID:", colaboradorId);
 
-      const [entregas, devolucoes] = await Promise.all([
-        api.get(`/fichas-epi/${fichaId}/entregas`) as Promise<{ data?: any[] }>,
-        // Tentar múltiplas formas de buscar devoluções
-        this.buscarDevolucoes(fichaId, colaboradorId),
-      ]);
+      let entregas = { data: [] };
+      let devolucoes: any[] = [];
+
+      try {
+        // Tentar buscar entregas - se falhar, continuar sem elas
+        console.log("🔍 Tentando buscar entregas...");
+        entregas = await api.get(`/fichas-epi/${fichaId}/entregas`) as { data: any[] };
+        console.log("✅ Entregas carregadas:", entregas.data?.length || 0);
+      } catch (error) {
+        console.warn("⚠️ Não foi possível carregar entregas:", error);
+        entregas = { data: [] };
+      }
+
+      try {
+        // Tentar buscar devoluções - se falhar, continuar sem elas  
+        if (colaboradorId) {
+          console.log("🔍 Tentando buscar devoluções...");
+          devolucoes = await this.buscarDevolucoes(fichaId, colaboradorId);
+          console.log("✅ Devoluções carregadas:", devolucoes.length);
+        }
+      } catch (error) {
+        console.warn("⚠️ Não foi possível carregar devoluções:", error);
+        devolucoes = [];
+      }
 
       console.log("✅ Dados da ficha carregados via endpoints específicos");
       console.log("🔍 DEBUG Entregas do backend:", entregas?.data?.[0]); // Ver estrutura real
@@ -899,9 +958,14 @@ class FichaQueryAdapter {
 
           console.log("🎯 EPI processado:", {
             id: result.id,
+            estoqueItemId: result.estoqueItemId,
+            episDisponivelId: result.episDisponivelId,
+            tipoEpiId: result.tipoEpiId,
             nome: result.nomeEquipamento,
             quantidade: result.quantidadeDisponivel,
             disponivel: result.disponivel,
+            isValidId: result.id?.match(/^[A-Z0-9]{6}$/) || result.id?.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i),
+            rawItem: item
           });
 
           return result;

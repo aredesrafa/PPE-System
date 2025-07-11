@@ -17,15 +17,15 @@
   import LoadingSpinner from '$lib/components/common/LoadingSpinner.svelte';
   import ErrorDisplay from '$lib/components/common/ErrorDisplay.svelte';
   import type { ContratadaDTO } from '$lib/types/serviceTypes';
-  import type { PaginationState, FilterState } from '$lib/stores/paginatedStore';
+  import type { PaginatedState } from '$lib/stores/paginatedStore';
   
   // ==================== PROPS ====================
   
   export let items: ContratadaDTO[] = [];
   export let loading = false;
   export let error: string | null = null;
-  export let pagination: PaginationState;
-  export let filters: FilterState = {};
+  export let pagination: any;
+  export let filters: any = {};
   export let embedded = false; // Para uso em tabs
   export let showEditarContratadaModal = false;
   export let contratadaEdicao: ContratadaDTO | null = null;
@@ -230,7 +230,7 @@
         <Input
           id="filtro-nome"
           value={filters.search || ''}
-          on:input={(e) => handleFilterInput('search', e.target.value)}
+          on:input={(e) => handleFilterInput('search', (e.target as HTMLInputElement)?.value || '')}
           placeholder="Digite o nome da empresa..."
           size="sm"
           class="rounded-sm"

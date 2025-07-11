@@ -19,13 +19,17 @@ export const API_BASE_URL = (() => {
                   window.location.hostname === "127.0.0.1";
   const isGitHubPages = window.location.hostname.includes("github.io");
   
-  if (isLocal && window.location.port !== "") {
-    // Desenvolvimento local com porta específica - usar proxy
-    return "/api";
-  } else {
-    // Produção, GitHub Pages ou qualquer outro ambiente - URL direta
-    return "https://epi-backend-s14g.onrender.com/api";
-  }
+  // TEMPORÁRIO: Usar URL direta sempre até resolver problema do proxy
+  // if (isLocal && window.location.port !== "") {
+  //   // Desenvolvimento local com porta específica - usar proxy
+  //   return "/api";
+  // } else {
+  //   // Produção, GitHub Pages ou qualquer outro ambiente - URL direta
+  //   return "https://epi-backend-s14g.onrender.com/api";
+  // }
+  
+  // URL direta sempre (contornando proxy problemático)
+  return "https://epi-backend-s14g.onrender.com/api";
 })();
 
 // Interfaces para request unificado

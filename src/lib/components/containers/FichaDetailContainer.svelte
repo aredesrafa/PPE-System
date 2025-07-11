@@ -249,14 +249,42 @@
       }
       
       // ✅ NOVA ARQUITETURA: Usar deliveryProcessAdapter para operações de entrega
+      console.log('🔍 Verificando fichaId:', {
+        fichaId: fichaId,
+        fichaIdType: typeof fichaId,
+        isUUID: fichaId?.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i),
+        isCustomId: fichaId?.match(/^[A-Z0-9]{6}$/i)
+      });
+      
       const payload: CreateDeliveryPayload = {
         fichaEpiId: fichaId,
         responsavelId: event.detail.usuarioResponsavelId, // Nome do campo correto
         itens: event.detail.itens.map(item => {
           // Encontrar o EPI correspondente para pegar o estoqueItemId correto
-          const epiCorrespondente = episDisponiveis.find(epi => epi.episDisponivelId === item.episDisponivelId);
+          const epiCorrespondente = episDisponiveis.find(epi => epi.id === item.episDisponivelId);
+          
+          console.log('🔍 Mapeando item:', {
+            itemEpisDisponivelId: item.episDisponivelId,
+            epiCorrespondente: epiCorrespondente ? {
+              id: epiCorrespondente.id,
+              estoqueItemId: epiCorrespondente.estoqueItemId,
+              episDisponivelId: epiCorrespondente.episDisponivelId,
+              nome: epiCorrespondente.nomeEquipamento
+            } : null
+          });
+          
+          // Usar o ID real do item de estoque, não o ID de display
+          const estoqueItemId = epiCorrespondente?.estoqueItemId || epiCorrespondente?.id || item.episDisponivelId;
+          
+          // Verificar se o ID está em formato válido
+          console.log('🔍 Verificando ID do estoque item:', {
+            estoqueItemId: estoqueItemId,
+            isValidFormat: estoqueItemId?.match(/^[A-Z0-9]{6}$/) || estoqueItemId?.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i),
+            needsMapping: !estoqueItemId?.match(/^[A-Z0-9]{6}$/) && !estoqueItemId?.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)
+          });
+          
           return {
-            estoqueItemId: epiCorrespondente?.estoqueItemId || item.episDisponivelId, // Usar estoqueItemId se disponível
+            estoqueItemId: estoqueItemId,
             quantidade: item.quantidade
           };
         }),

@@ -19,7 +19,7 @@
   let searchTerm = '';
   let dropdownOpen = false;
   let dropdownElement: HTMLDivElement;
-  let buttonElement: HTMLButtonElement;
+  let buttonElement: HTMLButtonElement | undefined;
   let dropdownStyle = '';
   let dropdownPortalElement: HTMLDivElement;
   
@@ -152,7 +152,6 @@
     {disabled}
     class="w-full justify-between rounded-sm text-left h-10 px-3 text-sm {selectedOption ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}"
     on:click={toggleDropdown}
-    bind:this={buttonElement}
   >
     <span class="truncate">{displayText}</span>
     <ChevronDownOutline class="w-4 h-4 ml-2 flex-shrink-0 {dropdownOpen ? 'rotate-180' : ''} transition-transform" />

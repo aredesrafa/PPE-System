@@ -19,17 +19,40 @@
   
   // ==================== SIMPLE PAGINATED STORE ====================
   
-  // ✅ Simple Store similar ao ContratadaContainer
+  // ✅ Store integrado com adapter real
   const colaboradorStore = createPaginatedStore<ColaboradorDTO>(
     async (params) => {
       console.log('👥 Fetching colaboradores with params:', params);
-      // Mock para teste básico - substituir por adapter real depois
-      return {
-        data: [],
-        total: 0,
-        page: params.page || 1,
-        totalPages: 1
-      };
+      try {
+        // Usar endpoint real de colaboradores
+        const response = await fetch(`https://epi-backend-s14g.onrender.com/api/colaboradores?page=${params.page || 1}&limit=${params.limit || 10}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const result = await response.json();
+        console.log('✅ Colaboradores carregados do backend:', result);
+        
+        if (result.success && result.data) {
+          return {
+            data: result.data,
+            total: result.pagination?.total || 0,
+            page: params.page || 1,
+            totalPages: result.pagination?.totalPages || 1
+          };
+        } else {
+          throw new Error('Resposta inválida do backend');
+        }
+      } catch (error) {
+        console.error('❌ Erro ao carregar colaboradores:', error);
+        throw error;
+      }
     },
     { initialPageSize }
   );
@@ -42,11 +65,58 @@
   $: pagination = {
     currentPage: $colaboradorStore.page,
     totalPages: $colaboradorStore.totalPages,
-    total: $colaboradorStore.total
+    total: $colaboradorStore.total,
+    totalItems: $colaboradorStore.total,
+    itemsPerPage: $colaboradorStore.pageSize || initialPageSize,
+    hasNext: $colaboradorStore.page < $colaboradorStore.totalPages,
+    hasPrev: $colaboradorStore.page > 1
   };
   
-  // Mock data para teste
-  $: contratadas = [];
+  // ==================== CONTRATADAS STATE ====================
+  
+  let contratadas: ContratadaDTO[] = [];
+  let loadingContratadas = false;
+  
+  // Função para carregar contratadas
+  async function loadContratadas() {
+    if (loadingContratadas) return;
+    
+    try {
+      loadingContratadas = true;
+      console.log('🏢 Carregando contratadas...');
+      
+      const response = await fetch('https://epi-backend-s14g.onrender.com/api/contratadas', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      const result = await response.json();
+      console.log('✅ Contratadas carregadas:', result);
+      
+      if (result.success && result.data) {
+        contratadas = result.data;
+      }
+    } catch (error) {
+      console.error('❌ Erro ao carregar contratadas:', error);
+      contratadas = [];
+    } finally {
+      loadingContratadas = false;
+    }
+  }
+  
+  // Mock filters para teste
+  $: filters = {
+    searchTerm: '',
+    contratadaFilter: 'todas',
+    cargoFilter: 'todos',
+    statusFilter: 'todos'
+  };
   
   // Debug logs
   $: console.log('👥 ColaboradorContainer - items:', items.length, items);
@@ -63,6 +133,7 @@
   onMount(() => {
     console.log('👥 Inicializando ColaboradorContainer...');
     colaboradorStore.fetchPage();
+    loadContratadas();
   });
   
   // ==================== EVENT HANDLERS ====================

@@ -122,7 +122,6 @@
               <SidebarItem 
                 href={item.href}
                 label={item.label}
-                active={currentPath === item.href}
                 class="text-sm {currentPath === item.href ? 'text-primary-600 dark:text-primary-400' : ''}"
                 on:click={handleSidebarLinkClick}
               >

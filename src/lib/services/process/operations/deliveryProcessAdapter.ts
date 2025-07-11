@@ -6,6 +6,17 @@
  */
 
 import { api } from "../../core/apiClient";
+import { 
+  isValidEntityId, 
+  isValidUUID, 
+  isValidEstoqueItemId, 
+  normalizeId,
+  getIdErrorMessage 
+} from "$lib/utils/idValidation";
+import { 
+  validateAndMapDeliveryPayload,
+  logIdMappingIssues 
+} from "$lib/utils/idMapper";
 
 // ==================== INTERFACES ====================
 
@@ -92,38 +103,92 @@ class DeliveryProcessAdapter {
       throw new Error("Pelo menos um item é obrigatório");
     }
 
+    // ✅ VALIDAÇÃO E MAPEAMENTO DE IDS: Verificar se IDs estão no formato correto
+    console.log("🔍 Validando e mapeando IDs do payload...");
+    
+    const mappingResult = validateAndMapDeliveryPayload(payload);
+    
+    if (mappingResult.warnings.length > 0) {
+      console.warn("⚠️ Avisos no mapeamento de IDs:", mappingResult.warnings);
+    }
+    
+    if (!mappingResult.isValid) {
+      console.error("❌ Erro no mapeamento de IDs:", mappingResult.errors);
+      throw new Error(`IDs inválidos: ${mappingResult.errors.join(', ')}`);
+    }
+    
+    // Usar o payload mapeado se disponível
+    const validatedPayload = mappingResult.mappedPayload || payload;
+    console.log("✅ Payload validado e mapeado:", {
+      original: {
+        fichaEpiId: payload.fichaEpiId,
+        responsavelId: payload.responsavelId,
+        itemCount: payload.itens.length
+      },
+      mapped: {
+        fichaEpiId: validatedPayload.fichaEpiId,
+        responsavelId: validatedPayload.responsavelId,
+        itemCount: validatedPayload.itens.length
+      }
+    });
+
     try {
       // Montar payload conforme implementação REAL do backend
       // CRÍTICO: Número de objetos em 'itens' deve ser IGUAL ao campo 'quantidade'
       const itensExpandidos = [];
-      payload.itens.forEach((item) => {
+      validatedPayload.itens.forEach((item) => {
+        console.log('🔍 Processando item para expansão:', {
+          estoqueItemId: item.estoqueItemId,
+          quantidade: item.quantidade,
+          isUUID: item.estoqueItemId?.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i),
+          isCustomId: item.estoqueItemId?.match(/^[A-Z0-9]{6}$/i)
+        });
+        
         // Para cada quantidade, criar um objeto separado no array
         for (let i = 0; i < item.quantidade; i++) {
+          const normalizedEstoqueItemId = normalizeId(item.estoqueItemId);
           itensExpandidos.push({
-            estoqueItemOrigemId: item.estoqueItemId,
-            numeroSerie: `SER-${item.estoqueItemId}-${i + 1}`, // Série única para cada item
+            estoqueItemOrigemId: normalizedEstoqueItemId,
+            numeroSerie: `SER-${normalizedEstoqueItemId}-${i + 1}`, // Série única para cada item
           });
         }
       });
 
       const deliveryData = {
-        fichaEpiId: payload.fichaEpiId, // NECESSÁRIO no body conforme validação do backend
+        fichaEpiId: normalizeId(validatedPayload.fichaEpiId), // NECESSÁRIO no body conforme validação do backend
         quantidade: itensExpandidos.length, // Deve ser igual ao número de objetos em itens
         itens: itensExpandidos,
         assinaturaColaborador: "placeholder_signature", // Temporary placeholder
         observacoes: payload.observacoes || "",
-        usuarioId: payload.responsavelId,
+        responsavelId: normalizeId(validatedPayload.responsavelId), // ✅ CORREÇÃO: usar responsavelId ao invés de usuarioId
       };
 
       console.log("📋 Payload formatado para backend:", deliveryData);
+      console.log("🔍 Validação de IDs no payload:", {
+        fichaEpiId: {
+          value: validatedPayload.fichaEpiId,
+          isUUID: validatedPayload.fichaEpiId?.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i),
+          isCustomId: validatedPayload.fichaEpiId?.match(/^[A-Z0-9]{6}$/i)
+        },
+        responsavelId: {
+          value: validatedPayload.responsavelId,
+          isUUID: validatedPayload.responsavelId?.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i),
+          isCustomId: validatedPayload.responsavelId?.match(/^[A-Z0-9]{6}$/i)
+        },
+        estoqueItemIds: itensExpandidos.map(item => ({
+          value: item.estoqueItemOrigemId,
+          isUUID: item.estoqueItemOrigemId?.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i),
+          isCustomId: item.estoqueItemOrigemId?.match(/^[A-Z0-9]{6}$/i)
+        }))
+      });
 
       const response = await api.post<DeliveryCompleteResult>(
-        `/fichas-epi/${payload.fichaEpiId}/entregas`,
+        `/fichas-epi/${validatedPayload.fichaEpiId}/entregas`,
         deliveryData,
       );
 
       console.log("✅ Entrega criada via endpoint da ficha:");
-      console.log(`  - Ficha ID: ${payload.fichaEpiId}`);
+      console.log(`  - Ficha ID: ${validatedPayload.fichaEpiId} (original: ${payload.fichaEpiId})`);
       console.log(`  - Response:`, response);
 
       return response;
