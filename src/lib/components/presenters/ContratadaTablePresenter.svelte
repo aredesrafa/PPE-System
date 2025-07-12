@@ -230,7 +230,7 @@
         <Input
           id="filtro-nome"
           value={filters.search || ''}
-          on:input={(e) => handleFilterInput('search', (e.target as HTMLInputElement)?.value || '')}
+          on:input={(e) => handleFilterInput('search', e.target?.value || '')}
           placeholder="Digite o nome da empresa..."
           size="sm"
           class="rounded-sm"

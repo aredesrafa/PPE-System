@@ -38,7 +38,7 @@
   
   // Icons
   import { 
-    CalendarDateRangeOutline,
+    CalendarWeekOutline,
     FilterOutline,
     ChevronDownOutline,
     ChevronUpOutline,
@@ -48,7 +48,7 @@
   
   // ==================== TIPOS ====================
   
-  export interface MovimentacaoEstoque {
+  interface MovimentacaoEstoque {
     id: string;
     tipoMovimentacao: TipoMovimentacaoEnum;
     quantidadeMovida: number;
@@ -74,7 +74,7 @@
     ipOrigemOperacao?: string;
   }
   
-  export interface HistoryFilters {
+  interface HistoryFilters {
     periodo?: '7d' | '30d' | '90d' | 'custom';
     dataInicio?: string;
     dataFim?: string;
@@ -247,11 +247,11 @@
     });
   }
   
-  function getMovementColor(movement: MovimentacaoEstoque): string {
+  function getMovementColor(movement: MovimentacaoEstoque): "green" | "red" | "blue" | "dark" {
     if (isEstorno(movement.tipoMovimentacao)) return 'red';
     if (isEntrada(movement.tipoMovimentacao)) return 'green';
     if (isSaida(movement.tipoMovimentacao)) return 'blue';
-    return 'gray';
+    return 'dark';
   }
   
   function getQuantityChangeText(movement: MovimentacaoEstoque): string {
@@ -434,12 +434,13 @@
           <!-- Movimentações do dia -->
           {#each dayMovements as movement}
             <div 
-              class="timeline-item"
-              class:estorno={isEstorno(movement.tipoMovimentacao) && highlightEstornos}
+              class="relative flex items-start space-x-4 p-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+              class:border-red-300={isEstorno(movement.tipoMovimentacao) && highlightEstornos}
+              class:bg-red-50={isEstorno(movement.tipoMovimentacao) && highlightEstornos}
             >
               <!-- Ícone da timeline -->
-              <div class="timeline-icon {getMovementColor(movement)}">
-                <span class="movement-emoji">
+              <div class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-lg bg-{getMovementColor(movement)}-500">
+                <span class="text-base">
                   {getMovementIcon(movement.tipoMovimentacao)}
                 </span>
               </div>
@@ -484,10 +485,10 @@
                 <!-- Referências (notas, entregas, etc.) -->
                 <div class="movement-references">
                   {#if movement.notaMovimentacaoId}
-                    <Badge color="light" class="mr-1">Nota: {movement.notaMovimentacaoId}</Badge>
+                    <Badge color="primary" class="mr-1">Nota: {movement.notaMovimentacaoId}</Badge>
                   {/if}
                   {#if movement.entregaId}
-                    <Badge color="light" class="mr-1">Entrega: {movement.entregaId}</Badge>
+                    <Badge color="blue" class="mr-1">Entrega: {movement.entregaId}</Badge>
                   {/if}
                   {#if movement.movimentacaoOrigemId}
                     <Badge color="red" class="mr-1">Estorno de: {movement.movimentacaoOrigemId}</Badge>
@@ -570,104 +571,149 @@
     margin-top: 1rem;
   }
   
-  /* Separador de data - usando classes Tailwind */
+  /* Separador de data */
   .date-separator {
-    @apply flex items-center my-6;
+    display: flex;
+    align-items: center;
+    margin: 1.5rem 0;
   }
   
   .date-line {
-    @apply flex-1 h-px bg-gray-300 dark:bg-gray-600;
+    flex: 1;
+    height: 1px;
+    background-color: #d1d5db;
   }
   
   .date-badge {
-    @apply px-4 py-1 mx-4 text-sm font-medium text-gray-600 dark:text-gray-400 
-           bg-gray-100 dark:bg-gray-800 rounded-full;
+    padding: 0.25rem 1rem;
+    margin: 0 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #6b7280;
+    background-color: #f3f4f6;
+    border-radius: 9999px;
   }
   
-  /* Item da timeline - usando classes Tailwind */
+  /* Item da timeline */
   .timeline-item {
-    @apply relative flex items-start space-x-4 p-4 
-           bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 
-           rounded-lg shadow-sm hover:shadow-md transition-shadow;
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+    background-color: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.2s;
+  }
+  
+  .timeline-item:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   }
   
   .timeline-item.estorno {
-    @apply border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-900/20;
+    border-color: #fca5a5;
+    background-color: #fef2f2;
   }
   
-  /* Ícone da timeline - usando classes Tailwind */
+  /* Ícone da timeline */
   .timeline-icon {
-    @apply flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center
-           text-white font-bold text-lg;
+    flex-shrink: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 1.125rem;
   }
   
   .timeline-icon.green {
-    @apply bg-green-500;
+    background-color: #10b981;
   }
   
   .timeline-icon.blue {
-    @apply bg-blue-500;
+    background-color: #3b82f6;
   }
   
   .timeline-icon.red {
-    @apply bg-red-500;
+    background-color: #ef4444;
   }
   
   .timeline-icon.gray {
-    @apply bg-gray-500;
-  }
-  
-  .movement-emoji {
-    @apply text-base;
+    background-color: #6b7280;
   }
   
   /* Conteúdo */
   .timeline-content {
-    @apply flex-1 min-w-0;
+    flex: 1;
+    min-width: 0;
   }
   
   .movement-title {
-    @apply text-base font-medium text-gray-900 dark:text-white;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #111827;
   }
   
   .movement-meta {
-    @apply text-sm text-gray-600 dark:text-gray-400 mt-1;
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin-top: 0.25rem;
   }
   
   .movement-quantity {
-    @apply flex-shrink-0;
+    flex-shrink: 0;
   }
   
   /* Fluxo de quantidade */
   .quantity-flow {
-    @apply flex items-center text-sm text-gray-600 dark:text-gray-400 mt-2;
+    display: flex;
+    align-items: center;
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin-top: 0.5rem;
   }
   
   .quantity-before {
-    @apply font-mono bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded;
+    font-family: ui-monospace, monospace;
+    background-color: #f3f4f6;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
   }
   
   .arrow {
-    @apply mx-2;
+    margin: 0 0.5rem;
   }
   
   .quantity-after {
-    @apply font-mono bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded;
+    font-family: ui-monospace, monospace;
+    background-color: #f3f4f6;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
   }
   
   /* Observações */
   .movement-notes {
-    @apply text-sm text-gray-600 dark:text-gray-400 mt-2 italic;
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin-top: 0.5rem;
+    font-style: italic;
   }
   
   /* Referências */
   .movement-references {
-    @apply mt-2;
+    margin-top: 0.5rem;
   }
   
   /* Ações */
   .movement-actions {
-    @apply flex gap-2 mt-3;
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
   }
   
   /* Animações */
@@ -692,14 +738,15 @@
   }
   
   .timeline::-webkit-scrollbar-track {
-    @apply bg-gray-100 dark:bg-gray-800;
+    background-color: #f3f4f6;
   }
   
   .timeline::-webkit-scrollbar-thumb {
-    @apply bg-gray-400 dark:bg-gray-600 rounded-full;
+    background-color: #9ca3af;
+    border-radius: 9999px;
   }
   
   .timeline::-webkit-scrollbar-thumb:hover {
-    @apply bg-gray-500 dark:bg-gray-500;
+    background-color: #6b7280;
   }
 </style>

@@ -25,28 +25,31 @@
   // ==================== PROPS ====================
   
   export let initialPageSize: number = 10;
-  export const autoRefresh: boolean = false;
-  export const refreshInterval: number = 30000;
+  export let autoRefresh: boolean = false;
+  export let refreshInterval: number = 30000;
 
   // ==================== ENHANCED STORE ====================
   
-  // 🚀 MIGRADO: Store paginado usando método transitório do novo adapter
+  // 🚀 MIGRADO: Store paginado usando novo adapter mas mantendo compatibilidade
   const fichasStore = createPaginatedStore(
-    (params) => fichaQueryAdapter.getFichasWithColaboradores({
-      page: params.page || 1,
-      limit: params.limit || initialPageSize,
-      searchTerm: params.search || undefined,
-      empresaFilter: params.empresa !== 'todas' ? params.empresa : undefined,
-      cargoFilter: params.cargo !== 'todos' ? params.cargo : undefined,
-      statusFilter: params.status !== 'todos' ? params.status : undefined,
-      devolucaoPendente: !!params.devolucaoPendente
-    }).then(response => ({
-      data: response.fichas,
-      total: response.total,
-      page: response.page || params.page || 1,
-      pageSize: response.pageSize || params.limit || initialPageSize,
-      totalPages: Math.ceil(response.total / (params.limit || initialPageSize))
-    })),
+    (params) => {
+      // Mapear para o novo formato do adapter
+      return fichaQueryAdapter.getFichasList({
+        page: params.page || 1,
+        limit: params.limit || initialPageSize,
+        search: params.search || undefined, // 🆕 NOVO: busca unificada
+        empresaId: params.empresa !== 'todas' ? params.empresa : undefined,
+        cargo: params.cargo !== 'todos' ? params.cargo : undefined,
+        status: params.status !== 'todos' ? params.status : undefined,
+        devolucaoPendente: !!params.devolucaoPendente
+      }).then(response => ({
+        data: response.items, // 🔄 MAPEAR: items -> data para compatibilidade
+        total: response.total,
+        page: response.page || params.page || 1,
+        pageSize: response.pageSize || params.limit || initialPageSize,
+        totalPages: response.totalPages || Math.ceil(response.total / (params.limit || initialPageSize))
+      }));
+    },
     { initialPageSize }
   );
   
@@ -68,14 +71,12 @@
     console.log('🚀 FichasContainer: Inicializando...');
     
     // Aguardar configurações de negócio
-    if (typeof window !== 'undefined') {
-      await businessConfigStore.initialize();
-      
-      // Carregar dados iniciais apenas no browser
-      await loadFichasData();
-      
-      console.log('✅ FichasContainer: Inicializado com sucesso');
-    }
+    await businessConfigStore.initialize();
+    
+    // Carregar dados iniciais
+    await loadFichasData();
+    
+    console.log('✅ FichasContainer: Inicializado com sucesso');
   });
   
   // ==================== DATA LOADING ====================
@@ -103,25 +104,19 @@
   // Debounce para busca
   let searchTimeout: NodeJS.Timeout;
   $: {
-    // ✅ CORREÇÃO SSR: Só aplicar debounce no browser
-    if (typeof window !== 'undefined') {
-      if (searchTimeout) clearTimeout(searchTimeout);
-      searchTimeout = setTimeout(() => {
-        fichasStore.setSearch(searchTerm);
-      }, 300);
-    }
+    if (searchTimeout) clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+      fichasStore.updateFilters({ search: searchTerm });
+    }, 300);
   }
 
   // Filtros reativos
   $: {
-    // ✅ CORREÇÃO SSR: Só aplicar filtros no browser
-    if (typeof window !== 'undefined') {
-      fichasStore.setFilters({
-        empresa: filters.empresa,
-        cargo: filters.cargo,
-        devolucaoPendente: filters.devolucaoPendente
-      });
-    }
+    fichasStore.updateFilters({
+      empresa: filters.empresa,
+      cargo: filters.cargo,
+      devolucaoPendente: filters.devolucaoPendente
+    });
   }
 
   // ==================== EVENT HANDLERS ====================
@@ -150,7 +145,7 @@
 
   // ==================== REACTIVE STATEMENTS ====================
   
-  $: fichas = $fichasStore.items || [];
+  $: fichas = $fichasStore.data || [];
   $: loading = $fichasStore.loading;
   $: error = $fichasStore.error;
   $: pagination = {
@@ -166,44 +161,24 @@
 <div class="fichas-container h-full">
   <!-- Usar componente original que funcionava -->
   <FichasTablePresenter 
-    items={fichas}
+    {fichas}
     {loading}
     {error}
-    pagination={{
-      currentPage: pagination.page,
-      totalPages: pagination.totalPages,
-      pageSize: pagination.pageSize,
-      total: pagination.total,
-      hasNext: pagination.page < pagination.totalPages,
-      hasPrev: pagination.page > 1
-    }}
-    filters={{
-      searchTerm,
-      empresaFilter: filters.empresa,
-      cargoFilter: filters.cargo,
-      devolucaoPendente: filters.devolucaoPendente,
-      hasActiveFilters: searchTerm !== '' || filters.empresa !== 'todas' || filters.cargo !== 'todos' || filters.devolucaoPendente
-    }}
-    filterOptions={{
-      empresas: [{ value: 'todas', label: 'Todas as Empresas' }],
-      cargos: [{ value: 'todos', label: 'Todos os Cargos' }]
-    }}
-    on:searchChange={(e) => searchTerm = e.detail}
-    on:empresaFilterChange={(e) => filters.empresa = e.detail}
-    on:cargoFilterChange={(e) => filters.cargo = e.detail}
-    on:devolucaoPendenteChange={(e) => filters.devolucaoPendente = e.detail}
-    on:clearFilters={() => { searchTerm = ''; filters = { empresa: 'todas', cargo: 'todos', devolucaoPendente: false }; }}
-    on:pageChange={(e) => fichasStore.goToPage(e.detail)}
-    on:viewDetail={handleFichaSelect}
+    {pagination}
+    {searchTerm}
+    {filters}
+    bind:searchTerm
+    bind:filters
+    on:fichaSelect={handleFichaSelect}
     on:refresh={handleRefresh}
     on:novaFicha={handleNovaFicha}
+    on:pageChange={(e) => fichasStore.goToPage(e.detail)}
   />
 
   <!-- Detail Drawer -->
   {#if showDetail && selectedFichaId}
     <FichaDetailContainer
       fichaId={selectedFichaId}
-      open={showDetail}
       on:close={handleCloseDetail}
     />
   {/if}

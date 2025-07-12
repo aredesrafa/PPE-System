@@ -6,7 +6,7 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
   import { Table, TableHead, TableHeadCell, TableBody, TableBodyRow, TableBodyCell, Checkbox, Button, Spinner, Alert } from 'flowbite-svelte';
-  import { UserOutline, BuildingOutline, CalendarOutline } from 'flowbite-svelte-icons';
+  import { UserOutline, BuildingOutline, ClockOutline } from 'flowbite-svelte-icons';
   
   import { fichasUIStore } from '$lib/stores/fichas';
   import StatusBadge from '$lib/components/ui/StatusBadge.svelte';
@@ -217,7 +217,7 @@
               <!-- Última Atualização -->
               <TableBodyCell>
                 <div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-                  <CalendarOutline class="w-4 h-4" />
+                  <ClockOutline class="w-4 h-4" />
                   {formatDate(ficha.dataAtualizacao)}
                 </div>
               </TableBodyCell>

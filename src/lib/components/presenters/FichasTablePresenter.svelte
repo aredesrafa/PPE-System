@@ -288,7 +288,7 @@
                   <div class="flex space-x-1">
                     <button
                       class="p-2 rounded-md text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:focus:ring-gray-700"
-                      on:click={(e) => { e.stopPropagation(); handleViewDetail(ficha.id); }}
+                      on:click={(e) => { e.stopPropagation(); handleViewDetail(ficha.id.startsWith('FICHA') ? ficha.id.substring(5) : ficha.id); }}
                       title="Ver Detalhes"
                     >
                       <EyeOutline class="w-4 h-4" />

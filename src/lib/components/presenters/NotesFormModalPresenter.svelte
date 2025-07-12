@@ -13,7 +13,18 @@
   import { Modal, Button, Input, Textarea, Label, Select, Tabs, TabItem, Badge, Alert } from 'flowbite-svelte';
   import { ArrowRightOutline, ArrowLeftOutline, CheckOutline, FloppyDiskOutline, FileDocOutline } from 'flowbite-svelte-icons';
   import NotaItensManager from './NotaItensManager.svelte';
-  import type { NotaItem } from './NotaItensManager.svelte';
+  
+  interface NotaItem {
+    id: string;
+    temp_id: string;
+    quantidade: number;
+    estoque_item_id?: string;
+    tipo_epi_id: string;
+    custo_unitario: number;
+    equipamento_nome: string;
+    categoria: string;
+    numero_ca: string;
+  }
   import { almoxarifadosAdapter } from '$lib/services/entity/almoxarifadosAdapter';
   import { notasMovimentacaoAdapter } from '$lib/services/process/notasMovimentacaoAdapter';
   import { tiposEpiAdapter } from '$lib/services/entity/tiposEpiAdapter';
@@ -125,7 +136,7 @@
 
         // Carregar itens baseado na estrutura REAL da API
         // A API retorna "_itens" em vez de "itens" (conforme logs)
-        const itensArray = nota._itens || nota.itens || nota.items || [];
+        const itensArray = (nota as any)._itens || (nota as any).itens || (nota as any).items || [];
         if (Array.isArray(itensArray)) {
           itensTemp = itensArray.map((item, index) => {
             console.log(`🔍 Item ${index}:`, JSON.stringify(item, null, 2));
@@ -465,9 +476,9 @@
   $: almoxarifadoRequerido = formData.tipo_nota === 'ENTRADA' ? 
     formData.almoxarifado_destino_id : 
     formData.almoxarifado_origem_id;
-  $: canProceedToDados = itensTemp.length > 0 && almoxarifadoRequerido;
-  $: canSaveRascunho = almoxarifadoRequerido;
-  $: canConcluir = canProceedToDados && formData.data_documento;
+  $: canProceedToDados = itensTemp.length > 0 && !!almoxarifadoRequerido;
+  $: canSaveRascunho = !!almoxarifadoRequerido;
+  $: canConcluir = canProceedToDados && !!formData.data_documento;
 
 </script>
 
@@ -510,7 +521,7 @@
                   bind:value={formData.tipo_nota}
                   disabled={loading}
                   class="rounded-sm"
-                  on:change={(e) => handleInputChange('tipo_nota', e.currentTarget.value)}
+                  on:change={(e) => handleInputChange('tipo_nota', (e.target as HTMLSelectElement).value)}
                 >
                   <option value="ENTRADA">Entrada</option>
                   <option value="TRANSFERENCIA">Transferência</option>
@@ -537,7 +548,7 @@
                   bind:value={formData.almoxarifado_destino_id}
                   disabled={isReadonly || loading || loadingOptions}
                   class="rounded-sm {errors.almoxarifado_destino_id ? 'border-red-500' : ''}"
-                  on:change={(e) => handleInputChange('almoxarifado_destino_id', e.currentTarget.value)}
+                  on:change={(e) => handleInputChange('almoxarifado_destino_id', (e.target as HTMLSelectElement).value)}
                 >
                   <option value="">Selecione o almoxarifado de destino</option>
                   {#each almoxarifadoOptions as option}
@@ -559,7 +570,7 @@
                   bind:value={formData.almoxarifado_origem_id}
                   disabled={isReadonly || loading || loadingOptions}
                   class="rounded-sm {errors.almoxarifado_origem_id ? 'border-red-500' : ''}"
-                  on:change={(e) => handleInputChange('almoxarifado_origem_id', e.currentTarget.value)}
+                  on:change={(e) => handleInputChange('almoxarifado_origem_id', (e.target as HTMLSelectElement).value)}
                 >
                   <option value="">Selecione o almoxarifado de origem</option>
                   {#each almoxarifadoOptions as option}
@@ -579,7 +590,7 @@
                   bind:value={formData.almoxarifado_destino_id}
                   disabled={isReadonly || loading || loadingOptions}
                   class="rounded-sm {errors.almoxarifado_destino_id ? 'border-red-500' : ''}"
-                  on:change={(e) => handleInputChange('almoxarifado_destino_id', e.currentTarget.value)}
+                  on:change={(e) => handleInputChange('almoxarifado_destino_id', (e.target as HTMLSelectElement).value)}
                 >
                   <option value="">Selecione o almoxarifado de destino</option>
                   {#each almoxarifadoOptions as option}
@@ -603,7 +614,7 @@
                   bind:value={formData.almoxarifado_origem_id}
                   disabled={isReadonly || loading || loadingOptions}
                   class="rounded-sm {errors.almoxarifado_origem_id ? 'border-red-500' : ''}"
-                  on:change={(e) => handleInputChange('almoxarifado_origem_id', e.currentTarget.value)}
+                  on:change={(e) => handleInputChange('almoxarifado_origem_id', (e.target as HTMLSelectElement).value)}
                 >
                   <option value="">Selecione o almoxarifado de origem</option>
                   {#each almoxarifadoOptions as option}
@@ -653,7 +664,7 @@
                 bind:value={formData.numero_documento}
                 disabled={isReadonly || loading}
                 class="rounded-sm"
-                on:input={(e) => handleInputChange('numero_documento', e.currentTarget.value)}
+                on:input={(e) => handleInputChange('numero_documento', (e.target as HTMLInputElement).value)}
               />
               <p class="text-sm text-gray-500 mt-1">
                 Nota fiscal, código interno, etc.

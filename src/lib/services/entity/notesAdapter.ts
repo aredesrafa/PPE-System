@@ -9,7 +9,15 @@
  */
 
 import { apiClient, createUrlWithParams } from "../core/apiClient";
-import type { PaginatedResponse, FilterParams } from "../../types/serviceTypes";
+import type { PaginatedResponse } from "../../types/serviceTypes";
+
+interface FilterParams {
+  search?: string;
+  page?: number;
+  limit?: number;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+}
 
 // ==================== TIPOS ====================
 
@@ -79,8 +87,14 @@ export interface CreateNotaSaidaData {
 
 export type CreateNotaData = CreateNotaEntradaData | CreateNotaSaidaData;
 
-export interface UpdateNotaData extends Partial<CreateNotaData> {
+export interface UpdateNotaData {
+  numeroNota?: string;
+  data?: string;
+  responsavel?: string;
+  motivo?: string;
+  observacoes?: string;
   status?: "pendente" | "processada" | "cancelada";
+  itens?: Omit<NotaItem, "id">[];
 }
 
 // ==================== CACHE ====================
@@ -179,7 +193,7 @@ class NotesAdapter {
     try {
       // Mock data - substituir por API real
       const mockData = this.getMockNotas();
-      const nota = mockData.items.find((item) => item.id === id);
+      const nota = mockData.items.find((item: any) => item.id === id);
 
       if (!nota) {
         throw new Error("Nota não encontrada");
@@ -242,7 +256,7 @@ class NotesAdapter {
         ...existing,
         ...data,
         itens: data.itens
-          ? data.itens.map((item, index) => ({
+          ? data.itens.map((item: any, index: number) => ({
               ...item,
               id: item.id || `item-${Date.now()}-${index}`,
             }))

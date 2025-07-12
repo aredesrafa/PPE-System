@@ -213,6 +213,12 @@ export function createPaginatedStore<T>(
    * Função principal para buscar página
    */
   async function fetchPage(params: PaginationParams = {}): Promise<void> {
+    // ✅ CORREÇÃO SSR: Só fazer requisições no browser
+    if (typeof window === 'undefined') {
+      console.log('⚠️ PaginatedStore: Ignorando fetchPage durante SSR');
+      return;
+    }
+
     // Mesclar com parâmetros atuais
     currentParams = { ...currentParams, ...params };
 
@@ -268,6 +274,11 @@ export function createPaginatedStore<T>(
    * Define filtros com debounce
    */
   async function setFilters(filters: Record<string, any>): Promise<void> {
+    // ✅ CORREÇÃO SSR: Só fazer requisições no browser
+    if (typeof window === 'undefined') {
+      return;
+    }
+
     // Limpar timeout anterior
     if (filterTimeout) {
       clearTimeout(filterTimeout);
@@ -288,6 +299,11 @@ export function createPaginatedStore<T>(
    * Define busca com debounce
    */
   async function setSearch(search: string): Promise<void> {
+    // ✅ CORREÇÃO SSR: Só fazer requisições no browser
+    if (typeof window === 'undefined') {
+      return;
+    }
+
     // Limpar timeout anterior
     if (searchTimeout) {
       clearTimeout(searchTimeout);

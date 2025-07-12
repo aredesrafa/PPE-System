@@ -18,7 +18,7 @@
   
   import DrawerHeader from '$lib/components/common/DrawerHeader.svelte';
   import NotaItensManagerSimplified from './NotaItensManagerSimplified.svelte';
-  import type { NotaItem } from './NotaItensManagerSimplified.svelte';
+  import type { NotaItem } from './NotaItensManager.svelte';
   import LoadingSpinner from '$lib/components/common/LoadingSpinner.svelte';
   import ErrorDisplay from '$lib/components/common/ErrorDisplay.svelte';
   
@@ -225,7 +225,7 @@
             
             const baseItem = {
               temp_id: `existing_${item.id}`,
-              tipo_epi_id: item.tipoEpiId || item.tipo_epi_id,
+              tipo_epi_id: (item as any).tipoEpiId || item.tipo_epi_id,
               estoque_item_id: item.estoque_item_id,
               quantidade: item.quantidade,
               custo_unitario: item.custo_unitario || 0,
@@ -236,8 +236,8 @@
 
             try {
               // Se tem tipoEpiId, buscar dados do tipo de EPI
-              if (item.tipoEpiId || item.tipo_epi_id) {
-                const tipoEpiId = item.tipoEpiId || item.tipo_epi_id;
+              if ((item as any).tipoEpiId || item.tipo_epi_id) {
+                const tipoEpiId = (item as any).tipoEpiId || item.tipo_epi_id;
                 console.log('🔍 Buscando dados do tipo EPI:', tipoEpiId);
                 
                 const tiposEpiOptions = await tiposEpiAdapter.obterOpcoesSelectComCache({ 

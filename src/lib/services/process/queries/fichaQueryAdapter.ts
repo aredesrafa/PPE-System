@@ -9,13 +9,30 @@ import type { FichaQueryParams, PaginatedFichaResponse, FichaBasica } from './ty
 
 export class FichaQueryAdapter {
   /**
+   * Busca detalhes completos de uma ficha EPI
+   */
+  async getFichaComplete(fichaId: string): Promise<any> {
+    try {
+      const endpoint = `/fichas-epi/${fichaId}/complete`;
+      console.log('🔍 Chamando endpoint de ficha completa:', endpoint);
+      const response = await api.get(endpoint);
+      return fichaTransformAdapter.transformFichaComplete(response);
+    } catch (error) {
+      console.error('❌ Erro ao buscar ficha completa:', error);
+      throw error;
+    }
+  }
+
+  /**
    * Busca lista de fichas com filtros e paginação
    */
   async getFichasList(params: FichaQueryParams = {}): Promise<PaginatedFichaResponse> {
     try {
       const queryParams = this.buildQueryParams(params);
+      // 🔧 CORREÇÃO: Usar endpoint list-enhanced que existe na API v3.5
       const endpoint = `/fichas-epi/list-enhanced${queryParams}`;
 
+      console.log('🔍 Chamando endpoint:', endpoint);
       const response = await api.get(endpoint);
       return fichaTransformAdapter.transformFichasList(response);
     } catch (error) {
@@ -125,6 +142,40 @@ export class FichaQueryAdapter {
   }
 
   /**
+   * MÉTODO TRANSITÓRIO: getFichasWithColaboradores 
+   * Mantém compatibilidade com código legado
+   */
+  async getFichasWithColaboradores(params: any): Promise<any> {
+    console.log('📋 FichaQueryAdapter: Método transitório - getFichasWithColaboradores');
+
+    // Converter parâmetros do formato antigo para o novo
+    const newParams: FichaQueryParams = {
+      page: params.page,
+      limit: params.limit,
+      search: params.searchTerm,
+      empresa: params.empresaFilter,
+      cargo: params.cargoFilter,
+      status: params.statusFilter,
+      devolucaoPendente: params.devolucaoPendente,
+    };
+
+    try {
+      const response = await this.getFichasList(newParams);
+
+      // Converter resposta para formato antigo
+      return {
+        fichas: response.items,
+        total: response.total,
+        page: response.page,
+        pageSize: response.pageSize,
+      };
+    } catch (error) {
+      console.error('❌ Erro no método transitório:', error);
+      throw error;
+    }
+  }
+
+  /**
    * Busca estatísticas gerais de fichas
    */
   async getEstatisticasGerais(): Promise<{
@@ -144,6 +195,56 @@ export class FichaQueryAdapter {
     } catch (error) {
       console.error('Erro ao buscar estatísticas:', error);
       return { total: 0, ativas: 0, inativas: 0, pendenteDevolucao: 0 };
+    }
+  }
+
+  /**
+   * Busca EPIs disponíveis para entrega
+   */
+  async getEPIsDisponiveis(): Promise<EPIDisponivel[]> {
+    try {
+      const response = await api.get('/estoque/itens?apenasDisponiveis=true&apenasComSaldo=true');
+      if (!response.success || !Array.isArray(response.data.items)) {
+        return [];
+      }
+      // Mapear para o formato EPIDisponivel
+      return response.data.items.map((item: any) => ({
+        id: item.id,
+        nomeEquipamento: item.tipoEpi.nomeEquipamento,
+        numeroCA: item.tipoEpi.numeroCa,
+        categoria: item.tipoEpi.categoriaEpi,
+        quantidadeDisponivel: item.quantidade,
+        disponivel: item.status === 'DISPONIVEL' && item.quantidade > 0,
+        registroCA: item.tipoEpi.numeroCa, // Assumindo que registroCA é o mesmo que numeroCa
+        estoqueItemId: item.id,
+        tipoEpiId: item.tipoEpi.id,
+        posicaoEstoqueId: item.almoxarifadoId, // Assumindo que almoxarifadoId é o id da posição de estoque
+      }));
+    } catch (error) {
+      console.error('Erro ao buscar EPIs disponíveis:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Busca usuários para seleção de responsável
+   */
+  async getUsuarios(): Promise<Usuario[]> {
+    try {
+      const response = await api.get('/usuarios');
+      if (!response.success || !Array.isArray(response.data)) {
+        return [];
+      }
+      return response.data.map((user: any) => ({
+        id: user.id,
+        nome: user.nome,
+        email: user.email,
+        cargo: user.cargo || '',
+        ativo: user.ativo || true,
+      }));
+    } catch (error) {
+      console.error('Erro ao buscar usuários:', error);
+      return [];
     }
   }
 }

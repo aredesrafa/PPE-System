@@ -15,7 +15,9 @@ export class FichaTransformAdapter {
    * Transforma lista de fichas do backend para frontend
    */
   transformFichasList(rawData: any): PaginatedFichaResponse {
-    if (!rawData?.data?.items) {
+    // ✅ CORREÇÃO: API v3.5 retorna { success: true, data: { items: [...], pagination: {...} } }
+    if (!rawData?.success || !rawData?.data?.items || !Array.isArray(rawData.data.items)) {
+      console.log('❌ Transform: Invalid data structure');
       return {
         items: [],
         total: 0,
@@ -25,12 +27,14 @@ export class FichaTransformAdapter {
       };
     }
 
+    const transformedItems = rawData.data.items.map(this.transformFichaBasica);
+
     return {
-      items: rawData.data.items.map(this.transformFichaBasica),
-      total: rawData.data.total || 0,
-      page: rawData.data.page || 1,
-      pageSize: rawData.data.pageSize || 10,
-      totalPages: rawData.data.totalPages || 0
+      items: transformedItems,
+      total: rawData.data.pagination?.total || rawData.data.items.length,
+      page: rawData.data.pagination?.page || 1,
+      pageSize: rawData.data.pagination?.limit || 10,
+      totalPages: rawData.data.pagination?.totalPages || Math.ceil((rawData.data.pagination?.total || rawData.data.items.length) / (rawData.data.pagination?.limit || 10))
     };
   }
 
@@ -122,7 +126,7 @@ export class FichaTransformAdapter {
     return {
       success: true,
       data: {
-        ficha: this.transformFichaBasica(rawData.data.ficha),
+        ficha: this.transformFichaBasica(rawData.data),
         entregas: rawData.data.entregas || [],
         devolucoes: rawData.data.devolucoes || []
       }
