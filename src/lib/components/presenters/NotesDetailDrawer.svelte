@@ -520,6 +520,12 @@
           observacoes: notaData.observacoes
         });
         notaId = nota.id;
+        
+        // Se modo é concluida, concluir a nota também para edição
+        if (modo === 'concluida') {
+          console.log('🎯 Concluindo nota editada:', notaId);
+          await notasMovimentacaoAdapter.concluirNota(notaId);
+        }
       }
 
       // Emitir evento de sucesso

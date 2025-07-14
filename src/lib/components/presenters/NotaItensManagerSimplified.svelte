@@ -42,6 +42,9 @@
   export let readonly = false;
   export let currentNotaId: string = ''; // Para salvar custos de itens existentes
 
+  // Track if we've loaded data to prevent auto-addition during data loading
+  let hasLoadedData = false;
+
   // ==================== EVENT DISPATCHER ====================
 
   const dispatch = createEventDispatcher<{
@@ -297,8 +300,13 @@
     atualizarItem(index, 'custo_unitario', novoCusto);
   }
 
-  // Adicionar primeiro item automaticamente
-  $: if (itens.length === 0 && !readonly && (tipoEpiOptions.length > 0 || estoqueItensOptions.length > 0)) {
+  // Mark as loaded when we receive items with data
+  $: if (itens.length > 0 && itens.some(item => item.tipo_epi_id || item.estoque_item_id)) {
+    hasLoadedData = true;
+  }
+
+  // Only auto-add items in create mode, not when loading existing data
+  $: if (itens.length === 0 && !readonly && (tipoEpiOptions.length > 0 || estoqueItensOptions.length > 0) && !hasLoadedData) {
     adicionarItem();
   }
 </script>
