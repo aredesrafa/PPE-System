@@ -35,7 +35,7 @@
     telefone: '',
     email: '',
     endereco: '',
-    status: 'ATIVO' as const
+    status: 'ATIVO'
   };
 
   // Validation
@@ -114,7 +114,7 @@
 
       dispatch('success', result);
       show = false;
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao salvar contratada:', error);
     } finally {
       isSubmitting = false;
@@ -174,7 +174,7 @@
         bind:value={formData.cnpj}
         on:input={handleCNPJInput}
         placeholder="00.000.000/0000-00"
-        maxlength="18"
+        maxlength={18}
         class="w-full"
         color={errors.cnpj ? 'red' : 'base'}
       />

@@ -9,11 +9,12 @@
  */
 
 import { api, createUrlWithParams } from "../core/apiClient";
-import type { PaginatedResponse } from "$lib/stores/paginatedStore";
-import type {
-  EnhancedPaginationParams,
-  FilterOptionsResponse,
-} from "$lib/stores/enhancedPaginatedStore";
+import type { PaginatedResponse, PaginationParams } from "$lib/stores/paginatedStore";
+
+// TODO: Verificar se FilterOptionsResponse existe ou se deve ser criado
+interface FilterOptionsResponse {
+  [key: string]: any;
+}
 
 // ==================== INTERFACES UNIFICADAS ====================
 
@@ -56,7 +57,7 @@ export interface AlmoxarifadoUnified extends BaseEntity {
   unidadeNegocioId: string;
 }
 
-export interface UnifiedSearchParams extends EnhancedPaginationParams {
+export interface UnifiedSearchParams extends PaginationParams {
   // Campos de busca comuns
   search?: string;
 
@@ -210,7 +211,7 @@ class UnifiedDataAdapter {
       };
 
       const url = createUrlWithParams("/tipos-epi", queryParams);
-      const response = await api.get(url);
+      const response = await api.get(url) as any;
 
       // Mapear resposta para formato unificado conforme estrutura real da API
       const mappedItems: TipoEPIUnified[] = response.data.items.map(
@@ -247,7 +248,7 @@ class UnifiedDataAdapter {
       );
 
       return result;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao carregar tipos EPI:", error);
       throw new Error("Não foi possível carregar o catálogo de EPIs");
     }
@@ -285,7 +286,7 @@ class UnifiedDataAdapter {
       };
 
       const url = createUrlWithParams("/estoque-itens", queryParams);
-      const response = await api.get(url);
+      const response = await api.get(url) as any;
 
       // Mapear resposta para formato unificado
       const mappedItems: ItemEstoqueUnified[] = response.data.items.map(
@@ -344,7 +345,7 @@ class UnifiedDataAdapter {
       );
 
       return result;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao carregar estoque:", error);
       throw new Error("Não foi possível carregar os dados de estoque");
     }
@@ -407,7 +408,7 @@ class UnifiedDataAdapter {
       console.log("✅ Opções de filtros carregadas de forma otimizada");
 
       return options;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao carregar opções de filtros:", error);
 
       // Fallback com opções vazias
@@ -452,7 +453,7 @@ class UnifiedDataAdapter {
     }
 
     try {
-      const response = await api.get("/almoxarifados?ativo=true&limit=100");
+      const response = await api.get("/almoxarifados?ativo=true&limit=100") as any;
 
       const almoxarifados: AlmoxarifadoUnified[] = response.data.items.map(
         (item: any) => ({
@@ -470,7 +471,7 @@ class UnifiedDataAdapter {
       console.log(`✅ Almoxarifados carregados: ${almoxarifados.length} itens`);
 
       return almoxarifados;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao carregar almoxarifados:", error);
       throw new Error("Não foi possível carregar os almoxarifados");
     }

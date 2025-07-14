@@ -161,11 +161,14 @@
 
     const formData: NovaEntregaFormData = {
       responsavel: responsavelEntrega.trim(),
+      usuarioResponsavelId: responsavelEntrega.trim(),
+      responsavelId: responsavelEntrega.trim(),
       itens: itensSelecionados.map(item => ({
         episDisponivelId: item.episDisponivelId,
         nomeEquipamento: item.nomeEquipamento,
         registroCA: item.registroCA,
-        quantidade: item.quantidade
+        quantidade: item.quantidade,
+        estoqueItemId: item.episDisponivelId
       }))
     };
 
@@ -176,15 +179,22 @@
     dispatch('cancelar');
   }
 
+  // Função auxiliar para eventos de input - compatível com Svelte
+  function handleQuantidadeInputChange(event: Event, index: number): void {
+    const target = event.currentTarget as HTMLInputElement;
+    atualizarQuantidade(index, parseInt(target.value) || 1);
+  }
+
   // ==================== COMPUTED PROPERTIES ====================
   
   $: episOptions = [
-    { value: '', label: 'Selecione um EPI...' },
+    { value: '', label: 'Selecione um EPI...', name: 'select' },
     ...episDisponiveis
       .filter(epi => epi.disponivel)
       .map(epi => ({
         value: epi.id,
-        label: `${epi.nomeEquipamento} (CA ${epi.registroCA})${epi.quantidade ? ` - ${epi.quantidade} disponíveis` : ''}`
+        label: `${epi.nomeEquipamento} (CA ${epi.registroCA})${epi.quantidade ? ` - ${epi.quantidade} disponíveis` : ''}`,
+        name: epi.nomeEquipamento
       }))
   ];
 
@@ -326,7 +336,7 @@
                       min="1"
                       max="100"
                       bind:value={item.quantidade}
-                      on:input={(e) => atualizarQuantidade(index, parseInt(e.target.value) || 1)}
+                      on:input={(e) => handleQuantidadeInputChange(e, index)}
                       class="rounded-sm {errors[`quantidade-${index}`] ? 'border-red-500' : ''}"
                       disabled={loading}
                     />

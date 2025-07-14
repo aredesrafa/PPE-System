@@ -251,7 +251,7 @@ class ConfigurationService {
       } else {
         throw new Error("Formato de resposta inesperado");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.warn("⚠️ Endpoint /api/configuracoes não encontrado ou erro:", error);
 
       // Em caso de erro, usar dados do cache (se existir) ou mock data
@@ -368,7 +368,7 @@ export async function getConfiguracoesSistema(): Promise<
       response.data.length,
     );
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("❌ Erro ao carregar configurações do sistema:", error);
     throw error;
   }
@@ -400,7 +400,7 @@ export async function updateConfiguracaoSistema(
     });
 
     return response.data.configuracao;
-  } catch (error) {
+  } catch (error: any) {
     console.error("❌ Erro ao atualizar configuração do sistema:", error);
     throw error;
   }
@@ -415,7 +415,7 @@ export async function getConfiguracaoPorChave(
   try {
     const configuracoes = await getConfiguracoesSistema();
     return configuracoes.find((config) => config.chave === chave) || null;
-  } catch (error) {
+  } catch (error: any) {
     console.error("❌ Erro ao buscar configuração:", chave, error);
     return null;
   }

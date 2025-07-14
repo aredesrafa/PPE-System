@@ -29,16 +29,27 @@ export interface EPIDisponivel {
   quantidadeDisponivel: number;
   disponivel: boolean;
   registroCA: string;
+  // Propriedades faltantes identificadas nos erros TS
+  quantidade: number;
+  estoqueItemId: string;
+  episDisponivelId: string;
+  tipoEpiId: string;
+  posicaoEstoqueId: string;
 }
 
 export interface NovaEntregaFormData {
   responsavel: string;
   usuarioResponsavelId: string;
+  // Propriedades faltantes identificadas nos erros TS
+  observacoes?: string;
+  responsavelId: string;
   itens: Array<{
     episDisponivelId: string;
     nomeEquipamento: string;
     registroCA: string;
     quantidade: number;
+    // Propriedades faltantes nos itens
+    estoqueItemId: string;
   }>;
 }
 
@@ -135,8 +146,11 @@ class DeliveryProcessAdapter {
     try {
       // Montar payload conforme implementação REAL do backend
       // CRÍTICO: Número de objetos em 'itens' deve ser IGUAL ao campo 'quantidade'
-      const itensExpandidos = [];
-      validatedPayload.itens.forEach((item) => {
+      const itensExpandidos: Array<{
+        estoqueItemOrigemId: string;
+        numeroSerie: string;
+      }> = [];
+      validatedPayload.itens.forEach((item: { estoqueItemId: string; quantidade: number; }) => {
         console.log('🔍 Processando item para expansão:', {
           estoqueItemId: item.estoqueItemId,
           quantidade: item.quantidade,
@@ -160,7 +174,7 @@ class DeliveryProcessAdapter {
         itens: itensExpandidos,
         assinaturaColaborador: "placeholder_signature", // Temporary placeholder
         observacoes: payload.observacoes || "",
-        responsavelId: normalizeId(validatedPayload.responsavelId), // ✅ CORREÇÃO: usar responsavelId ao invés de usuarioId
+        usuarioId: normalizeId(validatedPayload.responsavelId), // ✅ CORREÇÃO FINAL: backend espera usuarioId
       };
 
       console.log("📋 Payload formatado para backend:", deliveryData);
@@ -170,7 +184,7 @@ class DeliveryProcessAdapter {
           isUUID: validatedPayload.fichaEpiId?.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i),
           isCustomId: validatedPayload.fichaEpiId?.match(/^[A-Z0-9]{6}$/i)
         },
-        responsavelId: {
+        usuarioId: {
           value: validatedPayload.responsavelId,
           isUUID: validatedPayload.responsavelId?.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i),
           isCustomId: validatedPayload.responsavelId?.match(/^[A-Z0-9]{6}$/i)
@@ -192,12 +206,15 @@ class DeliveryProcessAdapter {
       console.log(`  - Response:`, response);
 
       return response;
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("❌ Erro ao criar entrega via ficha:", error);
 
       // Log mais detalhado do erro para debug
-      if (error.response?.data) {
-        console.error("❌ Detalhes do erro do backend:", error.response.data);
+      if (error && typeof error === 'object' && 'response' in error) {
+        const errorResponse = error as { response?: { data: any } };
+        if (errorResponse.response?.data) {
+          console.error("❌ Detalhes do erro do backend:", errorResponse.response.data);
+        }
       }
 
       throw error;
@@ -216,10 +233,10 @@ class DeliveryProcessAdapter {
     );
 
     try {
-      const response = await api.post(`/fichas-epi/entregas/validar`, payload);
+      const response = await api.post(`/fichas-epi/entregas/validar`, payload) as any;
       console.log("✅ Validação da entrega concluída:", response);
-      return response;
-    } catch (error) {
+      return response as { valid: boolean; errors?: string[] };
+    } catch (error: any) {
       console.error("❌ Erro na validação da entrega:", error);
       throw error;
     }
@@ -250,7 +267,7 @@ class DeliveryProcessAdapter {
         assinaturaData,
       );
       console.log("✅ Assinatura confirmada");
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao confirmar assinatura:", error);
       throw error;
     }
@@ -268,7 +285,7 @@ class DeliveryProcessAdapter {
     try {
       await api.post(`/entregas/${entregaId}/cancel`, payload);
       console.log("✅ Entrega cancelada");
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao cancelar entrega:", error);
       throw error;
     }
@@ -284,12 +301,10 @@ class DeliveryProcessAdapter {
     );
 
     try {
-      const response = await api.get(`/entregas/${entregaId}/print`, {
-        responseType: "blob",
-      });
+      const response = await api.get(`/entregas/${entregaId}/print`) as any;
       console.log("✅ PDF gerado");
       return response as Blob;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao gerar PDF:", error);
       throw error;
     }
@@ -311,7 +326,7 @@ class DeliveryProcessAdapter {
       );
       console.log("✅ Entrega editada");
       return response;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao editar entrega:", error);
       throw error;
     }
@@ -353,8 +368,8 @@ class DeliveryProcessAdapter {
         payload,
       );
       console.log("✅ Devolução criada com sucesso:", response);
-      return response;
-    } catch (error) {
+      return response as { success: boolean; data: { devolucaoId: string; itensProcessados: number; status: string; }; };
+    } catch (error: any) {
       console.error("❌ Erro ao criar devolução:", error);
       throw error;
     }
@@ -388,8 +403,8 @@ class DeliveryProcessAdapter {
         payload,
       );
       console.log("✅ Validação de devolução concluída:", response);
-      return response;
-    } catch (error) {
+      return response as { valid: boolean; errors?: string[]; warnings?: string[]; };
+    } catch (error: any) {
       console.error("❌ Erro na validação de devolução:", error);
       throw error;
     }
@@ -425,10 +440,10 @@ class DeliveryProcessAdapter {
     );
 
     try {
-      const response = await api.post("/devolucoes/process-batch", payload);
+      const response = await api.post("/devolucoes/process-batch", payload) as any;
       console.log("✅ Devoluções em lote processadas:", response);
       return response;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao processar devoluções em lote:", error);
       throw error;
     }

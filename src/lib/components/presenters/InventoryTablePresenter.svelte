@@ -110,27 +110,27 @@
     switch (normalizedStatus) {
       case 'disponivel':
       case 'ativo':
-        return { color: 'green' as const, label: 'Disponível' };
+        return { color: 'green', label: 'Disponível' };
       case 'baixo':
-        return { color: 'yellow' as const, label: 'Estoque baixo' };
+        return { color: 'yellow', label: 'Estoque baixo' };
       case 'indisponivel':
       case 'inativo':
-        return { color: 'red' as const, label: 'Indisponível' };
+        return { color: 'red', label: 'Indisponível' };
       case 'vencendo':
-        return { color: 'orange' as const, label: 'Próximo ao vencimento' };
+        return { color: 'yellow', label: 'Próximo ao vencimento' };
       case 'vencido':
-        return { color: 'red' as const, label: 'Vencido' };
+        return { color: 'red', label: 'Vencido' };
       case 'esgotado':
       case 'zero':
-        return { color: 'gray' as const, label: 'Esgotado' };
+        return { color: 'dark', label: 'Esgotado' };
       case 'bloqueado':
-        return { color: 'red' as const, label: 'Bloqueado' };
+        return { color: 'red', label: 'Bloqueado' };
       case 'quarentena':
-        return { color: 'orange' as const, label: 'Em Quarentena' };
+        return { color: 'yellow', label: 'Em Quarentena' };
       case 'aguarda_inspecao':
-        return { color: 'yellow' as const, label: 'Aguarda Inspeção' };
+        return { color: 'yellow', label: 'Aguarda Inspeção' };
       default:
-        return { color: 'blue' as const, label: status || 'Indefinido' };
+        return { color: 'blue', label: status || 'Indefinido' };
     }
   }
 
@@ -158,24 +158,8 @@
     (filters.categoria && filters.categoria !== 'todas');
 </script>
 
-<!-- Layout atualizado baseado no Figma -->
-<div class="p-6 space-y-6">
-  <!-- Header -->
-  <div class="flex items-center justify-between">
-    <div>
-      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Estoque</h1>
-      <p class="text-gray-600 dark:text-gray-400">
-        Controle de estoque e movimentações
-      </p>
-    </div>
-    <div class="flex gap-3">
-      <Button size="sm" color="primary" class="rounded-sm" on:click={handleNewMovement}>
-        <PlusOutline class="w-4 h-4 mr-2" />
-        Nova Movimentação
-      </Button>
-    </div>
-  </div>
-  
+<!-- Layout sem header duplicado -->
+<div class="space-y-6">
   <!-- Content -->
   {#if loading}
     <LoadingSpinner />
@@ -203,7 +187,7 @@
           </div>
           
           <!-- Filtros em linha -->
-          {#if !hideStatusFilter}
+          {#if !hideStatusFilter && statusOptions && statusOptions.length > 0}
             <SearchableDropdown
               options={statusOptions}
               value={filters.status || 'todos'}
@@ -261,7 +245,7 @@
               
               <TableBodyRow 
                 class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer" 
-                on:click={() => handleItemEdit(item)}
+                on:click={() => handleItemHistory(item)}
               >
                 <TableBodyCell class="py-4 px-6">
                   <div class="flex items-center space-x-3">
@@ -379,12 +363,8 @@
         <p class="text-gray-500 dark:text-gray-400 mb-6 max-w-sm mx-auto">
           {searchInput || hasActiveFilters
             ? 'Tente ajustar os filtros ou termo de busca para encontrar itens'
-            : 'Comece adicionando itens ao estoque através de uma nova movimentação'}
+            : 'Use o botão "Nova Movimentação" acima para começar'}
         </p>
-        <Button size="sm" color="primary" class="rounded-sm" on:click={handleNewMovement}>
-          <PlusOutline class="w-4 h-4 mr-2" />
-          {searchInput || hasActiveFilters ? 'Nova Movimentação' : 'Primeira Movimentação'}
-        </Button>
       </div>
     </div>
   {/if}

@@ -72,6 +72,7 @@ export const TipoMovimentacao = {
   ENTRADA_NOTA: "ENTRADA_NOTA",
   SAIDA_ENTREGA: "SAIDA_ENTREGA",
   ENTRADA_DEVOLUCAO: "ENTRADA_DEVOLUCAO",
+  SAIDA_DEVOLUCAO: "SAIDA_DEVOLUCAO", // Propriedade faltante identificada nos erros TS
   SAIDA_TRANSFERENCIA: "SAIDA_TRANSFERENCIA",
   ENTRADA_TRANSFERENCIA: "ENTRADA_TRANSFERENCIA",
   SAIDA_DESCARTE: "SAIDA_DESCARTE",
@@ -82,6 +83,7 @@ export const TipoMovimentacao = {
   ESTORNO_ENTRADA_NOTA: "ESTORNO_ENTRADA_NOTA",
   ESTORNO_SAIDA_ENTREGA: "ESTORNO_SAIDA_ENTREGA",
   ESTORNO_ENTRADA_DEVOLUCAO: "ESTORNO_ENTRADA_DEVOLUCAO",
+  ESTORNO_SAIDA_DEVOLUCAO: "ESTORNO_SAIDA_DEVOLUCAO", // Estorno para SAIDA_DEVOLUCAO
   ESTORNO_SAIDA_DESCARTE: "ESTORNO_SAIDA_DESCARTE",
   ESTORNO_SAIDA_TRANSFERENCIA: "ESTORNO_SAIDA_TRANSFERENCIA",
   ESTORNO_ENTRADA_TRANSFERENCIA: "ESTORNO_ENTRADA_TRANSFERENCIA",
@@ -189,6 +191,7 @@ export function getMovementIcon(tipo: TipoMovimentacaoEnum): string {
     [TipoMovimentacao.ENTRADA_NOTA]: "➡️",
     [TipoMovimentacao.SAIDA_ENTREGA]: "⬅️",
     [TipoMovimentacao.ENTRADA_DEVOLUCAO]: "🔄",
+    [TipoMovimentacao.SAIDA_DEVOLUCAO]: "🔙", // Ícone para saída de devolução
     [TipoMovimentacao.SAIDA_TRANSFERENCIA]: "↗️",
     [TipoMovimentacao.ENTRADA_TRANSFERENCIA]: "↙️",
     [TipoMovimentacao.SAIDA_DESCARTE]: "🗑️",
@@ -197,6 +200,7 @@ export function getMovementIcon(tipo: TipoMovimentacaoEnum): string {
     [TipoMovimentacao.ESTORNO_ENTRADA_NOTA]: "↩️",
     [TipoMovimentacao.ESTORNO_SAIDA_ENTREGA]: "↪️",
     [TipoMovimentacao.ESTORNO_ENTRADA_DEVOLUCAO]: "🔁",
+    [TipoMovimentacao.ESTORNO_SAIDA_DEVOLUCAO]: "🔀", // Estorno de saída de devolução
     [TipoMovimentacao.ESTORNO_SAIDA_DESCARTE]: "♻️",
     [TipoMovimentacao.ESTORNO_SAIDA_TRANSFERENCIA]: "⤴️",
     [TipoMovimentacao.ESTORNO_ENTRADA_TRANSFERENCIA]: "⤵️",

@@ -66,7 +66,7 @@ class EstoqueConfigAdapter {
 
       console.log('📋 Carregando configuração de filtros do backend...');
       
-      const response = await api.get<EstoqueConfiguracaoResponse>('/estoque/configuracao-filtros');
+      const response = await api.get<EstoqueConfiguracaoResponse>('/estoque/configuracao-filtros') as any;
       
       if (response.success) {
         this.config = response.data;
@@ -89,7 +89,7 @@ class EstoqueConfigAdapter {
       } else {
         throw new Error('Resposta inválida do servidor');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Erro ao carregar configuração de filtros:', error);
       
       // Fallback: configuração padrão

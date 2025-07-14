@@ -26,7 +26,7 @@
   };
 </script>
 
-<div class="grid {gridCols[columns]} gap-4">
+<div class="grid {gridCols[columns] || 'grid-cols-4'} gap-4">
   {#each stats as stat}
     <div class="text-center">
       <p class="text-2xl font-bold {stat.color ? colorClasses[stat.color] : 'text-gray-900 dark:text-white'}">

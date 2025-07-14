@@ -150,7 +150,7 @@ class ReportingQueryAdapter {
         url = createUrlWithParams(url, filtros);
       }
 
-      const response = await api.get<any>(url);
+      const response = await api.get<any>(url) as any;
       console.log("📊 Resposta do backend:", response);
 
       if (!response.success) {
@@ -216,7 +216,7 @@ class ReportingQueryAdapter {
 
       console.log("✅ Dashboard carregado do backend real:", dashboardData);
       return dashboardData;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao carregar dashboard:", error);
       throw error;
     }
@@ -241,7 +241,7 @@ class ReportingQueryAdapter {
         url = createUrlWithParams(url, filtros);
       }
 
-      const response = await api.get<any>(url);
+      const response = await api.get<any>(url) as any;
 
       if (!response.success) {
         throw new Error("Erro na resposta do backend");
@@ -270,7 +270,7 @@ class ReportingQueryAdapter {
 
       console.log("✅ Estatísticas de entregas carregadas:", estatisticas);
       return estatisticas;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao carregar estatísticas de entregas:", error);
       throw error;
     }
@@ -294,7 +294,7 @@ class ReportingQueryAdapter {
         url = createUrlWithParams(url, filtros);
       }
 
-      const response = await api.get<any>(url);
+      const response = await api.get<any>(url) as any;
 
       if (!response.success) {
         throw new Error("Erro na resposta do backend");
@@ -333,7 +333,7 @@ class ReportingQueryAdapter {
 
       console.log("✅ Vencimentos próximos carregados:", vencimentos);
       return vencimentos;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao carregar vencimentos próximos:", error);
       throw error;
     }
@@ -356,7 +356,7 @@ class ReportingQueryAdapter {
         url = createUrlWithParams(url, filtros);
       }
 
-      const response = await api.get<any>(url);
+      const response = await api.get<any>(url) as any;
 
       if (!response.success) {
         throw new Error("Erro na resposta do backend");
@@ -383,7 +383,7 @@ class ReportingQueryAdapter {
 
       console.log("✅ Relatório de descartes carregado:", relatorio);
       return relatorio;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao carregar relatório de descartes:", error);
       throw error;
     }
@@ -396,7 +396,7 @@ class ReportingQueryAdapter {
     try {
       console.log("📊 Carregando estatísticas de descartes...");
 
-      const response = await api.get<any>("/relatorios/descartes");
+      const response = await api.get<any>("/relatorios/descartes") as any;
 
       if (!response.success) {
         throw new Error("Erro na resposta do backend");
@@ -429,7 +429,7 @@ class ReportingQueryAdapter {
 
       console.log("✅ Estatísticas de descartes carregadas:", estatisticas);
       return estatisticas;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao carregar estatísticas de descartes:", error);
       throw error;
     }
@@ -449,7 +449,7 @@ class ReportingQueryAdapter {
         url = createUrlWithParams(url, { incluirPerformance: "true" });
       }
 
-      const response = await api.get<any>(url);
+      const response = await api.get<any>(url) as any;
 
       if (!response.success) {
         throw new Error("Erro na resposta do backend");
@@ -487,7 +487,7 @@ class ReportingQueryAdapter {
 
       console.log("✅ Saúde do sistema carregada:", saudeSistema);
       return saudeSistema;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao carregar saúde do sistema:", error);
       throw error;
     }
@@ -514,7 +514,7 @@ class ReportingQueryAdapter {
 
       console.log("✅ Relatório exportado com sucesso");
       return mockBlob;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao exportar relatório:", error);
       throw error;
     }

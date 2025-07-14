@@ -4,7 +4,7 @@
  */
 
 import { api } from "../../../core/apiClient";
-import type { EPIDisponivel, Usuario } from '../types';
+import type { EPIDisponivel, Usuario } from '$lib/types';
 
 export class FichaResourceAdapter {
   /**
@@ -12,14 +12,14 @@ export class FichaResourceAdapter {
    */
   async getEPIsDisponiveis(): Promise<EPIDisponivel[]> {
     try {
-      const response = await api.get("/estoque/itens");
+      const response = await api.get("/estoque/itens") as any;
       
       if (!response.success || !response.data) {
         return [];
       }
 
       return this.transformEPIs(response.data);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao buscar EPIs disponíveis:', error);
       return [];
     }
@@ -30,14 +30,14 @@ export class FichaResourceAdapter {
    */
   async getUsuarios(): Promise<Usuario[]> {
     try {
-      const response = await api.get("/usuarios");
+      const response = await api.get("/usuarios") as any;
       
       if (!response.success || !response.data) {
         return [];
       }
 
       return response.data.map(this.transformUsuario);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao buscar usuários:', error);
       return [];
     }
@@ -48,7 +48,7 @@ export class FichaResourceAdapter {
    */
   async getEmpresasOptions(): Promise<Array<{ id: string; nome: string }>> {
     try {
-      const response = await api.get("/contratadas");
+      const response = await api.get("/contratadas") as any;
       
       if (!response.success || !response.data) {
         return [];
@@ -58,7 +58,7 @@ export class FichaResourceAdapter {
         id: empresa.id,
         nome: empresa.nome
       }));
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao buscar empresas:', error);
       return [];
     }
@@ -69,14 +69,14 @@ export class FichaResourceAdapter {
    */
   async getCargosOptions(): Promise<string[]> {
     try {
-      const response = await api.get("/colaboradores/cargos");
+      const response = await api.get("/colaboradores/cargos") as any;
       
       if (!response.success || !response.data) {
         return [];
       }
 
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao buscar cargos:', error);
       return [];
     }
@@ -102,7 +102,9 @@ export class FichaResourceAdapter {
         categoria: item.categoria || item.tipoEpi?.categoria || '',
         quantidadeDisponivel: item.quantidadeDisponivel || 0,
         disponivel: (item.quantidadeDisponivel || 0) > 0,
-        registroCA: item.numeroCA || 'N/A'
+        registroCA: item.numeroCA || 'N/A',
+        quantidade: item.quantidadeDisponivel || 0,
+        episDisponivelId: item.id || ''
       }));
   }
 
@@ -114,7 +116,10 @@ export class FichaResourceAdapter {
     nome: rawUser.nome || '',
     email: rawUser.email || '',
     cargo: rawUser.cargo || '',
-    ativo: rawUser.ativo !== false
+    ativo: rawUser.ativo !== false,
+    perfil: rawUser.perfil || '',
+    createdAt: rawUser.createdAt || new Date().toISOString(),
+    updatedAt: rawUser.updatedAt || new Date().toISOString()
   });
 }
 

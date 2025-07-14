@@ -21,14 +21,18 @@ export {
 
 // Entity Management Adapter - Para entidades com hierarquia
 export { entityManagementAdapter } from "./entity/entityManagementAdapter";
+import { entityManagementAdapter } from "./entity/entityManagementAdapter";
 
 // Inventory Adapters - Separação CQRS
 export { inventoryQueryAdapter } from "./inventory/inventoryQueryAdapter";
 export { inventoryCommandAdapter } from "./inventory/inventoryCommandAdapter";
+import { inventoryQueryAdapter } from "./inventory/inventoryQueryAdapter";
+import { inventoryCommandAdapter } from "./inventory/inventoryCommandAdapter";
 export { estoqueConfigAdapter } from "./inventory/estoqueConfigAdapter";
 
 // Process Lifecycle Adapter - Para workflows complexos
 export { processLifecycleAdapter } from "./process/processLifecycleAdapter";
+import { processLifecycleAdapter } from "./process/processLifecycleAdapter";
 
 // 🚀 NOVOS: Process adapters especializados (substituindo fichaProcessAdapter)
 export * from "./process";
@@ -38,6 +42,7 @@ export { notasMovimentacaoAdapter } from "./process/notasMovimentacaoAdapter";
 
 // Reporting Query Adapter - Para consultas especializadas
 export { reportingQueryAdapter } from "./reporting/reportingQueryAdapter";
+import { reportingQueryAdapter } from "./reporting/reportingQueryAdapter";
 
 // Nuevos adapters para notas
 export { almoxarifadosAdapter } from "./entity/almoxarifadosAdapter";
@@ -100,7 +105,7 @@ export async function initializeServices(): Promise<void> {
     // Aqui podemos fazer outras inicializações se necessário
 
     console.log("✅ Service adapters inicializados com sucesso");
-  } catch (error) {
+  } catch (error: any) {
     console.error("❌ Erro ao inicializar service adapters:", error);
   }
 }
@@ -122,7 +127,7 @@ export function clearAllServiceCaches(): void {
     // notasMovimentacaoAdapter não tem cache (adapter de processo)
 
     console.log("🗑️ Cache de todos os services limpo");
-  } catch (error) {
+  } catch (error: any) {
     console.warn("⚠️ Erro ao limpar cache dos services:", error);
   }
 }

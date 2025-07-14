@@ -44,12 +44,13 @@
             data: result.data,
             total: result.pagination?.total || 0,
             page: params.page || 1,
+            pageSize: params.limit || 10,
             totalPages: result.pagination?.totalPages || 1
           };
         } else {
           throw new Error('Resposta inválida do backend');
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error('❌ Erro ao carregar colaboradores:', error);
         throw error;
       }
@@ -102,7 +103,7 @@
       if (result.success && result.data) {
         contratadas = result.data;
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Erro ao carregar contratadas:', error);
       contratadas = [];
     } finally {
@@ -183,7 +184,7 @@
       showEditarColaboradorModal = false;
       notify.success('Sucesso', 'Colaborador salvo com sucesso');
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Erro ao salvar colaborador:', error);
       notify.error('Erro', 'Não foi possível salvar o colaborador');
     }
@@ -198,7 +199,7 @@
       colaboradorEdicao = null;
       notify.success('Sucesso', 'Colaborador atualizado com sucesso');
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Erro ao atualizar colaborador:', error);
       notify.error('Erro', 'Não foi possível atualizar o colaborador');
     }
@@ -211,7 +212,7 @@
       // Mock para teste - implementar API real depois
       notify.success('Sucesso', 'Colaborador excluído com sucesso');
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Erro ao excluir colaborador:', error);
       notify.error('Erro', 'Não foi possível excluir o colaborador');
     }

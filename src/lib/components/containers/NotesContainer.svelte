@@ -89,22 +89,32 @@
     tipos: [],
     status: []
   };
+  
+  // Estado de inicialização para evitar flash do empty state
+  let initializing = true;
 
   // ==================== LIFECYCLE ====================
   
   onMount(async () => {
     console.log('📋 NotesContainer: Inicializando...');
     
-    // Aguardar configurações de negócio
-    await businessConfigStore.initialize();
-    
-    // Carregar opções de filtros
-    await loadFilterOptions();
-    
-    // Aplicar filtros iniciais (tab Concluídas = status CONCLUIDA)
-    applyFiltersToStore();
-    
-    console.log('✅ NotesContainer: Inicializado');
+    try {
+      // Aguardar configurações de negócio
+      await businessConfigStore.initialize();
+      
+      // Carregar opções de filtros
+      await loadFilterOptions();
+      
+      // Aplicar filtros iniciais (tab Concluídas = status CONCLUIDA)
+      applyFiltersToStore();
+      
+      console.log('✅ NotesContainer: Inicializado');
+    } catch (error: any) {
+      console.error('❌ Erro ao inicializar NotesContainer:', error);
+    } finally {
+      // Finalizar inicialização após carregar dados ou erro
+      initializing = false;
+    }
   });
 
   onDestroy(() => {
@@ -132,7 +142,7 @@
           ...options.status.map(s => ({ value: s.value as StatusNotaEnum, label: s.label }))
         ]
       };
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao carregar opções de filtros:', error);
       
       // Detectar se estamos usando dados de fallback
@@ -285,7 +295,7 @@
         itens: notaCompleta.itens?.length || 0,
         status: notaCompleta.status
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Erro ao carregar dados completos da nota:', error);
       
       // Fallback para dados básicos (do resumo)
@@ -300,27 +310,34 @@
 
   async function handleVisualizarNota(nota: NotaMovimentacao): Promise<void> {
     try {
-      console.log('👁️ Carregando dados completos da nota para visualização:', nota.id);
+      console.log('👁️ Carregando dados completos da nota:', nota.id);
       
       // Buscar dados completos da nota (incluindo itens) usando endpoint GET /:id
       const notaCompleta = await notasMovimentacaoAdapter.obterNota(nota.id);
       
       selectedNota = notaCompleta;
-      drawerMode = 'view';
+      
+      // 🔧 CORREÇÃO: Notas de rascunho devem abrir automaticamente em modo de edição
+      const isRascunho = notaCompleta.status === 'RASCUNHO' || notaCompleta._status === 'RASCUNHO';
+      drawerMode = isRascunho ? 'edit' : 'view';
       drawerTipo = notaCompleta.tipo_nota || notaCompleta.tipo;
       showNotaDrawer = true;
       
       console.log('✅ Dados completos carregados:', {
         id: notaCompleta.id,
         itens: notaCompleta.itens?.length || 0,
-        status: notaCompleta.status
+        status: notaCompleta.status,
+        modo: drawerMode
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Erro ao carregar dados completos da nota:', error);
       
       // Fallback para dados básicos (do resumo)
       selectedNota = nota;
-      drawerMode = 'view';
+      
+      // 🔧 CORREÇÃO: Aplicar mesma lógica no fallback
+      const isRascunho = nota.status === 'RASCUNHO' || nota._status === 'RASCUNHO';
+      drawerMode = isRascunho ? 'edit' : 'view';
       drawerTipo = nota.tipo;
       showNotaDrawer = true;
       
@@ -339,7 +356,7 @@
       
       // Emitir evento
       dispatch('notaDeleted', nota.id);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao excluir nota:', error);
       notify.error('Erro ao excluir', 'Não foi possível remover a nota');
     }
@@ -392,7 +409,7 @@
       
       // Emitir evento
       dispatch('notaConcluida', { ...nota, status: 'CONCLUIDA' });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao concluir nota:', error);
       notify.error('Erro ao concluir', 'Não foi possível concluir a nota');
     }
@@ -417,7 +434,7 @@
       
       // Emitir evento
       dispatch('notaCancelada', nota.id);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao cancelar nota:', error);
       notify.error('Erro ao cancelar', 'Não foi possível cancelar a nota');
     }
@@ -459,7 +476,7 @@
         }
       }
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao salvar nota:', error);
       notify.error('Erro ao salvar', 'Não foi possível salvar a nota');
     } finally {
@@ -504,7 +521,7 @@
 
   $: presentationData = {
     items: $notesStore.items,
-    loading: $notesStore.loading,
+    loading: initializing || $notesStore.loading,
     error: $notesStore.error,
     pagination: {
       currentPage: $notesStore.page,

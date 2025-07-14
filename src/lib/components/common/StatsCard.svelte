@@ -61,9 +61,9 @@
     'gray': 'bg-gray-50 dark:bg-gray-900/20'
   };
 
-  $: IconComponent = iconMap[icon as keyof typeof iconMap] || iconMap.document;
-  $: textColor = colorMap[color as keyof typeof colorMap] || colorMap.blue;
-  $: bgColor = bgColorMap[color as keyof typeof bgColorMap] || bgColorMap.blue;
+  $: IconComponent = iconMap[icon] || iconMap.document;
+  $: textColor = colorMap[color] || colorMap.blue;
+  $: bgColor = bgColorMap[color] || bgColorMap.blue;
   $: formattedValue = typeof value === 'number' ? value.toLocaleString('pt-BR') : value;
 </script>
 

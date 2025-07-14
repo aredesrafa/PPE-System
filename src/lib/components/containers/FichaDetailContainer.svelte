@@ -21,12 +21,12 @@
   import { fichaDataStore } from '$lib/stores/fichaDataStore';
   import FichaDetailPresenter from '../presenters/FichaDetailPresenter.svelte';
   import type { 
-    FichaCompleteResponse,
     CreateDeliveryPayload,
     ReturnBatchPayload,
     ConfirmSignaturePayload,
     CancelDeliveryPayload
   } from '$lib/services/process';
+  import type { FichaCompleteResponse } from '$lib/services/process/queries/types';
   // Imports dos novos adapters
   import type { 
     NovaEntregaFormData,
@@ -65,8 +65,12 @@
   // 🚀 ATUALIZADO: Reatividade ao store de fichas com dados completos
   $: if (fichaId && $fichaDataStore.has(fichaId)) {
     const cachedData = $fichaDataStore.get(fichaId);
-    if (cachedData && fichaCompleteData !== cachedData) {
-      fichaCompleteData = cachedData;
+    if (cachedData) {
+      // Convert FichaDetailData to FichaCompleteResponse format
+      fichaCompleteData = {
+        success: true,
+        data: cachedData as any
+      };
       console.log('🔄 Dados completos atualizados via store reativo:', fichaId);
     }
   }
@@ -309,7 +313,7 @@
       // Notificar que ficha foi atualizada
       dispatch('fichaUpdated', { fichaId });
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Erro ao salvar nova entrega:', error);
       
       // Melhor tratamento de erro baseado no tipo
@@ -404,7 +408,7 @@
       
       dispatch('fichaUpdated', { fichaId: fichaId! });
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Erro ao editar entrega:', error);
       notify.error('Erro ao editar', 'Não foi possível atualizar a entrega');
     } finally {
@@ -459,7 +463,7 @@
       
       dispatch('fichaUpdated', { fichaId: fichaId! });
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Erro ao processar assinatura:', error);
       notify.error('Erro na assinatura', 'Não foi possível registrar a assinatura');
     } finally {
@@ -486,31 +490,39 @@
   }
   
   /**
-   * 🚀 MIGRADO: Handler para confirmar devolução
+   * 🔧 CORRIGIDO: Handler para confirmar devolução usando endpoint individual
+   * Endpoint: POST /api/fichas-epi/:fichaId/devolucoes (da documentação)
    */
   async function handleConfirmarDevolucao(event: CustomEvent<{ motivo: string; observacoes?: string }>): Promise<void> {
-    if (!equipamentoDevolucao) return;
+    if (!equipamentoDevolucao || !fichaId) return;
     
     devolucaoLoading = true;
     
     try {
-      console.log('🔄 FichaDetailContainer: Processando devolução:', event.detail);
+      console.log('🔄 FichaDetailContainer: Processando devolução via endpoint individual:', event.detail);
+      console.log('📋 Dados do equipamento:', {
+        id: equipamentoDevolucao.id,
+        entregaId: equipamentoDevolucao.entregaId,
+        itemEntregaId: equipamentoDevolucao.itemEntregaId
+      });
       
-      // ✅ NOVA ARQUITETURA: Usar returnProcessAdapter para processamento em lote
-      const payload: ReturnBatchPayload = {
-        devolucoes: [{
-          equipamentoId: equipamentoDevolucao.id,
-          motivo: event.detail.motivo, // Agora já vem no formato correto do enum
-          observacoes: event.detail.observacoes || `Devolução via interface da ficha`
-        }]
-      };
-      
-      const result = await returnProcessAdapter.processReturns(payload);
-      
-      // Verificar se houve erros
-      if (result.data.erros.length > 0) {
-        throw new Error(`Erro na devolução: ${result.data.erros[0].erro}`);
+      // Validar que temos todos os dados necessários
+      if (!equipamentoDevolucao.entregaId || !equipamentoDevolucao.itemEntregaId) {
+        throw new Error('Dados incompletos do equipamento para devolução');
       }
+
+      // Obter usuário do store ou usar padrão
+      const usuarioId = 'cffc2197-acbe-4a64-bfd7-435370e9c226'; // TODO: Obter do contexto do usuário logado
+      
+      // ✅ CORREÇÃO: Usar endpoint individual da documentação
+      const result = await returnProcessAdapter.processIndividualReturn(
+        fichaId,
+        equipamentoDevolucao.entregaId,
+        equipamentoDevolucao.itemEntregaId,
+        event.detail.motivo as "devolução padrão" | "danificado" | "troca" | "outros",
+        usuarioId,
+        event.detail.observacoes
+      );
       
       // Fechar modal
       showDevolucaoModal = false;
@@ -523,9 +535,18 @@
       
       dispatch('fichaUpdated', { fichaId: fichaId! });
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Erro ao processar devolução:', error);
-      notify.error('Erro na devolução', 'Não foi possível registrar a devolução');
+      
+      // Melhor tratamento de erro
+      let errorMessage = 'Não foi possível registrar a devolução';
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      notify.error('Erro na devolução', errorMessage);
     } finally {
       devolucaoLoading = false;
     }
@@ -564,7 +585,7 @@
       
       dispatch('fichaUpdated', { fichaId: fichaId! });
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Erro ao cancelar entrega:', error);
       notify.error('Erro ao cancelar', 'Não foi possível cancelar a entrega');
     }

@@ -1,133 +1,107 @@
 <!--
-  Página de Estoque - Sistema de Tabs Condicionais
-  Implementação com tabs baseadas na configuração do backend
-  ✅ CORRIGIDO: SSR desabilitado para evitar erros de hidratação
+  Página de Estoque - Tabbed Interface with Counters
+  Similar ao padrão da página de notas com abas e contadores
+  ✅ IMPLEMENTADO: Sistema de abas com contadores dinâmicos
 -->
 
 <script lang="ts">
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
+  import { Badge, Button } from 'flowbite-svelte';
+  import { PlusOutline, RefreshOutline } from 'flowbite-svelte-icons';
+  import { estoqueItensAdapter } from '$lib/services/entity/estoqueItensAdapter';
   
   // Variáveis reativas para controle de estado
   let error: string | null = null;
-  let loading = true;
-  let tabsAtivas: any[] = [];
-  let tabAtiva = 'DISPONIVEL'; // Tab padrão
-  
-  // Componentes que serão carregados dinamicamente (SSR-safe)
-  let Tabs: any;
-  let TabItem: any;
-  let CheckCircleSolid: any;
-  let ExclamationTriangleOutline: any;
-  let XCircleSolid: any;
   let InventoryContainer: any;
-  let estoqueConfigAdapter: any;
-  
-  // Componentes de ícones por tab
-  let iconComponents: Record<string, any> = {};
-  
-  // Cores das tabs por status
-  const tabColors = {
-    'green': 'text-green-600',
-    'orange': 'text-orange-600', 
-    'red': 'text-red-600',
-    'blue': 'text-blue-600'
+  let activeTab = 0;
+  let tabCounts = {
+    disponivel: 0,
+    quarentena: 0,
+    aguardando_inspecao: 0
   };
+  let loadingCounts = false;
+  let inventoryContainerRef: any;
   
-  // Carregar componentes e configuração de forma SSR-safe
+  // Configuração das abas com contadores
+  const tabs = [
+    { label: 'Disponível', key: 'disponivel', statusFilter: 'DISPONIVEL' },
+    { label: 'Quarentena', key: 'quarentena', statusFilter: 'QUARENTENA' },
+    { label: 'Aguardando Inspeção', key: 'aguardando_inspecao', statusFilter: 'AGUARDANDO_INSPECAO' }
+  ];
+  
+  // Carregar componente de forma SSR-safe
   onMount(async () => {
     if (!browser) return;
     
-    console.log('🚀 Inicializando página de estoque com tabs condicionais (SSR-safe)');
+    console.log('🚀 Inicializando página de estoque com abas e contadores');
     
     try {
-      // Importações dinâmicas para evitar problemas de SSR
-      console.log('📦 Carregando componentes...');
-      
-      const [
-        flowbiteComponents,
-        flowbiteIcons,
-        inventoryComponent,
-        services
-      ] = await Promise.all([
-        import('flowbite-svelte'),
-        import('flowbite-svelte-icons'),
-        import('$lib/components/containers/InventoryContainer.svelte'),
-        import('$lib/services')
-      ]);
-      
-      // Atribuir componentes carregados
-      Tabs = flowbiteComponents.Tabs;
-      TabItem = flowbiteComponents.TabItem;
-      CheckCircleSolid = flowbiteIcons.CheckCircleSolid;
-      ExclamationTriangleOutline = flowbiteIcons.ExclamationTriangleOutline;
-      XCircleSolid = flowbiteIcons.XCircleSolid;
+      // Importação dinâmica para evitar problemas de SSR
+      const inventoryComponent = await import('$lib/components/containers/InventoryContainer.svelte');
       InventoryContainer = inventoryComponent.default;
-      estoqueConfigAdapter = services.estoqueConfigAdapter;
       
-      // Mapear ícones
-      iconComponents = {
-        'check-circle': CheckCircleSolid,
-        'alert-triangle': ExclamationTriangleOutline,
-        'x-circle': XCircleSolid
-      };
+      // Carregar contadores das abas
+      await loadTabCounts();
       
-      console.log('✅ Componentes carregados com sucesso');
-      
-      // Carregar configuração de tabs do backend
-      console.log('📋 Carregando configuração de tabs do backend...');
-      tabsAtivas = await estoqueConfigAdapter.obterTabsAtivas();
-      console.log('📋 Tabs obtidas do adapter:', tabsAtivas);
-      
-      // Definir primeira tab ativa como padrão
-      if (tabsAtivas.length > 0) {
-        tabAtiva = tabsAtivas[0].key;
-        console.log('📋 Tab padrão definida:', tabAtiva);
-      } else {
-        console.warn('⚠️ Nenhuma tab ativa encontrada');
-        // Fallback para uma tab padrão se não houver nenhuma
-        tabsAtivas = [{
-          key: 'DISPONIVEL',
-          label: 'Disponível',
-          visible: true,
-          color: 'green' as const,
-          icon: 'check-circle',
-          statusFilter: 'DISPONIVEL'
-        }];
-        tabAtiva = 'DISPONIVEL';
-      }
-      
-      console.log('✅ Página de estoque configurada:', {
-        totalTabs: tabsAtivas.length,
-        tabsAtivas: tabsAtivas.map(t => ({ key: t.key, label: t.label, visible: t.visible })),
-        tabPadrão: tabAtiva
-      });
-      
+      console.log('✅ InventoryContainer carregado com sucesso');
     } catch (err) {
-      console.error('❌ Erro ao inicializar página de estoque:', err);
-      console.error('❌ Stack trace:', err?.stack);
+      console.error('❌ Erro ao carregar InventoryContainer:', err);
       error = err instanceof Error ? err.message : 'Erro desconhecido';
-      
-      // Fallback em caso de erro
-      tabsAtivas = [{
-        key: 'DISPONIVEL',
-        label: 'Disponível',
-        visible: true,
-        color: 'green' as const,
-        icon: 'check-circle',
-        statusFilter: 'DISPONIVEL'
-      }];
-      tabAtiva = 'DISPONIVEL';
-    } finally {
-      loading = false;
-      console.log('📋 Loading finalizado, loading =', loading);
     }
   });
   
-  // Handler para mudança de tab
-  function handleTabChange(tabKey: string) {
-    console.log('🔄 Mudança de tab:', tabKey);
-    tabAtiva = tabKey;
+  /**
+   * Carrega contadores para cada aba
+   */
+  async function loadTabCounts(): Promise<void> {
+    loadingCounts = true;
+    console.log('📊 Carregando contadores das abas...');
+    
+    try {
+      // Fazer requisições paralelas para cada status
+      const [disponivelResult, quarentenaResult, aguardandoInspecaoResult] = await Promise.allSettled([
+        estoqueItensAdapter.listarItensEstoque({ status: 'DISPONIVEL', limit: 1 }),
+        estoqueItensAdapter.listarItensEstoque({ status: 'QUARENTENA', limit: 1 }),
+        estoqueItensAdapter.listarItensEstoque({ status: 'AGUARDANDO_INSPECAO', limit: 1 })
+      ]);
+      
+      // Extrair totais das respostas
+      tabCounts.disponivel = disponivelResult.status === 'fulfilled' ? disponivelResult.value.total : 0;
+      tabCounts.quarentena = quarentenaResult.status === 'fulfilled' ? quarentenaResult.value.total : 0;
+      tabCounts.aguardando_inspecao = aguardandoInspecaoResult.status === 'fulfilled' ? aguardandoInspecaoResult.value.total : 0;
+      
+      console.log('✅ Contadores carregados:', tabCounts);
+    } catch (error: any) {
+      console.error('❌ Erro ao carregar contadores:', error);
+      // Manter contadores em 0 em caso de erro
+    } finally {
+      loadingCounts = false;
+    }
+  }
+  
+  /**
+   * Handler para mudança de aba
+   */
+  function handleTabChange(newTab: number): void {
+    activeTab = newTab;
+    console.log('🔄 Mudança de aba:', tabs[newTab].label);
+  }
+  
+  /**
+   * Handler para nova movimentação - delega para o container
+   */
+  function handleNewMovement(): void {
+    if (inventoryContainerRef?.handleNewMovement) {
+      inventoryContainerRef.handleNewMovement();
+    }
+  }
+
+  /**
+   * Handler para dados alterados - atualiza contadores
+   */
+  function handleDataChanged(): void {
+    loadTabCounts();
   }
 </script>
 
@@ -142,7 +116,7 @@
       <p class="text-red-600 mt-2">{error}</p>
     </div>
   </div>
-{:else if loading}
+{:else if !InventoryContainer}
   <div class="p-6">
     <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
       <h3 class="text-gray-800 font-medium">Carregando configuração de estoque...</h3>
@@ -153,55 +127,64 @@
     </div>
   </div>
 {:else}
-  <div class="p-6">
-    <!-- Header da página -->
-    <div class="mb-6">
-      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Gestão de Estoque</h1>
-      <p class="text-gray-600 dark:text-gray-400">Controle de itens por status</p>
+  <div class="space-y-6">
+    <!-- Header -->
+    <div class="flex items-center justify-between px-6 pt-6">
+      <div>
+        <h1 class="text-xl font-medium text-gray-900 dark:text-white">Estoque</h1>
+      </div>
+      <div class="flex space-x-2">
+        <Button 
+          size="sm" 
+          color="primary" 
+          class="rounded-sm" 
+          on:click={handleNewMovement}
+        >
+          <PlusOutline class="w-4 h-4 mr-2" />
+          Nova Movimentação
+        </Button>
+      </div>
     </div>
-    
-    <!-- Sistema de Tabs Condicionais -->
-    {#if tabsAtivas.length > 0 && Tabs && TabItem}
-      <svelte:component this={Tabs} style="underline" contentClass="py-4">
-        {#each tabsAtivas as tab (tab.key)}
-          <svelte:component 
-            this={TabItem}
-            open={tabAtiva === tab.key}
-            title={tab.label}
-            on:click={() => handleTabChange(tab.key)}
+
+    <!-- Tabs com Contadores -->
+    <div class="border-b border-gray-200 dark:border-gray-700">
+      <nav class="flex space-x-4 px-6" aria-label="Tabs">
+        {#each tabs as tab, index}
+          <button
+            class="whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm focus:outline-none transition-colors duration-200 -mb-px {activeTab === index ? 'border-primary-500 text-primary-600 dark:text-primary-400' : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'}"
+            on:click={() => handleTabChange(index)}
           >
-            <div slot="title" class="flex items-center gap-2">
-              {#if iconComponents[tab.icon]}
-                <svelte:component 
-                  this={iconComponents[tab.icon]} 
-                  class="w-4 h-4 {tabColors[tab.color]}" 
-                />
-              {/if}
+            <span class="flex items-center space-x-2">
               <span>{tab.label}</span>
-            </div>
-            
-            <!-- Container específico para cada tab -->
-            {#if InventoryContainer}
-              <svelte:component 
-                this={InventoryContainer}
-                key={tab.key}
-                statusFilter={tab.statusFilter}
-                initialPageSize={20}
-                autoRefresh={false}
-              />
-            {:else}
-              <div class="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <p class="text-blue-700">Carregando container de inventário...</p>
-              </div>
-            {/if}
-          </svelte:component>
+              {#if !loadingCounts}
+                <Badge color="dark" class="rounded-sm text-xs">
+                  {tabCounts[tab.key]}
+                </Badge>
+              {:else}
+                <div class="animate-spin rounded-full h-3 w-3 border-b border-gray-400"></div>
+              {/if}
+            </span>
+          </button>
         {/each}
-      </svelte:component>
+      </nav>
+    </div>
+
+    <!-- Conteúdo da Aba Ativa -->
+    {#if InventoryContainer}
+      <svelte:component 
+        this={InventoryContainer}
+        bind:this={inventoryContainerRef}
+        key={tabs[activeTab].key}
+        statusFilter={tabs[activeTab].statusFilter}
+        initialPageSize={20}
+        autoRefresh={false}
+        on:dataChanged={handleDataChanged}
+      />
     {:else}
-      <!-- Fallback caso não tenha tabs configuradas -->
-      <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-        <h3 class="text-yellow-800 font-medium">Nenhuma categoria de estoque configurada</h3>
-        <p class="text-yellow-600 mt-2">Entre em contato com o administrador do sistema.</p>
+      <div class="p-6">
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <p class="text-blue-700">Carregando container de inventário...</p>
+        </div>
       </div>
     {/if}
   </div>

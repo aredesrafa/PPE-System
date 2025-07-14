@@ -166,7 +166,7 @@ export class DevolutionAdapter {
           requiredSignatures,
         ),
       };
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao validar devolução:", error);
       throw error;
     }
@@ -218,7 +218,7 @@ export class DevolutionAdapter {
 
       console.log("✅ Devolução solicitada com sucesso:", resultado.id);
       return resultado.id!;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao solicitar devolução:", error);
       throw error;
     }
@@ -251,7 +251,7 @@ export class DevolutionAdapter {
       );
 
       console.log("✅ Devolução aprovada com sucesso");
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao aprovar devolução:", error);
       throw error;
     }
@@ -310,7 +310,7 @@ export class DevolutionAdapter {
       }
 
       console.log("✅ Devolução finalizada com sucesso");
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao finalizar devolução:", error);
       throw error;
     }
@@ -334,7 +334,7 @@ export class DevolutionAdapter {
       );
 
       return movimentacoes || [];
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao listar devoluções:", error);
       return [];
     }
@@ -358,7 +358,7 @@ export class DevolutionAdapter {
       );
 
       return movimentacoes || [];
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao buscar devoluções do colaborador:", error);
       return [];
     }

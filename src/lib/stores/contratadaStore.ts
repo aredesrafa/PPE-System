@@ -163,7 +163,7 @@ async function fetchContratadaData(
       pageSize: backendParams.limit,
       totalPages: 0,
     };
-  } catch (error) {
+  } catch (error: any) {
     console.error("❌ Erro ao buscar contratadas:", error);
     throw error;
   }
@@ -289,7 +289,7 @@ export async function createContratada(
     }
 
     throw new Error("Erro ao criar contratada");
-  } catch (error) {
+  } catch (error: any) {
     console.error("❌ Erro ao criar contratada:", error);
     throw error;
   }
@@ -311,7 +311,7 @@ export async function updateContratada(
     }
 
     throw new Error("Erro ao atualizar contratada");
-  } catch (error) {
+  } catch (error: any) {
     console.error("❌ Erro ao atualizar contratada:", error);
     throw error;
   }
@@ -325,7 +325,7 @@ export async function deleteContratada(id: string): Promise<void> {
 
     // Reload data to remove deleted item
     await reloadContratadas();
-  } catch (error) {
+  } catch (error: any) {
     console.error("❌ Erro ao deletar contratada:", error);
     throw error;
   }
@@ -342,7 +342,7 @@ export async function getContratadaById(id: string): Promise<Contratada> {
     }
 
     throw new Error("Contratada não encontrada");
-  } catch (error) {
+  } catch (error: any) {
     console.error("❌ Erro ao buscar contratada:", error);
     throw error;
   }
@@ -483,7 +483,7 @@ export async function validateCNPJWithBackend(cnpj: string): Promise<{
       exists: false,
       message: "CNPJ válido e disponível",
     };
-  } catch (error) {
+  } catch (error: any) {
     console.error("❌ Erro na validação CNPJ com backend:", error);
 
     // Em caso de erro de rede, retornar validação local
@@ -512,7 +512,7 @@ export async function getContratadaStatistics(): Promise<any> {
   try {
     const response = await api.get("/contratadas/stats");
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("❌ Erro ao buscar estatísticas:", error);
     throw error;
   }

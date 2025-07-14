@@ -121,7 +121,7 @@ export async function initializeConfiguration(): Promise<SystemConfiguration> {
       mergedConfig,
     );
     return mergedConfig;
-  } catch (error) {
+  } catch (error: any) {
     console.warn(
       "⚠️ Erro inesperado ao carregar configurações, usando padrão:",
       error,

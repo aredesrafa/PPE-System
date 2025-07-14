@@ -426,6 +426,85 @@ export type TipoEPIModerno = TipoEPI;
 export type ColaboradorModerno = Colaborador;
 export type EmpresaModerna = Empresa;
 
+// ==================== TIPOS FALTANTES (CORREÇÃO TYPESCRIPT) ====================
+
+/**
+ * Interface para EPIs disponíveis para entrega
+ * Usada em fichaQueryAdapter.ts
+ */
+export interface EPIDisponivel {
+  id: string;
+  nomeEquipamento: string;
+  numeroCA: string;
+  categoria: string;
+  quantidadeDisponivel: number;
+  disponivel: boolean;
+  registroCA: string;
+  estoqueItemId: string;
+  tipoEpiId: string;
+  posicaoEstoqueId: string;
+  // Propriedades faltantes identificadas nos erros TS
+  quantidade: number;
+  episDisponivelId: string;
+}
+
+/**
+ * Interface para usuários do sistema
+ * Usada em fichaQueryAdapter.ts
+ */
+export interface Usuario {
+  id: string;
+  nome: string;
+  email: string;
+  perfil: string;
+  cargo?: string;
+  ativo: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/**
+ * Interface genérica para respostas da API
+ * Resolve problemas de 'response is unknown'
+ */
+export interface ApiResponse<T = any> {
+  success: boolean;
+  data: T;
+  message?: string;
+  error?: string;
+}
+
+/**
+ * Interface específica para lista de EPIs disponíveis
+ */
+export interface EPIsDisponiveisResponse extends ApiResponse<{
+  items: Array<{
+    id: string;
+    tipoEpi: {
+      id: string;
+      nomeEquipamento: string;
+      numeroCa: string;
+      categoriaEpi: string;
+    };
+    quantidade: number;
+    status: string;
+    almoxarifadoId: string;
+  }>;
+}> {}
+
+/**
+ * Interface específica para lista de usuários
+ */
+export interface UsuariosResponse extends ApiResponse<Array<{
+  id: string;
+  nome: string;
+  email: string;
+  perfil: string;
+  ativo: boolean;
+  createdAt: string;
+  updatedAt: string;
+}>> {}
+
 // Interface única para paginação
 export interface PaginationParams {
   page?: number;

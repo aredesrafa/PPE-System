@@ -49,20 +49,25 @@ export class UIMappingHelpers {
    */
   static getBadgeColor(
     cor: string,
-  ): "green" | "red" | "yellow" | "blue" | "gray" {
+  ): "green" | "red" | "yellow" | "primary" | "blue" | "dark" | "purple" | "indigo" | "pink" | "none" {
     const badgeColorMap: Record<
       string,
-      "green" | "red" | "yellow" | "blue" | "gray"
+      "green" | "red" | "yellow" | "primary" | "blue" | "dark" | "purple" | "indigo" | "pink" | "none"
     > = {
       green: "green",
       red: "red",
       yellow: "yellow",
       orange: "yellow", // Orange não existe no Flowbite, usar yellow
       blue: "blue",
-      gray: "gray",
+      gray: "dark", // Gray não existe no Flowbite, usar dark
+      primary: "primary",
+      purple: "purple",
+      indigo: "indigo",
+      pink: "pink",
+      none: "none",
     };
 
-    return badgeColorMap[cor] || "gray";
+    return badgeColorMap[cor] || "dark";
   }
 
   /**

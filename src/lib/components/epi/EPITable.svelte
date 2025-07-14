@@ -16,7 +16,7 @@
     if (confirm(`Deseja realmente excluir o tipo EPI "${tipo.nomeEquipamento}"?`)) {
       try {
         await onDelete(tipo);
-      } catch (error) {
+      } catch (error: any) {
         console.error('Erro ao excluir tipo EPI:', error);
         alert('Erro ao excluir tipo EPI.');
       }
@@ -63,7 +63,7 @@
               </div>
             </TableBodyCell>
             <TableBodyCell class="min-w-[100px]">
-              <Badge color="gray" class="w-fit rounded-sm">
+              <Badge color="dark" class="w-fit rounded-sm">
                 {tipo.numeroCA}
               </Badge>
             </TableBodyCell>
@@ -123,7 +123,7 @@
         {/each}
       {:else}
         <TableBodyRow>
-          <TableBodyCell colspan="6" class="text-center py-12">
+          <TableBodyCell colspan={6} class="text-center py-12">
             <div class="text-gray-500 dark:text-gray-400">
               Nenhum tipo de EPI encontrado
             </div>

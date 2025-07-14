@@ -52,7 +52,7 @@ export class FichaTransformAdapter {
   /**
    * Transforma uma ficha individual para formato básico
    */
-  private transformFichaBasica = (rawFicha: any): FichaBasica => {
+  public transformFichaBasica = (rawFicha: any): FichaBasica => {
     return {
       id: rawFicha.id || '',
       status: rawFicha.status || 'inativa',
@@ -68,10 +68,12 @@ export class FichaTransformAdapter {
       },
       estatisticas: {
         totalEntregas: rawFicha.estatisticas?.totalEntregas || 0,
-        itensAtivos: rawFicha.estatisticas?.itensAtivos || 0,
+        itensAtivos: rawFicha.totalEpisAtivos || rawFicha.estatisticas?.itensAtivos || 0,
         devolucoesPendentes: rawFicha.estatisticas?.devolucoesPendentes || 0
       },
-      dataAtualizacao: rawFicha.dataAtualizacao || new Date().toISOString()
+      // 🔧 CORREÇÃO: Adicionar totalEpisAtivos na raiz para compatibilidade com FichaEPIDTO
+      totalEpisAtivos: rawFicha.totalEpisAtivos || rawFicha.estatisticas?.itensAtivos || 0,
+      dataAtualizacao: rawFicha.dataAtualizacao || rawFicha.createdAt || new Date().toISOString()
     };
   };
 
@@ -123,14 +125,177 @@ export class FichaTransformAdapter {
       throw new Error('Dados de ficha completa inválidos');
     }
 
+    // 🔧 CORREÇÃO: O endpoint /complete retorna dados já processados
+    // A estrutura é: { data: { ficha: {...}, equipamentosEmPosse: [...], ... } }
+    const processedData = rawData.data;
+
     return {
       success: true,
       data: {
-        ficha: this.transformFichaBasica(rawData.data),
-        entregas: rawData.data.entregas || [],
-        devolucoes: rawData.data.devolucoes || []
+        // ✅ CORRIGIDO: Usar dados da ficha já processados pelo backend
+        ficha: processedData.ficha || {},
+        // ✅ NOVO: Transformar entregas para incluir campos esperados pelo frontend
+        entregas: this.transformEntregas(processedData.entregas || []),
+        // ✅ CORREÇÃO: Extrair devoluções do histórico já que o backend não está populando corretamente
+        devolucoes: this.extractDevolucoes(processedData.historico || []),
+        equipamentosEmPosse: processedData.equipamentosEmPosse || [],
+        // ✅ NOVO: Transformar histórico para incluir campos esperados pelo frontend
+        historico: this.transformHistorico(processedData.historico || []),
+        estatisticas: processedData.estatisticas || {}
       }
     };
+  }
+
+  /**
+   * Transforma dados de entregas da API para o formato esperado pelo frontend
+   */
+  private transformEntregas(entregas: any[]): any[] {
+    return entregas.map(entrega => ({
+      ...entrega,
+      // Adicionar campos esperados pelo frontend
+      numero: entrega.id || '',
+      dataEntrega: this.formatDate(entrega.dataEntrega),
+      statusDisplay: this.transformStatusEntrega(entrega.status),
+      acoes: this.getAcoesEntrega(entrega.status),
+      itens: entrega.itens?.map((item: any) => ({
+        ...item,
+        quantidade: item.quantidadeEntregue || 1,
+        nomeEquipamento: entrega.tipoEpi?.nome || 'EPI não identificado',
+        numeroCA: entrega.tipoEpi?.codigo || '',
+        registroCA: entrega.tipoEpi?.codigo || ''
+      })) || []
+    }));
+  }
+
+  /**
+   * Transforma dados de histórico da API para o formato esperado pelo frontend
+   */
+  private transformHistorico(historico: any[]): any[] {
+    return historico.map(evento => ({
+      ...evento,
+      dataFormatada: this.formatDate(evento.dataAcao),
+      tipoDisplay: {
+        tipo: evento.tipoAcao,
+        label: this.getTipoEventoLabel(evento.tipoAcao),
+        cor: this.getTipoEventoCor(evento.tipoAcao)
+      },
+      acao: evento.descricao || '',
+      responsavel: evento.responsavel?.nome || 'Sistema',
+      detalhes: {
+        resumo: evento.descricao || ''
+      }
+    }));
+  }
+
+  /**
+   * Transforma status de entrega para display
+   */
+  private transformStatusEntrega(status: string): { cor: string; label: string } {
+    const statusMap = {
+      'PENDENTE_ASSINATURA': { cor: 'yellow', label: 'Pendente Assinatura' },
+      'ASSINADA': { cor: 'green', label: 'Assinada' },
+      'CANCELADA': { cor: 'red', label: 'Cancelada' },
+      'RASCUNHO': { cor: 'gray', label: 'Rascunho' }
+    };
+
+    return statusMap[status as keyof typeof statusMap] || { cor: 'gray', label: status };
+  }
+
+  /**
+   * Determina ações disponíveis para uma entrega baseado no status
+   */
+  private getAcoesEntrega(status: string): string[] {
+    switch (status) {
+      case 'PENDENTE_ASSINATURA':
+        return ['assinar', 'editar', 'imprimir'];
+      case 'ASSINADA':
+        return ['imprimir'];
+      case 'RASCUNHO':
+        return ['editar'];
+      default:
+        return ['imprimir'];
+    }
+  }
+
+  /**
+   * Formata data para exibição
+   */
+  private formatDate(dateString: string): string {
+    if (!dateString) return '';
+    
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('pt-BR');
+    } catch {
+      return dateString;
+    }
+  }
+
+  /**
+   * Obtém label do tipo de evento
+   */
+  private getTipoEventoLabel(tipoAcao: string): string {
+    const labelMap = {
+      'CRIACAO': 'Criação',
+      'ENTREGA': 'Entrega',
+      'DEVOLUCAO': 'Devolução',
+      'EDICAO': 'Edição',
+      'CANCELAMENTO': 'Cancelamento',
+      'ALTERACAO_STATUS': 'Alteração de Status',
+      'ITEM_VENCIDO': 'Item Vencido'
+    };
+
+    return labelMap[tipoAcao as keyof typeof labelMap] || tipoAcao;
+  }
+
+  /**
+   * Obtém cor do tipo de evento
+   */
+  private getTipoEventoCor(tipoAcao: string): string {
+    const corMap = {
+      'CRIACAO': 'blue',
+      'ENTREGA': 'green',
+      'DEVOLUCAO': 'orange',
+      'EDICAO': 'yellow',
+      'CANCELAMENTO': 'red',
+      'ALTERACAO_STATUS': 'purple',
+      'ITEM_VENCIDO': 'red'
+    };
+
+    return corMap[tipoAcao as keyof typeof corMap] || 'gray';
+  }
+
+  /**
+   * Extrai devoluções do histórico para popular a tab "Devoluções"
+   * 🔧 CORREÇÃO: O backend não está populando o array devolucoes, mas as devoluções estão no histórico
+   */
+  private extractDevolucoes(historico: any[]): any[] {
+    const devolucoes = historico.filter(evento => evento.tipoAcao === 'DEVOLUCAO');
+    
+    return devolucoes.map(devolucao => ({
+      id: devolucao.id,
+      nomeEquipamento: devolucao.detalhes?.tipoEpiNome || 'EPI não identificado',
+      numeroCA: 'N/A', // Não disponível no histórico atual
+      categoria: 'N/A', // Não disponível no histórico atual
+      dataDevolucao: this.formatDate(devolucao.dataAcao),
+      motivoDisplay: this.getMotivoDevolucao(devolucao.descricao),
+      status: 'processada', // Devoluções no histórico já foram processadas
+      condicaoItem: 'BOM', // Não especificado no histórico
+      observacoes: devolucao.descricao || '',
+      entregaId: devolucao.detalhes?.entregaId || '',
+      responsavel: devolucao.responsavel?.nome || 'Sistema'
+    }));
+  }
+
+  /**
+   * Extrai motivo da devolução da descrição
+   */
+  private getMotivoDevolucao(descricao: string): string {
+    // Tentar extrair motivo da descrição
+    if (descricao?.includes('danificado')) return 'Item danificado';
+    if (descricao?.includes('troca')) return 'Troca de equipamento';
+    if (descricao?.includes('vencido')) return 'Item vencido';
+    return 'Devolução padrão';
   }
 }
 

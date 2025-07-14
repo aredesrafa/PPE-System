@@ -277,7 +277,7 @@
     </Card>
   {:else if error}
     <ErrorDisplay 
-      message={error}
+      error={error}
       onRetry={() => dispatch('refresh')}
     />
   {:else if items.length === 0}

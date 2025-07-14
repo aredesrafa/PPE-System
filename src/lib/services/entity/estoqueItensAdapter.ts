@@ -13,7 +13,7 @@ import type { PaginatedResponse } from "$lib/stores/paginatedStore";
 export interface EstoqueItem {
   id: string;
   quantidade: number;
-  status: "DISPONIVEL" | "BAIXO" | "INDISPONIVEL" | "ZERO";
+  status: "DISPONIVEL" | "BAIXO" | "AGUARDANDO_INSPECAO" | "ZERO" | "QUARENTENA";
   data_validade?: string;
   lote?: string;
   created_at: string;
@@ -44,6 +44,8 @@ export interface EstoqueItemOption {
   status: string;
   dataValidade?: string;
   lote?: string;
+  // Propriedade faltante identificada nos erros TS
+  quantidadeDisponivel: number;
 }
 
 // ==================== ADAPTER CLASS ====================
@@ -60,7 +62,7 @@ class EstoqueItensAdapter {
     search?: string;
     almoxarifado_id?: string;
     tipo_epi_id?: string;
-    status?: "DISPONIVEL" | "BAIXO" | "INDISPONIVEL" | "ZERO" | "todos";
+    status?: "DISPONIVEL" | "BAIXO" | "AGUARDANDO_INSPECAO" | "ZERO" | "QUARENTENA" | "todos";
     categoria?: string;
   }): Promise<PaginatedResponse<EstoqueItem>> {
     console.log("📦 EstoqueItensAdapter: Listando itens de estoque", params);
@@ -103,7 +105,7 @@ class EstoqueItensAdapter {
         pageSize: response.data.pagination.limit,
         totalPages: response.data.pagination.totalPages,
       };
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao listar itens de estoque:", error);
       throw new Error("Não foi possível carregar os itens de estoque");
     }
@@ -143,6 +145,7 @@ class EstoqueItensAdapter {
           status: item.status,
           dataValidade: item.data_validade,
           lote: item.lote,
+          quantidadeDisponivel: item.quantidade,
         }));
 
       // Ordenar por nome do equipamento
@@ -152,7 +155,7 @@ class EstoqueItensAdapter {
 
       console.log("✅ Itens disponíveis para saída:", itensDisponiveis.length);
       return itensDisponiveis;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao buscar itens disponíveis para saída:", error);
       return [];
     }
@@ -198,11 +201,12 @@ class EstoqueItensAdapter {
         status: item.status,
         dataValidade: item.data_validade,
         lote: item.lote,
+        quantidadeDisponivel: item.quantidade,
       }));
 
       console.log("✅ Busca realizada, encontrados:", opcoes.length);
       return opcoes;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro na busca de itens de estoque:", error);
       return [];
     }
@@ -225,7 +229,7 @@ class EstoqueItensAdapter {
         response.data.tipo_epi.nome_equipamento,
       );
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao buscar item de estoque:", error);
       throw new Error("Não foi possível encontrar o item de estoque");
     }
@@ -279,7 +283,7 @@ class EstoqueItensAdapter {
         valido: true,
         quantidadeDisponivel: item.quantidade,
       };
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao validar quantidade disponível:", error);
       return {
         valido: false,
@@ -339,7 +343,7 @@ class EstoqueItensAdapter {
         Object.keys(agrupados).length,
       );
       return agrupados;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao agrupar itens por tipo:", error);
       return {};
     }
@@ -436,11 +440,12 @@ class EstoqueItensAdapter {
         status: item.status,
         dataValidade: item.data_validade,
         lote: item.lote,
+        quantidadeDisponivel: item.quantidade,
       }));
 
       console.log("✅ Itens com baixo estoque:", opcoes.length);
       return opcoes;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao buscar itens com baixo estoque:", error);
       return [];
     }
@@ -480,7 +485,7 @@ class EstoqueItensAdapter {
             quantidadeAtual: validacao.quantidadeDisponivel,
             motivo: validacao.motivo,
           };
-        } catch (error) {
+        } catch (error: any) {
           return {
             itemId: verificacao.itemId,
             disponivel: false,

@@ -96,12 +96,10 @@ export const equipmentWithCollaborators = createPaginatedStore<Entrega>(
 
     return {
       data: mockData,
-      meta: {
-        total: mockData.length,
-        page: params.page,
-        pageSize: params.pageSize,
-        totalPages: Math.ceil(mockData.length / params.pageSize),
-      },
+      total: mockData.length,
+      page: params.page || 1,
+      pageSize: params.pageSize || 10,
+      totalPages: Math.ceil(mockData.length / (params.pageSize || 10)),
     };
   },
   10,
@@ -174,7 +172,7 @@ export async function validateDevolutionRequest(
     });
 
     return validation;
-  } catch (error) {
+  } catch (error: any) {
     console.error("❌ Erro ao validar devolução:", error);
     throw error;
   }
@@ -226,7 +224,7 @@ export async function requestDevolution(
 
     console.log("✅ Devolução solicitada com sucesso");
     return processId;
-  } catch (error) {
+  } catch (error: any) {
     console.error("❌ Erro ao solicitar devolução:", error);
     throw error;
   }
@@ -255,7 +253,7 @@ export async function approveDevolution(
 
     updateDevolutionStats();
     console.log("✅ Devolução aprovada");
-  } catch (error) {
+  } catch (error: any) {
     console.error("❌ Erro ao aprovar devolução:", error);
     throw error;
   }
@@ -288,7 +286,7 @@ export async function finalizeDevolution(
     equipmentWithCollaborators.reload();
 
     console.log("✅ Devolução finalizada");
-  } catch (error) {
+  } catch (error: any) {
     console.error("❌ Erro ao finalizar devolução:", error);
     throw error;
   }
@@ -324,7 +322,7 @@ export async function loadDevolutionsByStatus(
     });
 
     console.log(`✅ ${processes.length} devoluções carregadas`);
-  } catch (error) {
+  } catch (error: any) {
     console.error("❌ Erro ao carregar devoluções:", error);
     throw error;
   }
@@ -351,7 +349,7 @@ export async function loadCollaboratorDevolutions(
       createdAt: new Date(mov.dataMovimentacao),
       updatedAt: new Date(mov.dataMovimentacao),
     }));
-  } catch (error) {
+  } catch (error: any) {
     console.error("❌ Erro ao carregar devoluções do colaborador:", error);
     return [];
   }
@@ -421,7 +419,7 @@ export async function initializeDevolutionStore(): Promise<void> {
     await equipmentWithCollaborators.loadPage(1);
 
     console.log("✅ Devolution store inicializado");
-  } catch (error) {
+  } catch (error: any) {
     console.error("❌ Erro ao inicializar devolution store:", error);
   }
 }

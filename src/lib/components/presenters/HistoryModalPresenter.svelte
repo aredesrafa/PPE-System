@@ -82,14 +82,14 @@
     });
   }
 
-  function getTipoMovimentacaoColor(tipo: string): string {
+  function getTipoMovimentacaoColor(tipo: string): "green" | "red" | "yellow" | "primary" | "blue" | "dark" | "purple" | "indigo" | "pink" | "none" {
     if (tipo.includes('ENTRADA') || tipo.includes('DEVOLUCAO')) return 'green';
     if (tipo.includes('SAIDA') || tipo.includes('ENTREGA')) return 'blue';
     if (tipo.includes('AJUSTE_POSITIVO')) return 'green';
     if (tipo.includes('AJUSTE_NEGATIVO')) return 'yellow';
     if (tipo.includes('DESCARTE')) return 'red';
     if (tipo.includes('ESTORNO')) return 'purple';
-    return 'gray';
+    return 'dark';
   }
 
   function getTipoMovimentacaoLabel(tipo: string): string {

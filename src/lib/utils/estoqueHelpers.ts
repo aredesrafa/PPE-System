@@ -47,7 +47,7 @@ export const registrarEventoEstoque = async (
   try {
     // TODO: Implementar API de histórico quando disponível
     console.log("Evento de estoque registrado:", evento);
-  } catch (error) {
+  } catch (error: any) {
     console.error("Erro ao registrar evento de estoque:", error);
   }
 };
@@ -79,7 +79,7 @@ export const verificarAlertasEstoque = async (): Promise<{
     }
 
     return { baixoEstoque, proximosVencimento, vencidos };
-  } catch (error) {
+  } catch (error: any) {
     console.error("Erro ao verificar alertas de estoque:", error);
     return { baixoEstoque: [], proximosVencimento: [], vencidos: [] };
   }

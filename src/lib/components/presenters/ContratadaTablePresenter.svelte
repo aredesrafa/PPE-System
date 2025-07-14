@@ -49,10 +49,10 @@
   // ==================== LOCAL STATE ====================
   
   let itemsPerPageOptions = [
-    { value: 5, label: '5 por página' },
-    { value: 10, label: '10 por página' },
-    { value: 25, label: '25 por página' },
-    { value: 50, label: '50 por página' }
+    { value: 5, label: '5 por página', name: '5' },
+    { value: 10, label: '10 por página', name: '10' },
+    { value: 25, label: '25 por página', name: '25' },
+    { value: 50, label: '50 por página', name: '50' }
   ];
   
   
@@ -137,6 +137,12 @@
   function handleSelectChange(event: Event): void {
     const target = event.target as HTMLSelectElement;
     handleItemsPerPageChange(target.value);
+  }
+
+  // Função auxiliar para eventos de input - compatível com Svelte
+  function handleSearchInput(event: Event): void {
+    const target = event.currentTarget as HTMLInputElement;
+    handleFilterInput('search', target.value || '');
   }
   
   function handleSalvarContratada(): void {
@@ -230,7 +236,7 @@
         <Input
           id="filtro-nome"
           value={filters.search || ''}
-          on:input={(e) => handleFilterInput('search', e.target?.value || '')}
+          on:input={handleSearchInput}
           placeholder="Digite o nome da empresa..."
           size="sm"
           class="rounded-sm"
@@ -270,7 +276,7 @@
     </Card>
   {:else if error}
     <ErrorDisplay 
-      message={error}
+      error={error}
       onRetry={() => dispatch('refresh')}
     />
   {:else if items.length === 0}

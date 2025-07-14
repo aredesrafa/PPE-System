@@ -110,7 +110,7 @@
   
   function validateForm(): boolean {
     // Validação simples: verificar se usuário está selecionado e itens estão válidos
-    return usuarioResponsavelId.trim() && 
+    return !!usuarioResponsavelId.trim() && 
            itensSelecionados.length > 0 && 
            itensSelecionados.every(item => item.episDisponivelId && item.quantidade > 0);
   }
@@ -143,11 +143,13 @@
     const formData: NovaEntregaFormData = {
       responsavel: responsavelEntrega.trim(),
       usuarioResponsavelId: usuarioResponsavelId.trim(),
+      responsavelId: usuarioResponsavelId.trim(),
       itens: itensValidos.map(item => ({
         episDisponivelId: item.episDisponivelId,
         nomeEquipamento: item.nomeEquipamento,
         registroCA: item.registroCA,
-        quantidade: item.quantidade
+        quantidade: item.quantidade,
+        estoqueItemId: item.episDisponivelId
       }))
     };
 
@@ -177,6 +179,12 @@
 
   function handleCancelar(): void {
     dispatch('cancelar');
+  }
+
+  // Função auxiliar para eventos de input - compatível com Svelte
+  function handleQuantidadeInput(event: Event, index: number): void {
+    const target = event.currentTarget as HTMLInputElement;
+    atualizarQuantidade(index, parseInt(target.value) || 1);
   }
 
   // ==================== COMPUTED PROPERTIES ====================
@@ -336,7 +344,7 @@
                       min="1"
                       max="100"
                       bind:value={item.quantidade}
-                      on:input={(e) => atualizarQuantidade(index, parseInt(e.target.value) || 1)}
+                      on:input={(e) => handleQuantidadeInput(e, index)}
                       class="rounded-sm"
                       disabled={loading}
                     />

@@ -26,7 +26,7 @@ export function createApiStore<T>(initialData: T | null = null) {
         const data = await apiCall();
         store.update((state) => ({ ...state, data, loading: false }));
         return data;
-      } catch (error) {
+      } catch (error: any) {
         const errorMessage =
           error instanceof Error ? error.message : "Erro desconhecido";
         store.update((state) => ({

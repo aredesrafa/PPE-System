@@ -8,11 +8,10 @@
 // ==================== QUERY ADAPTERS ====================
 export { fichaQueryAdapter } from "./queries/fichaQueryAdapter";
 export type {
-  FichaCompleteResponse,
-  FichaListParams,
-  FichaListItem,
-  PaginatedResponse,
-} from "./queries/fichaQueryAdapter";
+  FichaQueryParams,
+  PaginatedFichaResponse,
+  FichaBasica,
+} from "./queries/types";
 
 // ==================== OPERATION ADAPTERS ====================
 export { deliveryProcessAdapter } from "./operations/deliveryProcessAdapter";

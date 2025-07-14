@@ -125,7 +125,7 @@
       // Reload data after creation
       await contratadaStore.reload();
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Erro ao salvar contratada:', error);
       notify.error('Erro', 'Não foi possível salvar a contratada');
     }
@@ -149,7 +149,7 @@
       // Reload data after update
       await contratadaStore.reload();
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Erro ao atualizar contratada:', error);
       notify.error('Erro', 'Não foi possível atualizar a contratada');
     }
@@ -167,7 +167,7 @@
       // Reload data after deletion
       await contratadaStore.reload();
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Erro ao excluir contratada:', error);
       notify.error('Erro', 'Não foi possível excluir a contratada');
     }

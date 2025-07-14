@@ -14,8 +14,9 @@ export type TipoNotaEnum =
   | "TRANSFERENCIA"
   | "DESCARTE"
   | "ENTRADA_AJUSTE"
-  | "SAIDA_AJUSTE";
-export type StatusNotaEnum = "RASCUNHO" | "CONCLUIDA" | "CANCELADA";
+  | "SAIDA_AJUSTE"
+  | "AJUSTE";
+export type StatusNotaEnum = "RASCUNHO" | "CONCLUIDA" | "CANCELADA" | "todos";
 
 // ==================== INTERFACES PRINCIPAIS ====================
 
@@ -77,6 +78,10 @@ export interface NotaMovimentacao {
   // Campos derivados
   total_itens?: number;
   valor_total?: number;
+  // Propriedades faltantes identificadas nos erros TS
+  responsavel_nome?: string;
+  almoxarifado_nome?: string;
+  almoxarifado_destino_nome?: string;
 }
 
 // ==================== REQUEST/RESPONSE INTERFACES ====================
@@ -116,6 +121,8 @@ export interface AdicionarItemNotaRequest {
   estoque_item_id?: string; // Para saídas/transferências
   quantidade: number;
   custo_unitario?: number; // Para entradas
+  // Propriedade faltante identificada nos erros TS
+  observacoes?: string;
 }
 
 // ==================== RESPONSE INTERFACES ====================
@@ -127,7 +134,12 @@ export interface CriarNotaResponse {
     id: string;
     numero: string;
     status: StatusNotaEnum;
+    // Propriedades faltantes identificadas nos erros TS
+    uuid?: string;
   };
+  // Propriedades faltantes identificadas nos erros TS
+  id?: string;
+  uuid?: string;
 }
 
 // Response de conclusão de nota
@@ -137,6 +149,9 @@ export interface ConcluirNotaResponse {
     movimentacoes_criadas: number;
     nota_id: string;
     status: StatusNotaEnum;
+    // Propriedades faltantes identificadas nos erros TS
+    movimentacoesCriadas?: number;
+    data?: any;
   };
 }
 

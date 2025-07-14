@@ -45,10 +45,10 @@ export function getStatusNotaLabel(status: StatusNotaEnum): string {
  */
 export function getTipoNotaBadgeColor(
   tipo: TipoNotaEnum,
-): "green" | "blue" | "red" | "yellow" | "dark" | "gray" {
+): "green" | "blue" | "red" | "yellow" | "dark" | "primary" | "purple" | "indigo" | "pink" | "none" {
   const colors: Record<
     TipoNotaEnum,
-    "green" | "blue" | "red" | "yellow" | "dark" | "gray"
+    "green" | "blue" | "red" | "yellow" | "dark" | "primary" | "purple" | "indigo" | "pink" | "none"
   > = {
     ENTRADA: "green",
     TRANSFERENCIA: "blue",
@@ -56,7 +56,7 @@ export function getTipoNotaBadgeColor(
     ENTRADA_AJUSTE: "yellow",
     SAIDA_AJUSTE: "dark",
   };
-  return colors[tipo] || "gray";
+  return colors[tipo] || "dark";
 }
 
 /**

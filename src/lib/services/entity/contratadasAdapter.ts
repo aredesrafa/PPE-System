@@ -69,7 +69,7 @@ class ContratadasAdapter {
 
       // ✅ CONECTADO: Chamada real para o endpoint de contratadas
       const endpoint = createUrlWithParams('/contratadas', queryParams);
-      const response = await api.get<{ success: boolean; data: { contratadas: any[]; total: number } }>(endpoint);
+      const response = await api.get(endpoint) as any;
 
       console.log('📦 Contratadas response real:', response);
       console.log('📦 Estrutura dos dados:', {
@@ -106,7 +106,7 @@ class ContratadasAdapter {
       // Se chegou aqui, a resposta não foi bem-sucedida
       throw new Error('Falha na resposta da API');
 
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao carregar contratadas, usando fallback mock:", error);
       
       // Fallback para dados mock em caso de erro
@@ -176,7 +176,7 @@ class ContratadasAdapter {
       console.log("🏢 Buscando contratada:", id);
 
       // TODO: Conectar ao endpoint real
-      // const response = await api.get<ContratadaDTO>(`/contratadas/${id}`);
+      // const response = await api.get<ContratadaDTO>(`/contratadas/${id}`) as any;
 
       await new Promise((resolve) => setTimeout(resolve, 500));
 
@@ -196,7 +196,7 @@ class ContratadasAdapter {
 
       console.log("✅ Contratada encontrada:", mockContratada.nome);
       return mockContratada;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao buscar contratada:", error);
       throw error;
     }
@@ -229,7 +229,7 @@ class ContratadasAdapter {
       }
 
       throw new Error("Resposta inválida do backend");
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao criar contratada no backend, usando fallback:", error);
       
       // Se for erro de validação, repassar
@@ -269,7 +269,7 @@ class ContratadasAdapter {
       console.log("💾 Atualizando contratada:", id, data);
 
       // TODO: Conectar ao endpoint real
-      // const response = await api.put<ContratadaDTO>(`/contratadas/${id}`, data);
+      // const response = await api.put<ContratadaDTO>(`/contratadas/${id}`, data) as any;
 
       await new Promise((resolve) => setTimeout(resolve, 800));
 
@@ -289,7 +289,7 @@ class ContratadasAdapter {
 
       console.log("✅ Contratada atualizada:", contratadaAtualizada.id);
       return contratadaAtualizada;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao atualizar contratada:", error);
       throw error;
     }
@@ -308,7 +308,7 @@ class ContratadasAdapter {
       await new Promise((resolve) => setTimeout(resolve, 600));
 
       console.log("✅ Contratada deletada:", id);
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao deletar contratada:", error);
       throw error;
     }
@@ -330,7 +330,7 @@ class ContratadasAdapter {
       await new Promise((resolve) => setTimeout(resolve, 500));
 
       console.log("✅ Status da contratada alterado:", id, novoStatus);
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao alterar status da contratada:", error);
       throw error;
     }

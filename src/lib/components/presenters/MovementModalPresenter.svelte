@@ -185,7 +185,7 @@
             bind:value={formData.motivo}
             on:input={handleTextareaResize}
             placeholder="Descreva o motivo da movimentação..."
-            rows="2"
+            rows={2}
             class="rounded-sm resize-none"
             color={errors.motivo ? 'red' : 'base'}
           />

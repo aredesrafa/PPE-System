@@ -11,7 +11,7 @@
 
 <script lang="ts">
   import { createEventDispatcher, onMount, onDestroy } from 'svelte';
-  import { catalogAdapter, type TipoEPI } from '$lib/services/entity/catalogAdapter';
+  import { catalogAdapter, type TipoEPI, type CatalogFilterParams, type CreateTipoEPIData } from '$lib/services/entity/catalogAdapter';
   import { createPaginatedStore } from '$lib/stores/paginatedStore';
   import { businessConfigStore } from '$lib/stores/businessConfigStore';
   import { notify } from '$lib/stores';
@@ -35,7 +35,19 @@
   
   // Store para catálogo com paginação server-side
   const catalogStore = createPaginatedStore<TipoEPI>(
-    (params) => catalogAdapter.getTiposEPI(params),
+    (params) => {
+      // Convert PaginationParams to CatalogFilterParams
+      const catalogParams: CatalogFilterParams = {
+        search: params.search,
+        categoria: params.categoria,
+        status: params.status,
+        ativo: typeof params.ativo === 'string' ? params.ativo === 'true' : params.ativo,
+        page: params.page,
+        pageSize: params.pageSize,
+        limit: params.limit
+      };
+      return catalogAdapter.getTiposEPI(catalogParams);
+    },
     {
       initialPageSize: initialPageSize,
       enableCache: true,
@@ -65,7 +77,7 @@
       await catalogStore.fetchPage();
       
       console.log('✅ CatalogContainer: Inicializado com sucesso');
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Erro na inicialização do CatalogContainer:', error);
     }
   });
@@ -158,7 +170,7 @@
       
       // Emitir evento
       dispatch('epiDeleted', epi.id);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao excluir EPI:', error);
       notify.error('Erro ao excluir', 'Não foi possível remover o EPI do catálogo');
     }
@@ -174,7 +186,15 @@
       let result: TipoEPI;
       
       if (drawerMode === 'create') {
-        result = await catalogAdapter.createTipoEPI(formData);
+        // Ensure required fields are present for create
+        const createData: CreateTipoEPIData = {
+          nomeEquipamento: formData.nomeEquipamento || '',
+          numeroCa: formData.numeroCa || formData.numeroCA || '',
+          categoria: formData.categoria || '',
+          vidaUtilDias: formData.vidaUtilDias || formData.validadePadrao,
+          descricao: formData.descricao
+        };
+        result = await catalogAdapter.createTipoEPI(createData);
         notify.success('EPI criado', `${result.nomeEquipamento} foi adicionado ao catálogo`);
         dispatch('epiCreated', result);
       } else {
@@ -190,7 +210,7 @@
       showEPIDrawer = false;
       selectedEPI = null;
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao salvar EPI:', error);
       notify.error('Erro ao salvar', 'Não foi possível salvar o EPI');
     } finally {

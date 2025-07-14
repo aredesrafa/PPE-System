@@ -318,7 +318,7 @@
           <span class="flex items-center space-x-2">
             <span>{tab.label}</span>
             {#if filters.activeTab === index && pagination.total > 0}
-              <Badge color="gray" class="rounded-sm text-xs">{pagination.total}</Badge>
+              <Badge color="dark" class="rounded-sm text-xs">{pagination.total}</Badge>
             {/if}
           </span>
         </button>
@@ -403,12 +403,18 @@
                   </div>
                 </TableBodyCell>
                 <TableBodyCell>
-                  <Badge 
-                    color={getStatusNotaBadgeColor(nota.status)} 
-                    class="w-fit rounded-sm"
-                  >
-                    {getStatusNotaLabel(nota.status)}
-                  </Badge>
+                  {#if nota.status}
+                    <Badge 
+                      color={getStatusNotaBadgeColor(nota.status)} 
+                      class="w-fit rounded-sm"
+                    >
+                      {getStatusNotaLabel(nota.status)}
+                    </Badge>
+                  {:else}
+                    <Badge color="dark" class="w-fit rounded-sm">
+                      Sem status
+                    </Badge>
+                  {/if}
                 </TableBodyCell>
                 <TableBodyCell>
                   <div class="flex items-center space-x-2">

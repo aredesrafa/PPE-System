@@ -131,7 +131,7 @@
       bind:value={formData.descricao}
       on:input={(e) => handleChange('descricao', e)}
       placeholder="Descreva as características e especificações do EPI..."
-      rows="3"
+      rows={3}
       class="rounded-sm"
       {disabled}
     />

@@ -26,6 +26,12 @@ export interface TipoEpi {
   custo_unitario?: number;
   data_validade?: string;
   created_at?: string;
+  // Propriedades faltantes identificadas nos erros TS
+  numeroCA?: string;
+  ca?: string;
+  category?: string;
+  custoUnitario?: number;
+  preco?: number;
 }
 
 export interface TipoEpiSelectOption {
@@ -35,6 +41,8 @@ export interface TipoEpiSelectOption {
   numeroCA: string;
   custoUnitario?: number;
   status?: string;
+  // Propriedade faltante identificada nos erros TS
+  custoSugerido?: number;
 }
 
 // ==================== ADAPTER CLASS ====================
@@ -89,7 +97,7 @@ class TiposEpiAdapter {
         pageSize: response.data.pagination.limit,
         totalPages: response.data.pagination.totalPages,
       };
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao listar tipos de EPI:", error);
 
       // Se for timeout, usar dados de fallback temporariamente
@@ -125,7 +133,7 @@ class TiposEpiAdapter {
 
       console.log("✅ Tipo de EPI encontrado:", response.data.nome_equipamento);
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao buscar tipo de EPI:", error);
       throw new Error("Não foi possível encontrar o tipo de EPI");
     }
@@ -226,7 +234,7 @@ class TiposEpiAdapter {
 
       console.log("✅ Opções de select criadas:", opcoes.length);
       return opcoes;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao criar opções de select:", error);
 
       // Retornar lista vazia em caso de erro para não quebrar a UI
@@ -261,7 +269,7 @@ class TiposEpiAdapter {
 
       console.log("✅ Opções agrupadas por categoria:", Object.keys(agrupadas));
       return agrupadas;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao agrupar opções por categoria:", error);
       return {};
     }
@@ -355,7 +363,7 @@ class TiposEpiAdapter {
 
       console.log("✅ Busca realizada, encontrados:", opcoes.length);
       return opcoes;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro na busca de tipos de EPI:", error);
       return [];
     }
@@ -383,7 +391,7 @@ class TiposEpiAdapter {
 
       console.log("✅ Categorias encontradas:", categorias);
       return categorias;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao carregar categorias:", error);
       return [];
     }
@@ -459,7 +467,7 @@ class TiposEpiAdapter {
 
       console.log("✅ Tipos populares carregados:", opcoes.length);
       return opcoes;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao carregar tipos populares:", error);
       return [];
     }

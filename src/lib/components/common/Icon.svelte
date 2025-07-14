@@ -45,8 +45,8 @@
       const iconName = iconMap[name] || name;
       const iconModule = await import('flowbite-svelte-icons');
       
-      if (iconModule[iconName]) {
-        IconComponent = iconModule[iconName];
+      if ((iconModule as any)[iconName]) {
+        IconComponent = (iconModule as any)[iconName];
       } else {
         console.warn(`Ícone não encontrado: ${iconName}`);
         error = true;

@@ -60,6 +60,8 @@ export interface NotesFilterParams extends FilterParams {
   dataInicio?: string;
   dataFim?: string;
   responsavel?: string;
+  // Propriedade faltante identificada nos erros TS
+  pageSize?: number;
 }
 
 export interface CreateNotaEntradaData {
@@ -171,7 +173,7 @@ class NotesAdapter {
       console.log("✅ Notas carregadas com sucesso");
 
       return mockResponse;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao carregar notas:", error);
       throw new Error("Não foi possível carregar as notas de movimentação");
     }
@@ -201,7 +203,7 @@ class NotesAdapter {
 
       this.cache.set(cacheKey, nota);
       return nota;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao buscar nota:", error);
       throw error;
     }
@@ -236,7 +238,7 @@ class NotesAdapter {
 
       console.log("✅ Nota criada com sucesso:", newNota.id);
       return newNota;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao criar nota:", error);
       throw new Error("Não foi possível criar a nota");
     }
@@ -269,7 +271,7 @@ class NotesAdapter {
 
       console.log("✅ Nota atualizada com sucesso");
       return updatedNota;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao atualizar nota:", error);
       throw new Error("Não foi possível atualizar a nota");
     }
@@ -286,7 +288,7 @@ class NotesAdapter {
       await this.updateNota(id, { status: "cancelada" });
 
       console.log("✅ Nota removida com sucesso");
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao remover nota:", error);
       throw new Error("Não foi possível remover a nota");
     }
@@ -302,7 +304,7 @@ class NotesAdapter {
       const nota = await this.updateNota(id, { status: "processada" });
       console.log("✅ Nota processada com sucesso");
       return nota;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao processar nota:", error);
       throw new Error("Não foi possível processar a nota");
     }
@@ -329,7 +331,7 @@ class NotesAdapter {
     const data = await this.getNotas({ pageSize: 1000 }); // Buscar todos para extrair opções
 
     const responsaveis = [
-      ...new Set(data.items.map((item) => item.responsavel)),
+      ...new Set(data.items.map((item: Nota) => item.responsavel)),
     ]
       .filter(Boolean)
       .sort()
@@ -339,7 +341,7 @@ class NotesAdapter {
       ...new Set(
         data.items
           .filter((item): item is NotaEntrada => item.tipo === "entrada")
-          .map((item) => item.fornecedor)
+          .map((item: NotaEntrada) => item.fornecedor)
           .filter(Boolean),
       ),
     ]

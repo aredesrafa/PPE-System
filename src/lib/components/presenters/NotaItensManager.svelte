@@ -15,6 +15,7 @@
   import { almoxarifadosAdapter } from '$lib/services/entity/almoxarifadosAdapter';
   import { tiposEpiAdapter } from '$lib/services/entity/tiposEpiAdapter';
   import { estoqueItensAdapter } from '$lib/services/entity/estoqueItensAdapter';
+  import { notasMovimentacaoAdapter } from '$lib/services/process/notasMovimentacaoAdapter';
   import type { TipoNotaEnum } from '$lib/services/process/notasMovimentacaoTypes';
   import type { TipoEpiSelectOption } from '$lib/services/entity/tiposEpiAdapter';
   import type { EstoqueItemOption } from '$lib/services/entity/estoqueItensAdapter';
@@ -44,6 +45,7 @@
   export let almoxarifadoDestinoId: string = '';
   export let itens: NotaItem[] = [];
   export let readonly = false;
+  export let currentNotaId: string = ''; // Para salvar custos de itens existentes
 
   // ==================== EVENT DISPATCHER ====================
 
@@ -107,7 +109,7 @@
       if (almoxarifadoId) {
         await loadOptionsForAlmoxarifado(almoxarifadoId);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao carregar opções iniciais:', error);
     } finally {
       loadingOptions = false;
@@ -123,7 +125,7 @@
         // Para saídas/transferências: carregar itens de estoque disponíveis
         estoqueItensOptions = await estoqueItensAdapter.obterItensDisponiveisComCache(almoxarifadoId);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao carregar opções para almoxarifado:', error);
     }
   }
@@ -246,7 +248,7 @@
       addingItem = false;
       resetNewItemForm();
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao adicionar item:', error);
       dispatch('validationError', 'Erro ao adicionar item');
     }
@@ -284,7 +286,7 @@
           validationErrors[tempId] = validacao.motivo || 'Quantidade inválida';
           return;
         }
-      } catch (error) {
+      } catch (error: any) {
         validationErrors[tempId] = 'Erro ao validar quantidade';
         return;
       }
@@ -303,12 +305,65 @@
     emitItensChange();
   }
 
+  async function handleCustoUnitarioChange(tempId: string, novoCusto: number): Promise<void> {
+    if (novoCusto < 0) {
+      validationErrors[tempId] = 'Custo unitário deve ser maior ou igual a zero';
+      return;
+    }
+
+    const item = itens.find(i => i.temp_id === tempId);
+    if (!item) return;
+
+    // Se não tem ID ou não tem nota ID, apenas atualizar localmente
+    if (!item.id || !currentNotaId || !item.tipo_epi_id) {
+      handleCustoUnitarioLocalChange(tempId, novoCusto);
+      return;
+    }
+
+    try {
+      // Item existente com ID - salvar no backend usando novo endpoint
+      await notasMovimentacaoAdapter.atualizarCustoUnitario(
+        currentNotaId,
+        item.tipo_epi_id,
+        novoCusto
+      );
+
+      // Limpar erro de validação
+      delete validationErrors[tempId];
+
+      // Atualizar item local
+      itens = itens.map(i => 
+        i.temp_id === tempId 
+          ? { ...i, custo_unitario: novoCusto }
+          : i
+      );
+
+      emitItensChange();
+      
+    } catch (error: any) {
+      validationErrors[tempId] = 'Erro ao salvar custo unitário';
+      console.error('Erro ao atualizar custo unitário:', error);
+    }
+  }
+
+  function handleCustoUnitarioLocalChange(tempId: string, novoCusto: number): void {
+    // Atualização local (para itens novos)
+    itens = itens.map(i => 
+      i.temp_id === tempId 
+        ? { ...i, custo_unitario: novoCusto }
+        : i
+    );
+    emitItensChange();
+  }
+
   function emitItensChange(): void {
     console.log('📤 Emitindo mudança de itens:', itens.map(item => ({
       temp_id: item.temp_id,
       tipo_epi_id: item.tipo_epi_id,
       estoque_item_id: item.estoque_item_id,
-      quantidade: item.quantidade
+      quantidade: item.quantidade,
+      custo_unitario: item.custo_unitario,
+      custo_tipo: typeof item.custo_unitario
     })));
     dispatch('itensChanged', itens);
   }
@@ -334,6 +389,18 @@
 
   function hasValidationErrors(): boolean {
     return Object.keys(validationErrors).length > 0;
+  }
+
+  // Funções auxiliares para eventos - compatível com Svelte
+  function handleCustoUnitarioInputChange(event: Event): void {
+    const target = event.currentTarget as HTMLInputElement;
+    const value = target.value;
+    newItemForm.custo_unitario = value ? parseFloat(value) : 0;
+  }
+
+  function handleQuantidadeItemInputChange(event: Event, tempId: string): void {
+    const target = event.currentTarget as HTMLInputElement;
+    handleQuantidadeChange(tempId, parseInt(target.value) || 0);
   }
 </script>
 
@@ -429,10 +496,7 @@
               bind:value={newItemForm.custo_unitario}
               placeholder="Custo unitário (R$)"
               class="rounded-sm text-sm"
-              on:input={(e) => {
-                const value = e.currentTarget.value;
-                newItemForm.custo_unitario = value ? parseFloat(value) : 0;
-              }}
+              on:input={handleCustoUnitarioInputChange}
             />
           </div>
         {/if}
@@ -487,7 +551,7 @@
                 {item.equipamento_nome}
               </TableBodyCell>
               <TableBodyCell>
-                <Badge color="gray" class="w-fit rounded-sm">
+                <Badge color="dark" class="w-fit rounded-sm">
                   {item.categoria || 'N/A'}
                 </Badge>
               </TableBodyCell>
@@ -504,7 +568,7 @@
                     max={item.quantidade_disponivel}
                     value={item.quantidade}
                     class="w-20 text-sm rounded-sm {validationErrors[item.temp_id] ? 'border-red-500' : ''}"
-                    on:input={(e) => handleQuantidadeChange(item.temp_id, parseInt(e.currentTarget.value) || 0)}
+                    on:input={(e) => handleQuantidadeItemInputChange(e, item.temp_id)}
                   />
                   {#if validationErrors[item.temp_id]}
                     <p class="text-xs text-red-500 mt-1">{validationErrors[item.temp_id]}</p>
@@ -514,10 +578,21 @@
               
               {#if isEntrada}
                 <TableBodyCell class="text-sm">
-                  {#if item.custo_unitario != null && typeof item.custo_unitario === 'number' && !isNaN(item.custo_unitario)}
-                    R$ {item.custo_unitario.toFixed(2)}
+                  {#if readonly}
+                    {#if item.custo_unitario != null && typeof item.custo_unitario === 'number' && !isNaN(item.custo_unitario)}
+                      R$ {item.custo_unitario.toFixed(2)}
+                    {:else}
+                      <span class="text-gray-400">N/A</span>
+                    {/if}
                   {:else}
-                    <span class="text-gray-400">N/A</span>
+                    <Input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={item.custo_unitario || 0}
+                      class="w-24 text-sm rounded-sm {validationErrors[item.temp_id] ? 'border-red-500' : ''}"
+                      on:blur={(e) => handleCustoUnitarioChange(item.temp_id, parseFloat(e.currentTarget.value) || 0)}
+                    />
                   {/if}
                 </TableBodyCell>
                 <TableBodyCell class="text-sm font-medium">

@@ -14,6 +14,7 @@ import type {
   EntityParams,
   PaginatedColaboradores,
   PaginatedTiposEPI,
+  TiposEPIResponse,
 } from "$lib/types/serviceTypes";
 import type { PaginatedResponse } from "$lib/stores/paginatedStore";
 
@@ -115,7 +116,7 @@ class EntityManagementAdapter {
     }
 
     // Se há paginação, retorna apenas os dados da resposta paginada
-    const response = await api.get<PaginatedColaboradores>(url);
+    const response = await api.get<PaginatedColaboradores>(url) as any;
     return response.data;
   }
 
@@ -168,7 +169,7 @@ class EntityManagementAdapter {
   async getTiposEPI(params: EntityParams = {}): Promise<PaginatedTiposEPI> {
     try {
       // Usar backend real
-      const response = await api.get<{ data: { items: TipoEPIDTO[] } }>(
+      const response = await api.get<{ data: TiposEPIResponse }>(
         "/tipos-epi",
         params,
       );
@@ -183,7 +184,7 @@ class EntityManagementAdapter {
           (response.data.total || items.length) / (params.limit || 50),
         ),
       };
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao buscar tipos EPI:", error);
       throw error;
     }
@@ -211,7 +212,7 @@ class EntityManagementAdapter {
     }
 
     // Se há paginação, retorna apenas os dados da resposta paginada
-    const response = await api.get<PaginatedTiposEPI>(url);
+    const response = await api.get<PaginatedTiposEPI>(url) as any;
     return response.data;
   }
 
@@ -229,7 +230,7 @@ class EntityManagementAdapter {
     try {
       const url = createUrlWithParams("/tipos-epi/search", { numeroCA });
       return await api.get<TipoEPIDTO>(url);
-    } catch (error) {
+    } catch (error: any) {
       // Se não encontrar, retorna null ao invés de throw
       return null;
     }
@@ -276,6 +277,7 @@ class EntityManagementAdapter {
         {
           id: "1",
           nome: "Almoxarifado Central",
+          codigo: "ALM-001",
           localizacao: "Setor A - Galpão 1",
           ativo: true,
           unidadeNegocioId: "1",
@@ -285,6 +287,7 @@ class EntityManagementAdapter {
         {
           id: "2",
           nome: "Almoxarifado Secundário",
+          codigo: "ALM-002",
           localizacao: "Setor B - Galpão 2",
           ativo: true,
           unidadeNegocioId: "1",
@@ -294,6 +297,7 @@ class EntityManagementAdapter {
         {
           id: "3",
           nome: "Almoxarifado Obras",
+          codigo: "ALM-003",
           localizacao: "Canteiro - Container 1",
           ativo: true,
           unidadeNegocioId: "1",
@@ -312,7 +316,7 @@ class EntityManagementAdapter {
       }
 
       return filteredData;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao buscar almoxarifados:", error);
       throw error;
     }

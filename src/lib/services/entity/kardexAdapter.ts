@@ -87,7 +87,7 @@ class KardexAdapter {
       }
 
       throw new Error('Dados de kardex não encontrados');
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Erro ao buscar kardex:', error);
       
       // Para desenvolvimento, retornar dados mockados

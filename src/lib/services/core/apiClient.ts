@@ -242,7 +242,7 @@ export async function apiClient<T>(
 
       // Se não for JSON, retornar como texto
       return (await response.text()) as unknown as T;
-    } catch (error) {
+    } catch (error: any) {
       clearTimeout(timeoutId);
 
       // Tratar timeout
@@ -419,7 +419,7 @@ if (browser && !import.meta.env.PROD) {
       );
 
       return response;
-    } catch (error) {
+    } catch (error: any) {
       const duration = performance.now() - start;
       console.error(
         `❌ ${init?.method || "GET"} ${input} - ERROR (${duration.toFixed(2)}ms)`,
@@ -454,7 +454,7 @@ export async function healthCheck(): Promise<{
     } else {
       throw new Error(`HTTP ${response.status}`);
     }
-  } catch (error) {
+  } catch (error: any) {
     console.warn("⚠️ Backend pode estar iniciando:", error);
 
     // Tentar endpoint alternativo

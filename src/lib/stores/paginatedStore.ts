@@ -47,6 +47,8 @@ export interface PaginatedResponse<T> {
   page: number;
   pageSize: number;
   totalPages: number;
+  // Propriedades faltantes para compatibilidade
+  items?: T[];
 }
 
 /**
@@ -76,6 +78,12 @@ export interface PaginationParams {
   // Propriedades específicas para diferentes contextos
   ativo?: boolean | string;
   contratadaId?: string;
+  // Propriedades faltantes identificadas nos erros TS
+  empresa?: string;
+  cargo?: string;
+  status?: string;
+  devolucaoPendente?: boolean;
+  [key: string]: any; // Para permitir outros filtros específicos
 }
 
 // Alias para compatibilidade com types/index.ts
@@ -94,6 +102,8 @@ export interface PaginatedStore<T> extends Readable<PaginatedState<T>> {
   goToPage: (page: number) => Promise<void>;
   reload: () => Promise<void>;
   reset: () => void;
+  // Propriedade faltante identificada nos erros TS
+  loadPage: (page: number) => Promise<void>;
 
   // Getters de conveniência
   hasNext: () => boolean;
@@ -256,7 +266,7 @@ export function createPaginatedStore<T>(
       });
 
       set(newState);
-    } catch (error) {
+    } catch (error: any) {
       const errorMessage =
         error instanceof Error ? error.message : "Erro desconhecido";
 
@@ -427,6 +437,7 @@ export function createPaginatedStore<T>(
   return {
     subscribe,
     fetchPage,
+    loadPage: (page: number) => fetchPage({ page }),
     setFilters,
     setSearch,
     setSorting,
@@ -591,7 +602,7 @@ export function createAdvancedPaginatedStore<T>(
           pageSize: params.limit || 10,
           totalPages: Math.ceil(total / (params.limit || 10)),
         };
-      } catch (error) {
+      } catch (error: any) {
         console.error("❌ Erro ao buscar contratadas:", error);
         // Fallback para dados mock em caso de erro
         return getFallbackContratadas(params);
@@ -643,7 +654,7 @@ export function createAdvancedPaginatedStore<T>(
           pageSize: params.limit || 10,
           totalPages: Math.ceil(total / (params.limit || 10)),
         };
-      } catch (error) {
+      } catch (error: any) {
         console.error("❌ Erro ao buscar colaboradores:", error);
 
         // Fallback para dados mock em caso de erro
@@ -841,7 +852,7 @@ export function createAdvancedPaginatedStore<T>(
         await refresh();
 
         return result.data;
-      } catch (error) {
+      } catch (error: any) {
         console.error("❌ Erro ao criar contratada:", error);
         throw error;
       }
@@ -886,7 +897,7 @@ export function createAdvancedPaginatedStore<T>(
         await refresh();
 
         return result.data;
-      } catch (error) {
+      } catch (error: any) {
         console.error("❌ Erro ao criar colaborador:", error);
         throw error;
       }
@@ -912,7 +923,7 @@ export function createAdvancedPaginatedStore<T>(
         await refresh();
 
         return result.data;
-      } catch (error) {
+      } catch (error: any) {
         console.error("❌ Erro ao atualizar contratada:", error);
         throw error;
       }
@@ -932,7 +943,7 @@ export function createAdvancedPaginatedStore<T>(
         await refresh();
 
         return result.data;
-      } catch (error) {
+      } catch (error: any) {
         console.error("❌ Erro ao atualizar colaborador:", error);
         throw error;
       }
@@ -958,7 +969,7 @@ export function createAdvancedPaginatedStore<T>(
         await refresh();
 
         return true;
-      } catch (error) {
+      } catch (error: any) {
         console.error("❌ Erro ao excluir contratada:", error);
         throw error;
       }
@@ -978,7 +989,7 @@ export function createAdvancedPaginatedStore<T>(
         await refresh();
 
         return true;
-      } catch (error) {
+      } catch (error: any) {
         console.error("❌ Erro ao excluir colaborador:", error);
         throw error;
       }
@@ -1002,7 +1013,7 @@ export function createAdvancedPaginatedStore<T>(
       
       console.log('✅ Contratadas carregadas:', response.contratadas?.length || 0);
       return response.contratadas || [];
-    } catch (error) {
+    } catch (error: any) {
       console.warn('⚠️ Erro ao carregar contratadas, usando fallback:', error);
       // Fallback para dados mockados em caso de erro
       return [

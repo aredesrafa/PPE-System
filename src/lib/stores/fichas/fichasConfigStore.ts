@@ -105,7 +105,7 @@ function createFichasConfigStore() {
             empresas: new Date().toISOString()
           }
         }));
-      } catch (error) {
+      } catch (error: any) {
         console.error('Erro ao carregar empresas:', error);
         update(state => ({ ...state, loadingEmpresas: false }));
       }
@@ -134,7 +134,7 @@ function createFichasConfigStore() {
             cargos: new Date().toISOString()
           }
         }));
-      } catch (error) {
+      } catch (error: any) {
         console.error('Erro ao carregar cargos:', error);
         update(state => ({ ...state, loadingCargos: false }));
       }

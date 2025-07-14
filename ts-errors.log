@@ -14,60 +14,371 @@ Warn: Component has unused export property 'headerType'. If it is for external r
 
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/AuditoriaContainer.svelte:248:81
-Error: Property 'items' does not exist on type 'never'. (ts)
-        const almoxarifadosUnicos = new Map();
-        (Array.isArray(estoqueData.data) ? estoqueData.data : estoqueData.data?.items || []).forEach((item: any) => {
-            if (item.almoxarifado) {
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/process/operations/deliveryProcessAdapter.ts:138:13
+Error: Variable 'itensExpandidos' implicitly has type 'any[]' in some locations where its type cannot be determined. 
+      // CRÍTICO: Número de objetos em 'itens' deve ser IGUAL ao campo 'quantidade'
+      const itensExpandidos = [];
+      validatedPayload.itens.forEach((item) => {
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/StatusBadge.svelte:72:30
-Error: Expected } (svelte)
-  <!-- Badge Mode -->
-  <Badge color={config.color as any} size={size} rounded={rounded} class="w-fit rounded-sm">
-    {config.label}
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/process/operations/deliveryProcessAdapter.ts:139:39
+Error: Parameter 'item' implicitly has an 'any' type. 
+      const itensExpandidos = [];
+      validatedPayload.itens.forEach((item) => {
+        console.log('🔍 Processando item para expansão:', {
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/StatusBadge.svelte:72:30
-Error: Expected } (ts)
-  <!-- Badge Mode -->
-  <Badge color={config.color as any} size={size} rounded={rounded} class="w-fit rounded-sm">
-    {config.label}
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/process/operations/deliveryProcessAdapter.ts:160:16
+Error: Variable 'itensExpandidos' implicitly has an 'any[]' type. 
+        quantidade: itensExpandidos.length, // Deve ser igual ao número de objetos em itens
+        itens: itensExpandidos,
+        assinaturaColaborador: "placeholder_signature", // Temporary placeholder
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/common/DrawerHeader.svelte:8:10
-Error: Module '"/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/StatusBadge.svelte"' has no default export. (ts)
-  import Icon from '$lib/components/common/Icon.svelte';
-  import StatusBadge from '$lib/components/ui/StatusBadge.svelte';
-  
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/process/operations/deliveryProcessAdapter.ts:178:25
+Error: Variable 'itensExpandidos' implicitly has an 'any[]' type. 
+        },
+        estoqueItemIds: itensExpandidos.map(item => ({
+          value: item.estoqueItemOrigemId,
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/EPIDetailDrawer.svelte:24:10
-Error: Module '"/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/StatusBadge.svelte"' has no default export. (ts)
-  import ErrorDisplay from '$lib/components/common/ErrorDisplay.svelte';
-  import StatusBadge from '$lib/components/ui/StatusBadge.svelte';
-  import type { TipoEPI } from '$lib/services/entity/catalogAdapter';
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/process/operations/deliveryProcessAdapter.ts:199:11
+Error: 'error' is of type 'unknown'. 
+      // Log mais detalhado do erro para debug
+      if (error.response?.data) {
+        console.error("❌ Detalhes do erro do backend:", error.response.data);
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/ColaboradorContainer.svelte:32:26
-Error: Property 'pageSize' does not exist on type 'PaginationParams'. (ts)
-        totalPages: 1,
-        pageSize: params.pageSize || initialPageSize
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/process/operations/deliveryProcessAdapter.ts:200:57
+Error: 'error' is of type 'unknown'. 
+      if (error.response?.data) {
+        console.error("❌ Detalhes do erro do backend:", error.response.data);
+      }
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/process/operations/deliveryProcessAdapter.ts:221:7
+Error: Type 'unknown' is not assignable to type '{ valid: boolean; errors?: string[] | undefined; }'. 
+      console.log("✅ Validação da entrega concluída:", response);
+      return response;
+    } catch (error) {
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/process/operations/deliveryProcessAdapter.ts:288:9
+Error: Object literal may only specify known properties, and 'responseType' does not exist in type 'ApiRequestOptions'. 
+      const response = await api.get(`/entregas/${entregaId}/print`, {
+        responseType: "blob",
+      });
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/process/operations/deliveryProcessAdapter.ts:356:7
+Error: Type 'unknown' is not assignable to type '{ success: boolean; data: { devolucaoId: string; itensProcessados: number; status: string; }; }'. 
+      console.log("✅ Devolução criada com sucesso:", response);
+      return response;
+    } catch (error) {
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/process/operations/deliveryProcessAdapter.ts:391:7
+Error: Type 'unknown' is not assignable to type '{ valid: boolean; errors?: string[] | undefined; warnings?: string[] | undefined; }'. 
+      console.log("✅ Validação de devolução concluída:", response);
+      return response;
+    } catch (error) {
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/process/operations/deliveryProcessAdapter.ts:430:7
+Error: Type 'unknown' is not assignable to type '{ success: boolean; data: { totalProcessadas: number; resultados: { entregaId: string; devolucaoId: string; status: string; }[]; }; }'. 
+      console.log("✅ Devoluções em lote processadas:", response);
+      return response;
+    } catch (error) {
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/process/operations/returnProcessAdapter.ts:118:7
+Error: Type 'unknown' is not assignable to type 'any[]'. 
+      console.log("✅ Histórico de devoluções carregado");
+      return response;
+    } catch (error) {
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/process/index.ts:11:3
+Error: Module '"./queries/fichaQueryAdapter"' has no exported member 'FichaCompleteResponse'. 
+export type {
+  FichaCompleteResponse,
+  FichaListParams,
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/process/index.ts:12:3
+Error: Module '"./queries/fichaQueryAdapter"' has no exported member 'FichaListParams'. 
+  FichaCompleteResponse,
+  FichaListParams,
+  FichaListItem,
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/process/index.ts:13:3
+Error: Module '"./queries/fichaQueryAdapter"' has no exported member 'FichaListItem'. 
+  FichaListParams,
+  FichaListItem,
+  PaginatedResponse,
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/process/index.ts:14:3
+Error: Module '"./queries/fichaQueryAdapter"' has no exported member 'PaginatedResponse'. 
+  FichaListItem,
+  PaginatedResponse,
+} from "./queries/fichaQueryAdapter";
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/inventory/inventoryQueryAdapter.ts:10:3
+Error: Module '"$lib/types/serviceTypes"' has no exported member 'InventoryItemDTO'. 
+import type {
+  InventoryItemDTO,
+  PaginatedResponse,
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/inventory/inventoryQueryAdapter.ts:12:3
+Error: Module '"$lib/types/serviceTypes"' has no exported member 'MovementHistoryDTO'. 
+  PaginatedResponse,
+  MovementHistoryDTO,
+  ConsolidatedStockDTO,
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/inventory/inventoryQueryAdapter.ts:13:3
+Error: Module '"$lib/types/serviceTypes"' has no exported member 'ConsolidatedStockDTO'. 
+  MovementHistoryDTO,
+  ConsolidatedStockDTO,
+} from "$lib/types/serviceTypes";
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/catalogAdapter.ts:139:38
+Error: 'response' is of type 'unknown'. 
+      // Mapear resposta do backend para o formato esperado
+      const mappedItems: TipoEPI[] = response.data.items.map((item: any) => ({
+        id: item.id,
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/catalogAdapter.ts:158:16
+Error: 'response' is of type 'unknown'. 
+        data: mappedItems,
+        total: response.data.pagination.total,
+        page: response.data.pagination.page,
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/catalogAdapter.ts:159:15
+Error: 'response' is of type 'unknown'. 
+        total: response.data.pagination.total,
+        page: response.data.pagination.page,
+        pageSize: response.data.pagination.limit,
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/catalogAdapter.ts:160:19
+Error: 'response' is of type 'unknown'. 
+        page: response.data.pagination.page,
+        pageSize: response.data.pagination.limit,
+        totalPages: response.data.pagination.totalPages,
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/catalogAdapter.ts:161:21
+Error: 'response' is of type 'unknown'. 
+        pageSize: response.data.pagination.limit,
+        totalPages: response.data.pagination.totalPages,
       };
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/ContratadaTablePresenter.svelte:234:37
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/catalogAdapter.ts:201:20
+Error: 'response' is of type 'unknown'. 
+      // Mapear resposta do backend para o formato esperado
+      const item = response.data;
+      const tipoEPI: TipoEPI = {
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/catalogAdapter.ts:252:20
+Error: 'response' is of type 'unknown'. 
+      // Mapear resposta de volta para o formato frontend
+      const item = response.data;
+      const newTipoEPI: TipoEPI = {
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/catalogAdapter.ts:309:20
+Error: 'response' is of type 'unknown'. 
+      // Mapear resposta de volta para o formato frontend
+      const item = response.data;
+      const updatedTipoEPI: TipoEPI = {
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/AuditoriaContainer.svelte:59:56
+Error: Property 'getFichaById' does not exist on type 'FichaQueryAdapter'. (ts)
+          // TODO: Implementar getEntregasByFicha no fichaQueryAdapter
+          const entregasData = await fichaQueryAdapter.getFichaById(ficha.id);
+            
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/AuditoriaContainer.svelte:158:18
+Error: 'result' is of type 'unknown'. (ts)
+      console.log('📊 Estrutura dos dados:', {
+        success: result.success,
+        movimentacoes: result.data?.movimentacoes?.length || 0,
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/AuditoriaContainer.svelte:159:24
+Error: 'result' is of type 'unknown'. (ts)
+        success: result.success,
+        movimentacoes: result.data?.movimentacoes?.length || 0,
+        totalMovimentacoes: result.data?.resumo?.totalMovimentacoes || 0
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/AuditoriaContainer.svelte:160:29
+Error: 'result' is of type 'unknown'. (ts)
+        movimentacoes: result.data?.movimentacoes?.length || 0,
+        totalMovimentacoes: result.data?.resumo?.totalMovimentacoes || 0
+      });
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/AuditoriaContainer.svelte:164:12
+Error: 'result' is of type 'unknown'. (ts)
+      // Validar estrutura da resposta conforme documentação
+      if (!result.success || !result.data) {
+        throw new Error(`Backend retornou estrutura inválida: ${JSON.stringify(result)}`);
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/AuditoriaContainer.svelte:164:31
+Error: 'result' is of type 'unknown'. (ts)
+      // Validar estrutura da resposta conforme documentação
+      if (!result.success || !result.data) {
+        throw new Error(`Backend retornou estrutura inválida: ${JSON.stringify(result)}`);
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/AuditoriaContainer.svelte:168:29
+Error: 'result' is of type 'unknown'. (ts)
+      
+      const movimentacoes = result.data.movimentacoes || [];
+      const total = result.data.resumo?.totalMovimentacoes || 0;
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/AuditoriaContainer.svelte:169:21
+Error: 'result' is of type 'unknown'. (ts)
+      const movimentacoes = result.data.movimentacoes || [];
+      const total = result.data.resumo?.totalMovimentacoes || 0;
+      
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/AuditoriaContainer.svelte:248:26
+Error: Property 'items' does not exist on type 'InventoryItemDTO[]'. (ts)
+        const almoxarifadosUnicos = new Map();
+        estoqueData.data.items.forEach((item: any) => {
+            if (item.almoxarifado) {
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/AuditoriaContainer.svelte:270:9
+Error: Object literal may only specify known properties, and 'limit' does not exist in type 'CatalogFilterParams'. (ts)
+        page: 1,
+        limit: 100
+      });
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/AuditoriaContainer.svelte:283:52
+Error: Property 'getUsuarios' does not exist on type 'FichaQueryAdapter'. (ts)
+      // 🚀 MIGRADO: Carregar usuários
+      const usuariosData = await fichaQueryAdapter.getUsuarios();
+      usuarios = usuariosData.map((item: any) => ({
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/CatalogTablePresenter.svelte:235:35
+Error: Object is possibly 'undefined'. (ts)
+                    <span class="text-sm">
+                      {Math.round((epi.vidaUtilDias || epi.validadePadrao) / 30)} meses
+                    </span>
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/common/Icon.svelte:48:11
+Error: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type 'typeof import("/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/node_modules/flowbite-svelte-icons/dist/index")'.
+  No index signature with a parameter of type 'string' was found on type 'typeof import("/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/node_modules/flowbite-svelte-icons/dist/index")'. (ts)
+      
+      if (iconModule[iconName]) {
+        IconComponent = iconModule[iconName];
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/common/Icon.svelte:49:25
+Error: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type 'typeof import("/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/node_modules/flowbite-svelte-icons/dist/index")'.
+  No index signature with a parameter of type 'string' was found on type 'typeof import("/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/node_modules/flowbite-svelte-icons/dist/index")'. (ts)
+      if (iconModule[iconName]) {
+        IconComponent = iconModule[iconName];
+      } else {
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/StatusBadge.svelte:5:14
+Warn: Component has unused export property 'status'. If it is for external reference only, please consider using `export const status` (svelte)
+  
+  export let status: string;
+  export let color: string;
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/StatusBadge.svelte:10:9
+Error: Type 'string' is not assignable to type '"green" | "red" | "yellow" | "primary" | "blue" | "dark" | "purple" | "indigo" | "pink" | "none" | undefined'. (ts)
+
+<Badge {color} class="text-xs rounded-sm">
+  {label}
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/common/DrawerHeader.svelte:99:33
+Error: Object literal may only specify known properties, and '"type"' does not exist in type '{ status: string; color: string; label: string; }'. (ts)
+        <div class="flex-shrink-0">
+          <StatusBadge {status} type={statusType} dotMode={true} dotSize="md" />
+        </div>
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/EPIDetailDrawer.svelte:290:68
+Error: Object literal may only specify known properties, and '"type"' does not exist in type '{ status: string; color: string; label: string; }'. (ts)
+                    <div class="mt-1">
+                      <StatusBadge status={epi?.status || 'ATIVO'} type="epi" />
+                    </div>
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/CatalogContainer.svelte:38:44
+Error: Argument of type 'PaginationParams' is not assignable to parameter of type 'CatalogFilterParams'.
+  Types of property 'ativo' are incompatible.
+    Type 'string | boolean | undefined' is not assignable to type 'boolean | undefined'.
+      Type 'string' is not assignable to type 'boolean | undefined'. (ts)
+  const catalogStore = createPaginatedStore<TipoEPI>(
+    (params) => catalogAdapter.getTiposEPI(params),
+    {
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/CatalogContainer.svelte:177:53
+Error: Argument of type 'Partial<TipoEPI>' is not assignable to parameter of type 'CreateTipoEPIData'.
+  Types of property 'nomeEquipamento' are incompatible.
+    Type 'string | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'. (ts)
+      if (drawerMode === 'create') {
+        result = await catalogAdapter.createTipoEPI(formData);
+        notify.success('EPI criado', `${result.nomeEquipamento} foi adicionado ao catálogo`);
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/ColaboradorTablePresenter.svelte:280:7
+Error: Object literal may only specify known properties, and '"message"' does not exist in type '{ error?: string | Error | null | undefined; title?: string | undefined; showRetry?: boolean | undefined; retryText?: string | undefined; onRetry?: (() => void) | null | undefined; fullHeight?: boolean | undefined; }'. (ts)
+    <ErrorDisplay 
+      message={error}
+      onRetry={() => dispatch('refresh')}
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/ColaboradorContainer.svelte:24:5
+Error: Argument of type '(params: PaginationParams) => Promise<{ data: any; total: any; page: number; totalPages: any; }>' is not assignable to parameter of type '(params: PaginationParams) => Promise<PaginatedResponse<ColaboradorDTO>>'.
+  Type 'Promise<{ data: any; total: any; page: number; totalPages: any; }>' is not assignable to type 'Promise<PaginatedResponse<ColaboradorDTO>>'.
+    Property 'pageSize' is missing in type '{ data: any; total: any; page: number; totalPages: any; }' but required in type 'PaginatedResponse<ColaboradorDTO>'. (ts)
+  const colaboradorStore = createPaginatedStore<ColaboradorDTO>(
+    async (params) => {
+      console.log('👥 Fetching colaboradores with params:', params);
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/ContratadaTablePresenter.svelte:233:66
 Error: Unexpected token (svelte)
-          on:input={(e) => {
-            const target = e.target as HTMLInputElement;
-            handleFilterInput('search', target?.value || '');
+          value={filters.search || ''}
+          on:input={(e) => handleFilterInput('search', (e.target as HTMLInputElement)?.value || '')}
+          placeholder="Digite o nome da empresa..."
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/ContratadaTablePresenter.svelte:234:37
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/ContratadaTablePresenter.svelte:233:66
 Error: Unexpected token (ts)
-          on:input={(e) => {
-            const target = e.target as HTMLInputElement;
-            handleFilterInput('search', target?.value || '');
+          value={filters.search || ''}
+          on:input={(e) => handleFilterInput('search', (e.target as HTMLInputElement)?.value || '')}
+          placeholder="Digite o nome da empresa..."
 
 
 /Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/ContratadaContainer.svelte:11:10
@@ -208,31 +519,894 @@ Error: Element implicitly has an 'any' type because expression of type 'number' 
   {#each stats as stat}
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NovaEntregaDrawerPresenter.svelte:339:86
-Error: Unexpected token (svelte)
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NovaEntregaDrawerPresenter.svelte:219:3
+Warn: A11y: visible, non-interactive elements with an on:click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as <button type="button"> or <a> might be more appropriate. See https://svelte.dev/docs/accessibility-warnings#a11y-click-events-have-key-events for more details. (svelte)
+  <!-- Drawer -->
+  <div 
+    class="fixed top-16 right-0 h-[calc(100vh-4rem)] w-full max-w-2xl bg-white dark:bg-gray-900 shadow-2xl z-[70] transform transition-transform duration-300 ease-in-out"
+    on:click|stopPropagation
+    role="dialog"
+    aria-modal="true"
+  >
+    
+    <!-- Header -->
+    <DrawerHeader 
+      title="Nova Entrega de EPI"
+      objectType="NOVA ENTREGA"
+      iconName="PlusOutline"
+      primaryAction={{
+        text: loading ? 'Salvando...' : 'Criar Entrega',
+        icon: loading ? '' : 'CheckOutline',
+        disabled: !canSave
+      }}
+      secondaryAction={{
+        text: 'Cancelar',
+        disabled: loading
+      }}
+      on:close={handleCancelar}
+      on:primaryAction={handleSalvar}
+      on:secondaryAction={handleCancelar}
+    />
+
+    <!-- Content -->
+    <div class="overflow-y-auto custom-scrollbar p-6" style="height: calc(100% - 80px);">
+        
+        <!-- Responsável -->
+        <div class="mb-6">
+          <Label for="responsavel" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Responsável pela Entrega *
+          </Label>
+          <SearchableDropdown
+            options={usuarioOptions}
+            value={usuarioResponsavelId}
+            placeholder="Selecione um responsável..."
+            disabled={loading}
+            on:change={(e) => atualizarUsuario(e.detail)}
+          />
+        </div>
+
+        <!-- EPIs para Entrega -->
+        <div class="mb-6">
+          <div class="flex items-center justify-between mb-4">
+            <Label class="text-sm font-medium text-gray-700 dark:text-gray-300">
+              EPIs para Entrega *
+            </Label>
+            <Button
+              size="xs"
+              color="alternative"
+              class="rounded-sm"
+              on:click={adicionarItem}
+              disabled={loading}
+            >
+              <PlusOutline class="w-4 h-4 mr-2" />
+              Adicionar Item
+            </Button>
+          </div>
+
+
+          {#if episDisponiveis.length === 0}
+            <div class="p-4 border-2 border-dashed border-red-300 rounded-lg bg-red-50 dark:bg-red-900/20">
+              <div class="text-center">
+                <ExclamationCircleOutline class="mx-auto mb-2 text-red-500 w-8 h-8" />
+                <h4 class="text-sm font-medium text-red-800 dark:text-red-200 mb-1">
+                  Nenhum EPI Disponível
+                </h4>
+                <p class="text-sm text-red-600 dark:text-red-400">
+                  Não há EPIs disponíveis para entrega no momento. Verifique o estoque ou entre em contato com o administrador.
+                </p>
+              </div>
+            </div>
+          {:else}
+            <div class="space-y-4">
+              {#each itensSelecionados as item, index}
+                <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                <div class="flex items-start justify-between mb-4">
+                  <h4 class="text-sm font-medium text-gray-900 dark:text-white">
+                    Item {index + 1}
+                  </h4>
+                  {#if itensSelecionados.length > 1}
+                    <button
+                      class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
+                      on:click={() => removerItem(index)}
+                      disabled={loading}
+                      title="Remover item"
+                    >
+                      <TrashBinOutline class="w-4 h-4" />
+                    </button>
+                  {/if}
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <!-- EPI Selection -->
+                  <div class="md:col-span-2">
+                    <Label for="epi-{index}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Equipamento
+                    </Label>
+                    <SearchableDropdown
+                      options={episOptions}
+                      value={item.episDisponivelId}
+                      placeholder="Selecione um EPI..."
+                      disabled={loading}
+                      on:change={(e) => atualizarEPI(index, e.detail)}
+                    />
+                  </div>
+
+                  <!-- Quantidade -->
+                  <div>
+                    <Label for="quantidade-{index}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Quantidade
+                    </Label>
+                    <Input
+                      id="quantidade-{index}"
+                      type="number"
+                      min="1"
+                      max="100"
                       bind:value={item.quantidade}
-                      on:input={(e) => atualizarQuantidade(index, parseInt((e.target as HTMLInputElement)?.value || '1') || 1)}
+                      on:input={(e) => atualizarQuantidade(index, parseInt(e.target.value) || 1)}
+                      class="rounded-sm"
+                      disabled={loading}
+                    />
+                  </div>
+                </div>
+
+                <!-- Preview do EPI selecionado -->
+                {#if item.nomeEquipamento}
+                  <div class="mt-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-sm">
+                    <div class="flex items-center justify-between">
+                      <div>
+                        <p class="text-sm font-medium text-gray-900 dark:text-white">
+                          {item.nomeEquipamento}
+                        </p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">
+                          CA {item.registroCA}
+                        </p>
+                      </div>
+                      <div class="text-right">
+                        <p class="text-sm font-medium text-gray-900 dark:text-white">
+                          Qtd: {item.quantidade}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                {/if}
+              </div>
+            {/each}
+
+            <!-- Add first item button if no items -->
+            {#if itensSelecionados.length === 0}
+              <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center">
+                <PlusOutline class="w-8 h-8 mx-auto mb-3 text-gray-400" />
+                <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                  Nenhum item adicionado
+                </p>
+                <Button
+                  size="sm"
+                  color="alternative"
+                  class="rounded-sm"
+                  on:click={adicionarItem}
+                  disabled={loading}
+                >
+                  Adicionar Primeiro Item
+                </Button>
+              </div>
+            {/if}
+            </div>
+          {/if}
+        </div>
+
+    </div>
+  </div>
+{/if}
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NovaEntregaDrawerPresenter.svelte:219:3
+Warn: A11y: Non-interactive element <div> should not be assigned mouse or keyboard event listeners. (svelte)
+  <!-- Drawer -->
+  <div 
+    class="fixed top-16 right-0 h-[calc(100vh-4rem)] w-full max-w-2xl bg-white dark:bg-gray-900 shadow-2xl z-[70] transform transition-transform duration-300 ease-in-out"
+    on:click|stopPropagation
+    role="dialog"
+    aria-modal="true"
+  >
+    
+    <!-- Header -->
+    <DrawerHeader 
+      title="Nova Entrega de EPI"
+      objectType="NOVA ENTREGA"
+      iconName="PlusOutline"
+      primaryAction={{
+        text: loading ? 'Salvando...' : 'Criar Entrega',
+        icon: loading ? '' : 'CheckOutline',
+        disabled: !canSave
+      }}
+      secondaryAction={{
+        text: 'Cancelar',
+        disabled: loading
+      }}
+      on:close={handleCancelar}
+      on:primaryAction={handleSalvar}
+      on:secondaryAction={handleCancelar}
+    />
+
+    <!-- Content -->
+    <div class="overflow-y-auto custom-scrollbar p-6" style="height: calc(100% - 80px);">
+        
+        <!-- Responsável -->
+        <div class="mb-6">
+          <Label for="responsavel" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Responsável pela Entrega *
+          </Label>
+          <SearchableDropdown
+            options={usuarioOptions}
+            value={usuarioResponsavelId}
+            placeholder="Selecione um responsável..."
+            disabled={loading}
+            on:change={(e) => atualizarUsuario(e.detail)}
+          />
+        </div>
+
+        <!-- EPIs para Entrega -->
+        <div class="mb-6">
+          <div class="flex items-center justify-between mb-4">
+            <Label class="text-sm font-medium text-gray-700 dark:text-gray-300">
+              EPIs para Entrega *
+            </Label>
+            <Button
+              size="xs"
+              color="alternative"
+              class="rounded-sm"
+              on:click={adicionarItem}
+              disabled={loading}
+            >
+              <PlusOutline class="w-4 h-4 mr-2" />
+              Adicionar Item
+            </Button>
+          </div>
+
+
+          {#if episDisponiveis.length === 0}
+            <div class="p-4 border-2 border-dashed border-red-300 rounded-lg bg-red-50 dark:bg-red-900/20">
+              <div class="text-center">
+                <ExclamationCircleOutline class="mx-auto mb-2 text-red-500 w-8 h-8" />
+                <h4 class="text-sm font-medium text-red-800 dark:text-red-200 mb-1">
+                  Nenhum EPI Disponível
+                </h4>
+                <p class="text-sm text-red-600 dark:text-red-400">
+                  Não há EPIs disponíveis para entrega no momento. Verifique o estoque ou entre em contato com o administrador.
+                </p>
+              </div>
+            </div>
+          {:else}
+            <div class="space-y-4">
+              {#each itensSelecionados as item, index}
+                <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                <div class="flex items-start justify-between mb-4">
+                  <h4 class="text-sm font-medium text-gray-900 dark:text-white">
+                    Item {index + 1}
+                  </h4>
+                  {#if itensSelecionados.length > 1}
+                    <button
+                      class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
+                      on:click={() => removerItem(index)}
+                      disabled={loading}
+                      title="Remover item"
+                    >
+                      <TrashBinOutline class="w-4 h-4" />
+                    </button>
+                  {/if}
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <!-- EPI Selection -->
+                  <div class="md:col-span-2">
+                    <Label for="epi-{index}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Equipamento
+                    </Label>
+                    <SearchableDropdown
+                      options={episOptions}
+                      value={item.episDisponivelId}
+                      placeholder="Selecione um EPI..."
+                      disabled={loading}
+                      on:change={(e) => atualizarEPI(index, e.detail)}
+                    />
+                  </div>
+
+                  <!-- Quantidade -->
+                  <div>
+                    <Label for="quantidade-{index}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Quantidade
+                    </Label>
+                    <Input
+                      id="quantidade-{index}"
+                      type="number"
+                      min="1"
+                      max="100"
+                      bind:value={item.quantidade}
+                      on:input={(e) => atualizarQuantidade(index, parseInt(e.target.value) || 1)}
+                      class="rounded-sm"
+                      disabled={loading}
+                    />
+                  </div>
+                </div>
+
+                <!-- Preview do EPI selecionado -->
+                {#if item.nomeEquipamento}
+                  <div class="mt-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-sm">
+                    <div class="flex items-center justify-between">
+                      <div>
+                        <p class="text-sm font-medium text-gray-900 dark:text-white">
+                          {item.nomeEquipamento}
+                        </p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">
+                          CA {item.registroCA}
+                        </p>
+                      </div>
+                      <div class="text-right">
+                        <p class="text-sm font-medium text-gray-900 dark:text-white">
+                          Qtd: {item.quantidade}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                {/if}
+              </div>
+            {/each}
+
+            <!-- Add first item button if no items -->
+            {#if itensSelecionados.length === 0}
+              <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center">
+                <PlusOutline class="w-8 h-8 mx-auto mb-3 text-gray-400" />
+                <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                  Nenhum item adicionado
+                </p>
+                <Button
+                  size="sm"
+                  color="alternative"
+                  class="rounded-sm"
+                  on:click={adicionarItem}
+                  disabled={loading}
+                >
+                  Adicionar Primeiro Item
+                </Button>
+              </div>
+            {/if}
+            </div>
+          {/if}
+        </div>
+
+    </div>
+  </div>
+{/if}
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NovaEntregaDrawerPresenter.svelte:113:5
+Error: Type 'string | boolean' is not assignable to type 'boolean'.
+  Type 'string' is not assignable to type 'boolean'. (ts)
+    // Validação simples: verificar se usuário está selecionado e itens estão válidos
+    return usuarioResponsavelId.trim() && 
+           itensSelecionados.length > 0 && 
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NovaEntregaDrawerPresenter.svelte:339:76
+Error: 'e.target' is possibly 'null'. (ts)
+                      bind:value={item.quantidade}
+                      on:input={(e) => atualizarQuantidade(index, parseInt(e.target.value) || 1)}
                       class="rounded-sm"
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NovaEntregaDrawerPresenter.svelte:339:86
-Error: Unexpected token (ts)
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NovaEntregaDrawerPresenter.svelte:339:85
+Error: Property 'value' does not exist on type 'EventTarget'. (ts)
                       bind:value={item.quantidade}
-                      on:input={(e) => atualizarQuantidade(index, parseInt((e.target as HTMLInputElement)?.value || '1') || 1)}
+                      on:input={(e) => atualizarQuantidade(index, parseInt(e.target.value) || 1)}
                       class="rounded-sm"
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/EditarEntregaDrawerPresenter.svelte:329:86
-Error: Unexpected token (svelte)
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/EditarEntregaDrawerPresenter.svelte:203:3
+Warn: A11y: visible, non-interactive elements with an on:click event must be accompanied by a keyboard event handler. Consider whether an interactive element such as <button type="button"> or <a> might be more appropriate. See https://svelte.dev/docs/accessibility-warnings#a11y-click-events-have-key-events for more details. (svelte)
+  <!-- Drawer -->
+  <div 
+    class="fixed top-16 right-0 h-[calc(100vh-4rem)] w-full max-w-2xl bg-white dark:bg-gray-900 shadow-2xl z-[70] transform transition-transform duration-300 ease-in-out"
+    on:click|stopPropagation
+    role="dialog"
+    aria-modal="true"
+  >
+    
+    <!-- Header -->
+    <DrawerHeader 
+      title="Editar Entrega #{entrega?.id || ''}" 
+      on:close={handleCancelar}
+    />
+
+    <!-- Content -->
+    <div class="flex flex-col h-full">
+      <div class="flex-1 overflow-y-auto custom-scrollbar p-6" style="height: calc(100% - 80px);">
+        
+        <!-- Info da Entrega Original -->
+        {#if entrega}
+          <div class="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+            <h4 class="text-sm font-medium text-blue-900 dark:text-blue-100 mb-2">
+              Informações da Entrega Original
+            </h4>
+            <div class="text-sm text-blue-800 dark:text-blue-200">
+              <p>• Data: {new Date(entrega.dataEntrega).toLocaleDateString('pt-BR')}</p>
+              <p>• Status: {entrega.status === 'assinado' ? 'Assinado' : 'Pendente Assinatura'}</p>
+              <p>• ID: #{entrega.id}</p>
+            </div>
+          </div>
+        {/if}
+        
+        <!-- Responsável -->
+        <div class="mb-6">
+          <Label for="responsavel" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Responsável pela Entrega *
+          </Label>
+          <Input
+            id="responsavel"
+            type="text"
+            placeholder="Nome do responsável pela entrega"
+            bind:value={responsavelEntrega}
+            class="rounded-sm {errors.responsavel ? 'border-red-500' : ''}"
+            disabled={loading}
+          />
+          {#if errors.responsavel}
+            <p class="mt-1 text-sm text-red-600 dark:text-red-400">
+              {errors.responsavel}
+            </p>
+          {/if}
+        </div>
+
+        <!-- EPIs para Entrega -->
+        <div class="mb-6">
+          <div class="flex items-center justify-between mb-4">
+            <Label class="text-sm font-medium text-gray-700 dark:text-gray-300">
+              EPIs da Entrega *
+            </Label>
+            <Button
+              size="xs"
+              color="alternative"
+              class="rounded-sm"
+              on:click={adicionarItem}
+              disabled={loading}
+            >
+              <PlusOutline class="mr-2 w-4 h-4" />
+              Adicionar Item
+            </Button>
+          </div>
+
+          {#if errors.items}
+            <p class="mb-3 text-sm text-red-600 dark:text-red-400">
+              {errors.items}
+            </p>
+          {/if}
+
+          <div class="space-y-4">
+            {#each itensSelecionados as item, index}
+              <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                <div class="flex items-start justify-between mb-4">
+                  <h4 class="text-sm font-medium text-gray-900 dark:text-white">
+                    Item {index + 1}
+                  </h4>
+                  {#if itensSelecionados.length > 1}
+                    <button
+                      class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
+                      on:click={() => removerItem(index)}
+                      disabled={loading}
+                      title="Remover item"
+                    >
+                      <TrashBinOutline class="w-4 h-4" />
+                    </button>
+                  {/if}
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <!-- EPI Selection -->
+                  <div class="md:col-span-2">
+                    <Label for="epi-{index}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Equipamento
+                    </Label>
+                    <Select
+                      id="epi-{index}"
+                      items={episOptions}
+                      bind:value={item.episDisponivelId}
+                      on:change={(e) => handleEPISelectChange(index, e)}
+                      class="rounded-sm {errors[`item-${index}`] ? 'border-red-500' : ''}"
+                      disabled={loading}
+                    />
+                    {#if errors[`item-${index}`]}
+                      <p class="mt-1 text-sm text-red-600 dark:text-red-400">
+                        {errors[`item-${index}`]}
+                      </p>
+                    {/if}
+                  </div>
+
+                  <!-- Quantidade -->
+                  <div>
+                    <Label for="quantidade-{index}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Quantidade
+                    </Label>
+                    <Input
+                      id="quantidade-{index}"
+                      type="number"
+                      min="1"
+                      max="100"
                       bind:value={item.quantidade}
-                      on:input={(e) => atualizarQuantidade(index, parseInt((e.target as HTMLInputElement)?.value || '1') || 1)}
+                      on:input={(e) => atualizarQuantidade(index, parseInt(e.target.value) || 1)}
+                      class="rounded-sm {errors[`quantidade-${index}`] ? 'border-red-500' : ''}"
+                      disabled={loading}
+                    />
+                    {#if errors[`quantidade-${index}`]}
+                      <p class="mt-1 text-sm text-red-600 dark:text-red-400">
+                        {errors[`quantidade-${index}`]}
+                      </p>
+                    {/if}
+                  </div>
+                </div>
+
+                <!-- Preview do EPI selecionado -->
+                {#if item.nomeEquipamento}
+                  <div class="mt-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-sm">
+                    <div class="flex items-center justify-between">
+                      <div>
+                        <p class="text-sm font-medium text-gray-900 dark:text-white">
+                          {item.nomeEquipamento}
+                        </p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">
+                          CA {item.registroCA}
+                        </p>
+                      </div>
+                      <div class="text-right">
+                        <p class="text-sm font-medium text-gray-900 dark:text-white">
+                          Qtd: {item.quantidade}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                {/if}
+              </div>
+            {/each}
+
+            <!-- Add first item button if no items -->
+            {#if itensSelecionados.length === 0}
+              <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center">
+                <PlusOutline class="mx-auto mb-3 text-gray-400 w-8 h-8" />
+                <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                  Nenhum item na entrega
+                </p>
+                <Button
+                  size="sm"
+                  color="alternative"
+                  class="rounded-sm"
+                  on:click={adicionarItem}
+                  disabled={loading}
+                >
+                  Adicionar Primeiro Item
+                </Button>
+              </div>
+            {/if}
+          </div>
+        </div>
+
+        <!-- Summary -->
+        {#if itensSelecionados.length > 0}
+          <div class="mb-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+            <h4 class="text-sm font-medium text-yellow-900 dark:text-yellow-100 mb-2">
+              Resumo das Alterações
+            </h4>
+            <div class="text-sm text-yellow-800 dark:text-yellow-200">
+              <p>• Total de itens: {itensSelecionados.length}</p>
+              <p>• Quantidade total: {itensSelecionados.reduce((sum, item) => sum + item.quantidade, 0)} unidades</p>
+              <p>• Responsável: {responsavelEntrega || 'Não informado'}</p>
+            </div>
+          </div>
+        {/if}
+
+      </div>
+
+      <!-- Footer Actions -->
+      <div class="flex-shrink-0 bg-gray-50 dark:bg-gray-800 px-6 py-4 border-t border-gray-200 dark:border-gray-700">
+        <div class="flex items-center justify-end space-x-3">
+          <Button
+            color="alternative"
+            class="rounded-sm"
+            on:click={handleCancelar}
+            disabled={loading}
+          >
+            Cancelar
+          </Button>
+          <Button
+            color="primary"
+            class="rounded-sm"
+            on:click={handleSalvar}
+            disabled={!canSave}
+          >
+            {#if loading}
+              <RefreshOutline class="mr-2 animate-spin w-4 h-4" />
+              Salvando...
+            {:else}
+              <CheckOutline class="mr-2 w-4 h-4" />
+              Salvar Alterações
+            {/if}
+          </Button>
+        </div>
+      </div>
+    </div>
+  </div>
+{/if}
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/EditarEntregaDrawerPresenter.svelte:203:3
+Warn: A11y: Non-interactive element <div> should not be assigned mouse or keyboard event listeners. (svelte)
+  <!-- Drawer -->
+  <div 
+    class="fixed top-16 right-0 h-[calc(100vh-4rem)] w-full max-w-2xl bg-white dark:bg-gray-900 shadow-2xl z-[70] transform transition-transform duration-300 ease-in-out"
+    on:click|stopPropagation
+    role="dialog"
+    aria-modal="true"
+  >
+    
+    <!-- Header -->
+    <DrawerHeader 
+      title="Editar Entrega #{entrega?.id || ''}" 
+      on:close={handleCancelar}
+    />
+
+    <!-- Content -->
+    <div class="flex flex-col h-full">
+      <div class="flex-1 overflow-y-auto custom-scrollbar p-6" style="height: calc(100% - 80px);">
+        
+        <!-- Info da Entrega Original -->
+        {#if entrega}
+          <div class="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+            <h4 class="text-sm font-medium text-blue-900 dark:text-blue-100 mb-2">
+              Informações da Entrega Original
+            </h4>
+            <div class="text-sm text-blue-800 dark:text-blue-200">
+              <p>• Data: {new Date(entrega.dataEntrega).toLocaleDateString('pt-BR')}</p>
+              <p>• Status: {entrega.status === 'assinado' ? 'Assinado' : 'Pendente Assinatura'}</p>
+              <p>• ID: #{entrega.id}</p>
+            </div>
+          </div>
+        {/if}
+        
+        <!-- Responsável -->
+        <div class="mb-6">
+          <Label for="responsavel" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Responsável pela Entrega *
+          </Label>
+          <Input
+            id="responsavel"
+            type="text"
+            placeholder="Nome do responsável pela entrega"
+            bind:value={responsavelEntrega}
+            class="rounded-sm {errors.responsavel ? 'border-red-500' : ''}"
+            disabled={loading}
+          />
+          {#if errors.responsavel}
+            <p class="mt-1 text-sm text-red-600 dark:text-red-400">
+              {errors.responsavel}
+            </p>
+          {/if}
+        </div>
+
+        <!-- EPIs para Entrega -->
+        <div class="mb-6">
+          <div class="flex items-center justify-between mb-4">
+            <Label class="text-sm font-medium text-gray-700 dark:text-gray-300">
+              EPIs da Entrega *
+            </Label>
+            <Button
+              size="xs"
+              color="alternative"
+              class="rounded-sm"
+              on:click={adicionarItem}
+              disabled={loading}
+            >
+              <PlusOutline class="mr-2 w-4 h-4" />
+              Adicionar Item
+            </Button>
+          </div>
+
+          {#if errors.items}
+            <p class="mb-3 text-sm text-red-600 dark:text-red-400">
+              {errors.items}
+            </p>
+          {/if}
+
+          <div class="space-y-4">
+            {#each itensSelecionados as item, index}
+              <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                <div class="flex items-start justify-between mb-4">
+                  <h4 class="text-sm font-medium text-gray-900 dark:text-white">
+                    Item {index + 1}
+                  </h4>
+                  {#if itensSelecionados.length > 1}
+                    <button
+                      class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
+                      on:click={() => removerItem(index)}
+                      disabled={loading}
+                      title="Remover item"
+                    >
+                      <TrashBinOutline class="w-4 h-4" />
+                    </button>
+                  {/if}
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <!-- EPI Selection -->
+                  <div class="md:col-span-2">
+                    <Label for="epi-{index}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Equipamento
+                    </Label>
+                    <Select
+                      id="epi-{index}"
+                      items={episOptions}
+                      bind:value={item.episDisponivelId}
+                      on:change={(e) => handleEPISelectChange(index, e)}
+                      class="rounded-sm {errors[`item-${index}`] ? 'border-red-500' : ''}"
+                      disabled={loading}
+                    />
+                    {#if errors[`item-${index}`]}
+                      <p class="mt-1 text-sm text-red-600 dark:text-red-400">
+                        {errors[`item-${index}`]}
+                      </p>
+                    {/if}
+                  </div>
+
+                  <!-- Quantidade -->
+                  <div>
+                    <Label for="quantidade-{index}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Quantidade
+                    </Label>
+                    <Input
+                      id="quantidade-{index}"
+                      type="number"
+                      min="1"
+                      max="100"
+                      bind:value={item.quantidade}
+                      on:input={(e) => atualizarQuantidade(index, parseInt(e.target.value) || 1)}
+                      class="rounded-sm {errors[`quantidade-${index}`] ? 'border-red-500' : ''}"
+                      disabled={loading}
+                    />
+                    {#if errors[`quantidade-${index}`]}
+                      <p class="mt-1 text-sm text-red-600 dark:text-red-400">
+                        {errors[`quantidade-${index}`]}
+                      </p>
+                    {/if}
+                  </div>
+                </div>
+
+                <!-- Preview do EPI selecionado -->
+                {#if item.nomeEquipamento}
+                  <div class="mt-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-sm">
+                    <div class="flex items-center justify-between">
+                      <div>
+                        <p class="text-sm font-medium text-gray-900 dark:text-white">
+                          {item.nomeEquipamento}
+                        </p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">
+                          CA {item.registroCA}
+                        </p>
+                      </div>
+                      <div class="text-right">
+                        <p class="text-sm font-medium text-gray-900 dark:text-white">
+                          Qtd: {item.quantidade}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                {/if}
+              </div>
+            {/each}
+
+            <!-- Add first item button if no items -->
+            {#if itensSelecionados.length === 0}
+              <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center">
+                <PlusOutline class="mx-auto mb-3 text-gray-400 w-8 h-8" />
+                <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                  Nenhum item na entrega
+                </p>
+                <Button
+                  size="sm"
+                  color="alternative"
+                  class="rounded-sm"
+                  on:click={adicionarItem}
+                  disabled={loading}
+                >
+                  Adicionar Primeiro Item
+                </Button>
+              </div>
+            {/if}
+          </div>
+        </div>
+
+        <!-- Summary -->
+        {#if itensSelecionados.length > 0}
+          <div class="mb-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+            <h4 class="text-sm font-medium text-yellow-900 dark:text-yellow-100 mb-2">
+              Resumo das Alterações
+            </h4>
+            <div class="text-sm text-yellow-800 dark:text-yellow-200">
+              <p>• Total de itens: {itensSelecionados.length}</p>
+              <p>• Quantidade total: {itensSelecionados.reduce((sum, item) => sum + item.quantidade, 0)} unidades</p>
+              <p>• Responsável: {responsavelEntrega || 'Não informado'}</p>
+            </div>
+          </div>
+        {/if}
+
+      </div>
+
+      <!-- Footer Actions -->
+      <div class="flex-shrink-0 bg-gray-50 dark:bg-gray-800 px-6 py-4 border-t border-gray-200 dark:border-gray-700">
+        <div class="flex items-center justify-end space-x-3">
+          <Button
+            color="alternative"
+            class="rounded-sm"
+            on:click={handleCancelar}
+            disabled={loading}
+          >
+            Cancelar
+          </Button>
+          <Button
+            color="primary"
+            class="rounded-sm"
+            on:click={handleSalvar}
+            disabled={!canSave}
+          >
+            {#if loading}
+              <RefreshOutline class="mr-2 animate-spin w-4 h-4" />
+              Salvando...
+            {:else}
+              <CheckOutline class="mr-2 w-4 h-4" />
+              Salvar Alterações
+            {/if}
+          </Button>
+        </div>
+      </div>
+    </div>
+  </div>
+{/if}
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/EditarEntregaDrawerPresenter.svelte:162:11
+Error: Property 'usuarioResponsavelId' is missing in type '{ responsavel: string; itens: { episDisponivelId: string; nomeEquipamento: string; registroCA: string; quantidade: number; }[]; }' but required in type 'NovaEntregaFormData'. (ts)
+
+    const formData: NovaEntregaFormData = {
+      responsavel: responsavelEntrega.trim(),
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/EditarEntregaDrawerPresenter.svelte:187:68
+Error: Property 'quantidade' does not exist on type 'EPIDisponivel'. (ts)
+        value: epi.id,
+        label: `${epi.nomeEquipamento} (CA ${epi.registroCA})${epi.quantidade ? ` - ${epi.quantidade} disponíveis` : ''}`
+      }))
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/EditarEntregaDrawerPresenter.svelte:187:91
+Error: Property 'quantidade' does not exist on type 'EPIDisponivel'. (ts)
+        value: epi.id,
+        label: `${epi.nomeEquipamento} (CA ${epi.registroCA})${epi.quantidade ? ` - ${epi.quantidade} disponíveis` : ''}`
+      }))
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/EditarEntregaDrawerPresenter.svelte:305:23
+Error: Type '{ value: string; label: string; }[]' is not assignable to type 'SelectOptionType<any>[]'.
+  Property 'name' is missing in type '{ value: string; label: string; }' but required in type 'SelectOptionType<any>'. (ts)
+                      id="epi-{index}"
+                      items={episOptions}
+                      bind:value={item.episDisponivelId}
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/EditarEntregaDrawerPresenter.svelte:329:76
+Error: 'e.target' is possibly 'null'. (ts)
+                      bind:value={item.quantidade}
+                      on:input={(e) => atualizarQuantidade(index, parseInt(e.target.value) || 1)}
                       class="rounded-sm {errors[`quantidade-${index}`] ? 'border-red-500' : ''}"
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/EditarEntregaDrawerPresenter.svelte:329:86
-Error: Unexpected token (ts)
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/EditarEntregaDrawerPresenter.svelte:329:85
+Error: Property 'value' does not exist on type 'EventTarget'. (ts)
                       bind:value={item.quantidade}
-                      on:input={(e) => atualizarQuantidade(index, parseInt((e.target as HTMLInputElement)?.value || '1') || 1)}
+                      on:input={(e) => atualizarQuantidade(index, parseInt(e.target.value) || 1)}
                       class="rounded-sm {errors[`quantidade-${index}`] ? 'border-red-500' : ''}"
 
 
@@ -874,25 +2048,11 @@ Error: identifier expected (css)
     z-index: 60 !important;
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/FichaDetailPresenter.svelte:9:10
-Error: Module '"/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/StatusBadge.svelte"' has no default export. (ts)
-  import StatsGrid from '$lib/components/common/StatsGrid.svelte';
-  import StatusBadge from '$lib/components/ui/StatusBadge.svelte';
-  import LoadingSpinner from '$lib/components/common/LoadingSpinner.svelte';
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/FichaDetailPresenter.svelte:14:10
-Error: Module '"/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NovaEntregaDrawerPresenter.svelte"' has no default export. (ts)
-  // Importar presenters especializados
-  import NovaEntregaDrawerPresenter from './NovaEntregaDrawerPresenter.svelte';
-  import EditarEntregaDrawerPresenter from './EditarEntregaDrawerPresenter.svelte';
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/FichaDetailPresenter.svelte:15:10
-Error: Module '"/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/EditarEntregaDrawerPresenter.svelte"' has no default export. (ts)
-  import NovaEntregaDrawerPresenter from './NovaEntregaDrawerPresenter.svelte';
-  import EditarEntregaDrawerPresenter from './EditarEntregaDrawerPresenter.svelte';
-  import DevolucaoModalPresenter from './DevolucaoModalPresenter.svelte';
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/FichaDetailPresenter.svelte:23:17
+Error: Module '"$lib/services/process/queries/fichaQueryAdapter"' has no exported member 'FichaCompleteResponse'. (ts)
+  // 🚀 NOVO: Importar tipos das novas interfaces
+  import type { FichaCompleteResponse } from '$lib/services/process/queries/fichaQueryAdapter';
+  import type { NovaEntregaFormData } from '$lib/services/process';
 
 
 /Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/FichaDetailPresenter.svelte:267:19
@@ -903,17 +2063,10 @@ Error: Object literal may only specify known properties, and '"message"' does no
 
 
 /Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/FichaDetailPresenter.svelte:283:29
-Error: Type 'string' is not assignable to type '"entregas" | "devolucoes" | "equipamentos" | "historico"'. (ts)
+Error: Type 'string' is not assignable to type '"devolucoes" | "entregas" | "equipamentos" | "historico"'. (ts)
               : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'}"
             on:click={() => activeTab = tab.id}
           >
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/FichaDetailPresenter.svelte:317:64
-Error: Property 'registroCA' does not exist on type '{ id: string; nomeEquipamento: string; numeroCA: string; categoria: string; dataEntrega: string; dataLimiteDevolucao: string; statusVencimento: "vencido" | "vencendo" | "dentro_prazo"; statusVencimentoDisplay: { ...; }; podeDevolver: boolean; entregaId: string; itemEntregaId: string; }'. (ts)
-                    <p class="text-sm text-gray-600 dark:text-gray-300">
-                      CA: {equipamento.numeroCA || equipamento.registroCA} • {equipamento.categoria}
-                    </p>
 
 
 /Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/FichaDetailPresenter.svelte:326:25
@@ -924,27 +2077,12 @@ Error: Type '"green" | "red" | "yellow" | "gray" | "blue"' is not assignable to 
                         class="rounded-sm"
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/FichaDetailPresenter.svelte:347:67
-Error: Argument of type '{ id: string; nomeEquipamento: string; numeroCA: string; categoria: string; dataEntrega: string; dataLimiteDevolucao: string; statusVencimento: "vencido" | "vencendo" | "dentro_prazo"; statusVencimentoDisplay: { ...; }; podeDevolver: boolean; entregaId: string; itemEntregaId: string; }' is not assignable to parameter of type 'EquipamentoEmPosseItem'.
-  Type '{ id: string; nomeEquipamento: string; numeroCA: string; categoria: string; dataEntrega: string; dataLimiteDevolucao: string; statusVencimento: "vencido" | "vencendo" | "dentro_prazo"; statusVencimentoDisplay: { ...; }; podeDevolver: boolean; entregaId: string; itemEntregaId: string; }' is missing the following properties from type 'EquipamentoEmPosseItem': registroCA, status, quantidade, prazoMaximoDevolucao, vencido (ts)
-                        class="rounded-sm"
-                        on:click={() => handleDevolverEquipamento(equipamento)}
-                      >
-
-
 /Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/FichaDetailPresenter.svelte:455:25
 Error: Type '"green" | "red" | "yellow" | "gray" | "blue"' is not assignable to type '"green" | "red" | "yellow" | "primary" | "blue" | "dark" | "purple" | "indigo" | "pink" | "none" | undefined'.
   Type '"gray"' is not assignable to type '"green" | "red" | "yellow" | "primary" | "blue" | "dark" | "purple" | "indigo" | "pink" | "none" | undefined'. (ts)
                       <Badge 
                         color={UIMappingHelpers.getBadgeColor(entrega.statusDisplay.cor)} 
                         class="rounded-sm"
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/FichaDetailPresenter.svelte:472:82
-Error: Property 'registroCA' does not exist on type '{ id: string; nomeEquipamento: string; numeroCA: string; categoria: string; quantidade: number; status?: string | undefined; }'. (ts)
-                            <div class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm font-mono text-gray-800 dark:text-gray-200">
-                              {item.nomeEquipamento} (CA: {item.numeroCA || item.registroCA})
-                            </div>
 
 
 /Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/FichaDetailPresenter.svelte:521:72
@@ -954,81 +2092,256 @@ Error: Object literal may only specify known properties, and '"class"' does not 
                   </div>
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/FichaDetailPresenter.svelte:575:15
-Error: Parameter 'e' implicitly has an 'any' type. (ts)
-  loading={entregaLoading}
-  on:salvar={(e) => dispatch('salvarNovaEntrega', e.detail)}
-  on:cancelar={() => dispatch('cancelarNovaEntrega')}
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichaDetailContainer.svelte:126:51
+Error: Property 'getFichaComplete' does not exist on type 'FichaQueryAdapter'. (ts)
+      // ✅ NOVA ARQUITETURA: 1 call ao invés de 3-5 calls
+      fichaCompleteData = await fichaQueryAdapter.getFichaComplete(fichaId);
+      
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/FichaDetailPresenter.svelte:585:15
-Error: Parameter 'e' implicitly has an 'any' type. (ts)
-  loading={entregaLoading}
-  on:salvar={(e) => dispatch('salvarEdicaoEntrega', e.detail)}
-  on:cancelar={() => dispatch('cancelarEdicaoEntrega')}
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichaDetailContainer.svelte:150:49
+Error: Property 'getEPIsDisponiveis' does not exist on type 'FichaQueryAdapter'. (ts)
+      // ✅ NOVA ARQUITETURA: Usar fichaQueryAdapter para consultas
+      episDisponiveis = await fichaQueryAdapter.getEPIsDisponiveis();
+      console.log('📦 EPIs disponíveis carregados:', episDisponiveis.length);
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichaDetailContainer.svelte:68:23
-Error: This comparison appears to be unintentional because the types 'FichaCompleteResponse | null' and 'FichaDetailData' have no overlap. (ts)
-    const cachedData = $fichaDataStore.get(fichaId);
-    if (cachedData && fichaCompleteData !== cachedData) {
-      fichaCompleteData = cachedData;
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichaDetailContainer.svelte:179:42
+Error: Property 'getUsuarios' does not exist on type 'FichaQueryAdapter'. (ts)
+      // ✅ NOVA ARQUITETURA: Usar fichaQueryAdapter para consultas
+      usuarios = await fichaQueryAdapter.getUsuarios();
+      console.log('👥 Usuários carregados:', usuarios?.length);
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichaDetailContainer.svelte:69:7
-Error: Type 'FichaDetailData' is missing the following properties from type 'FichaCompleteResponse': success, data (ts)
-    if (cachedData && fichaCompleteData !== cachedData) {
-      fichaCompleteData = cachedData;
-      console.log('🔄 Dados completos atualizados via store reativo:', fichaId);
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichaDetailContainer.svelte:257:69
-Error: Property 'episDisponivelId' does not exist on type 'EPIDisponivel'. (ts)
-          // Encontrar o EPI correspondente para pegar o estoqueItemId correto
-          const epiCorrespondente = episDisponiveis.find(epi => epi.episDisponivelId === item.episDisponivelId);
-          return {
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichaDetailContainer.svelte:259:47
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichaDetailContainer.svelte:270:48
 Error: Property 'estoqueItemId' does not exist on type 'EPIDisponivel'. (ts)
-          return {
-            estoqueItemId: epiCorrespondente?.estoqueItemId || item.episDisponivelId, // Usar estoqueItemId se disponível
-            quantidade: item.quantidade
+              id: epiCorrespondente.id,
+              estoqueItemId: epiCorrespondente.estoqueItemId,
+              episDisponivelId: epiCorrespondente.episDisponivelId,
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichaDetailContainer.svelte:263:35
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichaDetailContainer.svelte:271:51
+Error: Property 'episDisponivelId' does not exist on type 'EPIDisponivel'. (ts)
+              estoqueItemId: epiCorrespondente.estoqueItemId,
+              episDisponivelId: epiCorrespondente.episDisponivelId,
+              nome: epiCorrespondente.nomeEquipamento
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichaDetailContainer.svelte:277:52
+Error: Property 'estoqueItemId' does not exist on type 'EPIDisponivel'. (ts)
+          // Usar o ID real do item de estoque, não o ID de display
+          const estoqueItemId = epiCorrespondente?.estoqueItemId || epiCorrespondente?.id || item.episDisponivelId;
+          
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichaDetailContainer.svelte:291:35
 Error: Property 'observacoes' does not exist on type 'NovaEntregaFormData'. (ts)
         }),
         observacoes: event.detail.observacoes || ''
       };
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichaDetailContainer.svelte:358:37
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichaDetailContainer.svelte:386:37
 Error: Property 'responsavelId' does not exist on type 'NovaEntregaFormData'. Did you mean 'responsavel'? (ts)
       const payload: Partial<CreateDeliveryPayload> = {
         responsavelId: event.detail.responsavelId,
         itens: event.detail.itens.map(item => ({
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichaDetailContainer.svelte:360:31
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichaDetailContainer.svelte:388:31
 Error: Property 'estoqueItemId' does not exist on type '{ episDisponivelId: string; nomeEquipamento: string; registroCA: string; quantidade: number; }'. (ts)
         itens: event.detail.itens.map(item => ({
           estoqueItemId: item.estoqueItemId,
           quantidade: item.quantidade
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichaDetailContainer.svelte:363:35
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichaDetailContainer.svelte:391:35
 Error: Property 'observacoes' does not exist on type 'NovaEntregaFormData'. (ts)
         })),
         observacoes: event.detail.observacoes
       };
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichaDetailContainer.svelte:475:11
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichaDetailContainer.svelte:503:11
 Error: Type 'string' is not assignable to type '"devolução padrão" | "danificado" | "troca" | "outros"'. (ts)
           equipamentoId: equipamentoDevolucao.id,
           motivo: event.detail.motivo, // Agora já vem no formato correto do enum
           observacoes: event.detail.observacoes || `Devolução via interface da ficha`
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/process/queries/adapters/fichaDetailAdapter.ts:46:10
+Error: 'response' is of type 'unknown'. 
+    
+    if (!response.success || !response.data) {
+      throw new Error(`Ficha ${fichaId} não encontrada`);
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/process/queries/adapters/fichaDetailAdapter.ts:46:31
+Error: 'response' is of type 'unknown'. 
+    
+    if (!response.success || !response.data) {
+      throw new Error(`Ficha ${fichaId} não encontrada`);
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/process/queries/adapters/fichaDetailAdapter.ts:50:34
+Error: Property 'transformFichaBasica' is private and only accessible within class 'FichaTransformAdapter'. 
+
+    return fichaTransformAdapter.transformFichaBasica(response.data);
+  }
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/process/queries/adapters/fichaDetailAdapter.ts:50:55
+Error: 'response' is of type 'unknown'. 
+
+    return fichaTransformAdapter.transformFichaBasica(response.data);
+  }
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/process/queries/adapters/fichaDetailAdapter.ts:60:12
+Error: 'response' is of type 'unknown'. 
+      
+      if (!response.success || !response.data) {
+        return [];
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/process/queries/adapters/fichaDetailAdapter.ts:60:33
+Error: 'response' is of type 'unknown'. 
+      
+      if (!response.success || !response.data) {
+        return [];
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/process/queries/adapters/fichaDetailAdapter.ts:64:37
+Error: 'response' is of type 'unknown'. 
+
+      return this.transformEntregas(response.data);
+    } catch (error) {
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/process/queries/adapters/fichaDetailAdapter.ts:78:12
+Error: 'response' is of type 'unknown'. 
+      
+      if (!response.success || !response.data) {
+        return [];
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/process/queries/adapters/fichaDetailAdapter.ts:78:33
+Error: 'response' is of type 'unknown'. 
+      
+      if (!response.success || !response.data) {
+        return [];
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/process/queries/adapters/fichaDetailAdapter.ts:82:39
+Error: 'response' is of type 'unknown'. 
+
+      return this.transformDevolucoes(response.data);
+    } catch (error) {
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/process/queries/adapters/fichaDetailAdapter.ts:133:12
+Error: 'response' is of type 'unknown'. 
+      
+      if (!response.success || !response.data) {
+        return [];
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/process/queries/adapters/fichaDetailAdapter.ts:133:33
+Error: 'response' is of type 'unknown'. 
+      
+      if (!response.success || !response.data) {
+        return [];
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/process/queries/adapters/fichaDetailAdapter.ts:137:14
+Error: 'response' is of type 'unknown'. 
+
+      return response.data.map((movimento: any) => ({
+        id: movimento.id,
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/process/queries/adapters/fichaResourceAdapter.ts:17:12
+Error: 'response' is of type 'unknown'. 
+      
+      if (!response.success || !response.data) {
+        return [];
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/process/queries/adapters/fichaResourceAdapter.ts:17:33
+Error: 'response' is of type 'unknown'. 
+      
+      if (!response.success || !response.data) {
+        return [];
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/process/queries/adapters/fichaResourceAdapter.ts:21:33
+Error: 'response' is of type 'unknown'. 
+
+      return this.transformEPIs(response.data);
+    } catch (error) {
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/process/queries/adapters/fichaResourceAdapter.ts:35:12
+Error: 'response' is of type 'unknown'. 
+      
+      if (!response.success || !response.data) {
+        return [];
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/process/queries/adapters/fichaResourceAdapter.ts:35:33
+Error: 'response' is of type 'unknown'. 
+      
+      if (!response.success || !response.data) {
+        return [];
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/process/queries/adapters/fichaResourceAdapter.ts:39:14
+Error: 'response' is of type 'unknown'. 
+
+      return response.data.map(this.transformUsuario);
+    } catch (error) {
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/process/queries/adapters/fichaResourceAdapter.ts:53:12
+Error: 'response' is of type 'unknown'. 
+      
+      if (!response.success || !response.data) {
+        return [];
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/process/queries/adapters/fichaResourceAdapter.ts:53:33
+Error: 'response' is of type 'unknown'. 
+      
+      if (!response.success || !response.data) {
+        return [];
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/process/queries/adapters/fichaResourceAdapter.ts:57:14
+Error: 'response' is of type 'unknown'. 
+
+      return response.data.map((empresa: any) => ({
+        id: empresa.id,
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/process/queries/adapters/fichaResourceAdapter.ts:74:12
+Error: 'response' is of type 'unknown'. 
+      
+      if (!response.success || !response.data) {
+        return [];
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/process/queries/adapters/fichaResourceAdapter.ts:74:33
+Error: 'response' is of type 'unknown'. 
+      
+      if (!response.success || !response.data) {
+        return [];
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/process/queries/adapters/fichaResourceAdapter.ts:78:14
+Error: 'response' is of type 'unknown'. 
+
+      return response.data;
+    } catch (error) {
 
 
 /Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/FichasTablePresenter.svelte:270:40
@@ -1073,283 +2386,102 @@ Error: Property 'totalEpisVencidos' does not exist on type 'FichaEPIDTO'. (ts)
                       </Badge>
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:30:14
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:28:14
 Warn: Component has unused export property 'autoRefresh'. If it is for external reference only, please consider using `export const autoRefresh` (svelte)
   export let initialPageSize: number = 10;
   export let autoRefresh: boolean = false;
   export let refreshInterval: number = 30000;
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:31:14
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:29:14
 Warn: Component has unused export property 'refreshInterval'. If it is for external reference only, please consider using `export const refreshInterval` (svelte)
   export let autoRefresh: boolean = false;
   export let refreshInterval: number = 30000;
 
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:42:29
-Error: Property 'empresaFilter' does not exist on type 'PaginationParams'. (ts)
-      // ✅ CORREÇÃO: Usar nomes corretos dos parâmetros conforme container envia
-      empresaFilter: params.empresaFilter !== 'todas' ? params.empresaFilter : undefined, // Container envia 'empresaFilter'
-      cargo: params.cargo !== 'todos' ? params.cargo : undefined,
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:199:5
+Warn: Unknown at rule @apply (css)
+  .fichas-container {
+    @apply bg-white dark:bg-gray-900;
+  }
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:42:64
-Error: Property 'empresaFilter' does not exist on type 'PaginationParams'. (ts)
-      // ✅ CORREÇÃO: Usar nomes corretos dos parâmetros conforme container envia
-      empresaFilter: params.empresaFilter !== 'todas' ? params.empresaFilter : undefined, // Container envia 'empresaFilter'
-      cargo: params.cargo !== 'todos' ? params.cargo : undefined,
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:39:29
+Error: Property 'empresa' does not exist on type 'PaginationParams'. (ts)
+      searchTerm: params.search || undefined,
+      empresaFilter: params.empresa !== 'todas' ? params.empresa : undefined,
+      cargoFilter: params.cargo !== 'todos' ? params.cargo : undefined,
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:43:21
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:39:58
+Error: Property 'empresa' does not exist on type 'PaginationParams'. (ts)
+      searchTerm: params.search || undefined,
+      empresaFilter: params.empresa !== 'todas' ? params.empresa : undefined,
+      cargoFilter: params.cargo !== 'todos' ? params.cargo : undefined,
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:40:27
 Error: Property 'cargo' does not exist on type 'PaginationParams'. (ts)
-      empresaFilter: params.empresaFilter !== 'todas' ? params.empresaFilter : undefined, // Container envia 'empresaFilter'
-      cargo: params.cargo !== 'todos' ? params.cargo : undefined,
-      status: params.status !== 'todos' ? params.status : undefined,
+      empresaFilter: params.empresa !== 'todas' ? params.empresa : undefined,
+      cargoFilter: params.cargo !== 'todos' ? params.cargo : undefined,
+      statusFilter: params.status !== 'todos' ? params.status : undefined,
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:43:48
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:40:54
 Error: Property 'cargo' does not exist on type 'PaginationParams'. (ts)
-      empresaFilter: params.empresaFilter !== 'todas' ? params.empresaFilter : undefined, // Container envia 'empresaFilter'
-      cargo: params.cargo !== 'todos' ? params.cargo : undefined,
-      status: params.status !== 'todos' ? params.status : undefined,
+      empresaFilter: params.empresa !== 'todas' ? params.empresa : undefined,
+      cargoFilter: params.cargo !== 'todos' ? params.cargo : undefined,
+      statusFilter: params.status !== 'todos' ? params.status : undefined,
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:44:22
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:41:28
 Error: Property 'status' does not exist on type 'PaginationParams'. (ts)
-      cargo: params.cargo !== 'todos' ? params.cargo : undefined,
-      status: params.status !== 'todos' ? params.status : undefined,
-      devolucaoPendente: !!params.devolucaoPendente // ✅ CORREÇÃO: Usar nome correto
+      cargoFilter: params.cargo !== 'todos' ? params.cargo : undefined,
+      statusFilter: params.status !== 'todos' ? params.status : undefined,
+      devolucaoPendente: !!params.devolucaoPendente
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:44:50
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:41:56
 Error: Property 'status' does not exist on type 'PaginationParams'. (ts)
-      cargo: params.cargo !== 'todos' ? params.cargo : undefined,
-      status: params.status !== 'todos' ? params.status : undefined,
-      devolucaoPendente: !!params.devolucaoPendente // ✅ CORREÇÃO: Usar nome correto
+      cargoFilter: params.cargo !== 'todos' ? params.cargo : undefined,
+      statusFilter: params.status !== 'todos' ? params.status : undefined,
+      devolucaoPendente: !!params.devolucaoPendente
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:45:35
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:42:35
 Error: Property 'devolucaoPendente' does not exist on type 'PaginationParams'. (ts)
-      status: params.status !== 'todos' ? params.status : undefined,
-      devolucaoPendente: !!params.devolucaoPendente // ✅ CORREÇÃO: Usar nome correto
+      statusFilter: params.status !== 'todos' ? params.status : undefined,
+      devolucaoPendente: !!params.devolucaoPendente
     }).then(response => ({
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:48:23
-Error: Property 'total' does not exist on type 'PaginatedResponse<FichaListItem>'. (ts)
-      data: response.items,
-      total: response.total,
-      page: response.page || params.page || 1,
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:104:22
+Error: Cannot find namespace 'NodeJS'. (ts)
+  // Debounce para busca
+  let searchTimeout: NodeJS.Timeout;
+  $: {
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:49:22
-Error: Property 'page' does not exist on type 'PaginatedResponse<FichaListItem>'. (ts)
-      total: response.total,
-      page: response.page || params.page || 1,
-      pageSize: response.pageSize || params.limit || initialPageSize,
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:166:6
+Error: Type '{ page: number; total: number; pageSize: number; totalPages: number; }' is missing the following properties from type '{ currentPage: number; totalPages: number; pageSize: number; total: number; hasNext: boolean; hasPrev: boolean; }': currentPage, hasNext, hasPrev (ts)
+    {error}
+    {pagination}
+    bind:searchTerm
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:50:26
-Error: Property 'pageSize' does not exist on type 'PaginatedResponse<FichaListItem>'. (ts)
-      page: response.page || params.page || 1,
-      pageSize: response.pageSize || params.limit || initialPageSize,
-      totalPages: Math.ceil(response.total / (params.limit || initialPageSize))
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:168:10
+Error: Type '{ empresa: string; cargo: string; devolucaoPendente: boolean; }' is missing the following properties from type '{ searchTerm: string; empresaFilter: string; cargoFilter: string; devolucaoPendente: boolean; hasActiveFilters: boolean; }': searchTerm, empresaFilter, cargoFilter, hasActiveFilters (ts)
+    bind:searchTerm
+    bind:filters
+    on:fichaSelect={handleFichaSelect}
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:51:38
-Error: Property 'total' does not exist on type 'PaginatedResponse<FichaListItem>'. (ts)
-      pageSize: response.pageSize || params.limit || initialPageSize,
-      totalPages: Math.ceil(response.total / (params.limit || initialPageSize))
-    })),
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:142:11
-Error: 'empresasResponse' is of type 'unknown'. (ts)
-      const empresasResponse = await api.get('/contratadas');
-      if (empresasResponse.success && empresasResponse.data) {
-        const contratadasArray = empresasResponse.data.contratadas || empresasResponse.data;
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:142:39
-Error: 'empresasResponse' is of type 'unknown'. (ts)
-      const empresasResponse = await api.get('/contratadas');
-      if (empresasResponse.success && empresasResponse.data) {
-        const contratadasArray = empresasResponse.data.contratadas || empresasResponse.data;
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:143:34
-Error: 'empresasResponse' is of type 'unknown'. (ts)
-      if (empresasResponse.success && empresasResponse.data) {
-        const contratadasArray = empresasResponse.data.contratadas || empresasResponse.data;
-        if (Array.isArray(contratadasArray)) {
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:143:71
-Error: 'empresasResponse' is of type 'unknown'. (ts)
-      if (empresasResponse.success && empresasResponse.data) {
-        const contratadasArray = empresasResponse.data.contratadas || empresasResponse.data;
-        if (Array.isArray(contratadasArray)) {
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:165:13
-Error: 'colaboradoresResponse' is of type 'unknown'. (ts)
-        const colaboradoresResponse = await api.get('/colaboradores?limit=100');
-        if (colaboradoresResponse.success && colaboradoresResponse.data) {
-          const colaboradores = Array.isArray(colaboradoresResponse.data) 
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:165:46
-Error: 'colaboradoresResponse' is of type 'unknown'. (ts)
-        const colaboradoresResponse = await api.get('/colaboradores?limit=100');
-        if (colaboradoresResponse.success && colaboradoresResponse.data) {
-          const colaboradores = Array.isArray(colaboradoresResponse.data) 
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:166:47
-Error: 'colaboradoresResponse' is of type 'unknown'. (ts)
-        if (colaboradoresResponse.success && colaboradoresResponse.data) {
-          const colaboradores = Array.isArray(colaboradoresResponse.data) 
-            ? colaboradoresResponse.data 
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:167:15
-Error: 'colaboradoresResponse' is of type 'unknown'. (ts)
-          const colaboradores = Array.isArray(colaboradoresResponse.data) 
-            ? colaboradoresResponse.data 
-            : colaboradoresResponse.data.items || [];
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:168:15
-Error: 'colaboradoresResponse' is of type 'unknown'. (ts)
-            ? colaboradoresResponse.data 
-            : colaboradoresResponse.data.items || [];
-          
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:179:33
-Error: Argument of type '(cargo: string) => { value: string; label: string; }' is not assignable to parameter of type '(value: unknown, index: number, array: unknown[]) => { value: string; label: string; }'.
-  Types of parameters 'cargo' and 'value' are incompatible.
-    Type 'unknown' is not assignable to type 'string'. (ts)
-            { value: 'todos', label: 'Todos os Cargos' },
-            ...cargosUnicos.map((cargo: string) => ({
-              value: cargo, // ✅ CORREÇÃO: Usar o valor original do cargo
-              label: cargo
-            }))
-          ];
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:402:48
-Error: 'result' is of type 'unknown'. (ts)
-      console.log('📦 Raw API response for colaboradores:', result);
-      console.log('📦 result.data structure:', result.data);
-      
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:404:11
-Error: 'result' is of type 'unknown'. (ts)
-      
-      if (result.success && result.data) {
-        // ✅ CORREÇÃO: Backend retorna { success: true, data: [...], pagination: {...} }
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:404:29
-Error: 'result' is of type 'unknown'. (ts)
-      
-      if (result.success && result.data) {
-        // ✅ CORREÇÃO: Backend retorna { success: true, data: [...], pagination: {...} }
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:406:36
-Error: 'result' is of type 'unknown'. (ts)
-        // ✅ CORREÇÃO: Backend retorna { success: true, data: [...], pagination: {...} }
-        const colaboradoresArray = result.data;
-        
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:439:11
-Error: Object literal may only specify known properties, and 'cpf' does not exist in type '{ value: string; label: string; empresa: string; }'. (ts)
-          empresa: contratadaId,
-          cpf: '123.456.789-01',
-          cargo: 'Operador'
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:446:11
-Error: Object literal may only specify known properties, and 'cpf' does not exist in type '{ value: string; label: string; empresa: string; }'. (ts)
-          empresa: contratadaId,
-          cpf: '987.654.321-02',
-          cargo: 'Técnica'
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:453:11
-Error: Object literal may only specify known properties, and 'cpf' does not exist in type '{ value: string; label: string; empresa: string; }'. (ts)
-          empresa: contratadaId,
-          cpf: '456.789.123-03',
-          cargo: 'Supervisor'
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:496:11
-Error: 'result' is of type 'unknown'. (ts)
-      
-      if (result.success) {
-        // Fechar modal e recarregar dados
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:510:57
-Error: 'result' is of type 'unknown'. (ts)
-        
-        console.log('✅ Nova ficha criada com sucesso:', result.data);
-        
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:513:13
-Error: 'result' is of type 'unknown'. (ts)
-        // 🔗 NOVO: Abrir a ficha recém-criada automaticamente
-        if (result.data && result.data.id) {
-          console.log('🎯 Abrindo ficha recém-criada:', result.data.id);
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:513:28
-Error: 'result' is of type 'unknown'. (ts)
-        // 🔗 NOVO: Abrir a ficha recém-criada automaticamente
-        if (result.data && result.data.id) {
-          console.log('🎯 Abrindo ficha recém-criada:', result.data.id);
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:514:57
-Error: 'result' is of type 'unknown'. (ts)
-        if (result.data && result.data.id) {
-          console.log('🎯 Abrindo ficha recém-criada:', result.data.id);
-          selectedFichaId = result.data.id;
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:515:29
-Error: 'result' is of type 'unknown'. (ts)
-          console.log('🎯 Abrindo ficha recém-criada:', result.data.id);
-          selectedFichaId = result.data.id;
-          showDetail = true;
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:520:41
-Error: 'result' is of type 'unknown'. (ts)
-          const url = new URL($page.url);
-          url.searchParams.set('ficha', result.data.id);
-          goto(url.toString(), { replaceState: true, noScroll: true });
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:524:25
-Error: 'result' is of type 'unknown'. (ts)
-      } else {
-        throw new Error(result.message || 'Erro ao criar ficha');
-      }
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:585:3
-Error: Type 'FichaListItem[]' is not assignable to type 'FichaEPIDTO[]'.
-  Type 'FichaListItem' is missing the following properties from type 'FichaEPIDTO': colaboradorId, dataEmissao, criadoEm, atualizadoEm (ts)
-<FichasTablePresenter
-  items={presentationData.items}
-  loading={presentationData.loading}
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.svelte:190:7
+Error: Object literal may only specify known properties, and '"loading"' does not exist in type '{ open?: boolean | undefined; submitting?: boolean | undefined; error?: string | null | undefined; contratadas?: { value: string; label: string; }[] | undefined; colaboradores?: { value: string; label: string; empresa: string; }[] | undefined; loadingContratadas?: boolean | undefined; loadingColaboradores?: boolean ...'. (ts)
+      {loadingColaboradores}
+      loading={submittingNovaFicha}
+      on:close={handleCloseNovaFicha}
 
 
 /Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/entityManagementAdapter.ts:173:9
@@ -1485,46 +2617,18 @@ Error: Type '"AJUSTE"' is not assignable to type 'TipoNotaEnum'.
         ],
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/tiposEpiAdapter.ts:96:11
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/almoxarifadosAdapter.ts:140:11
 Error: 'error' is of type 'unknown'. 
       // Se for timeout, usar dados de fallback temporariamente
       if (error.name === "AbortError" || error.message?.includes("timeout")) {
-        console.warn(
+        console.warn("⚠️ Backend indisponível, usando dados de fallback");
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/tiposEpiAdapter.ts:96:42
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/almoxarifadosAdapter.ts:140:42
 Error: 'error' is of type 'unknown'. 
       // Se for timeout, usar dados de fallback temporariamente
       if (error.name === "AbortError" || error.message?.includes("timeout")) {
-        console.warn(
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/tiposEpiAdapter.ts:194:38
-Error: Property 'nome' does not exist on type 'TipoEpi'. 
-        console.log("🔍 nomeEquipamento:", tipo.nomeEquipamento);
-        console.log("🔍 nome:", tipo.nome);
-        console.log("🔍 name:", tipo.name);
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/tiposEpiAdapter.ts:195:38
-Error: Property 'name' does not exist on type 'TipoEpi'. 
-        console.log("🔍 nome:", tipo.nome);
-        console.log("🔍 name:", tipo.name);
-
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/tiposEpiAdapter.ts:201:16
-Error: Property 'nome' does not exist on type 'TipoEpi'. 
-          tipo.nome_equipamento ||
-          tipo.nome ||
-          tipo.name ||
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/tiposEpiAdapter.ts:202:16
-Error: Property 'name' does not exist on type 'TipoEpi'. 
-          tipo.nome ||
-          tipo.name ||
-          "Nome não identificado";
+        console.warn("⚠️ Backend indisponível, usando dados de fallback");
 
 
 /Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/tiposEpiAdapter.ts:206:51
@@ -1562,20 +2666,6 @@ Error: Property 'preco' does not exist on type 'TipoEpi'.
           status: tipo.status,
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/tiposEpiAdapter.ts:337:16
-Error: Property 'nome' does not exist on type 'TipoEpi'. 
-          tipo.nome_equipamento ||
-          tipo.nome ||
-          tipo.name ||
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/tiposEpiAdapter.ts:338:16
-Error: Property 'name' does not exist on type 'TipoEpi'. 
-          tipo.nome ||
-          tipo.name ||
-          "Nome não identificado";
-
-
 /Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/tiposEpiAdapter.ts:342:51
 Error: Property 'numeroCA' does not exist on type 'TipoEpi'. Did you mean 'numeroCa'? 
         const numeroCA =
@@ -1609,20 +2699,6 @@ Error: Property 'preco' does not exist on type 'TipoEpi'.
           custoUnitario:
             tipo.custo_unitario || tipo.custoUnitario || tipo.preco || 0,
         };
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/tiposEpiAdapter.ts:441:16
-Error: Property 'nome' does not exist on type 'TipoEpi'. 
-          tipo.nome_equipamento ||
-          tipo.nome ||
-          tipo.name ||
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/tiposEpiAdapter.ts:442:16
-Error: Property 'name' does not exist on type 'TipoEpi'. 
-          tipo.nome ||
-          tipo.name ||
-          "Nome não identificado";
 
 
 /Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/tiposEpiAdapter.ts:446:51
@@ -1845,78 +2921,158 @@ Error: Element implicitly has an 'any' type because expression of type 'string' 
   }
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotaItensManagerSimplified.svelte:375:88
-Error: Unexpected token (svelte)
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotaItensManagerSimplified.svelte:23:3
+Error: Modifiers cannot appear here.
+If this is a declare statement, move it into <script context="module">..</script> (ts)
+
+  export interface NotaItem {
+    temp_id: string;
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotaItensManagerSimplified.svelte:159:5
+Error: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type 'NotaItem'.
+  No index signature with a parameter of type 'string' was found on type 'NotaItem'. (ts)
+    // Atualizar campo
+    item[campo] = valor;
+
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotaItensManagerSimplified.svelte:170:21
+Error: Property 'custoSugerido' does not exist on type 'TipoEpiSelectOption'. (ts)
+        // Sugestão de custo se disponível
+        if (tipoEpi.custoSugerido && (!item.custo_unitario || item.custo_unitario === 0)) {
+          item.custo_unitario = tipoEpi.custoSugerido;
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotaItensManagerSimplified.svelte:171:41
+Error: Property 'custoSugerido' does not exist on type 'TipoEpiSelectOption'. (ts)
+        if (tipoEpi.custoSugerido && (!item.custo_unitario || item.custo_unitario === 0)) {
+          item.custo_unitario = tipoEpi.custoSugerido;
+        }
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotaItensManagerSimplified.svelte:180:50
+Error: Property 'quantidadeDisponivel' does not exist on type 'EstoqueItemOption'. (ts)
+        item.numero_ca = estoqueItem.numeroCA;
+        item.quantidade_disponivel = estoqueItem.quantidadeDisponivel;
+      }
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotaItensManagerSimplified.svelte:261:16
+Error: Type '"gray"' is not assignable to type '"green" | "red" | "yellow" | "primary" | "blue" | "dark" | "purple" | "indigo" | "pink" | "none" | undefined'. (ts)
+      {#if itens.length > 0}
+        <Badge color="gray" class="ml-2 rounded-sm">{itens.length}</Badge>
+      {/if}
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotaItensManagerSimplified.svelte:375:78
+Error: 'e.target' is possibly 'null'. (ts)
                 class="rounded-sm text-sm"
-                on:input={(e) => atualizarItem(index, 'quantidade', parseInt((e.target as HTMLInputElement)?.value || '1') || 1)}
+                on:input={(e) => atualizarItem(index, 'quantidade', parseInt(e.target.value) || 1)}
               />
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotaItensManagerSimplified.svelte:375:88
-Error: Unexpected token (ts)
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotaItensManagerSimplified.svelte:375:87
+Error: Property 'value' does not exist on type 'EventTarget'. (ts)
                 class="rounded-sm text-sm"
-                on:input={(e) => atualizarItem(index, 'quantidade', parseInt((e.target as HTMLInputElement)?.value || '1') || 1)}
+                on:input={(e) => atualizarItem(index, 'quantidade', parseInt(e.target.value) || 1)}
               />
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesDetailDrawer.svelte:20:10
-Error: Module '"/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotaItensManagerSimplified.svelte"' has no default export. (ts)
-  import DrawerHeader from '$lib/components/common/DrawerHeader.svelte';
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotaItensManagerSimplified.svelte:394:86
+Error: 'e.target' is possibly 'null'. (ts)
+                  class="rounded-sm text-sm"
+                  on:input={(e) => atualizarItem(index, 'custo_unitario', parseFloat(e.target.value) || 0)}
+                />
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotaItensManagerSimplified.svelte:394:95
+Error: Property 'value' does not exist on type 'EventTarget'. (ts)
+                  class="rounded-sm text-sm"
+                  on:input={(e) => atualizarItem(index, 'custo_unitario', parseFloat(e.target.value) || 0)}
+                />
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotaItensManager.svelte:25:3
+Error: Modifiers cannot appear here.
+If this is a declare statement, move it into <script context="module">..</script> (ts)
+
+  export interface NotaItem {
+    id?: string; // Para itens já salvos no backend
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotaItensManager.svelte:433:31
+Error: 'e.currentTarget' is possibly 'null'. (ts)
+              on:input={(e) => {
+                const value = e.currentTarget.value;
+                newItemForm.custo_unitario = value ? parseFloat(value) : 0;
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotaItensManager.svelte:433:47
+Error: Property 'value' does not exist on type 'EventTarget'. (ts)
+              on:input={(e) => {
+                const value = e.currentTarget.value;
+                newItemForm.custo_unitario = value ? parseFloat(value) : 0;
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotaItensManager.svelte:490:24
+Error: Type '"gray"' is not assignable to type '"green" | "red" | "yellow" | "primary" | "blue" | "dark" | "purple" | "indigo" | "pink" | "none" | undefined'. (ts)
+              <TableBodyCell>
+                <Badge color="gray" class="w-fit rounded-sm">
+                  {item.categoria || 'N/A'}
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotaItensManager.svelte:507:84
+Error: 'e.currentTarget' is possibly 'null'. (ts)
+                    class="w-20 text-sm rounded-sm {validationErrors[item.temp_id] ? 'border-red-500' : ''}"
+                    on:input={(e) => handleQuantidadeChange(item.temp_id, parseInt(e.currentTarget.value) || 0)}
+                  />
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotaItensManager.svelte:507:100
+Error: Property 'value' does not exist on type 'EventTarget'. (ts)
+                    class="w-20 text-sm rounded-sm {validationErrors[item.temp_id] ? 'border-red-500' : ''}"
+                    on:input={(e) => handleQuantidadeChange(item.temp_id, parseInt(e.currentTarget.value) || 0)}
+                  />
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesDetailDrawer.svelte:21:17
+Error: Module '"./NotaItensManager.svelte"' has no exported member 'NotaItem'. Did you mean to use 'import NotaItem from "./NotaItensManager.svelte"' instead? (ts)
   import NotaItensManagerSimplified from './NotaItensManagerSimplified.svelte';
+  import type { NotaItem } from './NotaItensManager.svelte';
   import LoadingSpinner from '$lib/components/common/LoadingSpinner.svelte';
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesDetailDrawer.svelte:227:33
-Error: Property 'tipoEpiId' does not exist on type 'NotaMovimentacaoItem'. Did you mean 'tipo_epi_id'? (ts)
-              temp_id: `existing_${item.id}`,
-              tipo_epi_id: item.tipoEpiId || item.tipo_epi_id,
-              estoque_item_id: item.estoque_item_id,
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesDetailDrawer.svelte:238:24
-Error: Property 'tipoEpiId' does not exist on type 'NotaMovimentacaoItem'. Did you mean 'tipo_epi_id'? (ts)
-              // Se tem tipoEpiId, buscar dados do tipo de EPI
-              if (item.tipoEpiId || item.tipo_epi_id) {
-                const tipoEpiId = item.tipoEpiId || item.tipo_epi_id;
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesDetailDrawer.svelte:239:40
-Error: Property 'tipoEpiId' does not exist on type 'NotaMovimentacaoItem'. Did you mean 'tipo_epi_id'? (ts)
-              if (item.tipoEpiId || item.tipo_epi_id) {
-                const tipoEpiId = item.tipoEpiId || item.tipo_epi_id;
-                console.log('🔍 Buscando dados do tipo EPI:', tipoEpiId);
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesDetailDrawer.svelte:452:50
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesDetailDrawer.svelte:453:50
 Error: Property 'id' does not exist on type 'CriarNotaResponse'. (ts)
         // Extrair ID de forma mais defensiva
         notaId = response?.data?.id || response?.id || response?.data?.uuid || response?.uuid;
         
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesDetailDrawer.svelte:452:72
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesDetailDrawer.svelte:453:72
 Error: Property 'uuid' does not exist on type '{ id: string; numero: string; status: StatusNotaEnum; }'. (ts)
         // Extrair ID de forma mais defensiva
         notaId = response?.data?.id || response?.id || response?.data?.uuid || response?.uuid;
         
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesDetailDrawer.svelte:452:90
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesDetailDrawer.svelte:453:90
 Error: Property 'uuid' does not exist on type 'CriarNotaResponse'. (ts)
         // Extrair ID de forma mais defensiva
         notaId = response?.data?.id || response?.id || response?.data?.uuid || response?.uuid;
         
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesDetailDrawer.svelte:516:5
-Error: Type 'any[]' is not assignable to type 'never[]'.
-  Type 'any' is not assignable to type 'never'. (ts)
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesDetailDrawer.svelte:517:5
+Error: Type 'NotaItem[]' is not assignable to type 'never[]'.
+  Type 'NotaItem' is not assignable to type 'never'. (ts)
     itens = event.detail;
     formData.itens = itens;
     
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesDetailDrawer.svelte:657:21
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesDetailDrawer.svelte:658:21
 Error: Type '"green" | "red" | "yellow" | "gray" | "blue" | "dark"' is not assignable to type '"green" | "red" | "yellow" | "primary" | "blue" | "dark" | "purple" | "indigo" | "pink" | "none" | undefined'.
   Type '"gray"' is not assignable to type '"green" | "red" | "yellow" | "primary" | "blue" | "dark" | "purple" | "indigo" | "pink" | "none" | undefined'. (ts)
                   <Badge 
@@ -1924,63 +3080,63 @@ Error: Type '"green" | "red" | "yellow" | "gray" | "blue" | "dark"' is not assig
                     class="w-fit rounded-sm font-medium"
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesDetailDrawer.svelte:717:22
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesDetailDrawer.svelte:718:22
 Error: Type '"gray"' is not assignable to type '"green" | "red" | "yellow" | "primary" | "blue" | "dark" | "purple" | "indigo" | "pink" | "none" | undefined'. (ts)
             {#if totalItens > 0}
               <Badge color="gray" class="ml-2 rounded-sm">{totalItens}</Badge>
             {/if}
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesDetailDrawer.svelte:830:27
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesDetailDrawer.svelte:831:27
 Error: This comparison appears to be unintentional because the types '"create" | "edit"' and '"view"' have no overlap. (ts)
                 bind:value={formData.tipo_nota}
                 disabled={mode === 'view'}
                 class="rounded-sm {formErrors.tipo_nota ? 'border-red-500' : ''}"
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesDetailDrawer.svelte:850:27
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesDetailDrawer.svelte:851:27
 Error: This comparison appears to be unintentional because the types '"create" | "edit"' and '"view"' have no overlap. (ts)
                 bind:value={formData.data_documento}
                 disabled={mode === 'view'}
                 class="rounded-sm h-10 text-sm {formErrors.data_documento ? 'border-red-500' : ''}"
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesDetailDrawer.svelte:872:35
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesDetailDrawer.svelte:873:35
 Error: This comparison appears to be unintentional because the types '"create" | "edit"' and '"view"' have no overlap. (ts)
                         bind:group={formData.almoxarifado_destino_id}
                         disabled={mode === 'view'}
                         class="text-primary-600 focus:ring-primary-500"
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesDetailDrawer.svelte:901:35
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesDetailDrawer.svelte:902:35
 Error: This comparison appears to be unintentional because the types '"create" | "edit"' and '"view"' have no overlap. (ts)
                         bind:group={formData.almoxarifado_origem_id}
                         disabled={mode === 'view'}
                         class="text-primary-600 focus:ring-primary-500"
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesDetailDrawer.svelte:930:35
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesDetailDrawer.svelte:931:35
 Error: This comparison appears to be unintentional because the types '"create" | "edit"' and '"view"' have no overlap. (ts)
                         bind:group={formData.almoxarifado_destino_id}
                         disabled={mode === 'view'}
                         class="text-primary-600 focus:ring-primary-500"
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesDetailDrawer.svelte:958:25
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesDetailDrawer.svelte:959:25
 Error: This comparison appears to be unintentional because the types '"create" | "edit"' and '"view"' have no overlap. (ts)
               bind:value={formData.observacoes}
               disabled={mode === 'view'}
               placeholder="Observações sobre a movimentação..."
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesDetailDrawer.svelte:960:15
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesDetailDrawer.svelte:961:15
 Error: Type 'string' is not assignable to type 'number'. (ts)
               placeholder="Observações sobre a movimentação..."
               rows="3"
               class="rounded-sm {formErrors.observacoes ? 'border-red-500' : ''}"
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesDetailDrawer.svelte:975:23
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesDetailDrawer.svelte:976:23
 Error: This comparison appears to be unintentional because the types '"create" | "edit"' and '"view"' have no overlap. (ts)
             almoxarifadoId={formData.tipo_nota === 'ENTRADA' ? formData.almoxarifado_destino_id : formData.almoxarifado_origem_id}
             readonly={mode === 'view'}
@@ -2561,273 +3717,6 @@ Warn: Component has unused export property 'autoclose'. If it is for external re
   export let outsideclose = true;
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/ItemMovementHistory.svelte:330:15
-Warn: A11y: A form label must be associated with a control. (svelte)
-            <div>
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Período
-              </label>
-              <Select bind:value={selectedPeriod} on:change={handleFiltersChange}>
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/ItemMovementHistory.svelte:359:15
-Warn: A11y: A form label must be associated with a control. (svelte)
-            <div>
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Tipo de Movimentação
-              </label>
-              <Select bind:value={selectedTipo} on:change={handleFiltersChange}>
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/ItemMovementHistory.svelte:371:15
-Warn: A11y: A form label must be associated with a control. (svelte)
-            <div>
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Opções
-              </label>
-              <div class="space-y-2">
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/ItemMovementHistory.svelte:96:14
-Warn: Component has unused export property 'itemsPerPage'. If it is for external reference only, please consider using `export const itemsPerPage` (svelte)
-  export let showPagination = true;
-  export let itemsPerPage = 10;
-  export let maxHeight = '600px';
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/ItemMovementHistory.svelte:557:5
-Warn: Unknown at rule @apply (css)
-  .movement-history-log {
-    @apply w-full;
-  }
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/ItemMovementHistory.svelte:562:5
-Warn: Unknown at rule @apply (css)
-  .timeline {
-    @apply relative space-y-4 px-2;
-  }
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/ItemMovementHistory.svelte:567:5
-Warn: Unknown at rule @apply (css)
-  .date-separator {
-    @apply flex items-center my-6;
-  }
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/ItemMovementHistory.svelte:571:5
-Warn: Unknown at rule @apply (css)
-  .date-line {
-    @apply flex-1 h-px bg-gray-300 dark:bg-gray-600;
-  }
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/ItemMovementHistory.svelte:575:5
-Warn: Unknown at rule @apply (css)
-  .date-badge {
-    @apply px-4 py-1 mx-4 text-sm font-medium text-gray-600 dark:text-gray-400 
-           bg-gray-100 dark:bg-gray-800 rounded-full;
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/ItemMovementHistory.svelte:581:5
-Warn: Unknown at rule @apply (css)
-  .timeline-item {
-    @apply relative flex items-start space-x-4 p-4 
-           bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/ItemMovementHistory.svelte:587:5
-Warn: Unknown at rule @apply (css)
-  .timeline-item.estorno {
-    @apply border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-900/20;
-  }
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/ItemMovementHistory.svelte:592:5
-Warn: Unknown at rule @apply (css)
-  .timeline-icon {
-    @apply flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center
-           text-white font-bold text-lg;
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/ItemMovementHistory.svelte:597:5
-Warn: Unknown at rule @apply (css)
-  .timeline-icon.green {
-    @apply bg-green-500;
-  }
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/ItemMovementHistory.svelte:601:5
-Warn: Unknown at rule @apply (css)
-  .timeline-icon.blue {
-    @apply bg-blue-500;
-  }
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/ItemMovementHistory.svelte:605:5
-Warn: Unknown at rule @apply (css)
-  .timeline-icon.red {
-    @apply bg-red-500;
-  }
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/ItemMovementHistory.svelte:609:5
-Warn: Unknown at rule @apply (css)
-  .timeline-icon.gray {
-    @apply bg-gray-500;
-  }
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/ItemMovementHistory.svelte:613:5
-Warn: Unknown at rule @apply (css)
-  .movement-emoji {
-    @apply text-base;
-  }
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/ItemMovementHistory.svelte:618:5
-Warn: Unknown at rule @apply (css)
-  .timeline-content {
-    @apply flex-1 min-w-0;
-  }
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/ItemMovementHistory.svelte:622:5
-Warn: Unknown at rule @apply (css)
-  .movement-title {
-    @apply text-base font-medium text-gray-900 dark:text-white;
-  }
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/ItemMovementHistory.svelte:626:5
-Warn: Unknown at rule @apply (css)
-  .movement-meta {
-    @apply text-sm text-gray-600 dark:text-gray-400 mt-1;
-  }
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/ItemMovementHistory.svelte:630:5
-Warn: Unknown at rule @apply (css)
-  .movement-quantity {
-    @apply flex-shrink-0;
-  }
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/ItemMovementHistory.svelte:635:5
-Warn: Unknown at rule @apply (css)
-  .quantity-flow {
-    @apply flex items-center text-sm text-gray-600 dark:text-gray-400 mt-2;
-  }
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/ItemMovementHistory.svelte:639:5
-Warn: Unknown at rule @apply (css)
-  .quantity-before {
-    @apply font-mono bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded;
-  }
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/ItemMovementHistory.svelte:643:5
-Warn: Unknown at rule @apply (css)
-  .arrow {
-    @apply mx-2;
-  }
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/ItemMovementHistory.svelte:647:5
-Warn: Unknown at rule @apply (css)
-  .quantity-after {
-    @apply font-mono bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded;
-  }
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/ItemMovementHistory.svelte:652:5
-Warn: Unknown at rule @apply (css)
-  .movement-notes {
-    @apply text-sm text-gray-600 dark:text-gray-400 mt-2 italic;
-  }
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/ItemMovementHistory.svelte:657:5
-Warn: Unknown at rule @apply (css)
-  .movement-references {
-    @apply mt-2;
-  }
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/ItemMovementHistory.svelte:662:5
-Warn: Unknown at rule @apply (css)
-  .movement-actions {
-    @apply flex gap-2 mt-3;
-  }
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/ItemMovementHistory.svelte:687:5
-Warn: Unknown at rule @apply (css)
-  .timeline::-webkit-scrollbar-track {
-    @apply bg-gray-100 dark:bg-gray-800;
-  }
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/ItemMovementHistory.svelte:691:5
-Warn: Unknown at rule @apply (css)
-  .timeline::-webkit-scrollbar-thumb {
-    @apply bg-gray-400 dark:bg-gray-600 rounded-full;
-  }
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/ItemMovementHistory.svelte:695:5
-Warn: Unknown at rule @apply (css)
-  .timeline::-webkit-scrollbar-thumb:hover {
-    @apply bg-gray-500 dark:bg-gray-500;
-  }
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/ItemMovementHistory.svelte:51:3
-Error: Modifiers cannot appear here.
-If this is a declare statement, move it into <script context="module">..</script> (ts)
-  
-  export interface MovimentacaoEstoque {
-    id: string;
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/ItemMovementHistory.svelte:77:3
-Error: Modifiers cannot appear here.
-If this is a declare statement, move it into <script context="module">..</script> (ts)
-  
-  export interface HistoryFilters {
-    periodo?: '7d' | '30d' | '90d' | 'custom';
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/ItemMovementHistory.svelte:459:30
-Error: Type 'string' is not assignable to type '"green" | "red" | "yellow" | "primary" | "blue" | "dark" | "purple" | "indigo" | "pink" | "none" | undefined'. (ts)
-                    <div class="movement-quantity">
-                      <Badge color={getMovementColor(movement)}>
-                        {getQuantityChangeText(movement)}
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/ItemMovementHistory.svelte:485:28
-Error: Type '"light"' is not assignable to type '"green" | "red" | "yellow" | "primary" | "blue" | "dark" | "purple" | "indigo" | "pink" | "none" | undefined'. (ts)
-                  {#if movement.notaMovimentacaoId}
-                    <Badge color="light" class="mr-1">Nota: {movement.notaMovimentacaoId}</Badge>
-                  {/if}
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/ItemMovementHistory.svelte:488:28
-Error: Type '"light"' is not assignable to type '"green" | "red" | "yellow" | "primary" | "blue" | "dark" | "purple" | "indigo" | "pink" | "none" | undefined'. (ts)
-                  {#if movement.entregaId}
-                    <Badge color="light" class="mr-1">Entrega: {movement.entregaId}</Badge>
-                  {/if}
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/index.ts:4:10
-Error: Module '"./StatusBadge.svelte"' has no exported member 'default'. 
-
-export { default as StatusBadge } from "./StatusBadge.svelte";
-export { default as OptimizedTable } from "./OptimizedTable.svelte";
-
-
 /Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/index.ts:7:43
 Error: Cannot find module './TableContainer.svelte' or its corresponding type declarations. 
 export { default as OptimizedModal } from "./OptimizedModal.svelte";
@@ -2849,6 +3738,76 @@ export { default as StatsCard } from "./StatsCard.svelte";
 export { default as ItemMovementHistory } from "./ItemMovementHistory.svelte";
 
 
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/mappers/entityMappers.ts:12:3
+Error: Module '"$lib/types/serviceTypes"' has no exported member 'EstoqueItemDTO'. 
+  ContratadaDTO,
+  EstoqueItemDTO,
+  ItemEstoqueDTO, // Compatibilidade
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/mappers/entityMappers.ts:18:3
+Error: Module '"$lib/types/serviceTypes"' has no exported member 'UnidadeNegocioDTO'. 
+  UsuarioDTO,
+  UnidadeNegocioDTO,
+  TipoEPIDTO
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/mappers/entityMappers.ts:31:7
+Error: Object literal may only specify known properties, and 'matricula' does not exist in type 'ColaboradorDTO'. 
+      cpf: data.cpf,
+      matricula: data.matricula || '',
+      cargo: data.cargo || '',
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/mappers/entityMappers.ts:50:7
+Error: Object literal may only specify known properties, and 'unidadeNegocioId' does not exist in type 'AlmoxarifadoDTO'. 
+      nome: data.nome,
+      unidadeNegocioId: data.unidadeNegocioId || data.unidade_negocio_id,
+      isPrincipal: data.isPrincipal || data.is_principal || false,
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/mappers/entityMappers.ts:67:5
+Error: Property 'ativo' is missing in type '{ id: any; nome: any; cnpj: any; createdAt: any; updatedAt: any; }' but required in type 'ContratadaDTO'. 
+  static contratadaFromAPI(data: any): ContratadaDTO {
+    return {
+      id: data.id,
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/mappers/entityMappers.ts:110:7
+Error: Object literal may only specify known properties, and 'createdAt' does not exist in type 'FichaEPIDTO'. 
+      status: data.status || "ATIVA", // ✅ DEFAULT: ATIVA
+      createdAt: data.createdAt || data.created_at,
+      colaborador: data.colaborador ? {
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/mappers/entityMappers.ts:133:7
+Error: Object literal may only specify known properties, but 'fichaEpiId' does not exist in type 'EntregaDTO'. Did you mean to write 'fichaEPIId'? 
+      id: data.id,
+      fichaEpiId: data.fichaEpiId || data.ficha_epi_id,
+      almoxarifadoId: data.almoxarifadoId || data.almoxarifado_id,
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/mappers/entityMappers.ts:153:7
+Error: Object literal may only specify known properties, and 'estoqueItemId' does not exist in type 'MovimentacaoEstoqueDTO'. 
+      id: data.id,
+      estoqueItemId: data.estoqueItemId || data.estoque_item_id,
+      responsavelId: data.responsavelId || data.responsavel_id,
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/mappers/entityMappers.ts:179:5
+Error: Type '{ id: any; nome: any; email: any; createdAt: any; }' is missing the following properties from type 'UsuarioDTO': perfil, ativo, updatedAt 
+  static usuarioFromAPI(data: any): UsuarioDTO {
+    return {
+      id: data.id,
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/mappers/entityMappers.ts:200:7
+Error: Object literal may only specify known properties, but 'numeroCa' does not exist in type 'TipoEPIDTO'. Did you mean to write 'numeroCA'? 
+      nomeEquipamento: data.nomeEquipamento || data.nome_equipamento,
+      numeroCa: data.numeroCa || data.numero_ca,
+      descricao: data.descricao,
+
+
 /Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/mockData.ts:381:3
 Error: Type '{ id: string; colaboradorId: string; empresaId: string; dataEmissao: string; dataValidade: string; status: string; itens: { id: string; tipoEPIId: string; quantidade: number; dataEntrega: string; status: "entregue"; }[]; }[]' is not assignable to type 'FichaEPI[]'.
   Type '{ id: string; colaboradorId: string; empresaId: string; dataEmissao: string; dataValidade: string; status: string; itens: { id: string; tipoEPIId: string; quantidade: number; dataEntrega: string; status: "entregue"; }[]; }' is not assignable to type 'FichaEPI'.
@@ -2866,53 +3825,46 @@ Error: Object literal may only specify known properties, but 'tipoEPIId' does no
         quantidade: 1,
 
 
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/devolution/devolutionAdapter.ts:13:3
+Error: Module '"$lib/services/api/types"' has no exported member 'FichaEPI'. 
+import type {
+  FichaEPI,
+  Entrega,
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/devolution/devolutionAdapter.ts:14:3
+Error: Module '"$lib/services/api/types"' has no exported member 'Entrega'. 
+  FichaEPI,
+  Entrega,
+  MovimentacaoEstoque,
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/devolution/devolutionAdapter.ts:15:3
+Error: Module '"$lib/services/api/types"' has no exported member 'MovimentacaoEstoque'. 
+  Entrega,
+  MovimentacaoEstoque,
+  StatusFicha,
+
+
 /Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/devolution/devolutionAdapter.ts:16:3
-Error: Module '"$lib/types"' has no exported member 'StatusFicha'. 
+Error: Module '"$lib/services/api/types"' has no exported member 'StatusFicha'. 
   MovimentacaoEstoque,
   StatusFicha,
   StatusEntrega,
 
 
 /Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/devolution/devolutionAdapter.ts:17:3
-Error: Module '"$lib/types"' has no exported member 'StatusEntrega'. 
+Error: Module '"$lib/services/api/types"' has no exported member 'StatusEntrega'. 
   StatusFicha,
   StatusEntrega,
   TipoMovimentacao,
 
 
 /Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/devolution/devolutionAdapter.ts:18:3
-Error: Module '"$lib/types"' has no exported member 'TipoMovimentacao'. 
+Error: Module '"$lib/services/api/types"' has no exported member 'TipoMovimentacao'. 
   StatusEntrega,
   TipoMovimentacao,
-} from "$lib/types";
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/devolution/devolutionAdapter.ts:102:35
-Error: Property 'fichaId' does not exist on type 'Entrega'. 
-      const ficha = await api.get<FichaEPI>(
-        `/api/v1/fichas/${entrega.fichaId}`,
-      );
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/devolution/devolutionAdapter.ts:112:20
-Error: Property 'assinaturaColaborador' does not exist on type 'Entrega'. 
-      // Validar assinaturas obrigatórias
-      if (!entrega.assinaturaColaborador) {
-        restrictions.push({
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/devolution/devolutionAdapter.ts:146:15
-Error: Property 'categoria' does not exist on type 'FichaEPI'. 
-      if (
-        ficha.categoria === "PROTECAO_RESPIRATORIA" ||
-        ficha.categoria === "PROTECAO_QUEDAS"
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/devolution/devolutionAdapter.ts:147:15
-Error: Property 'categoria' does not exist on type 'FichaEPI'. 
-        ficha.categoria === "PROTECAO_RESPIRATORIA" ||
-        ficha.categoria === "PROTECAO_QUEDAS"
-      ) {
+} from "$lib/services/api/types";
 
 
 /Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/devolution/devolutionAdapter.ts:192:39
@@ -2920,41 +3872,6 @@ Error: Property 'SAIDA_DEVOLUCAO' does not exist on type '{ readonly ENTRADA_NOT
       const movimentacao: Partial<MovimentacaoEstoque> = {
         tipoMovimentacao: TipoMovEnum.SAIDA_DEVOLUCAO,
         fichaId: request.fichaId,
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/devolution/devolutionAdapter.ts:193:9
-Error: Object literal may only specify known properties, and 'fichaId' does not exist in type 'Partial<MovimentacaoEstoque>'. 
-        tipoMovimentacao: TipoMovEnum.SAIDA_DEVOLUCAO,
-        fichaId: request.fichaId,
-        colaboradorId: request.colaboradorId,
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/devolution/devolutionAdapter.ts:284:29
-Error: Property 'metadados' does not exist on type 'MovimentacaoEstoque'. 
-          metadados: {
-            ...movimentacao.metadados,
-            condicaoFinal: finalCondition,
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/devolution/devolutionAdapter.ts:292:24
-Error: Property 'metadados' does not exist on type 'MovimentacaoEstoque'. 
-      // Atualizar entrega para devolvida
-      if (movimentacao.metadados?.entregaOriginal) {
-        await api.patch<Entrega>(
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/devolution/devolutionAdapter.ts:294:44
-Error: Property 'metadados' does not exist on type 'MovimentacaoEstoque'. 
-        await api.patch<Entrega>(
-          `/api/v1/entregas/${movimentacao.metadados.entregaOriginal}`,
-          {
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/devolution/devolutionAdapter.ts:307:66
-Error: Property 'fichaId' does not exist on type 'MovimentacaoEstoque'. 
-      ) {
-        await api.patch<FichaEPI>(`/api/v1/fichas/${movimentacao.fichaId}`, {
-          status: "DISPONIVEL" as StatusFicha,
 
 
 /Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/devolution/devolutionAdapter.ts:329:11
@@ -2985,105 +3902,56 @@ Error: Property 'SAIDA_DEVOLUCAO' does not exist on type '{ readonly ENTRADA_NOT
           },
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/notesAdapter.ts:12:34
-Error: Module '"../../types/serviceTypes"' has no exported member 'FilterParams'. 
-import { apiClient, createUrlWithParams } from "../core/apiClient";
-import type { PaginatedResponse, FilterParams } from "../../types/serviceTypes";
-
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/notesAdapter.ts:82:41
-Error: An interface can only extend an object type or intersection of object types with statically known members. 
-
-export interface UpdateNotaData extends Partial<CreateNotaData> {
-  status?: "pendente" | "processada" | "cancelada";
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/notesAdapter.ts:182:29
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/notesAdapter.ts:196:29
 Error: Property 'items' does not exist on type 'PaginatedResponse<Nota>'. 
       const mockData = this.getMockNotas();
-      const nota = mockData.items.find((item) => item.id === id);
+      const nota = mockData.items.find((item: any) => item.id === id);
 
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/notesAdapter.ts:182:41
-Error: Parameter 'item' implicitly has an 'any' type. 
-      const mockData = this.getMockNotas();
-      const nota = mockData.items.find((item) => item.id === id);
-
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/notesAdapter.ts:244:21
-Error: Property 'itens' does not exist on type 'UpdateNotaData'. 
-        ...data,
-        itens: data.itens
-          ? data.itens.map((item, index) => ({
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/notesAdapter.ts:245:18
-Error: Property 'itens' does not exist on type 'UpdateNotaData'. 
-        itens: data.itens
-          ? data.itens.map((item, index) => ({
-              ...item,
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/notesAdapter.ts:245:29
-Error: Parameter 'item' implicitly has an 'any' type. 
-        itens: data.itens
-          ? data.itens.map((item, index) => ({
-              ...item,
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/notesAdapter.ts:245:35
-Error: Parameter 'index' implicitly has an 'any' type. 
-        itens: data.itens
-          ? data.itens.map((item, index) => ({
-              ...item,
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/notesAdapter.ts:315:40
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/notesAdapter.ts:329:40
 Error: Object literal may only specify known properties, and 'pageSize' does not exist in type 'NotesFilterParams'. 
   }> {
     const data = await this.getNotas({ pageSize: 1000 }); // Buscar todos para extrair opções
 
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/notesAdapter.ts:318:23
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/notesAdapter.ts:332:23
 Error: Property 'items' does not exist on type 'PaginatedResponse<Nota>'. 
     const responsaveis = [
       ...new Set(data.items.map((item) => item.responsavel)),
     ]
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/notesAdapter.ts:318:34
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/notesAdapter.ts:332:34
 Error: Parameter 'item' implicitly has an 'any' type. 
     const responsaveis = [
       ...new Set(data.items.map((item) => item.responsavel)),
     ]
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/notesAdapter.ts:326:14
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/notesAdapter.ts:340:14
 Error: Property 'items' does not exist on type 'PaginatedResponse<Nota>'. 
       ...new Set(
         data.items
           .filter((item): item is NotaEntrada => item.tipo === "entrada")
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/notesAdapter.ts:327:20
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/notesAdapter.ts:341:20
 Error: Parameter 'item' implicitly has an 'any' type. 
         data.items
           .filter((item): item is NotaEntrada => item.tipo === "entrada")
           .map((item) => item.fornecedor)
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/notesAdapter.ts:328:17
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/notesAdapter.ts:342:17
 Error: Parameter 'item' implicitly has an 'any' type. 
           .filter((item): item is NotaEntrada => item.tipo === "entrada")
           .map((item) => item.fornecedor)
           .filter(Boolean),
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/notesAdapter.ts:341:14
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/notesAdapter.ts:355:14
 Error: Type '{ value: unknown; label: unknown; }[]' is not assignable to type '{ value: string; label: string; }[]'.
   Type '{ value: unknown; label: unknown; }' is not assignable to type '{ value: string; label: string; }'.
     Types of property 'value' are incompatible.
@@ -3093,7 +3961,7 @@ Error: Type '{ value: unknown; label: unknown; }[]' is not assignable to type '{
   }
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/notesAdapter.ts:341:28
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/notesAdapter.ts:355:28
 Error: Type '{ value: {}; label: {}; }[]' is not assignable to type '{ value: string; label: string; }[]'.
   Type '{ value: {}; label: {}; }' is not assignable to type '{ value: string; label: string; }'.
     Types of property 'value' are incompatible.
@@ -3103,35 +3971,14 @@ Error: Type '{ value: {}; label: {}; }[]' is not assignable to type '{ value: st
   }
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/notesAdapter.ts:443:16
-Error: Property 'search' does not exist on type 'NotesFilterParams'. 
-
-    if (params.search) {
-      const searchLower = params.search.toLowerCase();
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/notesAdapter.ts:444:34
-Error: Property 'search' does not exist on type 'NotesFilterParams'. 
-    if (params.search) {
-      const searchLower = params.search.toLowerCase();
-      allNotas = allNotas.filter(
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/notesAdapter.ts:471:29
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/notesAdapter.ts:485:29
 Error: Property 'pageSize' does not exist on type 'NotesFilterParams'. 
     // Paginação
     const pageSize = params.pageSize || 10;
     const page = params.page || 1;
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/notesAdapter.ts:472:25
-Error: Property 'page' does not exist on type 'NotesFilterParams'. 
-    const pageSize = params.pageSize || 10;
-    const page = params.page || 1;
-    const startIndex = (page - 1) * pageSize;
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/notesAdapter.ts:478:7
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/services/entity/notesAdapter.ts:492:7
 Error: Object literal may only specify known properties, and 'items' does not exist in type 'PaginatedResponse<Nota>'. 
     return {
       items: paginatedItems,
@@ -3285,90 +4132,6 @@ Error: Duplicate function implementation.
     const categoryLabels: Record<string, string> = {
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/stores/contratadaStore.ts:144:52
-Error: Type '{ page: any; limit: any; cnpj: any; nome: any; search: any; orderBy: any; orderDirection: any; }' has no properties in common with type 'ApiRequestOptions'. 
-    // Chamar endpoint de contratadas
-    const response = await api.get("/contratadas", backendParams);
-
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/stores/contratadaStore.ts:147:9
-Error: 'response' is of type 'unknown'. 
-    // Transformar response para formato do paginatedStore
-    if (response.success && response.data) {
-      return {
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/stores/contratadaStore.ts:147:29
-Error: 'response' is of type 'unknown'. 
-    // Transformar response para formato do paginatedStore
-    if (response.success && response.data) {
-      return {
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/stores/contratadaStore.ts:149:15
-Error: 'response' is of type 'unknown'. 
-      return {
-        data: response.data.contratadas || response.data.items || response.data,
-        total: response.meta?.totalItems || response.data.length || 0,
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/stores/contratadaStore.ts:149:44
-Error: 'response' is of type 'unknown'. 
-      return {
-        data: response.data.contratadas || response.data.items || response.data,
-        total: response.meta?.totalItems || response.data.length || 0,
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/stores/contratadaStore.ts:149:67
-Error: 'response' is of type 'unknown'. 
-      return {
-        data: response.data.contratadas || response.data.items || response.data,
-        total: response.meta?.totalItems || response.data.length || 0,
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/stores/contratadaStore.ts:150:16
-Error: 'response' is of type 'unknown'. 
-        data: response.data.contratadas || response.data.items || response.data,
-        total: response.meta?.totalItems || response.data.length || 0,
-        page: response.meta?.currentPage || backendParams.page,
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/stores/contratadaStore.ts:150:45
-Error: 'response' is of type 'unknown'. 
-        data: response.data.contratadas || response.data.items || response.data,
-        total: response.meta?.totalItems || response.data.length || 0,
-        page: response.meta?.currentPage || backendParams.page,
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/stores/contratadaStore.ts:151:15
-Error: 'response' is of type 'unknown'. 
-        total: response.meta?.totalItems || response.data.length || 0,
-        page: response.meta?.currentPage || backendParams.page,
-        pageSize: response.meta?.pageSize || backendParams.limit,
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/stores/contratadaStore.ts:152:19
-Error: 'response' is of type 'unknown'. 
-        page: response.meta?.currentPage || backendParams.page,
-        pageSize: response.meta?.pageSize || backendParams.limit,
-        totalPages:
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/stores/contratadaStore.ts:154:11
-Error: 'response' is of type 'unknown'. 
-        totalPages:
-          response.meta?.totalPages ||
-          Math.ceil((response.meta?.totalItems || 0) / backendParams.limit),
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/stores/contratadaStore.ts:155:22
-Error: 'response' is of type 'unknown'. 
-          response.meta?.totalPages ||
-          Math.ceil((response.meta?.totalItems || 0) / backendParams.limit),
-      };
-
-
 /Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/stores/contratadaStore.ts:285:9
 Error: 'response' is of type 'unknown'. 
 
@@ -3511,60 +4274,74 @@ Error: Property 'pageSize' does not exist on type 'PaginationParams'.
       },
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/stores/devolutionStore.ts:312:22
-Error: Property 'metadados' does not exist on type 'MovimentacaoEstoque'. 
-      id: mov.id!,
-      entregaId: mov.metadados?.entregaOriginal || "",
-      fichaId: mov.fichaId,
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/stores/devolutionStore.ts:313:20
-Error: Property 'fichaId' does not exist on type 'MovimentacaoEstoque'. 
-      entregaId: mov.metadados?.entregaOriginal || "",
-      fichaId: mov.fichaId,
-      colaboradorId: mov.colaboradorId,
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/stores/devolutionStore.ts:314:26
-Error: Property 'colaboradorId' does not exist on type 'MovimentacaoEstoque'. 
-      fichaId: mov.fichaId,
-      colaboradorId: mov.colaboradorId,
-      status: status,
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/stores/devolutionStore.ts:347:22
-Error: Property 'metadados' does not exist on type 'MovimentacaoEstoque'. 
-      id: mov.id!,
-      entregaId: mov.metadados?.entregaOriginal || "",
-      fichaId: mov.fichaId,
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/stores/devolutionStore.ts:348:20
-Error: Property 'fichaId' does not exist on type 'MovimentacaoEstoque'. 
-      entregaId: mov.metadados?.entregaOriginal || "",
-      fichaId: mov.fichaId,
-      colaboradorId: mov.colaboradorId,
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/stores/devolutionStore.ts:349:26
-Error: Property 'colaboradorId' does not exist on type 'MovimentacaoEstoque'. 
-      fichaId: mov.fichaId,
-      colaboradorId: mov.colaboradorId,
-      status: mov.status as StatusDevolucao,
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/stores/devolutionStore.ts:350:19
-Error: Property 'status' does not exist on type 'MovimentacaoEstoque'. 
-      colaboradorId: mov.colaboradorId,
-      status: mov.status as StatusDevolucao,
-      createdAt: new Date(mov.dataMovimentacao),
-
-
 /Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/stores/devolutionStore.ts:421:38
 Error: Property 'loadPage' does not exist on type 'PaginatedStore<Entrega>'. 
     // Carregar equipamentos com colaboradores
     await equipmentWithCollaborators.loadPage(1);
 
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/stores/fichas/fichasStore.ts:50:28
+Error: Cannot find namespace 'NodeJS'. 
+  let currentFilters: FichaQueryParams = {};
+  let autoRefreshInterval: NodeJS.Timeout | null = null;
+
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/types/paginationTypes.ts:198:3
+Error: Export declaration conflicts with exported declaration of 'PaginationParams'. 
+  // Tipos principais
+  PaginationParams,
+  PaginationMeta,
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/types/paginationTypes.ts:199:3
+Error: Export declaration conflicts with exported declaration of 'PaginationMeta'. 
+  PaginationParams,
+  PaginationMeta,
+  PaginatedResponse,
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/types/paginationTypes.ts:200:3
+Error: Export declaration conflicts with exported declaration of 'PaginatedResponse'. 
+  PaginationMeta,
+  PaginatedResponse,
+  PaginationState,
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/types/paginationTypes.ts:201:3
+Error: Export declaration conflicts with exported declaration of 'PaginationState'. 
+  PaginatedResponse,
+  PaginationState,
+  
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/types/paginationTypes.ts:204:3
+Error: Export declaration conflicts with exported declaration of 'BaseFilters'. 
+  // Tipos para filtros
+  BaseFilters,
+  PaginatedQueryParams,
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/types/paginationTypes.ts:205:3
+Error: Export declaration conflicts with exported declaration of 'PaginatedQueryParams'. 
+  BaseFilters,
+  PaginatedQueryParams,
+  
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/types/paginationTypes.ts:208:3
+Error: Export declaration conflicts with exported declaration of 'LegacyPaginationParams'. 
+  // Tipos legados (deprecated)
+  LegacyPaginationParams,
+  LegacyPaginatedResponse,
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/types/paginationTypes.ts:209:3
+Error: Export declaration conflicts with exported declaration of 'LegacyPaginatedResponse'. 
+  LegacyPaginationParams,
+  LegacyPaginatedResponse,
+};
 
 
 /Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/utils/entityHelpers.ts:229:7
@@ -3654,11 +4431,53 @@ Error: Type 'string' is not assignable to type '"green" | "red" | "yellow" | "pr
                     {inconsistency.tipo === 'read_model_maior' ? 'Read Model +' : 'Event Log +'}
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/devolution/DevolutionDashboard.svelte:65:10
-Error: Module '"/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/StatusBadge.svelte"' has no default export. (ts)
-  import StatsCard from '$lib/components/common/StatsCard.svelte';
-  import StatusBadge from '$lib/components/ui/StatusBadge.svelte';
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.fixed.svelte:170:5
+Error: Attributes need to be unique (svelte)
+    {filters}
+    bind:searchTerm
+    bind:filters
 
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.fixed.svelte:202:5
+Warn: Unknown at rule @apply (css)
+  .fichas-container {
+    @apply bg-white dark:bg-gray-900;
+  }
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/FichasContainer.fixed.svelte:170:5
+Error: Attributes need to be unique (ts)
+    {filters}
+    bind:searchTerm
+    bind:filters
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/fichas/FichasActions.svelte:193:5
+Warn: Unknown at rule @apply (css)
+  .fichas-actions {
+    @apply transition-all duration-200;
+  }
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/fichas/FichasFilters.svelte:202:5
+Warn: Unknown at rule @apply (css)
+  .fichas-filters {
+    @apply transition-all duration-200;
+  }
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/fichas/FichasTable.svelte:271:5
+Warn: Unknown at rule @apply (css)
+  .fichas-table {
+    @apply bg-white dark:bg-gray-900;
+  }
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/containers/fichas/FichasTable.svelte:106:9
+Error: Object literal may only specify known properties, and '"title"' does not exist in type '{ icon: string; message: string; description?: string | undefined; size?: "sm" | "md" | "lg" | undefined; }'. (ts)
+      <EmptyState
+        title="Nenhuma ficha encontrada"
+        description="Não há fichas que correspondam aos filtros aplicados."
 
 
 /Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/devolution/DevolutionDashboard.svelte:238:44
@@ -3669,7 +4488,7 @@ Error: Property 'data' does not exist on type 'PaginatedState<Entrega>'. (ts)
 
 
 /Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/devolution/DevolutionDashboard.svelte:280:16
-Error: Object literal may only specify known properties, and 'activeTabValue' does not exist in type 'HTMLAttributes<HTMLUListElement> & { tabStyle?: "none" | "full" | "pill" | "underline" | undefined; defaultClass?: string | undefined; contentClass?: string | undefined; divider?: boolean | undefined; activeClasses?: string | undefined; inactiveClasses?: string | undefined; }'. (ts)
+Error: Object literal may only specify known properties, and 'activeTabValue' does not exist in type 'HTMLAttributes<HTMLUListElement> & { tabStyle?: "none" | "underline" | "full" | "pill" | undefined; defaultClass?: string | undefined; contentClass?: string | undefined; divider?: boolean | undefined; activeClasses?: string | undefined; inactiveClasses?: string | undefined; }'. (ts)
     <!-- Tabs Navigation -->
     <Tabs bind:activeTabValue={activeTab} class="w-full">
       
@@ -3694,6 +4513,13 @@ Error: Property 'data' does not exist on type 'PaginatedState<Entrega>'. (ts)
                   <TableBody>
                     {#each $equipmentWithCollaborators.data as entrega (entrega.id)}
                       <TableBodyRow>
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/devolution/DevolutionDashboard.svelte:326:40
+Error: Object literal may only specify known properties, and '"type"' does not exist in type '{ status: string; color: string; label: string; }'. (ts)
+                        <TableBodyCell>
+                          <StatusBadge type="entrega" status={entrega.status} />
+                        </TableBodyCell>
 
 
 /Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/devolution/DevolutionDashboard.svelte:378:34
@@ -3822,13 +4648,6 @@ Error: Type 'string' is not assignable to type '"default" | "admin" | "holding" 
       
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/layout/MainLayout.svelte:125:17
-Error: Object literal may only specify known properties, and '"active"' does not exist in type 'HTMLAnchorAttributes & { action?: Action<HTMLElement, any, Record<never, any>> | undefined; params?: any; href?: string | undefined; label?: string | undefined; spanClass?: string | undefined; activeClass?: string | undefined; nonActiveClass?: string | undefined; }'. (ts)
-                label={item.label}
-                active={currentPath === item.href}
-                class="text-sm {currentPath === item.href ? 'text-primary-600 dark:text-primary-400' : ''}"
-
-
 /Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/modals/ContratadaDeleteModal.svelte:11:17
 Error: Module '"$lib/services/api/types"' has no exported member 'Contratada'. (ts)
   import { ExclamationCircleOutline } from 'flowbite-svelte-icons';
@@ -3850,371 +4669,101 @@ Error: Type 'string' is not assignable to type 'number'. (ts)
         class="w-full"
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotaItensManager.svelte:25:3
-Error: Modifiers cannot appear here.
-If this is a declare statement, move it into <script context="module">..</script> (ts)
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesFormModalPresenter.svelte:524:78
+Error: Unexpected token
 
-  export interface NotaItem {
-    id?: string; // Para itens já salvos no backend
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotaItensManager.svelte:433:31
-Error: 'e.currentTarget' is possibly 'null'. (ts)
-              on:input={(e) => {
-                const value = e.currentTarget.value;
-                newItemForm.custo_unitario = value ? parseFloat(value) : 0;
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotaItensManager.svelte:433:47
-Error: Property 'value' does not exist on type 'EventTarget'. (ts)
-              on:input={(e) => {
-                const value = e.currentTarget.value;
-                newItemForm.custo_unitario = value ? parseFloat(value) : 0;
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotaItensManager.svelte:490:24
-Error: Type '"gray"' is not assignable to type '"green" | "red" | "yellow" | "primary" | "blue" | "dark" | "purple" | "indigo" | "pink" | "none" | undefined'. (ts)
-              <TableBodyCell>
-                <Badge color="gray" class="w-fit rounded-sm">
-                  {item.categoria || 'N/A'}
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotaItensManager.svelte:507:84
-Error: 'e.currentTarget' is possibly 'null'. (ts)
-                    class="w-20 text-sm rounded-sm {validationErrors[item.temp_id] ? 'border-red-500' : ''}"
-                    on:input={(e) => handleQuantidadeChange(item.temp_id, parseInt(e.currentTarget.value) || 0)}
-                  />
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotaItensManager.svelte:507:100
-Error: Property 'value' does not exist on type 'EventTarget'. (ts)
-                    class="w-20 text-sm rounded-sm {validationErrors[item.temp_id] ? 'border-red-500' : ''}"
-                    on:input={(e) => handleQuantidadeChange(item.temp_id, parseInt(e.currentTarget.value) || 0)}
-                  />
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesFormModalPresenter.svelte:15:35
-Error: Module '"./NotaItensManager.svelte"' has no exported member 'NotaItem'. Did you mean to use 'import NotaItem from "./NotaItensManager.svelte"' instead? (ts)
-  import { ArrowRightOutline, ArrowLeftOutline, CheckOutline, FloppyDiskOutline, FileDocOutline } from 'flowbite-svelte-icons';
-  import NotaItensManager, { type NotaItem } from './NotaItensManager.svelte';
-  import { almoxarifadosAdapter } from '$lib/services/entity/almoxarifadosAdapter';
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesFormModalPresenter.svelte:116:69
-Error: Property 'almoxarifado_origem_id' does not exist on type 'NotaMovimentacao'. Did you mean 'almoxarifadoOrigemId'? (ts)
-          tipo_nota: nota.tipo || nota.tipo_nota || 'ENTRADA',
-          almoxarifado_origem_id: nota.almoxarifadoOrigemId || nota.almoxarifado_origem_id || nota.almoxarifado_id,
-          almoxarifado_destino_id: nota.almoxarifadoDestinoId || nota.almoxarifado_destino_id,
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesFormModalPresenter.svelte:118:74
-Error: Property 'numeroDocumento' does not exist on type 'NotaMovimentacao'. Did you mean 'numero_documento'? (ts)
-          almoxarifado_destino_id: nota.almoxarifadoDestinoId || nota.almoxarifado_destino_id,
-          numero_documento: nota.numero || nota.numero_documento || nota.numeroDocumento || '',
-          data_documento: nota.dataDocumento || nota.data_documento || nota.createdAt?.split('T')[0] || '',
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesFormModalPresenter.svelte:119:32
-Error: Property 'dataDocumento' does not exist on type 'NotaMovimentacao'. Did you mean 'data_documento'? (ts)
-          numero_documento: nota.numero || nota.numero_documento || nota.numeroDocumento || '',
-          data_documento: nota.dataDocumento || nota.data_documento || nota.createdAt?.split('T')[0] || '',
-          observacoes: nota.observacoes || nota.observacao || ''
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesFormModalPresenter.svelte:120:49
-Error: Property 'observacao' does not exist on type 'NotaMovimentacao'. Did you mean 'observacoes'? (ts)
-          data_documento: nota.dataDocumento || nota.data_documento || nota.createdAt?.split('T')[0] || '',
-          observacoes: nota.observacoes || nota.observacao || ''
-        };
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesFormModalPresenter.svelte:127:62
-Error: Property 'items' does not exist on type 'NotaMovimentacao'. Did you mean 'itens'? (ts)
-        // A API retorna "_itens" em vez de "itens" (conforme logs)
-        const itensArray = nota._itens || nota.itens || nota.items || [];
-        if (Array.isArray(itensArray)) {
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesFormModalPresenter.svelte:479:14
-Error: Type '"green" | "red" | "yellow" | "gray" | "blue" | "dark"' is not assignable to type '"green" | "red" | "yellow" | "primary" | "blue" | "dark" | "purple" | "indigo" | "pink" | "none" | undefined'.
-  Type '"gray"' is not assignable to type '"green" | "red" | "yellow" | "primary" | "blue" | "dark" | "purple" | "indigo" | "pink" | "none" | undefined'. (ts)
-      </h3>
-      <Badge color={getTipoNotaBadgeColor(formData.tipo_nota)} class="w-fit rounded-sm">
-        {getTipoNotaLabel(formData.tipo_nota)}
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesFormModalPresenter.svelte:495:7
-Error: Object literal may only specify known properties, and '"activeTabValue"' does not exist in type 'HTMLAttributes<HTMLUListElement> & { tabStyle?: "none" | "full" | "pill" | "underline" | undefined; defaultClass?: string | undefined; contentClass?: string | undefined; divider?: boolean | undefined; activeClasses?: string | undefined; inactiveClasses?: string | undefined; }'. (ts)
-      style="underline" 
-      activeTabValue={activeTabIndex}
-      on:activeTabChange={handleTabChange}
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesFormModalPresenter.svelte:512:68
-Error: 'e.currentTarget' is possibly 'null'. (ts)
+If you expect this syntax to work, here are some suggestions: 
+If you use typescript with `svelte-preprocess`, did you add `lang="ts"` to your `script` tag? 
+Did you setup a `svelte.config.js`? 
+See https://github.com/sveltejs/language-tools/tree/master/docs#using-with-preprocessors for more info. (svelte)
                   class="rounded-sm"
-                  on:change={(e) => handleInputChange('tipo_nota', e.currentTarget.value)}
+                  on:change={(e) => handleInputChange('tipo_nota', (e.target as HTMLSelectElement).value)}
                 >
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesFormModalPresenter.svelte:512:84
-Error: Property 'value' does not exist on type 'EventTarget'. (ts)
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesFormModalPresenter.svelte:524:78
+Error: Unexpected token (ts)
                   class="rounded-sm"
-                  on:change={(e) => handleInputChange('tipo_nota', e.currentTarget.value)}
+                  on:change={(e) => handleInputChange('tipo_nota', (e.target as HTMLSelectElement).value)}
                 >
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesFormModalPresenter.svelte:539:82
-Error: 'e.currentTarget' is possibly 'null'. (ts)
-                  class="rounded-sm {errors.almoxarifado_destino_id ? 'border-red-500' : ''}"
-                  on:change={(e) => handleInputChange('almoxarifado_destino_id', e.currentTarget.value)}
-                >
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/StatusBadge.temp.svelte:5:14
+Warn: Component has unused export property 'status'. If it is for external reference only, please consider using `export const status` (svelte)
+  
+  export let status: string;
+  export let color: string;
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesFormModalPresenter.svelte:539:98
-Error: Property 'value' does not exist on type 'EventTarget'. (ts)
-                  class="rounded-sm {errors.almoxarifado_destino_id ? 'border-red-500' : ''}"
-                  on:change={(e) => handleInputChange('almoxarifado_destino_id', e.currentTarget.value)}
-                >
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/ui/StatusBadge.temp.svelte:10:9
+Error: Type 'string' is not assignable to type '"green" | "red" | "yellow" | "primary" | "blue" | "dark" | "purple" | "indigo" | "pink" | "none" | undefined'. (ts)
+
+<Badge {color} class="text-xs rounded-sm">
+  {label}
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesFormModalPresenter.svelte:561:81
-Error: 'e.currentTarget' is possibly 'null'. (ts)
-                  class="rounded-sm {errors.almoxarifado_origem_id ? 'border-red-500' : ''}"
-                  on:change={(e) => handleInputChange('almoxarifado_origem_id', e.currentTarget.value)}
-                >
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesFormModalPresenter.svelte:561:97
-Error: Property 'value' does not exist on type 'EventTarget'. (ts)
-                  class="rounded-sm {errors.almoxarifado_origem_id ? 'border-red-500' : ''}"
-                  on:change={(e) => handleInputChange('almoxarifado_origem_id', e.currentTarget.value)}
-                >
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesFormModalPresenter.svelte:581:82
-Error: 'e.currentTarget' is possibly 'null'. (ts)
-                  class="rounded-sm {errors.almoxarifado_destino_id ? 'border-red-500' : ''}"
-                  on:change={(e) => handleInputChange('almoxarifado_destino_id', e.currentTarget.value)}
-                >
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesFormModalPresenter.svelte:581:98
-Error: Property 'value' does not exist on type 'EventTarget'. (ts)
-                  class="rounded-sm {errors.almoxarifado_destino_id ? 'border-red-500' : ''}"
-                  on:change={(e) => handleInputChange('almoxarifado_destino_id', e.currentTarget.value)}
-                >
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesFormModalPresenter.svelte:605:81
-Error: 'e.currentTarget' is possibly 'null'. (ts)
-                  class="rounded-sm {errors.almoxarifado_origem_id ? 'border-red-500' : ''}"
-                  on:change={(e) => handleInputChange('almoxarifado_origem_id', e.currentTarget.value)}
-                >
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesFormModalPresenter.svelte:605:97
-Error: Property 'value' does not exist on type 'EventTarget'. (ts)
-                  class="rounded-sm {errors.almoxarifado_origem_id ? 'border-red-500' : ''}"
-                  on:change={(e) => handleInputChange('almoxarifado_origem_id', e.currentTarget.value)}
-                >
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesFormModalPresenter.svelte:655:72
-Error: 'e.currentTarget' is possibly 'null'. (ts)
-                class="rounded-sm"
-                on:input={(e) => handleInputChange('numero_documento', e.currentTarget.value)}
-              />
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesFormModalPresenter.svelte:655:88
-Error: Property 'value' does not exist on type 'EventTarget'. (ts)
-                class="rounded-sm"
-                on:input={(e) => handleInputChange('numero_documento', e.currentTarget.value)}
-              />
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesFormModalPresenter.svelte:673:70
-Error: 'e.currentTarget' is possibly 'null'. (ts)
-                class="rounded-sm {errors.data_documento ? 'border-red-500' : ''}"
-                on:input={(e) => handleInputChange('data_documento', e.currentTarget.value)}
-              />
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesFormModalPresenter.svelte:673:86
-Error: Property 'value' does not exist on type 'EventTarget'. (ts)
-                class="rounded-sm {errors.data_documento ? 'border-red-500' : ''}"
-                on:input={(e) => handleInputChange('data_documento', e.currentTarget.value)}
-              />
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesFormModalPresenter.svelte:689:15
-Error: Type 'string' is not assignable to type 'number'. (ts)
-              placeholder="Observações sobre a nota de movimentação..."
-              rows="4"
-              bind:value={formData.observacoes}
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesFormModalPresenter.svelte:693:65
-Error: 'e.currentTarget' is possibly 'null'. (ts)
-              class="rounded-sm"
-              on:input={(e) => handleInputChange('observacoes', e.currentTarget.value)}
-            />
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesFormModalPresenter.svelte:693:81
-Error: Property 'value' does not exist on type 'EventTarget'. (ts)
-              class="rounded-sm"
-              on:input={(e) => handleInputChange('observacoes', e.currentTarget.value)}
-            />
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesFormModalPresenter.svelte:722:53
-Error: Property 'responsavel_nome' does not exist on type 'NotaMovimentacao'. Did you mean 'responsavel'? (ts)
-                <!-- Responsável -->
-                {#if nota.responsavel?.nome || nota.responsavel_nome || nota.responsavelNome || nota.usuario?.nome}
-                  <div>
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesFormModalPresenter.svelte:722:78
-Error: Property 'responsavelNome' does not exist on type 'NotaMovimentacao'. Did you mean 'responsavel'? (ts)
-                <!-- Responsável -->
-                {#if nota.responsavel?.nome || nota.responsavel_nome || nota.responsavelNome || nota.usuario?.nome}
-                  <div>
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesFormModalPresenter.svelte:722:102
-Error: Property 'usuario' does not exist on type 'NotaMovimentacao'. Did you mean 'usuarioId'? (ts)
-                <!-- Responsável -->
-                {#if nota.responsavel?.nome || nota.responsavel_nome || nota.responsavelNome || nota.usuario?.nome}
-                  <div>
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesFormModalPresenter.svelte:725:76
-Error: Property 'responsavel_nome' does not exist on type 'NotaMovimentacao'. Did you mean 'responsavel'? (ts)
-                    <span class="text-gray-500 dark:text-gray-400">Responsável:</span>
-                    <p class="font-medium">{nota.responsavel?.nome || nota.responsavel_nome || nota.responsavelNome || nota.usuario?.nome}</p>
-                  </div>
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesFormModalPresenter.svelte:725:101
-Error: Property 'responsavelNome' does not exist on type 'NotaMovimentacao'. Did you mean 'responsavel'? (ts)
-                    <span class="text-gray-500 dark:text-gray-400">Responsável:</span>
-                    <p class="font-medium">{nota.responsavel?.nome || nota.responsavel_nome || nota.responsavelNome || nota.usuario?.nome}</p>
-                  </div>
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesFormModalPresenter.svelte:725:125
-Error: Property 'usuario' does not exist on type 'NotaMovimentacao'. Did you mean 'usuarioId'? (ts)
-                    <span class="text-gray-500 dark:text-gray-400">Responsável:</span>
-                    <p class="font-medium">{nota.responsavel?.nome || nota.responsavel_nome || nota.responsavelNome || nota.usuario?.nome}</p>
-                  </div>
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesFormModalPresenter.svelte:730:64
-Error: Property 'data_criacao' does not exist on type 'NotaMovimentacao'. (ts)
-                <!-- Data de Criação -->
-                {#if nota.createdAt || nota.created_at || nota.data_criacao}
-                  <div>
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/lib/components/presenters/NotesFormModalPresenter.svelte:734:75
-Error: Property 'data_criacao' does not exist on type 'NotaMovimentacao'. (ts)
-                    <p class="font-medium">
-                      {new Date(nota.createdAt || nota.created_at || nota.data_criacao).toLocaleDateString('pt-BR')}
-                    </p>
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/routes/+page.svelte:39:11
-Error: Type 'string' is not assignable to type 'number'. (ts)
-          title: 'Fichas Ativas',
-          value: data.metrics.fichasAtivas.toString(),
-          icon: FileDocOutline,
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/routes/+page.svelte:40:11
-Error: Type 'typeof FileDocOutline' is not assignable to type 'string'. (ts)
-          value: data.metrics.fichasAtivas.toString(),
-          icon: FileDocOutline,
-          color: 'blue',
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/routes/+page.svelte:47:11
-Error: Type 'string' is not assignable to type 'number'. (ts)
-          title: 'EPIs Entregues',
-          value: data.metrics.episEntregues.toString(),
-          icon: CheckCircleOutline,
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/routes/+page.svelte:48:11
-Error: Type 'typeof CheckCircleOutline' is not assignable to type 'string'. (ts)
-          value: data.metrics.episEntregues.toString(),
-          icon: CheckCircleOutline,
-          color: 'green',
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/routes/+page.svelte:55:11
-Error: Type 'string' is not assignable to type 'number'. (ts)
-          title: 'EPIs Vencendo',
-          value: data.metrics.episVencendo.toString(),
-          icon: ExclamationCircleOutline,
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/routes/+page.svelte:56:11
-Error: Type 'typeof ExclamationCircleOutline' is not assignable to type 'string'. (ts)
-          value: data.metrics.episVencendo.toString(),
-          icon: ExclamationCircleOutline,
-          color: 'yellow',
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/routes/+page.svelte:63:11
-Error: Type 'string' is not assignable to type 'number'. (ts)
-          title: 'Estoque Baixo',
-          value: data.metrics.estoqueBaixo.toString(),
-          icon: ArchiveOutline,
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/routes/+page.svelte:64:11
-Error: Type 'typeof ArchiveOutline' is not assignable to type 'string'. (ts)
-          value: data.metrics.estoqueBaixo.toString(),
-          icon: ArchiveOutline,
-          color: 'red',
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/routes/+page.svelte:23:7
+Error: Variable 'metrics' implicitly has type 'any[]' in some locations where its type cannot be determined. (ts)
+  // Metrics data (reactive)
+  let metrics = [];
+  
 
 
 /Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/routes/+page.svelte:97:29
-Error: Object is possibly 'undefined'. (ts)
+Error: Variable 'metrics' implicitly has an 'any[]' type. (ts)
   const totalActiveAlerts = derived([quickStatsStore], ([$stats]) => 
     $stats.fichasVencidas + metrics.find(m => m.title === 'Estoque Baixo')?.value || 0
   );
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/routes/+page.svelte:193:46
-Error: Property 'changeType' does not exist on type '{ title: string; value: number; icon: string; color: string; }'. (ts)
-              <div class="flex items-center mt-2">
-                <span class="text-xs {metric.changeType === 'positive' ? 'text-green-600' : 'text-red-600'}">
-                  {metric.change}
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/routes/+page.svelte:186:14
+Error: Variable 'metrics' implicitly has an 'any[]' type. (ts)
+    {:else}
+      {#each metrics as metric}
+        <Card size="sm" class="rounded-sm shadow-none">
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/routes/+page.svelte:194:27
-Error: Property 'change' does not exist on type '{ title: string; value: number; icon: string; color: string; }'. (ts)
-                <span class="text-xs {metric.changeType === 'positive' ? 'text-green-600' : 'text-red-600'}">
-                  {metric.change}
-                </span>
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/routes/admin/+page.svelte:52:53
+Error: 'error' is of type 'unknown'. (ts)
+      console.error('❌ Erro na verificação:', error);
+      verificationResults = `Erro na verificação: ${error.message}`;
+    } finally {
 
 
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/routes/estoque/+page.svelte:177:46
-Error: Unexpected token (svelte)
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/routes/configuracoes/+page.svelte:185:25
+Error: Object literal may only specify known properties, and '"message"' does not exist in type '{ error?: string | Error | null | undefined; title?: string | undefined; showRetry?: boolean | undefined; retryText?: string | undefined; onRetry?: (() => void) | null | undefined; fullHeight?: boolean | undefined; }'. (ts)
+        {:else if configuracaoError}
+          <ErrorDisplay message={configuracaoError} />
+        {:else}
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/routes/estoque/+page.svelte:63:50
+Error: Property 'ExclamationTriangleOutline' does not exist on type 'typeof import("/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/node_modules/flowbite-svelte-icons/dist/index")'. Did you mean 'ExclamationCircleOutline'? (ts)
+      CheckCircleSolid = flowbiteIcons.CheckCircleSolid;
+      ExclamationTriangleOutline = flowbiteIcons.ExclamationTriangleOutline;
+      XCircleSolid = flowbiteIcons.XCircleSolid;
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/routes/estoque/+page.svelte:64:36
+Error: Property 'XCircleSolid' does not exist on type 'typeof import("/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/node_modules/flowbite-svelte-icons/dist/index")'. (ts)
+      ExclamationTriangleOutline = flowbiteIcons.ExclamationTriangleOutline;
+      XCircleSolid = flowbiteIcons.XCircleSolid;
+      InventoryContainer = inventoryComponent.default;
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/routes/estoque/+page.svelte:108:44
+Error: Property 'stack' does not exist on type '{}'. (ts)
+      console.error('❌ Erro ao inicializar página de estoque:', err);
+      console.error('❌ Stack trace:', err?.stack);
+      error = err instanceof Error ? err.message : 'Erro desconhecido';
+
+
+/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/routes/estoque/+page.svelte:177:35
+Error: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{ green: string; orange: string; red: string; blue: string; }'. (ts)
                   this={iconComponents[tab.icon]} 
-                  class="w-4 h-4 {(tabColors as any)[tab.color] || tabColors.blue}" 
-                />
-
-
-/Users/rafaelaredes/Documents/DataLife-EPI/frontend-svelt/src/routes/estoque/+page.svelte:177:46
-Error: Unexpected token (ts)
-                  this={iconComponents[tab.icon]} 
-                  class="w-4 h-4 {(tabColors as any)[tab.color] || tabColors.blue}" 
+                  class="w-4 h-4 {tabColors[tab.color]}" 
                 />
 
 
 ====================================
-svelte-check found 410 errors and 63 warnings in 70 files
+svelte-check found 394 errors and 43 warnings in 90 files

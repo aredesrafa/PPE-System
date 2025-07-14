@@ -39,7 +39,7 @@
       // Load configurations
       const realConfiguration = await initializeConfiguration();
       console.log('✅ Configurações carregadas:', realConfiguration);
-    } catch (error) {
+    } catch (error: any) {
       console.warn('⚠️ Erro ao carregar configurações do backend, usando padrão:', error);
     }
   });

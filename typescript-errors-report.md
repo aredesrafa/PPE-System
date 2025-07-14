@@ -1,60 +1,39 @@
 # Relatório de Erros TypeScript - DataLife EPI Frontend
 
-**Data:** 2025-07-12  
-**Total de Erros:** 389  
-**Total de Warnings:** 41  
-**Arquivos Afetados:** 67
+**Data:** 2025-07-13  
+**Total de Erros:** 73  
+**Total de Warnings:** 0  
+**Arquivos Afetados:** 21
 
 ## Resumo Executivo
 
-A codebase apresenta uma quantidade significativa de erros TypeScript que precisam ser corrigidos para garantir a estabilidade e manutenibilidade do projeto. Os principais problemas estão relacionados a:
-
-1. **Tipos não definidos** - Interfaces e tipos faltando
-2. **Respostas de API sem tipagem** - Uso de `unknown` type
-3. **Exports faltando** - Módulos não exportando tipos necessários
-4. **Propriedades inexistentes** - Acesso a propriedades não definidas
+A base de código apresenta 73 erros de TypeScript, distribuídos em 21 arquivos. Os principais problemas continuam relacionados a tipos não definidos, respostas de API sem tipagem, exports faltando e propriedades inexistentes. A maioria dos erros está concentrada em arquivos de serviços e stores.
 
 ## Tabela de Erros por Arquivo
 
-| Arquivo | Erros | Linhas | Densidade¹ | Categoria |
-|---------|-------|--------|------------|-----------|
-| `src/lib/services/unified/unifiedDataAdapter.ts` | 20 | 541 | 3.7% | Services |
-| `src/lib/services/entity/tiposEpiAdapter.ts` | 18 | 506 | 3.6% | Services |
-| `src/lib/components/presenters/NotesDetailDrawer.svelte` | 15 | 1002 | 1.5% | Components |
-| `src/lib/stores/contratadaStore.ts` | 14 | 556 | 2.5% | Stores |
-| `src/lib/services/process/queries/adapters/fichaDetailAdapter.ts` | 13 | 151 | 8.6% | Services |
-| `src/lib/components/presenters/NotesTablePresenter.svelte` | 13 | 540 | 2.4% | Components |
-| `src/lib/services/process/queries/adapters/fichaResourceAdapter.ts` | 12 | 120 | 10.0% | Services |
-| `src/lib/components/presenters/FichaDetailPresenter.svelte` | 12 | 604 | 2.0% | Components |
-| `src/lib/services/process/operations/deliveryProcessAdapter.ts` | 11 | 440 | 2.5% | Services |
-| `src/lib/services/entity/notesAdapter.ts` | 11 | 505 | 2.2% | Services |
-| `src/lib/services/devolution/devolutionAdapter.ts` | 11 | 399 | 2.8% | Services |
-| `src/lib/services/index.ts` | 10 | 128 | 7.8% | Services |
-| `src/lib/mappers/entityMappers.ts` | 10 | 247 | 4.0% | Mappers |
-| `src/lib/components/presenters/NotaItensManagerSimplified.svelte` | 10 | 477 | 2.1% | Components |
-| `src/lib/components/containers/FichasContainer.svelte` | 10 | 228 | 4.4% | Components |
-| `src/lib/components/containers/AuditoriaContainer.svelte` | 10 | 390 | 2.6% | Components |
-| `src/lib/types/paginationTypes.ts` | 8 | 222 | 3.6% | Types |
-| `src/lib/services/process/queries/fichaQueryAdapter.ts` | 8 | 251 | 3.2% | Services |
-| `src/lib/services/entity/catalogAdapter.ts` | 8 | 403 | 2.0% | Services |
-| `src/lib/components/devolution/DevolutionDashboard.svelte` | 8 | 688 | 1.2% | Components |
-| `src/lib/components/containers/FichaDetailContainer.svelte` | 8 | 636 | 1.3% | Components |
-| `src/lib/stores/devolutionStore.ts` | 7 | 427 | 1.6% | Stores |
-| `src/lib/services/inventory/inventoryCommandAdapter.ts` | 7 | 349 | 2.0% | Services |
-| `src/lib/components/containers/NotesContainer.svelte` | 7 | 572 | 1.2% | Components |
-| `src/lib/services/process/notasMovimentacaoAdapter.ts` | 6 | 652 | 0.9% | Services |
-| `src/lib/services/entity/entityManagementAdapter.ts` | 6 | 449 | 1.3% | Services |
-| `src/lib/components/presenters/NotaItensManager.svelte` | 6 | 581 | 1.0% | Components |
-| `src/lib/components/presenters/FichasTablePresenter.svelte` | 6 | 355 | 1.7% | Components |
-| `src/lib/components/presenters/EditarEntregaDrawerPresenter.svelte` | 6 | 453 | 1.3% | Components |
-| `src/lib/utils/stockConsistencyFixer.ts` | 5 | 366 | 1.4% | Utils |
-| `src/lib/components/containers/InventoryContainer.svelte` | 5 | 546 | 0.9% | Components |
-| `src/lib/components/admin/StockConsistencyChecker.svelte` | 5 | 470 | 1.1% | Components |
-| `src/routes/estoque/+page.svelte` | 4 | 207 | 1.9% | Routes |
-| `src/lib/services/process/index.ts` | 4 | 53 | 7.5% | Services |
-| `src/lib/components/presenters/InventoryTablePresenter.svelte` | 4 | 390 | 1.0% | Components |
-| `src/routes/+page.svelte` | 3 | 299 | 1.0% | Routes |
-| `src/lib/services/inventory/inventoryQueryAdapter.ts` | 3 | 98 | 3.1% | Services |
+| Arquivo                                                        | Erros |
+|---------------------------------------------------------------|-------|
+| src/lib/mappers/entityMappers.ts                              | 10    |
+| src/lib/services/devolution/devolutionAdapter.ts               | 8     |
+| src/lib/stores/contratadaStore.ts                              | 14    |
+| src/lib/types/paginationTypes.ts                               | 8     |
+| src/lib/services/unified/unifiedDataAdapter.ts                 | 4     |
+| src/lib/services/entity/notesAdapter.ts                        | 4     |
+| src/lib/utils/notasHelpers.ts                                  | 4     |
+| src/lib/stores/devolutionStore.ts                              | 4     |
+| src/lib/services/entity/tiposEpiAdapter.ts                     | 3     |
+| src/lib/services/mockData.ts                                   | 2     |
+| src/lib/utils/stockConsistencyFixer.ts                         | 2     |
+| src/lib/services/index.ts                                      | 1     |
+| src/lib/services/inventory/inventoryCommandAdapter.ts          | 1     |
+| src/lib/services/entity/entityManagementAdapter.ts             | 1     |
+| src/lib/services/entity/estoqueItensAdapter.ts                 | 1     |
+| src/lib/services/entity/kardexAdapter.ts                       | 1     |
+| src/lib/services/reporting/dashboardAdapter.ts                 | 1     |
+| src/lib/utils/entityHelpers.ts                                 | 1     |
+| src/lib/utils/estoqueHelpers.ts                                | 1     |
+| src/lib/utils/performance.ts                                   | 1     |
+| src/lib/stores/configurationStore.ts                           | 1     |
 | `src/lib/components/ui/index.ts` | 3 | 27 | 11.1% | UI |
 | `src/lib/components/presenters/index.ts` | 3 | 15 | 20.0% | Components |
 | `src/lib/components/presenters/NovaEntregaDrawerPresenter.svelte` | 3 | 416 | 0.7% | Components |

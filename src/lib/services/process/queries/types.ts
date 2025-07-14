@@ -25,6 +25,8 @@ export interface FichaBasica {
     itensAtivos: number;
     devolucoesPendentes: number;
   };
+  // 🔧 CORREÇÃO: Adicionar totalEpisAtivos para compatibilidade com FichaEPIDTO
+  totalEpisAtivos: number;
   dataAtualizacao: string;
 }
 
@@ -57,6 +59,9 @@ export interface FichaCompleteResponse {
     ficha: FichaBasica;
     entregas: any[]; // TODO: Define proper Entrega type
     devolucoes: any[]; // TODO: Define proper Devolucao type
+    equipamentosEmPosse: any[];
+    historico: any[];
+    estatisticas: any;
   };
 }
 

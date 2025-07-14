@@ -59,6 +59,8 @@ class ReturnProcessAdapter {
     console.log(`  - Total de itens: ${payload.devolucoes.length}`);
 
     try {
+      console.log("🔍 Endpoint atual sendo usado: /devolucoes/process-batch");
+      
       const response = await api.post<ReturnBatchResult>(
         "/devolucoes/process-batch",
         payload,
@@ -72,7 +74,7 @@ class ReturnProcessAdapter {
       );
 
       return response;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao processar devoluções:", error);
       throw error;
     }
@@ -97,7 +99,7 @@ class ReturnProcessAdapter {
       }
 
       return response;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao validar devolução:", error);
       throw error;
     }
@@ -113,10 +115,10 @@ class ReturnProcessAdapter {
     );
 
     try {
-      const response = await api.get(`/devolucoes/historico/${fichaId}`);
+      const response = await api.get(`/devolucoes/historico/${fichaId}`) as any;
       console.log("✅ Histórico de devoluções carregado");
-      return response;
-    } catch (error) {
+      return response as any[];
+    } catch (error: any) {
       console.error("❌ Erro ao buscar histórico de devoluções:", error);
       throw error;
     }
@@ -131,8 +133,62 @@ class ReturnProcessAdapter {
     try {
       await api.post(`/devolucoes/${devolucaoId}/cancel`, { motivo });
       console.log("✅ Devolução cancelada");
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao cancelar devolução:", error);
+      throw error;
+    }
+  }
+
+  /**
+   * ✨ NOVO: Processar devolução individual usando endpoint da documentação
+   * Endpoint: POST /api/fichas-epi/:fichaId/devolucoes
+   * 
+   * Formato correto do payload baseado na validação da API:
+   * - entregaId: ID da entrega
+   * - itensParaDevolucao: array com itens a devolver
+   * - usuarioId: ID do usuário responsável
+   */
+  async processIndividualReturn(
+    fichaId: string,
+    entregaId: string,
+    itemEntregaId: string,
+    motivo: "devolução padrão" | "danificado" | "troca" | "outros",
+    usuarioId: string,
+    observacoes?: string
+  ): Promise<any> {
+    console.log("🔄 ReturnProcessAdapter: Processando devolução individual via endpoint da documentação");
+    console.log(`  - FichaId: ${fichaId}`);
+    console.log(`  - EntregaId: ${entregaId}`);
+    console.log(`  - ItemEntregaId: ${itemEntregaId}`);
+    console.log(`  - Motivo: ${motivo}`);
+    console.log(`  - UsuarioId: ${usuarioId}`);
+
+    try {
+      const payload = {
+        entregaId,
+        itensParaDevolucao: [
+          {
+            itemId: itemEntregaId, // 🔧 CORREÇÃO: API espera "itemId" não "itemEntregaId"
+            motivo,
+            condicaoItem: "BOM", // Padrão - pode ser "BOM", "DANIFICADO", "INUTILIZADO"
+            observacoes: observacoes || 'Devolução via interface da ficha'
+          }
+        ],
+        usuarioId
+      };
+
+      console.log("📋 Payload da devolução individual:", JSON.stringify(payload, null, 2));
+
+      const response = await api.post(
+        `/fichas-epi/${fichaId}/devolucoes`,
+        payload
+      );
+
+      console.log("✅ Devolução individual processada via endpoint da documentação");
+      return response;
+    } catch (error: any) {
+      console.error("❌ Erro ao processar devolução individual:", error);
+      console.log("🔍 Detalhes do erro:", error.response?.data || error.message);
       throw error;
     }
   }

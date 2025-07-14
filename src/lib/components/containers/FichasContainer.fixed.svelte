@@ -85,7 +85,7 @@
     try {
       await fichasStore.fetchPage();
       console.log('📋 Dados de fichas carregados');
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Erro ao carregar fichas:', error);
       notify.error('Erro ao carregar fichas', 'Não foi possível carregar os dados das fichas');
     }

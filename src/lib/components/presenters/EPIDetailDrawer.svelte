@@ -287,7 +287,7 @@
                       Status
                     </Label>
                     <div class="mt-1">
-                      <StatusBadge status={epi?.status || 'ATIVO'} type="epi" />
+                      <StatusBadge status={epi?.status || 'ATIVO'} color="green" label={epi?.status || 'ATIVO'} />
                     </div>
                   </div>
                 </div>

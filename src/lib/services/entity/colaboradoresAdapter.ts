@@ -188,7 +188,7 @@ class ColaboradoresAdapter {
         page: params.page || 1,
         limit: params.limit || 10,
       };
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao carregar colaboradores:", error);
       throw error;
     }
@@ -202,7 +202,7 @@ class ColaboradoresAdapter {
       console.log("👤 Buscando colaborador:", id);
 
       // TODO: Conectar ao endpoint real
-      // const response = await api.get<ColaboradorDTO>(`/colaboradores/${id}`);
+      // const response = await api.get<ColaboradorDTO>(`/colaboradores/${id}`) as any;
 
       await new Promise((resolve) => setTimeout(resolve, 500));
 
@@ -223,7 +223,7 @@ class ColaboradoresAdapter {
 
       console.log("✅ Colaborador encontrado:", mockColaborador.nome);
       return mockColaborador;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao buscar colaborador:", error);
       throw error;
     }
@@ -239,7 +239,7 @@ class ColaboradoresAdapter {
       console.log("💾 Criando colaborador:", data);
 
       // TODO: Conectar ao endpoint real
-      // const response = await api.post<ColaboradorDTO>('/colaboradores', data);
+      // const response = await api.post<ColaboradorDTO>('/colaboradores', data) as any;
 
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
@@ -260,7 +260,7 @@ class ColaboradoresAdapter {
 
       console.log("✅ Colaborador criado:", novoColaborador.id);
       return novoColaborador;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao criar colaborador:", error);
       throw error;
     }
@@ -277,7 +277,7 @@ class ColaboradoresAdapter {
       console.log("💾 Atualizando colaborador:", id, data);
 
       // TODO: Conectar ao endpoint real
-      // const response = await api.put<ColaboradorDTO>(`/colaboradores/${id}`, data);
+      // const response = await api.put<ColaboradorDTO>(`/colaboradores/${id}`, data) as any;
 
       await new Promise((resolve) => setTimeout(resolve, 800));
 
@@ -299,7 +299,7 @@ class ColaboradoresAdapter {
 
       console.log("✅ Colaborador atualizado:", colaboradorAtualizado.id);
       return colaboradorAtualizado;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao atualizar colaborador:", error);
       throw error;
     }
@@ -318,7 +318,7 @@ class ColaboradoresAdapter {
       await new Promise((resolve) => setTimeout(resolve, 600));
 
       console.log("✅ Colaborador deletado:", id);
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao deletar colaborador:", error);
       throw error;
     }
@@ -340,7 +340,7 @@ class ColaboradoresAdapter {
       await new Promise((resolve) => setTimeout(resolve, 500));
 
       console.log("✅ Status do colaborador alterado:", id, novoStatus);
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao alterar status do colaborador:", error);
       throw error;
     }
@@ -359,7 +359,7 @@ class ColaboradoresAdapter {
       await new Promise((resolve) => setTimeout(resolve, 800));
 
       console.log("✅ Colaborador demitido:", id);
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao demitir colaborador:", error);
       throw error;
     }
@@ -375,7 +375,7 @@ class ColaboradoresAdapter {
       console.log("👥 Buscando colaboradores da contratada:", contratadaId);
 
       // TODO: Conectar ao endpoint real
-      // const response = await api.get<ColaboradorDTO[]>(`/contratadas/${contratadaId}/colaboradores`);
+      // const response = await api.get<ColaboradorDTO[]>(`/contratadas/${contratadaId}/colaboradores`) as any;
 
       await new Promise((resolve) => setTimeout(resolve, 600));
 
@@ -389,7 +389,7 @@ class ColaboradoresAdapter {
         result.colaboradores.length,
       );
       return result.colaboradores;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao buscar colaboradores da contratada:", error);
       throw error;
     }

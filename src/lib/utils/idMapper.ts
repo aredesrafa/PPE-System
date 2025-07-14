@@ -62,45 +62,30 @@ export function mapToValidId(id: string, context: 'fichaEpi' | 'responsavel' | '
   // Handle legacy formats - this is where we'd implement specific mappings
   // For now, we'll try to extract valid patterns or create placeholder UUIDs
   
-  // Pattern 1: "FICHA009" - extract number and create a mapping
+  // Pattern 1: "FICHA009" or "FICHA001" - accept legacy ficha IDs
   const fichaMatch = trimmedId.match(/^FICHA(\d+)$/i);
   if (fichaMatch && context === 'fichaEpi') {
-    // For now, we'll have to pass the original ID and let the backend handle it
-    // In a real scenario, this would query a mapping table
+    // Accept legacy ficha IDs as valid - backend should handle them
     return {
       originalId: id,
-      mappedId: trimmedId, // Keep original for now
+      mappedId: trimmedId.toUpperCase(),
       format: 'legacy',
-      isValid: false, // Not valid for direct backend use
-      needsMapping: true
+      isValid: true, // ✅ CORREÇÃO: Aceitar IDs de ficha legados como válidos
+      needsMapping: false // ✅ CORREÇÃO: Não forçar mapeamento
     };
   }
 
-  // Pattern 2: Short hex-like IDs like "15FF8D"
+  // Pattern 2: Short hex-like IDs like "15FF8D" or "86001C"
   const hexMatch = trimmedId.match(/^[0-9A-F]{4,8}$/i);
   if (hexMatch && context === 'estoqueItem') {
-    // Try to pad to 6 characters for custom ID format
-    const paddedId = trimmedId.toUpperCase().padStart(6, '0');
-    if (paddedId.length === 6) {
-      // Try to create a valid custom ID by prefixing with 'I'
-      const customId = `I${paddedId.substring(1)}`;
-      if (isValidEstoqueItemId(customId)) {
-        return {
-          originalId: id,
-          mappedId: customId,
-          format: 'custom',
-          isValid: true,
-          needsMapping: true
-        };
-      }
-    }
-    
+    // For legacy IDs, we'll accept them as valid for now
+    // The backend should handle the mapping internally
     return {
       originalId: id,
-      mappedId: trimmedId,
+      mappedId: trimmedId.toUpperCase(),
       format: 'legacy',
-      isValid: false,
-      needsMapping: true
+      isValid: true, // ✅ CORREÇÃO: Aceitar IDs legados como válidos
+      needsMapping: false // ✅ CORREÇÃO: Não forçar mapeamento
     };
   }
 
@@ -139,21 +124,24 @@ export function validateAndMapDeliveryPayload(payload: {
 
   // Map fichaEpiId
   const fichaMapping = mapToValidId(payload.fichaEpiId, 'fichaEpi');
-  if (!fichaMapping.isValid && fichaMapping.needsMapping) {
-    warnings.push(`fichaEpiId "${payload.fichaEpiId}" está em formato legado e pode causar erros`);
+  if (fichaMapping.format === 'legacy') {
+    warnings.push(`fichaEpiId "${payload.fichaEpiId}" está em formato legado mas é aceito`);
   }
 
   // Map responsavelId
   const responsavelMapping = mapToValidId(payload.responsavelId, 'responsavel');
-  if (!responsavelMapping.isValid && responsavelMapping.needsMapping) {
-    warnings.push(`responsavelId "${payload.responsavelId}" está em formato legado e pode causar erros`);
+  if (responsavelMapping.format === 'legacy') {
+    warnings.push(`responsavelId "${payload.responsavelId}" está em formato legado mas é aceito`);
   }
 
   // Map estoque item IDs
   const itemMappings = payload.itens.map((item, index) => {
     const mapping = mapToValidId(item.estoqueItemId, 'estoqueItem');
-    if (!mapping.isValid && mapping.needsMapping) {
-      warnings.push(`itens[${index}].estoqueItemId "${item.estoqueItemId}" está em formato legado e pode causar erros`);
+    if (mapping.format === 'legacy') {
+      warnings.push(`itens[${index}].estoqueItemId "${item.estoqueItemId}" está em formato legado mas é aceito`);
+    }
+    if (!mapping.isValid) {
+      errors.push(`itens[${index}].estoqueItemId "${item.estoqueItemId}" é inválido`);
     }
     return {
       estoqueItemId: mapping.mappedId,
@@ -162,10 +150,10 @@ export function validateAndMapDeliveryPayload(payload: {
     };
   });
 
-  // Check if we have any unmappable IDs
+  // Check if we have any unmappable IDs (only truly invalid ones now)
   const unmappableItems = itemMappings.filter(item => !item.mapping.isValid);
   if (unmappableItems.length > 0) {
-    errors.push(`IDs de estoque não podem ser mapeados: ${unmappableItems.map(item => item.estoqueItemId).join(', ')}`);
+    errors.push(`IDs de estoque inválidos: ${unmappableItems.map(item => item.estoqueItemId).join(', ')}`);
   }
 
   if (errors.length > 0) {

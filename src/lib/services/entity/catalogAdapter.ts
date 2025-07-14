@@ -37,6 +37,7 @@ export interface CatalogFilterParams {
   ativo?: boolean;
   page?: number;
   pageSize?: number;
+  limit?: number;
 }
 
 export interface CreateTipoEPIData {
@@ -131,7 +132,17 @@ class CatalogAdapter {
       };
 
       const url = createUrlWithParams("/tipos-epi", queryParams);
-      const response = await api.get(url);
+      const response = await api.get(url) as {
+        data: {
+          items: any[];
+          pagination: {
+            total: number;
+            page: number;
+            limit: number;
+            totalPages: number;
+          };
+        };
+      };
 
       console.log("🔗 Resposta da API tipos-epi:", response);
 
@@ -169,7 +180,7 @@ class CatalogAdapter {
       );
 
       return paginatedResponse;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao carregar tipos EPI do backend:", error);
       throw new Error(
         "Não foi possível carregar o catálogo de EPIs do backend",
@@ -193,7 +204,7 @@ class CatalogAdapter {
     try {
       // Chamada para API real
       const url = `/tipos-epi/${id}`;
-      const response = await api.get(url);
+      const response = await api.get(url) as { data: any };
 
       console.log("🔗 Resposta da API tipo-epi específico:", response);
 
@@ -219,7 +230,7 @@ class CatalogAdapter {
       this.cache.set(cacheKey, tipoEPI);
       console.log("✅ Tipo EPI específico carregado do backend real");
       return tipoEPI;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao buscar tipo EPI do backend:", error);
       throw new Error("Não foi possível buscar o tipo de EPI do backend");
     }
@@ -244,7 +255,7 @@ class CatalogAdapter {
         status: "ATIVO",
       };
 
-      const response = await api.post("/tipos-epi", backendData);
+      const response = await api.post("/tipos-epi", backendData) as { data: any };
 
       console.log("🔗 Resposta da criação no backend:", response);
 
@@ -272,7 +283,7 @@ class CatalogAdapter {
 
       console.log("✅ Tipo EPI criado com sucesso no backend:", newTipoEPI.id);
       return newTipoEPI;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao criar tipo EPI no backend:", error);
       throw new Error("Não foi possível criar o tipo de EPI");
     }
@@ -301,7 +312,7 @@ class CatalogAdapter {
       if (data.ativo !== undefined)
         backendData.status = data.ativo ? "ATIVO" : "DESCONTINUADO";
 
-      const response = await api.put(`/tipos-epi/${id}`, backendData);
+      const response = await api.put(`/tipos-epi/${id}`, backendData) as { data: any };
 
       console.log("🔗 Resposta da atualização no backend:", response);
 
@@ -330,7 +341,7 @@ class CatalogAdapter {
 
       console.log("✅ Tipo EPI atualizado com sucesso no backend");
       return updatedTipoEPI;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao atualizar tipo EPI no backend:", error);
       throw new Error("Não foi possível atualizar o tipo de EPI");
     }
@@ -347,7 +358,7 @@ class CatalogAdapter {
       await this.updateTipoEPI(id, { ativo: false });
 
       console.log("✅ Tipo EPI removido com sucesso no backend");
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao remover tipo EPI no backend:", error);
       throw new Error("Não foi possível remover o tipo de EPI");
     }
@@ -390,7 +401,7 @@ class CatalogAdapter {
       });
 
       return { categorias };
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao carregar opções de filtros:", error);
       // Retornar opções vazias em caso de erro
       return { categorias: [] };

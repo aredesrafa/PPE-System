@@ -47,9 +47,9 @@
         items: result
       });
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Erro na verificação:', error);
-      verificationResults = `Erro na verificação: ${error.message}`;
+      verificationResults = `Erro na verificação: ${error instanceof Error ? error.message : String(error)}`;
     } finally {
       checking = false;
     }

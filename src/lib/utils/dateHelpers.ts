@@ -18,7 +18,7 @@ export function formatarData(
   try {
     const dateObj = typeof date === "string" ? new Date(date) : date;
     return format(dateObj, "dd/MM/yyyy");
-  } catch (error) {
+  } catch (error: any) {
     console.warn("Erro ao formatar data:", date, error);
     return fallback;
   }
@@ -39,7 +39,7 @@ export function formatarDataComHora(
   try {
     const dateObj = typeof date === "string" ? new Date(date) : date;
     return format(dateObj, "dd/MM/yyyy • HH:mm");
-  } catch (error) {
+  } catch (error: any) {
     console.warn("Erro ao formatar data com hora:", date, error);
     return fallback;
   }
@@ -60,7 +60,7 @@ export function formatarDataHora(
   try {
     const dateObj = typeof date === "string" ? new Date(date) : date;
     return format(dateObj, "dd/MM/yyyy HH:mm");
-  } catch (error) {
+  } catch (error: any) {
     console.warn("Erro ao formatar data e hora:", date, error);
     return fallback;
   }
@@ -92,7 +92,7 @@ export function formatarPeriodoRelativo(
     } else {
       return `há ${Math.abs(dias)} dia${Math.abs(dias) > 1 ? "s" : ""}`;
     }
-  } catch (error) {
+  } catch (error: any) {
     console.warn("Erro ao calcular período relativo:", date, error);
     return "-";
   }
@@ -114,7 +114,7 @@ export function isDataVencida(date: string | Date | null | undefined): boolean {
   try {
     const dateObj = typeof date === "string" ? new Date(date) : date;
     return isBefore(dateObj, new Date());
-  } catch (error) {
+  } catch (error: any) {
     console.warn("Erro ao verificar vencimento:", date, error);
     return false;
   }
@@ -137,7 +137,7 @@ export function isProximoVencimento(
     const dataLimite = addDays(new Date(), diasAntecipacao);
 
     return isAfter(dateObj, new Date()) && isBefore(dateObj, dataLimite);
-  } catch (error) {
+  } catch (error: any) {
     console.warn("Erro ao verificar proximidade do vencimento:", date, error);
     return false;
   }
@@ -156,7 +156,7 @@ export function diasParaVencimento(
   try {
     const dateObj = typeof date === "string" ? new Date(date) : date;
     return differenceInDays(dateObj, new Date());
-  } catch (error) {
+  } catch (error: any) {
     console.warn("Erro ao calcular dias para vencimento:", date, error);
     return null;
   }
@@ -249,7 +249,7 @@ export function toISOString(
   try {
     const dateObj = typeof date === "string" ? new Date(date) : date;
     return dateObj.toISOString();
-  } catch (error) {
+  } catch (error: any) {
     console.warn("Erro ao converter para ISO string:", date, error);
     return null;
   }

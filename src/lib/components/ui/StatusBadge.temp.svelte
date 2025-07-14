@@ -3,7 +3,7 @@
   import { Badge } from 'flowbite-svelte';
   
   export let status: string;
-  export let color: string;
+  export let color: "green" | "red" | "yellow" | "primary" | "blue" | "dark" | "purple" | "indigo" | "pink" | "none";
   export let label: string;
 </script>
 

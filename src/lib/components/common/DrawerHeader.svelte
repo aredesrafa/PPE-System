@@ -96,7 +96,7 @@
       <!-- Status -->
       {#if status}
         <div class="flex-shrink-0">
-          <StatusBadge {status} type={statusType} dotMode={true} dotSize="md" />
+          <StatusBadge {status} color="blue" label={status} />
         </div>
       {/if}
 

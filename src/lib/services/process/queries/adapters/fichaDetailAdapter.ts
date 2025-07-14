@@ -28,10 +28,13 @@ export class FichaDetailAdapter {
         data: {
           ficha,
           entregas,
-          devolucoes
+          devolucoes,
+          equipamentosEmPosse: [],
+          historico: [],
+          estatisticas: {}
         }
       };
-    } catch (error) {
+    } catch (error: any) {
       console.error(`Erro ao buscar ficha completa ${fichaId}:`, error);
       throw error;
     }
@@ -41,7 +44,7 @@ export class FichaDetailAdapter {
    * Busca apenas os dados básicos da ficha
    */
   private async getFichaBasic(fichaId: string) {
-    const response = await api.get(`/fichas-epi/${fichaId}`);
+    const response = await api.get(`/fichas-epi/${fichaId}`) as any;
     
     if (!response.success || !response.data) {
       throw new Error(`Ficha ${fichaId} não encontrada`);
@@ -55,14 +58,14 @@ export class FichaDetailAdapter {
    */
   private async getEntregas(fichaId: string) {
     try {
-      const response = await api.get(`/fichas-epi/${fichaId}/entregas`);
+      const response = await api.get(`/fichas-epi/${fichaId}/entregas`) as any;
       
       if (!response.success || !response.data) {
         return [];
       }
 
       return this.transformEntregas(response.data);
-    } catch (error) {
+    } catch (error: any) {
       console.error(`Erro ao buscar entregas da ficha ${fichaId}:`, error);
       return [];
     }
@@ -73,14 +76,14 @@ export class FichaDetailAdapter {
    */
   private async getDevolucoes(fichaId: string) {
     try {
-      const response = await api.get(`/fichas-epi/${fichaId}/devolucoes`);
+      const response = await api.get(`/fichas-epi/${fichaId}/devolucoes`) as any;
       
       if (!response.success || !response.data) {
         return [];
       }
 
       return this.transformDevolucoes(response.data);
-    } catch (error) {
+    } catch (error: any) {
       console.error(`Erro ao buscar devoluções da ficha ${fichaId}:`, error);
       return [];
     }
@@ -128,7 +131,7 @@ export class FichaDetailAdapter {
    */
   async getHistoricoMovimentacoes(fichaId: string) {
     try {
-      const response = await api.get(`/fichas-epi/${fichaId}/historico`);
+      const response = await api.get(`/fichas-epi/${fichaId}/historico`) as any;
       
       if (!response.success || !response.data) {
         return [];
@@ -142,7 +145,7 @@ export class FichaDetailAdapter {
         responsavel: movimento.responsavel,
         detalhes: movimento.detalhes || {}
       }));
-    } catch (error) {
+    } catch (error: any) {
       console.error(`Erro ao buscar histórico da ficha ${fichaId}:`, error);
       return [];
     }

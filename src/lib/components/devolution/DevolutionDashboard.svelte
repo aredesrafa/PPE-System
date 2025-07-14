@@ -194,15 +194,15 @@
     return Math.ceil((hoje.getTime() - entrega.getTime()) / (1000 * 60 * 60 * 24));
   }
 
-  function getStatusColor(status: string): string {
-    const colors: Record<string, string> = {
+  function getStatusColor(status: string): "green" | "red" | "yellow" | "primary" | "blue" | "dark" | "purple" | "indigo" | "pink" | "none" {
+    const colors: Record<string, "green" | "red" | "yellow" | "primary" | "blue" | "dark" | "purple" | "indigo" | "pink" | "none"> = {
       'SOLICITADA': 'yellow',
       'EM_ANALISE': 'blue', 
       'APROVADA': 'green',
       'REJEITADA': 'red',
-      'FINALIZADA': 'gray'
+      'FINALIZADA': 'dark' // gray -> dark
     };
-    return colors[status] || 'gray';
+    return colors[status] || 'dark';
   }
 
   function getConditionColor(condition: CondicaoEquipamento): string {
@@ -323,7 +323,7 @@
                           </Badge>
                         </TableBodyCell>
                         <TableBodyCell>
-                          <StatusBadge type="entrega" status={entrega.status} />
+                          <StatusBadge status={entrega.status} color="blue" label={entrega.status} />
                         </TableBodyCell>
                         <TableBodyCell>
                           <Button
@@ -582,7 +582,7 @@
               id="observacoes"
               bind:value={devolutionForm.observacoes}
               placeholder="Observações adicionais sobre a devolução..."
-              rows="3"
+              rows={3}
             />
           </div>
         </div>

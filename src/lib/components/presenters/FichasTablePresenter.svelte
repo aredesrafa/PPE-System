@@ -99,6 +99,7 @@
 
   function handleDevolucaoPendenteChange(event: Event): void {
     const target = event.target as HTMLInputElement;
+    console.log('☑️ FichasTablePresenter: Devolução pendente changed:', target.checked);
     dispatch('devolucaoPendenteChange', target.checked);
   }
 
@@ -174,7 +175,7 @@
           </div>
           
           <!-- Empresa Filter -->
-          <div class="relative z-10">
+          <div class="relative z-30">
             <SearchableDropdown
               options={filterOptions.empresas}
               value={filters.empresaFilter}
@@ -185,7 +186,7 @@
           </div>
           
           <!-- Cargo Filter -->
-          <div class="relative z-10">
+          <div class="relative z-20">
             <SearchableDropdown
               options={filterOptions.cargos}
               value={filters.cargoFilter}
@@ -267,9 +268,9 @@
                 <TableBodyCell>
                   <div class="flex flex-wrap gap-1">
                     <Badge color="blue" class="w-fit rounded-sm">
-                      {ficha.episInfo?.totalEpisComColaborador || ficha.totalEpisAtivos || 0} EPIs
+                      {ficha.totalEpisAtivos || ficha.episInfo?.totalEpisComColaborador || 0} EPIs
                     </Badge>
-                    {#if (ficha.episInfo?.episExpirados || ficha.totalEpisVencidos) && (ficha.episInfo?.episExpirados > 0 || ficha.totalEpisVencidos > 0)}
+                    {#if (ficha.episInfo?.episExpirados || ficha.totalEpisVencidos) && ((ficha.episInfo?.episExpirados || 0) > 0 || (ficha.totalEpisVencidos || 0) > 0)}
                       <Badge color="red" class="w-fit rounded-sm">
                         {ficha.episInfo?.episExpirados || ficha.totalEpisVencidos} vencido(s)
                       </Badge>

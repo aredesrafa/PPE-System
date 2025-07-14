@@ -114,7 +114,7 @@ class NotasMovimentacaoAdapter {
       }
 
       throw new Error("Resposta inválida do servidor");
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao listar notas:", error);
       throw new Error("Não foi possível carregar as notas de movimentação");
     }
@@ -128,7 +128,7 @@ class NotasMovimentacaoAdapter {
     console.log("🔍 NotasMovimentacaoAdapter: Buscando nota", id);
 
     try {
-      const response = await api.get<any>(`${this.baseEndpoint}/${id}`);
+      const response = await api.get<any>(`${this.baseEndpoint}/${id}`) as any;
       console.log("✅ Resposta obter nota:", response);
       console.log(
         "🔍 Estrutura da resposta:",
@@ -150,7 +150,7 @@ class NotasMovimentacaoAdapter {
         JSON.stringify(notaData, null, 2),
       );
       return notaData;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao buscar nota:", error);
       throw new Error("Não foi possível encontrar a nota");
     }
@@ -166,7 +166,7 @@ class NotasMovimentacaoAdapter {
 
     try {
       // Usar endpoint específico para rascunhos (linha 848)
-      const response = await api.get<any>(`${this.baseEndpoint}/rascunhos`);
+      const response = await api.get<any>(`${this.baseEndpoint}/rascunhos`) as any;
       console.log("✅ Resposta listar rascunhos:", response);
 
       if (response.success && response.data) {
@@ -178,7 +178,7 @@ class NotasMovimentacaoAdapter {
       }
 
       return [];
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao listar rascunhos:", error);
       throw new Error("Não foi possível carregar os rascunhos");
     }
@@ -258,7 +258,7 @@ class NotasMovimentacaoAdapter {
 
       console.log("📤 Dados para backend:", backendData);
 
-      const response = await api.post<any>(this.baseEndpoint, backendData);
+      const response = await api.post<any>(this.baseEndpoint, backendData) as any;
 
       console.log("✅ Nota criada:", response);
 
@@ -279,7 +279,7 @@ class NotasMovimentacaoAdapter {
           data: response,
         };
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao criar nota:", error);
       throw new Error("Não foi possível criar a nota de movimentação");
     }
@@ -295,7 +295,7 @@ class NotasMovimentacaoAdapter {
     console.log("📝 NotasMovimentacaoAdapter: Atualizando nota", id, data);
 
     try {
-      const response = await api.put<any>(`${this.baseEndpoint}/${id}`, data);
+      const response = await api.put<any>(`${this.baseEndpoint}/${id}`, data) as any;
       console.log("✅ Resposta atualizar nota:", response);
 
       if (response.success && response.data) {
@@ -305,7 +305,7 @@ class NotasMovimentacaoAdapter {
       } else {
         return response;
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao atualizar nota:", error);
       throw new Error("Não foi possível atualizar a nota");
     }
@@ -320,7 +320,7 @@ class NotasMovimentacaoAdapter {
     try {
       await api.delete(`${this.baseEndpoint}/${id}`);
       console.log("✅ Nota excluída:", id);
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao excluir nota:", error);
       throw new Error("Não foi possível excluir a nota");
     }
@@ -352,11 +352,21 @@ class NotasMovimentacaoAdapter {
         throw new Error(`ID do tipo EPI inválido: ${item.tipo_epi_id}. Deve ser um UUID válido ou ID customizado (ex: E4U302)`);
       }
 
-      // Usar formato conforme documentação (linha 911)
-      const backendItemData = {
+      // Usar formato conforme documentação (linha 942)
+      const backendItemData: {
+        tipoEpiId: string;
+        quantidade: number;
+        custoUnitario?: number;
+        observacoes?: string;
+      } = {
         tipoEpiId: item.tipo_epi_id,
         quantidade: Number(item.quantidade),
       };
+
+      // 🔧 CORREÇÃO: Incluir custo unitário se fornecido
+      if (item.custo_unitario && item.custo_unitario > 0) {
+        backendItemData.custoUnitario = Number(item.custo_unitario);
+      }
 
       // Adicionar observacoes apenas se existir (backend valida null como erro)
       if (item.observacoes && item.observacoes.trim() !== '') {
@@ -379,7 +389,7 @@ class NotasMovimentacaoAdapter {
       } else {
         return response;
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao adicionar item:", error);
       throw new Error("Não foi possível adicionar o item à nota");
     }
@@ -405,9 +415,40 @@ class NotasMovimentacaoAdapter {
         quantidade: Number(quantidade),
       });
       console.log("✅ Quantidade atualizada");
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao atualizar quantidade:", error);
       throw new Error("Não foi possível atualizar a quantidade");
+    }
+  }
+
+  /**
+   * NOVO: Atualiza custo unitário de um item independentemente
+   */
+  async atualizarCustoUnitario(
+    notaId: string,
+    tipoEpiId: string,
+    custoUnitario: number,
+  ): Promise<void> {
+    console.log(
+      "💰 NotasMovimentacaoAdapter: Atualizando custo unitário",
+      notaId,
+      tipoEpiId,
+      custoUnitario,
+    );
+
+    try {
+      // Validar custo unitário (>= 0 conforme backend)
+      if (custoUnitario < 0) {
+        throw new Error("Custo unitário deve ser maior ou igual a zero");
+      }
+
+      await api.put(`${this.baseEndpoint}/${notaId}/itens/${tipoEpiId}/custo`, {
+        custoUnitario: Number(custoUnitario),
+      });
+      console.log("✅ Custo unitário atualizado");
+    } catch (error: any) {
+      console.error("❌ Erro ao atualizar custo unitário:", error);
+      throw new Error("Não foi possível atualizar o custo unitário");
     }
   }
 
@@ -420,7 +461,7 @@ class NotasMovimentacaoAdapter {
     try {
       await api.delete(`${this.baseEndpoint}/${notaId}/itens/${itemId}`);
       console.log("✅ Item removido");
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao remover item:", error);
       throw new Error("Não foi possível remover o item");
     }
@@ -452,7 +493,7 @@ class NotasMovimentacaoAdapter {
       } else {
         return response;
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao concluir nota:", error);
       throw new Error("Não foi possível concluir a nota");
     }
@@ -470,7 +511,7 @@ class NotasMovimentacaoAdapter {
         gerarEstorno: true,
       });
       console.log("✅ Nota cancelada:", id);
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao cancelar nota:", error);
       throw new Error("Não foi possível cancelar a nota");
     }
@@ -496,7 +537,7 @@ class NotasMovimentacaoAdapter {
       } else {
         return response;
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao validar cancelamento:", error);
       return { pode_cancelar: false, motivo: "Erro na validação" };
     }
@@ -565,7 +606,7 @@ class NotasMovimentacaoAdapter {
         total_itens_processados: nota.itens?.length || 0,
         movimentacoes_previstas: nota.itens?.length || 0,
       };
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro na validação local:", error);
       return {
         pode_concluir: false,
@@ -624,7 +665,7 @@ class NotasMovimentacaoAdapter {
       });
 
       return options;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao carregar opções de filtros:", error);
 
       // Retornar opções básicas em caso de erro

@@ -42,6 +42,10 @@
   export const autoRefresh: boolean = false;
   export const refreshInterval: number = 30000;
   
+  // Evento para notificar mudanças nos dados
+  import { createEventDispatcher } from 'svelte';
+  const dispatch = createEventDispatcher();
+  
   // ==================== ENHANCED STORE ====================
   
   // Store paginado usando o service adapter para transformação correta dos dados
@@ -68,6 +72,9 @@
   let tiposEPI: TipoEPIDTO[] = [];
   let almoxarifados: AlmoxarifadoDTO[] = [];
   
+  // Estado de inicialização para evitar flash do empty state
+  let initializing = true;
+  
   // ==================== LIFECYCLE ====================
   
   onMount(async () => {
@@ -93,8 +100,11 @@
       await loadInventoryData();
       
       console.log('✅ InventoryContainer: Inicializado com sucesso');
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Erro ao inicializar InventoryContainer:', error);
+    } finally {
+      // Finalizar inicialização após carregar dados ou erro
+      initializing = false;
     }
   });
   
@@ -107,7 +117,7 @@
     try {
       await inventoryStore.fetchPage();
       console.log('📦 Dados de inventário carregados');
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Erro ao carregar inventário:', error);
       notify.error('Erro ao carregar inventário', 'Não foi possível carregar os dados do estoque');
     }
@@ -127,7 +137,7 @@
       almoxarifados = almoxarifadosResponse;
       
       console.log(`📋 Carregados ${tiposEPI.length} tipos EPI e ${almoxarifados.length} almoxarifados`);
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Erro ao carregar dados auxiliares:', error);
     }
   }
@@ -303,7 +313,7 @@
       } else {
         console.log('✅ Estoque consistente:', { estoqueAtual, saldoKardex });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Erro ao carregar histórico:', error);
       historyError = error instanceof Error ? error.message : 'Erro desconhecido';
     } finally {
@@ -332,12 +342,15 @@
       // Recarregar dados
       await loadInventoryData();
       
+      // Notificar que os dados mudaram para atualizar contadores
+      dispatch('dataChanged');
+      
       notify.success(
         'Movimentação registrada', 
         `${event.detail.tipoMovimentacao} de ${event.detail.quantidade} unidades`
       );
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Erro ao salvar movimentação:', error);
       notify.error('Erro ao salvar', 'Não foi possível registrar a movimentação');
     } finally {
@@ -409,9 +422,12 @@
       // Recarregar dados
       await loadInventoryData();
       
+      // Notificar que os dados mudaram para atualizar contadores
+      dispatch('dataChanged');
+      
       notify.success('Nota salva', 'Movimentação registrada com sucesso');
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Erro ao salvar nota:', error);
       notify.error('Erro ao salvar', 'Não foi possível registrar a movimentação');
     }
@@ -455,7 +471,7 @@
   
   $: presentationData = {
     items: $inventoryStore.items || [],
-    loading: $inventoryStore.loading,
+    loading: initializing || $inventoryStore.loading,
     error: $inventoryStore.error,
     pagination: {
       currentPage: $inventoryStore.page,
@@ -497,6 +513,7 @@
     categoria: presentationData.filters.categoriaFilter
   }}
   categoriaOptions={presentationData.filterOptions.categorias}
+  statusOptions={presentationData.filterOptions.status}
   hideStatusFilter={!!statusFilter}
   on:searchChange={(e) => handleSearchChange(e.detail.value)}
   on:filterChange={(e) => {

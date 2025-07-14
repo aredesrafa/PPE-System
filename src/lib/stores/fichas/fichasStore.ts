@@ -47,7 +47,7 @@ function createFichasStore() {
   });
 
   let currentFilters: FichaQueryParams = {};
-  let autoRefreshInterval: NodeJS.Timeout | null = null;
+  let autoRefreshInterval: number | null = null;
 
   const actions: FichasActions = {
     async initialize(pageSize = 10) {
@@ -73,7 +73,7 @@ function createFichasStore() {
         });
 
         currentFilters = { page: 1, limit: pageSize };
-      } catch (error) {
+      } catch (error: any) {
         update(state => ({
           ...state,
           loading: false,
@@ -107,7 +107,7 @@ function createFichasStore() {
         }));
 
         currentFilters.page = page;
-      } catch (error) {
+      } catch (error: any) {
         update(state => ({
           ...state,
           loading: false,
@@ -147,7 +147,7 @@ function createFichasStore() {
         }));
 
         currentFilters = { search: searchTerm };
-      } catch (error) {
+      } catch (error: any) {
         update(state => ({
           ...state,
           loading: false,
@@ -179,7 +179,7 @@ function createFichasStore() {
         }));
 
         currentFilters = { ...filters, page: 1 };
-      } catch (error) {
+      } catch (error: any) {
         update(state => ({
           ...state,
           loading: false,

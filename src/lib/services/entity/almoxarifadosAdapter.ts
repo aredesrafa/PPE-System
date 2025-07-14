@@ -133,7 +133,7 @@ class AlmoxarifadosAdapter {
         console.log("✅ Almoxarifados extraídos do estoque:", items.length);
         return items;
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao listar almoxarifados:", error);
 
       // Se for timeout, usar dados de fallback temporariamente
@@ -192,7 +192,7 @@ class AlmoxarifadosAdapter {
         pageSize: response.data.pagination.limit,
         totalPages: response.data.pagination.totalPages,
       };
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao listar almoxarifados paginados:", error);
       throw new Error("Não foi possível carregar os almoxarifados");
     }
@@ -212,7 +212,7 @@ class AlmoxarifadosAdapter {
 
       console.log("✅ Almoxarifado encontrado:", response.data.nome);
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao buscar almoxarifado:", error);
       throw new Error("Não foi possível encontrar o almoxarifado");
     }
@@ -243,7 +243,7 @@ class AlmoxarifadosAdapter {
 
       console.log("✅ Opções de select criadas:", opcoes.length);
       return opcoes;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao criar opções de select:", error);
 
       // Retornar lista vazia em caso de erro para não quebrar a UI
@@ -329,7 +329,7 @@ class AlmoxarifadosAdapter {
         principais.length,
       );
       return principais;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao buscar almoxarifados principais:", error);
       throw new Error("Não foi possível carregar os almoxarifados principais");
     }

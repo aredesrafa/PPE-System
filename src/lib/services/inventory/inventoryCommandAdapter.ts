@@ -52,7 +52,7 @@ class InventoryCommandAdapter {
       console.log("🔗 URL construída:", url);
 
       // Fazer chamada real para o backend
-      const response = await api.get<any>(url);
+      const response = await api.get<any>(url) as any;
 
       console.log("🔍 Resposta bruta do backend estoque:", response);
       console.log("🔍 Estrutura dos dados:", {
@@ -85,8 +85,8 @@ class InventoryCommandAdapter {
               categoria: item.tipoEpi.categoriaEpi || item.tipoEpi.categoria, // Mapear categoria
             }
           : undefined,
-        // Mapear status para lowercase para compatibilidade com frontend
-        status: (item.status || "DISPONIVEL").toLowerCase(),
+        // Manter status em uppercase conforme especificação da API
+        status: item.status || "DISPONIVEL",
         // Manter dados do almoxarifado com ID garantido
         almoxarifado: item.almoxarifado ? {
           ...item.almoxarifado,
@@ -116,26 +116,33 @@ class InventoryCommandAdapter {
 
       console.log("✅ Itens do inventário mapeados:", mappedResponse);
       return mappedResponse;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao buscar itens do inventário:", error);
+      console.error("❌ Erro detalhado:", {
+        message: error.message,
+        status: error.status,
+        response: error.response,
+        url: url
+      });
       
-      // Retornar dados mockados para testar o modal
-      console.log("🔄 Usando dados mockados para desenvolvimento");
-      return {
-        data: [
+      // Retornar dados mockados filtrados por status para testar
+      console.log("🔄 Usando dados mockados para desenvolvimento - Status:", params.status);
+      
+      const mockData = {
+        DISPONIVEL: [
           {
-            id: "1",
+            id: "disp-1",
             tipoEPIId: "tipo-1",
             almoxarifadoId: "alm-1",
             quantidade: 25,
-            status: "disponivel",
+            status: "DISPONIVEL",
             dataUltimaMovimentacao: new Date().toISOString(),
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
             tipoEPI: {
               id: "tipo-1",
-              nomeEquipamento: "Capacete de Segurança",
-              numeroCA: "12345",
+              nomeEquipamento: "Capacete Disponível",
+              numeroCA: "11111",
               categoria: "Proteção da Cabeça",
               ativo: true,
               createdAt: new Date().toISOString(),
@@ -149,20 +156,22 @@ class InventoryCommandAdapter {
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString()
             }
-          },
+          }
+        ],
+        QUARENTENA: [
           {
-            id: "2",
+            id: "quar-1",
             tipoEPIId: "tipo-2",
             almoxarifadoId: "alm-1",
-            quantidade: 15,
-            status: "baixo",
+            quantidade: 8,
+            status: "QUARENTENA",
             dataUltimaMovimentacao: new Date().toISOString(),
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
             tipoEPI: {
               id: "tipo-2",
-              nomeEquipamento: "Luvas de Proteção",
-              numeroCA: "67890",
+              nomeEquipamento: "Luvas em Quarentena",
+              numeroCA: "22222",
               categoria: "Proteção das Mãos",
               ativo: true,
               createdAt: new Date().toISOString(),
@@ -178,7 +187,42 @@ class InventoryCommandAdapter {
             }
           }
         ],
-        total: 2,
+        AGUARDANDO_INSPECAO: [
+          {
+            id: "insp-1",
+            tipoEPIId: "tipo-3",
+            almoxarifadoId: "alm-1",
+            quantidade: 5,
+            status: "AGUARDANDO_INSPECAO",
+            dataUltimaMovimentacao: new Date().toISOString(),
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            tipoEPI: {
+              id: "tipo-3",
+              nomeEquipamento: "Óculos Aguardando Inspeção",
+              numeroCA: "33333",
+              categoria: "Proteção dos Olhos",
+              ativo: true,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString()
+            },
+            almoxarifado: {
+              id: "alm-1",
+              nome: "Almoxarifado Principal",
+              codigo: "ALMP001",
+              ativo: true,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString()
+            }
+          }
+        ]
+      };
+      
+      const statusData = mockData[params.status as keyof typeof mockData] || mockData.DISPONIVEL;
+      
+      return {
+        data: statusData,
+        total: statusData.length,
         page: 1,
         pageSize: 20,
         totalPages: 1
@@ -210,11 +254,11 @@ class InventoryCommandAdapter {
         `/estoque/itens/${itemId}/movimentacoes`,
         queryParams,
       );
-      const response = await api.get<MovimentacaoEstoqueDTO[]>(url);
+      const response = await api.get<MovimentacaoEstoqueDTO[]>(url) as any;
 
       console.log("✅ Histórico do item obtido com sucesso:", response.length);
       return response;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao buscar histórico do item:", error);
       throw error;
     }
@@ -238,7 +282,7 @@ class InventoryCommandAdapter {
       );
       console.log("✅ Movimentação registrada com sucesso:", response);
       return response;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao registrar movimentação:", error);
       throw error;
     }
@@ -255,8 +299,12 @@ class InventoryCommandAdapter {
     responsavelId: string;
   }): Promise<MovimentacaoEstoqueDTO> {
     const entryData: NovaMovimentacaoForm = {
-      ...data,
+      tipoEPIId: data.tipoEpiId,
+      almoxarifadoId: data.almoxarifadoId,
+      quantidade: data.quantidade,
+      observacoes: data.observacoes,
       tipoMovimentacao: "ENTRADA_COMPRA",
+      motivo: "Entrada por compra",
     };
 
     return this.registerMovement(entryData);
@@ -273,8 +321,12 @@ class InventoryCommandAdapter {
     responsavelId: string;
   }): Promise<MovimentacaoEstoqueDTO> {
     const exitData: NovaMovimentacaoForm = {
-      ...data,
+      tipoEPIId: data.tipoEpiId,
+      almoxarifadoId: data.almoxarifadoId,
+      quantidade: data.quantidade,
+      observacoes: data.observacoes,
       tipoMovimentacao: "SAIDA_ENTREGA",
+      motivo: "Saída por entrega",
     };
 
     return this.registerMovement(exitData);
@@ -287,7 +339,7 @@ class InventoryCommandAdapter {
     data: AjusteEstoqueForm,
   ): Promise<MovimentacaoEstoqueDTO> {
     const adjustmentData: NovaMovimentacaoForm = {
-      tipoEpiId: data.tipoEpiId,
+      tipoEPIId: data.tipoEpiId,
       almoxarifadoId: data.almoxarifadoId,
       quantidade: data.quantidade,
       observacoes: data.motivo,
@@ -312,7 +364,7 @@ class InventoryCommandAdapter {
       );
       console.log("✅ Transferência registrada com sucesso:", response);
       return response;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao registrar transferência:", error);
       throw error;
     }
@@ -331,7 +383,7 @@ class InventoryCommandAdapter {
       );
       console.log("✅ Estorno registrado com sucesso:", response);
       return response;
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erro ao criar estorno:", error);
       throw error;
     }

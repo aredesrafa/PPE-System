@@ -60,8 +60,8 @@ declare module '$env/static/private' {
 	export const npm_execpath: string;
 	export const MAMBA_EXE: string;
 	export const PATH: string;
-	export const npm_package_json: string;
 	export const _: string;
+	export const npm_package_json: string;
 	export const XML_CATALOG_FILES: string;
 	export const npm_config_userconfig: string;
 	export const npm_config_init_module: string;
@@ -70,9 +70,9 @@ declare module '$env/static/private' {
 	export const npm_command: string;
 	export const PWD: string;
 	export const MAMBA_ROOT_PREFIX: string;
+	export const OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE: string;
 	export const npm_lifecycle_event: string;
 	export const EDITOR: string;
-	export const OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE: string;
 	export const npm_package_name: string;
 	export const npm_config_npm_version: string;
 	export const XPC_FLAGS: string;
@@ -97,6 +97,7 @@ declare module '$env/static/private' {
 	export const CLAUDECODE: string;
 	export const npm_node_execpath: string;
 	export const npm_config_prefix: string;
+	export const NODE_ENV: string;
 }
 
 /**
@@ -162,8 +163,8 @@ declare module '$env/dynamic/private' {
 		npm_execpath: string;
 		MAMBA_EXE: string;
 		PATH: string;
-		npm_package_json: string;
 		_: string;
+		npm_package_json: string;
 		XML_CATALOG_FILES: string;
 		npm_config_userconfig: string;
 		npm_config_init_module: string;
@@ -172,9 +173,9 @@ declare module '$env/dynamic/private' {
 		npm_command: string;
 		PWD: string;
 		MAMBA_ROOT_PREFIX: string;
+		OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE: string;
 		npm_lifecycle_event: string;
 		EDITOR: string;
-		OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE: string;
 		npm_package_name: string;
 		npm_config_npm_version: string;
 		XPC_FLAGS: string;
@@ -199,6 +200,7 @@ declare module '$env/dynamic/private' {
 		CLAUDECODE: string;
 		npm_node_execpath: string;
 		npm_config_prefix: string;
+		NODE_ENV: string;
 		[key: `PUBLIC_${string}`]: undefined;
 		[key: `${string}`]: string | undefined;
 	}

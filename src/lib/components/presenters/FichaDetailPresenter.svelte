@@ -20,7 +20,7 @@
   import { UIMappingHelpers } from '$lib/services/process/shared/uiMappingHelpers';
   
   // 🚀 NOVO: Importar tipos das novas interfaces
-  import type { FichaCompleteResponse } from '$lib/services/process/queries/fichaQueryAdapter';
+  import type { FichaCompleteResponse } from '$lib/services/process/queries/types';
   import type { NovaEntregaFormData } from '$lib/services/process';
   import type { EquipamentoEmPosseItem } from '$lib/types/serviceTypes';
 
@@ -222,11 +222,11 @@
   }
   
   /* Garantir que modais e drawers internos fiquem na frente */
-  :global(.z-\\[70\\]) {
+  :global(.z-70) {
     z-index: 70 !important;
   }
   
-  :global(.z-\\[60\\]) {
+  :global(.z-60) {
     z-index: 60 !important;
   }
 </style>
@@ -264,7 +264,7 @@
       <LoadingSpinner />
     </div>
   {:else if error}
-    <ErrorDisplay message={error} />
+    <ErrorDisplay error={error} />
   {:else if fichaData}
 
     <!-- ==================== TABS NAVIGATION ==================== -->
@@ -518,7 +518,7 @@
                 <div class="flex items-start space-x-4">
                   <!-- ✅ SIMPLIFICADO: Usar helper para ícone -->
                   <div class={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${getStatusClasses(evento.tipoDisplay.cor)}`}>
-                    <Icon name={getEventIcon(evento.tipoDisplay.tipo)} class="w-5 h-5" />
+                    <Icon name={getEventIcon(evento.tipoDisplay.tipo)} className="w-5 h-5" />
                   </div>
 
                   <div class="flex-1 min-w-0">

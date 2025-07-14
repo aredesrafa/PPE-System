@@ -232,7 +232,7 @@
                 <TableBodyCell>
                   {#if epi.vidaUtilDias || epi.validadePadrao}
                     <span class="text-sm">
-                      {Math.round((epi.vidaUtilDias || epi.validadePadrao) / 30)} meses
+                      {Math.round((epi.vidaUtilDias || epi.validadePadrao || 0) / 30)} meses
                     </span>
                   {:else}
                     <span class="text-sm text-gray-400">-</span>

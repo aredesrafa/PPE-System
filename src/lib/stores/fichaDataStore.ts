@@ -13,12 +13,15 @@ export interface DevolucaoItem {
   equipamentoId: string;
   nomeEquipamento: string;
   registroCA: string;
-  entregaId: string;
-  dataDevolucao: Date;
+  entregaId?: string;
+  dataDevolucao: string;
   motivo: string;
   observacoes?: string;
-  status: "pendente" | "concluida" | "cancelada";
+  status?: "pendente" | "concluida" | "cancelada";
   quantidade: number;
+  prazoOriginal: string;
+  noPrazo: boolean;
+  diasAtraso?: number;
 }
 
 // Store principal para cache de dados de fichas
@@ -60,11 +63,14 @@ export function updateFichaAfterDevolucao(
       nomeEquipamento: equipamento.nomeEquipamento,
       registroCA: equipamento.registroCA,
       entregaId: equipamento.entregaId,
-      dataDevolucao: new Date(),
+      dataDevolucao: new Date().toISOString(),
       motivo: motivo,
       observacoes: observacoes || "",
       status: "concluida",
       quantidade: equipamento.quantidade,
+      prazoOriginal: equipamento.prazoMaximoDevolucao || new Date().toISOString(),
+      noPrazo: !equipamento.vencido,
+      diasAtraso: equipamento.vencido ? equipamento.diasVencido : undefined,
     };
 
     // Adicionar à lista de devoluções (inicializa se não existir)

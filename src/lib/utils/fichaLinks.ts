@@ -57,7 +57,7 @@ export async function copyFichaLink(fichaId: string, baseUrl?: string): Promise<
   try {
     await navigator.clipboard.writeText(link);
     console.log('✅ Link da ficha copiado:', link);
-  } catch (error) {
+  } catch (error: any) {
     console.error('❌ Erro ao copiar link da ficha:', error);
     
     // Fallback para browsers mais antigos

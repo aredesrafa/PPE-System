@@ -45,32 +45,32 @@
     success: { 
       icon: CheckCircleOutline, 
       colors: semanticColors.success,
-      buttonVariant: 'success' as const
+      buttonVariant: 'success'
     },
     error: { 
       icon: ExclamationCircleOutline, 
       colors: semanticColors.error,
-      buttonVariant: 'danger' as const
+      buttonVariant: 'danger'
     },
     warning: { 
       icon: ExclamationCircleOutline, 
       colors: semanticColors.warning,
-      buttonVariant: 'warning' as const
+      buttonVariant: 'warning'
     },
     info: { 
       icon: InfoCircleOutline, 
       colors: semanticColors.info,
-      buttonVariant: 'info' as const
+      buttonVariant: 'info'
     },
     primary: { 
       icon: InfoCircleOutline, 
       colors: semanticColors.primary,
-      buttonVariant: 'primary' as const
+      buttonVariant: 'primary'
     },
     neutral: { 
       icon: InfoCircleOutline, 
       colors: semanticColors.neutral,
-      buttonVariant: 'neutral' as const
+      buttonVariant: 'neutral'
     }
   };
   

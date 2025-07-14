@@ -87,7 +87,7 @@
         totalConfiguracoes: configuracoesSistema.length
       });
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Erro ao carregar configurações:', error);
       configuracaoError = 'Erro ao carregar configurações do sistema';
     } finally {
@@ -108,7 +108,7 @@
       
       notify.success('Configuração salva', 'Permissão de estoque negativo atualizada');
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Erro ao salvar configuração de estoque negativo:', error);
       notify.error('Erro ao salvar', 'Não foi possível salvar a configuração');
       
@@ -132,7 +132,7 @@
       
       notify.success('Configuração salva', 'Permissão de ajustes diretos atualizada');
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Erro ao salvar configuração de ajustes diretos:', error);
       notify.error('Erro ao salvar', 'Não foi possível salvar a configuração');
       
@@ -182,7 +182,7 @@
             <LoadingSpinner />
           </div>
         {:else if configuracaoError}
-          <ErrorDisplay message={configuracaoError} />
+          <ErrorDisplay error={configuracaoError} />
         {:else}
           <div class="space-y-6">
             <div class="grid gap-6 md:grid-cols-2">

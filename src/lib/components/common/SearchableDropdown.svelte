@@ -80,8 +80,8 @@
                       buttonElement.closest('.fixed.inset-0') ||
                       document.querySelector('.fixed.inset-0.z-40'); // Flowbite modal backdrop
     
-    // Z-index adequado para modal (Flowbite usa z-50 para modais)
-    const zIndex = isInModal ? 999999 : 50000;
+    // ✅ CORREÇÃO: Z-index mais alto para garantir sobreposição adequada
+    const zIndex = isInModal ? 999999 : 100000;
     
     dropdownStyle = `
       position: fixed;

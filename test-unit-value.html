@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Valor Unitário - DataLife EPI</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-step {
+            margin: 15px 0;
+            padding: 15px;
+            border-left: 4px solid #3b82f6;
+            background-color: #f8fafc;
+        }
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #dcfce7;
+            border: 1px solid #16a34a;
+            color: #166534;
+        }
+        .error {
+            background-color: #fef2f2;
+            border: 1px solid #dc2626;
+            color: #991b1b;
+        }
+        .info {
+            background-color: #dbeafe;
+            border: 1px solid #2563eb;
+            color: #1e40af;
+        }
+        button {
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #2563eb;
+        }
+        .code {
+            background-color: #1f2937;
+            color: #f9fafb;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            margin: 10px 0;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Teste de Valor Unitário - Sistema de Notas</h1>
+        
+        <div class="test-step">
+            <h3>📋 Instruções do Teste</h3>
+            <p>Este teste verificará se a correção do valor unitário no notasMovimentacaoAdapter.ts está funcionando corretamente.</p>
+            
+            <ol>
+                <li><strong>Abrir o sistema:</strong> <a href="http://localhost:5174/notas" target="_blank">http://localhost:5174/notas</a></li>
+                <li><strong>Criar nova nota:</strong> Clique em "Nova Movimentação"</li>
+                <li><strong>Configurar:</strong>
+                    <ul>
+                        <li>Tipo: ENTRADA</li>
+                        <li>Selecionar um almoxarifado de destino</li>
+                    </ul>
+                </li>
+                <li><strong>Adicionar item:</strong>
+                    <ul>
+                        <li>Selecionar qualquer EPI</li>
+                        <li>Quantidade: 3</li>
+                        <li><strong>Valor unitário: 25.50</strong> (valor crítico para teste)</li>
+                    </ul>
+                </li>
+                <li><strong>Salvar rascunho:</strong> Clique em "Salvar Rascunho"</li>
+                <li><strong>Verificar:</strong> Reabrir o rascunho e confirmar se o valor 25.50 está preservado</li>
+                <li><strong>Concluir:</strong> Se o valor estiver correto, tentar concluir a nota</li>
+            </ol>
+        </div>
+
+        <div class="test-step">
+            <h3>🔍 Monitoramento de Rede</h3>
+            <p>Abra as DevTools (F12) e vá para a aba Network. Procure por:</p>
+            <div class="code">POST /api/notas-movimentacao/items
+Payload esperado:
+{
+  "notaId": "[ID_DA_NOTA]",
+  "equipamentoId": "[ID_DO_EPI]", 
+  "quantidade": 3,
+  "custoUnitario": 25.5
+}</div>
+        </div>
+
+        <div class="test-step">
+            <h3>✅ Critérios de Sucesso</h3>
+            <ul>
+                <li>O valor unitário 25.50 deve ser preservado quando o rascunho for reaberto</li>
+                <li>O payload da requisição deve incluir "custoUnitario": 25.5</li>
+                <li>A conclusão da nota deve funcionar sem erros</li>
+                <li>Não deve haver mais erros de "custoUnitario" sendo null/undefined</li>
+            </ul>
+        </div>
+
+        <div class="test-step">
+            <h3>🚀 Iniciar Teste</h3>
+            <button onclick="window.open('http://localhost:5174/notas', '_blank')">
+                Abrir Sistema de Notas
+            </button>
+            <button onclick="showResults()">
+                Registrar Resultados
+            </button>
+        </div>
+
+        <div id="results" style="display:none;">
+            <h3>📊 Resultados do Teste</h3>
+            <div class="test-result">
+                <label>
+                    <input type="checkbox" id="unitValuePreserved"> 
+                    Valor unitário 25.50 preservado ao reabrir rascunho
+                </label>
+            </div>
+            <div class="test-result">
+                <label>
+                    <input type="checkbox" id="payloadCorrect"> 
+                    Payload da requisição contém "custoUnitario": 25.5
+                </label>
+            </div>
+            <div class="test-result">
+                <label>
+                    <input type="checkbox" id="conclusionWorks"> 
+                    Conclusão da nota funcionou sem erros
+                </label>
+            </div>
+            <div class="test-result">
+                <label>
+                    <input type="checkbox" id="noErrors"> 
+                    Sem erros de custoUnitario null/undefined
+                </label>
+            </div>
+            
+            <h4>Detalhes adicionais:</h4>
+            <textarea id="additionalDetails" placeholder="Descreva qualquer comportamento observado, erros encontrados ou problemas..." 
+                      style="width: 100%; height: 100px; margin: 10px 0; padding: 10px;"></textarea>
+            
+            <button onclick="generateReport()">Gerar Relatório</button>
+        </div>
+
+        <div id="reportOutput" style="display:none;">
+            <h3>📄 Relatório Final</h3>
+            <div id="reportContent" class="code"></div>
+        </div>
+    </div>
+
+    <script>
+        function showResults() {
+            document.getElementById('results').style.display = 'block';
+        }
+
+        function generateReport() {
+            const unitValuePreserved = document.getElementById('unitValuePreserved').checked;
+            const payloadCorrect = document.getElementById('payloadCorrect').checked;
+            const conclusionWorks = document.getElementById('conclusionWorks').checked;
+            const noErrors = document.getElementById('noErrors').checked;
+            const additionalDetails = document.getElementById('additionalDetails').value;
+
+            const allTestsPassed = unitValuePreserved && payloadCorrect && conclusionWorks && noErrors;
+
+            const report = `
+RELATÓRIO DE TESTE - CORREÇÃO VALOR UNITÁRIO
+============================================
+
+Data/Hora: ${new Date().toLocaleString('pt-BR')}
+Sistema: DataLife EPI - Notas de Movimentação
+Correção: notasMovimentacaoAdapter.ts - custoUnitario
+
+RESULTADOS:
+-----------
+✅ Valor unitário preservado: ${unitValuePreserved ? 'SIM' : 'NÃO'}
+✅ Payload correto: ${payloadCorrect ? 'SIM' : 'NÃO'}  
+✅ Conclusão funciona: ${conclusionWorks ? 'SIM' : 'NÃO'}
+✅ Sem erros: ${noErrors ? 'SIM' : 'NÃO'}
+
+STATUS GERAL: ${allTestsPassed ? '✅ TODOS OS TESTES PASSARAM' : '❌ ALGUNS TESTES FALHARAM'}
+
+DETALHES ADICIONAIS:
+-------------------
+${additionalDetails || 'Nenhum detalhe adicional fornecido.'}
+
+PRÓXIMOS PASSOS:
+---------------
+${allTestsPassed ? 
+  '- Correção validada com sucesso\n- Pode prosseguir para produção\n- Monitorar logs em produção' : 
+  '- Revisar implementação\n- Verificar logs de erro\n- Aplicar correções adicionais'
+}
+`;
+
+            document.getElementById('reportContent').textContent = report;
+            document.getElementById('reportOutput').style.display = 'block';
+            
+            // Copy to clipboard
+            navigator.clipboard.writeText(report).then(() => {
+                alert('Relatório copiado para a área de transferência!');
+            });
+        }
+    </script>
+</body>
+</html>

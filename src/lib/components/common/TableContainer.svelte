@@ -52,7 +52,7 @@
   {:else if error}
     <!-- Estado de erro -->
     <div class="p-8">
-      <ErrorDisplay message={error} />
+      <ErrorDisplay error={error} />
     </div>
   {:else if isEmpty}
     <!-- Estado vazio -->

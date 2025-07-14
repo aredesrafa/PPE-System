@@ -136,20 +136,20 @@
   /**
    * Obtém cor do badge baseada na severidade
    */
-  function getSeverityColor(severidade: string): string {
+  function getSeverityColor(severidade: string): "green" | "red" | "yellow" | "primary" | "blue" | "dark" | "purple" | "indigo" | "pink" | "none" {
     switch (severidade) {
       case 'critica': return 'red';
-      case 'alta': return 'orange';
+      case 'alta': return 'yellow'; // orange -> yellow
       case 'media': return 'yellow';
       case 'baixa': return 'blue';
-      default: return 'gray';
+      default: return 'dark'; // gray -> dark
     }
   }
   
   /**
    * Obtém cor do badge baseada no tipo
    */
-  function getTypeColor(tipo: string): string {
+  function getTypeColor(tipo: string): "green" | "red" | "yellow" | "primary" | "blue" | "dark" | "purple" | "indigo" | "pink" | "none" {
     return tipo === 'read_model_maior' ? 'purple' : 'indigo';
   }
   
@@ -240,7 +240,7 @@
             <Badge color="red" class="rounded-sm">Críticas: {stats.criticas}</Badge>
           {/if}
           {#if stats.altas > 0}
-            <Badge color="orange" class="rounded-sm">Altas: {stats.altas}</Badge>
+            <Badge color="yellow" class="rounded-sm">Altas: {stats.altas}</Badge>
           {/if}
           {#if stats.medias > 0}
             <Badge color="yellow" class="rounded-sm">Médias: {stats.medias}</Badge>

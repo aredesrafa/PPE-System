@@ -129,7 +129,7 @@ class DashboardAdapter {
       }
 
       throw new Error('Resposta inválida do backend');
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Erro ao carregar dashboard, usando fallback:', error);
       
       // Fallback para dados mockados em caso de erro

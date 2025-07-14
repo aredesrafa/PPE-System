@@ -54,7 +54,7 @@ function createBusinessConfigStore() {
         });
 
         console.log("✅ Configurações de negócio carregadas com sucesso");
-      } catch (error) {
+      } catch (error: any) {
         const errorMessage =
           error instanceof Error ? error.message : "Erro desconhecido";
 

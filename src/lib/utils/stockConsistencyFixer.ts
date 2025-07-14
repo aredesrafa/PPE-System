@@ -61,7 +61,7 @@ class StockConsistencyFixer {
           // Pequeno delay para não sobrecarregar o backend
           await new Promise(resolve => setTimeout(resolve, 100));
           
-        } catch (error) {
+        } catch (error: any) {
           console.warn(`⚠️ Erro ao verificar item ${item.id}:`, error);
           continue;
         }
@@ -77,7 +77,7 @@ class StockConsistencyFixer {
       
       return inconsistencies;
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Erro fatal na detecção de inconsistências:', error);
       throw error;
     }
@@ -133,7 +133,7 @@ class StockConsistencyFixer {
         });
       }
       
-    } catch (error) {
+    } catch (error: any) {
       console.warn(`⚠️ Erro ao buscar kardex para item ${item.id}:`, error);
     }
   }
@@ -205,7 +205,7 @@ class StockConsistencyFixer {
       
       return result;
       
-    } catch (error) {
+    } catch (error: any) {
       console.error(`❌ ERRO na correção de ${item.tipoEPI?.nomeEquipamento}:`, error);
       
       return {

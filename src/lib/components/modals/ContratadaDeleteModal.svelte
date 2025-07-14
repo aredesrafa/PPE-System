@@ -31,7 +31,7 @@
     try {
       dispatch('confirm', contratada);
       show = false;
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao excluir contratada:', error);
     } finally {
       isDeleting = false;

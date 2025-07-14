@@ -6,18 +6,50 @@
 import { api } from "../../core/apiClient";
 import { fichaTransformAdapter } from './adapters/fichaTransformAdapter';
 import type { FichaQueryParams, PaginatedFichaResponse, FichaBasica } from './types';
+import type { 
+  EPIDisponivel, 
+  Usuario, 
+  EPIsDisponiveisResponse, 
+  UsuariosResponse 
+} from '$lib/types';
 
 export class FichaQueryAdapter {
   /**
    * Busca detalhes completos de uma ficha EPI
+   * 🔧 CORREÇÃO: Agrega dados de múltiplos endpoints pois /complete não retorna entregas/histórico
    */
   async getFichaComplete(fichaId: string): Promise<any> {
     try {
-      const endpoint = `/fichas-epi/${fichaId}/complete`;
-      console.log('🔍 Chamando endpoint de ficha completa:', endpoint);
-      const response = await api.get(endpoint);
-      return fichaTransformAdapter.transformFichaComplete(response);
-    } catch (error) {
+      console.log('🔍 Carregando ficha completa:', fichaId);
+      
+      // Fazer todas as consultas em paralelo para melhor performance
+      const [fichaCompleteResponse, entregasResponse, historicoResponse] = await Promise.all([
+        api.get(`/fichas-epi/${fichaId}/complete`) as Promise<any>,
+        api.get(`/fichas-epi/${fichaId}/entregas`) as Promise<any>,
+        api.get(`/fichas-epi/${fichaId}/historico`) as Promise<any>
+      ]);
+
+      console.log('✅ Dados básicos carregados');
+      console.log('📦 Entregas encontradas:', entregasResponse?.data?.length || 0);
+      console.log('📝 Eventos de histórico:', historicoResponse?.data?.historico?.length || 0);
+
+      // Combinar os dados
+      const combinedData = {
+        ...fichaCompleteResponse,
+        data: {
+          ...fichaCompleteResponse.data,
+          // ✅ CORREÇÃO: Adicionar entregas e histórico dos endpoints específicos
+          entregas: entregasResponse?.data || [],
+          historico: historicoResponse?.data?.historico || [],
+          // Manter outros dados do endpoint /complete
+          devolucoes: fichaCompleteResponse.data?.devolucoes || [],
+          equipamentosEmPosse: fichaCompleteResponse.data?.equipamentosEmPosse || [],
+          estatisticas: fichaCompleteResponse.data?.estatisticas || {}
+        }
+      };
+
+      return fichaTransformAdapter.transformFichaComplete(combinedData);
+    } catch (error: any) {
       console.error('❌ Erro ao buscar ficha completa:', error);
       throw error;
     }
@@ -33,9 +65,9 @@ export class FichaQueryAdapter {
       const endpoint = `/fichas-epi/list-enhanced${queryParams}`;
 
       console.log('🔍 Chamando endpoint:', endpoint);
-      const response = await api.get(endpoint);
+      const response = await api.get(endpoint) as any;
       return fichaTransformAdapter.transformFichasList(response);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao buscar lista de fichas:', error);
       
       // Retorna resposta vazia em caso de erro
@@ -58,9 +90,9 @@ export class FichaQueryAdapter {
         return [];
       }
 
-      const response = await api.get(`/fichas-epi/search?q=${encodeURIComponent(searchTerm)}&limit=${limit}`);
+      const response = await api.get(`/fichas-epi/search?q=${encodeURIComponent(searchTerm)}&limit=${limit}`) as any;
       return fichaTransformAdapter.transformSearchResults(response);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao buscar fichas:', error);
       return [];
     }
@@ -169,7 +201,7 @@ export class FichaQueryAdapter {
         page: response.page,
         pageSize: response.pageSize,
       };
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Erro no método transitório:', error);
       throw error;
     }
@@ -192,7 +224,7 @@ export class FichaQueryAdapter {
       }
 
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao buscar estatísticas:', error);
       return { total: 0, ativas: 0, inativas: 0, pendenteDevolucao: 0 };
     }
@@ -203,12 +235,23 @@ export class FichaQueryAdapter {
    */
   async getEPIsDisponiveis(): Promise<EPIDisponivel[]> {
     try {
-      const response = await api.get('/estoque/itens?apenasDisponiveis=true&apenasComSaldo=true');
+      const response = await api.get('/estoque/itens?apenasDisponiveis=true&apenasComSaldo=true') as EPIsDisponiveisResponse as any;
       if (!response.success || !Array.isArray(response.data.items)) {
         return [];
       }
       // Mapear para o formato EPIDisponivel
-      return response.data.items.map((item: any) => ({
+      return response.data.items.map((item: { 
+        id: string; 
+        tipoEpi: { 
+          id: string; 
+          nomeEquipamento: string; 
+          numeroCa: string; 
+          categoriaEpi: string; 
+        }; 
+        quantidade: number; 
+        status: string; 
+        almoxarifadoId: string; 
+      }) => ({
         id: item.id,
         nomeEquipamento: item.tipoEpi.nomeEquipamento,
         numeroCA: item.tipoEpi.numeroCa,
@@ -220,9 +263,25 @@ export class FichaQueryAdapter {
         tipoEpiId: item.tipoEpi.id,
         posicaoEstoqueId: item.almoxarifadoId, // Assumindo que almoxarifadoId é o id da posição de estoque
       }));
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao buscar EPIs disponíveis:', error);
       return [];
+    }
+  }
+
+  /**
+   * Busca ficha por ID
+   */
+  async getFichaById(fichaId: string): Promise<any> {
+    try {
+      const response = await api.get(`/fichas-epi/${fichaId}`) as any;
+      if (!response.success) {
+        return null;
+      }
+      return response.data;
+    } catch (error: any) {
+      console.error('Erro ao buscar ficha por ID:', error);
+      return null;
     }
   }
 
@@ -231,19 +290,36 @@ export class FichaQueryAdapter {
    */
   async getUsuarios(): Promise<Usuario[]> {
     try {
-      const response = await api.get('/usuarios');
-      if (!response.success || !Array.isArray(response.data)) {
+      const response = await api.get('/usuarios') as any;
+      console.log('🔍 Resposta da API /usuarios:', response);
+      
+      // A API retorna { items: [...], pagination: {...} }
+      if (!response.items || !Array.isArray(response.items)) {
+        console.log('❌ Response não tem items ou items não é array:', response);
         return [];
       }
-      return response.data.map((user: any) => ({
+      
+      console.log('✅ Encontrado', response.items.length, 'usuários');
+      
+      return response.items.map((user: { 
+        id: string; 
+        nome: string; 
+        email: string; 
+        perfil?: string; 
+        ativo?: boolean; 
+        createdAt: string; 
+        updatedAt?: string; 
+      }) => ({
         id: user.id,
         nome: user.nome,
         email: user.email,
-        cargo: user.cargo || '',
-        ativo: user.ativo || true,
+        perfil: user.perfil || 'usuario', // Default se não tiver perfil
+        ativo: user.ativo !== false, // Default true se não especificado
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt || user.createdAt
       }));
-    } catch (error) {
-      console.error('Erro ao buscar usuários:', error);
+    } catch (error: any) {
+      console.error('❌ Erro ao buscar usuários:', error);
       return [];
     }
   }
