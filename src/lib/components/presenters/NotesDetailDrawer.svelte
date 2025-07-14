@@ -17,7 +17,7 @@
   } from 'flowbite-svelte-icons';
   
   import DrawerHeader from '$lib/components/common/DrawerHeader.svelte';
-  import NotaItensManagerSimplified from './NotaItensManagerSimplified.svelte';
+  import NotaItensManager from './NotaItensManager.svelte';
   import type { NotaItem } from './NotaItensManager.svelte';
   import LoadingSpinner from '$lib/components/common/LoadingSpinner.svelte';
   import ErrorDisplay from '$lib/components/common/ErrorDisplay.svelte';
@@ -38,7 +38,7 @@
   export let mode: 'create' | 'edit' | 'view' = 'create';
   export let tipo: TipoNotaEnum = 'ENTRADA';
   export let nota: NotaMovimentacao | null = null;
-  export let loading = false;
+  export const loading = false;
 
   // ==================== EVENT DISPATCHER ====================
   
@@ -1007,7 +1007,7 @@
 
         <!-- Itens Manager -->
         <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
-          <NotaItensManagerSimplified
+          <NotaItensManager
             bind:itens
             tipo={formData.tipo_nota}
             almoxarifadoId={formData.tipo_nota === 'ENTRADA' ? formData.almoxarifado_destino_id : formData.almoxarifado_origem_id}
