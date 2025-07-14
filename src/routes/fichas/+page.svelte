@@ -19,5 +19,4 @@
 <!-- Use the new Container/Presenter architecture -->
 <FichasContainer 
   initialPageSize={10}
-  autoRefresh={false}
 />

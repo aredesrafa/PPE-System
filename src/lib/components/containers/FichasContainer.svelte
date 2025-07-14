@@ -27,8 +27,6 @@
   // ==================== PROPS ====================
   
   export let initialPageSize: number = 10;
-  export const autoRefresh: boolean = false;
-  export const refreshInterval: number = 30000;
 
   // ==================== ENHANCED STORE ====================
   
@@ -134,31 +132,52 @@
       loadingFilterOptions = true;
       console.log('🔧 Carregando opções dos filtros...');
       
-      // Carregar empresas e colaboradores em paralelo
-      const [empresasResponse, colaboradoresResponse] = await Promise.all([
-        api.get('/contratadas?limit=100'),
-        api.get('/colaboradores?limit=1000')
-      ]);
+      // Carregar apenas colaboradores (API /contratadas tem problema)
+      console.log('🌐 API: Carregando colaboradores...');
+      const colaboradoresResponse = await api.get('/colaboradores');
       
-      // Processar empresas
-      if (empresasResponse?.success && empresasResponse.data?.contratadas) {
-        const empresasOptions = empresasResponse.data.contratadas.map((empresa: any) => ({
-          value: empresa.nome,
-          label: empresa.nome
+      console.log('📊 API Response - Colaboradores:', colaboradoresResponse);
+      
+      // Extrair empresas únicas dos colaboradores
+      let empresasFromColaboradores: Array<{ value: string; label: string }> = [];
+      let contratadaDataFromColaboradores: Array<{ value: string; label: string }> = [];
+      
+      // Processar colaboradores e extrair empresas
+      if (colaboradoresResponse?.success && colaboradoresResponse.data) {
+        const colaboradoresData = Array.isArray(colaboradoresResponse.data) 
+          ? colaboradoresResponse.data 
+          : colaboradoresResponse.data.colaboradores || [];
+        
+        // Extrair empresas únicas dos colaboradores
+        const empresasUnicas = [...new Set(
+          colaboradoresData
+            .filter((col: any) => col.contratada?.nome)
+            .map((col: any) => col.contratada.nome)
+        )];
+        
+        empresasFromColaboradores = empresasUnicas.map((empresa: string) => ({
+          value: empresa,
+          label: empresa
         }));
         
-        filterOptions.empresas = [
-          { value: 'todas', label: 'Todas as Empresas' },
-          ...empresasOptions
-        ];
+        // Para o modal Nova Ficha, usar os IDs das contratadas
+        const empresasComId = colaboradoresData
+          .filter((col: any) => col.contratada?.id && col.contratada?.nome)
+          .reduce((acc: any, col: any) => {
+            if (!acc.find((e: any) => e.value === col.contratada.id)) {
+              acc.push({
+                value: col.contratada.id,
+                label: col.contratada.nome
+              });
+            }
+            return acc;
+          }, []);
         
-        console.log('✅ Empresas carregadas:', empresasOptions.length);
-      }
-      
-      // Processar cargos únicos dos colaboradores
-      if (colaboradoresResponse?.success && colaboradoresResponse.data?.colaboradores) {
+        contratadaDataFromColaboradores = empresasComId;
+        
+        // Processar cargos únicos
         const cargosUnicos = [...new Set(
-          colaboradoresResponse.data.colaboradores
+          colaboradoresData
             .map((col: any) => col.cargo)
             .filter((cargo: string) => cargo && cargo.trim())
         )];
@@ -173,8 +192,38 @@
           ...cargosOptions
         ];
         
+        // Atribuir colaboradores para uso no modal Nova Ficha
+        colaboradores = colaboradoresData.map((col: any) => ({
+          value: col.id,
+          label: col.nome,
+          empresa: col.contratada?.nome || 'Sem empresa'
+        }));
+        
+        console.log('✅ Empresas extraídas dos colaboradores:', empresasFromColaboradores.length);
         console.log('✅ Cargos únicos carregados:', cargosOptions.length);
+        console.log('✅ Colaboradores carregados:', colaboradores.length);
+      } else {
+        console.error('❌ Erro ao processar colaboradores:', {
+          success: colaboradoresResponse?.success,
+          data: colaboradoresResponse?.data,
+          response: colaboradoresResponse
+        });
+        
+        // Fallback para evitar erro no dropdown
+        colaboradores = [];
+        filterOptions.cargos = [{ value: 'todos', label: 'Todos os Cargos' }];
+        empresasFromColaboradores = [];
+        contratadaDataFromColaboradores = [];
       }
+      
+      // Configurar empresas para filtros
+      filterOptions.empresas = [
+        { value: 'todas', label: 'Todas as Empresas' },
+        ...empresasFromColaboradores
+      ];
+      
+      // Configurar contratadas para modal Nova Ficha
+      contratadas = contratadaDataFromColaboradores;
       
       // Força reatividade
       filterOptions = { ...filterOptions };
@@ -236,11 +285,15 @@
   }
   
   function handleNovaFicha() {
+    console.log('📝 NovaFicha: Abrindo modal, estado anterior:', showNovaFicha);
     showNovaFicha = true;
+    console.log('📝 NovaFicha: Estado após abrir:', showNovaFicha);
   }
   
   function handleCloseNovaFicha() {
+    console.log('📝 NovaFicha: Fechando modal, estado anterior:', showNovaFicha);
     showNovaFicha = false;
+    console.log('📝 NovaFicha: Estado após fechar:', showNovaFicha);
   }
   
   function handleRefresh() {
@@ -305,17 +358,16 @@
   {/if}
 
   <!-- Nova Ficha Modal -->
-  {#if showNovaFicha}
-    <NovaFichaModalPresenter
-      {contratadas}
-      {colaboradores}
-      {loadingContratadas}
-      {loadingColaboradores}
-      loading={submittingNovaFicha}
-      on:close={handleCloseNovaFicha}
-      on:submit={(e) => console.log('Nova ficha:', e.detail)}
-    />
-  {/if}
+  <NovaFichaModalPresenter
+    bind:open={showNovaFicha}
+    {contratadas}
+    {colaboradores}
+    {loadingContratadas}
+    {loadingColaboradores}
+    submitting={submittingNovaFicha}
+    on:close={handleCloseNovaFicha}
+    on:submit={(e) => console.log('Nova ficha:', e.detail)}
+  />
 </div>
 
 <style>

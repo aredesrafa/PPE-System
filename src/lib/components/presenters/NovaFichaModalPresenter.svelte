@@ -84,9 +84,13 @@
 
   // Reset form when modal closes
   $: if (!open) {
+    console.log('📝 NovaFichaModal: Modal fechado, resetando formulário');
     selectedContratada = '';
     selectedColaborador = '';
   }
+  
+  // Debug modal state changes
+  $: console.log('📝 NovaFichaModal: Estado do modal mudou para:', open);
 </script>
 
 <Modal bind:open size="md" outsideclose={!submitting} autoclose={false}>
